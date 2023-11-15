@@ -17,5 +17,7 @@ class AppRoute{
   static const String groupspage="/groupspage";
   static const String pages="/pages";
   static const String peopleifollow="/peopleifollow";
-  static const String chatmainpage="/chatmainpage";
+  static const String chatmainpage="/chatmainpage"; 
+
+
 }

@@ -13,7 +13,9 @@ import 'package:growify/view/widget/auth/textSignupORsignIn.dart';
 import 'package:growify/view/widget/auth/textTitleAuth.dart';
 
 class Login extends StatelessWidget {
-  const Login({super.key});
+   Login({super.key});
+
+  GlobalKey<FormState>formstate=GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +33,10 @@ class Login extends StatelessWidget {
         body: WillPopScope(
           onWillPop: alertExitApp,
             child: Container(
-              key: controller.formstate,
+             // key: controller.formstate,
               padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
               child: Form(
+                key: formstate,
                 child: ListView(
                   children: [
                     LogoAuth(),
@@ -55,7 +58,8 @@ class Login extends StatelessWidget {
                     TextFormAuth(
                       
                       valid: (value) {
-                        return validInput(value!, 100, 12, "email");
+                        return validInput(value!, 20, 12, "email");
+                        
                       },
                       mycontroller: controller.email,
                       hinttext: "Enter Your Email",
@@ -90,7 +94,13 @@ class Login extends StatelessWidget {
                     ButtonAuth(
                       text: "Sign In",
                       onPressed: () {
-                        controller.login();
+                       controller.login();
+                      /* if(formstate.currentState!.validate()){
+                        print("Vaild");
+                       
+                       }else{
+                        print("Not Valid");
+                       }*/
                       },
                     ),
                 const    SizedBox(

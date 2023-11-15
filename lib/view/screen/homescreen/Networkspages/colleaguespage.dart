@@ -34,7 +34,9 @@ class ColleaguesPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.back();
+                    },
                     icon: Icon(
                       Icons.arrow_back,
                       size: 30,

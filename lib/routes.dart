@@ -20,8 +20,8 @@ import 'package:growify/view/screen/homescreen/notificationspages/notificationma
 
 Map<String, Widget Function(BuildContext)>routes={
   //Auth
-  AppRoute.login : (context)=> const Login(),
-  AppRoute.signup : (context)=> const SignUp(),
+  AppRoute.login : (context)=>  Login(),
+  AppRoute.signup : (context)=>  SignUp(),
   AppRoute.forgetpassword : (context)=> const ForgetPassword(),
   AppRoute.verifycode : (context)=> const VerifyCode(),
   AppRoute.resetpassword : (context)=> const ResetPassword(),
@@ -35,5 +35,5 @@ Map<String, Widget Function(BuildContext)>routes={
   AppRoute.pages : (context)=>  Pages(),
   AppRoute.peopleifollow : (context)=>  PeopleIFollow(),
   AppRoute.chatmainpage : (context)=>  ChatMainPage(),
-  
+   
 };

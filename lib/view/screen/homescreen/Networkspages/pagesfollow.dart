@@ -31,7 +31,9 @@ class Pages extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                IconButton(onPressed: (){}, icon: Icon(Icons.arrow_back,size: 30,)),
+                IconButton(onPressed: (){
+                  Get.back();
+                }, icon: Icon(Icons.arrow_back,size: 30,)),
                 // put the icons action
                 Container(
                     padding: EdgeInsets.only(left: 10),
