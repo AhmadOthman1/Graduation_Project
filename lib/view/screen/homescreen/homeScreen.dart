@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/homescreen_controller.dart';
+import 'package:growify/view/screen/homescreen/NewPost/newpost.dart';
 import 'package:growify/view/widget/homePage/bottomappbar.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -12,7 +13,9 @@ class HomeScreen extends StatelessWidget {
     return GetBuilder<HomeScreenControllerImp>(
         builder: (controller) => Scaffold(
             floatingActionButton: FloatingActionButton(
-              onPressed: () {},
+              onPressed: () {
+                Get.to(NewPost());
+              },
               child: Icon(Icons.post_add_outlined),
             ),
             floatingActionButtonLocation:

@@ -103,19 +103,30 @@ class Post extends StatelessWidget {
                                 ],
                               ),
                               // "Connect" icon here
-                              IconButton(
-                                onPressed: () {
-                                  postController.toggleConnectButton();
-                                },
-                                icon: Icon(
-                                  postController.isConnectButtonPressed.value
-                                      ? Icons.people
-                                      : Icons.person_add,
-                                  size: 32,
-                                  color: postController.isConnectButtonPressed.value
-                                      ? Colors.blue
-                                      : Colors.grey,
+                              Row(
+                                children :[IconButton(
+                                  onPressed: () {
+                                    postController.toggleConnectButton();
+                                  },
+                                  icon: Icon(
+                                    postController.isConnectButtonPressed.value
+                                        ? Icons.people
+                                        : Icons.person_add,
+                                    size: 32,
+                                    color: postController.isConnectButtonPressed.value
+                                        ? Colors.blue
+                                        : Colors.grey,
+                                  ),
                                 ),
+                               /* IconButton(
+                                onPressed: () {
+                                  //show  more cjoise
+                                },
+                                icon: Icon(Icons.more_vert),
+                              ),*/
+                                
+                                
+                                ]
                               )
                             ],
                           ),
