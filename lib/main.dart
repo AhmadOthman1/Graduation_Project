@@ -2,8 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/routes.dart';
 import 'package:growify/view/screen/auth/SignIn&SignUp/login.dart';
-
+import 'package:growify/global.dart';
 void main() {
+  firstName="";
+  lastName="";
+  userName="";
+  email="";
+  password="";
+  phone="";
+   dateOfBirth="";
+   code="";
   runApp(const MyApp());
 }
 

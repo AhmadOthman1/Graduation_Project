@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/auth/resetpassword_controller.dart';
+import 'package:growify/core/functions/alertbox.dart';
+import 'package:growify/core/functions/validinput.dart';
+import 'package:growify/global.dart';
 import 'package:growify/view/widget/auth/ButtonAuth.dart';
 import 'package:growify/view/widget/auth/textFormAuth.dart';
 import 'package:growify/view/widget/auth/textTitleAuth.dart';
 
 class ResetPassword extends StatelessWidget {
-  const ResetPassword({super.key});
-
+   ResetPassword({super.key});
+GlobalKey<FormState>formstate=GlobalKey();
   @override
   Widget build(BuildContext context) {
     ResetPasswordControllerImp controller =
@@ -24,47 +27,73 @@ class ResetPassword extends StatelessWidget {
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 50),
-        child: ListView(
-          children: [
-            const TextTitleAuth(
-              text: "New Password",
-            ),
-            const SizedBox(
-              height: 60,
-            ),
-            GetBuilder<ResetPasswordControllerImp>(
-              builder: (controller) => TextFormAuth(
-                onTapIcon: () {
-                  controller.showPassord();
-                },
-                obscureText: controller.isshowpass,
-                valid: (value) {},
-                mycontroller: controller.password,
-                hinttext: "Enter Your Password",
-                labeltext: "Password",
-                iconData: Icons.lock_outlined,
+        child: Form(
+          key: formstate,
+          child: ListView(
+            children: [
+              const TextTitleAuth(
+                text: "New Password",
               ),
-            ),
-               GetBuilder<ResetPasswordControllerImp>(
-              builder: (controller) => TextFormAuth(
-                onTapIcon: () {
-                  controller.showPassord();
-                },
-                obscureText: controller.isshowpass,
-                valid: (value) {},
-                mycontroller: controller.password,
-                hinttext: "Enter Your Password",
-                labeltext: "Password",
-                iconData: Icons.lock_outlined,
+              const SizedBox(
+                height: 60,
               ),
-            ),
-            ButtonAuth(
-              text: "Save",
-              onPressed: () {
-                controller.goToSuccessResetPassword();
-              },
-            ),
-          ],
+              GetBuilder<ResetPasswordControllerImp>(
+                builder: (controller) => TextFormAuth(
+                  onTapIcon: () {
+                    controller.showPassord();
+                  },
+                  obscureText: controller.isshowpass,
+                  valid: (value) {
+                    password=value;
+                    return validInput(value!, 30, 8, "password");
+                  },
+                  mycontroller: controller.password,
+                  hinttext: "Enter Your Password",
+                  labeltext: "Password",
+                  iconData: Icons.lock_outlined,
+                ),
+              ),
+                GetBuilder<ResetPasswordControllerImp>(
+                builder: (controller) => TextFormAuth(
+                  onTapIcon: () {
+                    controller.showPassord();
+                  },
+                  obscureText: controller.isshowpass,
+                  valid: (value) {
+                    password=value;
+                    return validInput(value!, 30, 8, "password");
+                  },
+                  mycontroller: controller.password,
+                  hinttext: "Enter Your Password",
+                  labeltext: "Password",
+                  iconData: Icons.lock_outlined,
+                ),
+              ),
+              ButtonAuth(
+                text: "Save",
+                onPressed: () async {
+                  if(formstate.currentState!.validate()){
+                          print("Vaild");
+                          var message = await controller.goToSuccessResetPassword(email,password);
+                          (message != null) ? showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CustomAlertDialog(
+                                title: 'Error',
+                                icon: Icons.error,
+                                text: message,
+                                buttonText: 'OK',
+                              );
+                            },
+                          ) : null ;
+                        
+                        }else{
+                          print("Not Valid");
+                        }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

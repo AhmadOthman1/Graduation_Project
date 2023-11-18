@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/core/constant/routes.dart';
-
+import 'package:growify/global.dart';
+import 'package:http/http.dart' as http;
 abstract class LoginController extends GetxController{
-login();
+login(email , password);
 goToSignup();
 goToForgetPassword();
+postLogin(email , password);
+
 }
 
 class LoginControllerImp extends LoginController {
@@ -25,16 +30,40 @@ class LoginControllerImp extends LoginController {
     // Initialize formstate in the constructor.
     formstate = GlobalKey<FormState>();
   }
-
+Future postLogin(email , password) async {
+    var url = urlStarter + "/user/Login";
+    var responce = await http.post(Uri.parse(url),
+        body: jsonEncode({
+          "email": email.trim(),
+          "password": password.trim(),
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        });
+    var responceBody = jsonDecode(responce.body);
+    return responce;
+  }
   @override
-  login() {
+  login(email , password) async {
+
     // Check if formstate.currentState is not null before using it.
-   /*  if (formstate.currentState != null && formstate.currentState!.validate()) {
-      print("Valid");
-    } else {
-      print("Not Valid");
-    }*/
-    Get.offNamed(AppRoute.homescreen);
+   try {
+      var res = await postLogin(email,password);
+      var resbody = jsonDecode(res.body);
+      print(resbody['message']);
+      print(res.statusCode);
+      if(res.statusCode == 409){
+        return resbody['message'];
+      }else if(res.statusCode == 200 && resbody['message'] == "logged"){
+        resbody['message'] = "";
+        Get.offNamed(AppRoute.homescreen);
+      }
+
+    } catch(err) {
+      print(err);
+      return "server error";
+    }
+    
 
 
   }

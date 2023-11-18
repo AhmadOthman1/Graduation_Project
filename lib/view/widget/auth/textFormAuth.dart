@@ -8,7 +8,7 @@ class TextFormAuth extends StatelessWidget {
   final String? Function(String?) valid;
   final bool? obscureText;
   final void Function()? onTapIcon;
-  const TextFormAuth({super.key, required this.hinttext, required this.labeltext, required this.iconData,required this.mycontroller, required this.valid,  this.obscureText, this.onTapIcon});
+  const TextFormAuth({super.key, required this.hinttext, required this.labeltext, required this.iconData, this.mycontroller, required this.valid,  this.obscureText, this.onTapIcon});
 
   @override
   Widget build(BuildContext context) {

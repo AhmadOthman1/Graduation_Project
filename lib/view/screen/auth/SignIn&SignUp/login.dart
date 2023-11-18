@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/auth/login_controller.dart';
 import 'package:growify/core/constant/imagesAssets.dart';
+import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/core/functions/alertexitapp.dart';
 import 'package:growify/core/functions/validinput.dart';
 import 'package:growify/view/widget/auth/ButtonAuth.dart';
@@ -11,9 +12,18 @@ import 'package:growify/view/widget/auth/textBodyAuth.dart';
 import 'package:growify/view/widget/auth/textFormAuth.dart';
 import 'package:growify/view/widget/auth/textSignupORsignIn.dart';
 import 'package:growify/view/widget/auth/textTitleAuth.dart';
-
+import 'package:growify/global.dart';
 class Login extends StatelessWidget {
-   Login({super.key});
+   Login({super.key}){
+    firstName="";
+    lastName="";
+    userName="";
+    email="";
+    password="";
+    phone="";
+    dateOfBirth="";
+    code="";
+   }
 
   GlobalKey<FormState>formstate=GlobalKey();
 
@@ -58,7 +68,8 @@ class Login extends StatelessWidget {
                     TextFormAuth(
                       
                       valid: (value) {
-                        return validInput(value!, 20, 12, "email");
+                        email = value;
+                        return validInput(value!, 100, 2, "email");
                         
                       },
                       mycontroller: controller.email,
@@ -72,6 +83,7 @@ class Login extends StatelessWidget {
                       },
                       obscureText: controller.isshowpass,
                       valid: (value) {
+                        password = value;
                         return validInput(value!, 30, 8, "password");
                       },
                       mycontroller: controller.password,
@@ -93,14 +105,25 @@ class Login extends StatelessWidget {
                     ),
                     ButtonAuth(
                       text: "Sign In",
-                      onPressed: () {
-                       controller.login();
-                      /* if(formstate.currentState!.validate()){
-                        print("Vaild");
+                      onPressed: () async {
                        
+                       if(formstate.currentState!.validate()){
+                        print("Vaild");
+                        var message = await controller.login(email , password);
+                        (message != null) ? showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CustomAlertDialog(
+                              title: 'Error',
+                              icon: Icons.error,
+                              text: message,
+                              buttonText: 'OK',
+                            );
+                          },
+                        ) : null ;
                        }else{
                         print("Not Valid");
-                       }*/
+                       }
                       },
                     ),
                 const    SizedBox(

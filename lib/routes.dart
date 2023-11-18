@@ -22,9 +22,9 @@ Map<String, Widget Function(BuildContext)>routes={
   //Auth
   AppRoute.login : (context)=>  Login(),
   AppRoute.signup : (context)=>  SignUp(),
-  AppRoute.forgetpassword : (context)=> const ForgetPassword(),
+  AppRoute.forgetpassword : (context)=> ForgetPassword(),
   AppRoute.verifycode : (context)=> const VerifyCode(),
-  AppRoute.resetpassword : (context)=> const ResetPassword(),
+  AppRoute.resetpassword : (context)=>  ResetPassword(),
   AppRoute.SuccessSignUp : (context)=> const SuccessSignUp(),
   AppRoute.SuccessResetPassword : (context)=> const SuccessResetPassword(),
   AppRoute.verifycodeaftersignup : (context)=> const VerifyCodeAfterSignUp(),

@@ -3,6 +3,8 @@ import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/auth/forgetPassword_controller.dart';
 import 'package:growify/controller/auth/verifycode_controller.dart';
+import 'package:growify/core/functions/alertbox.dart';
+import 'package:growify/global.dart';
 import 'package:growify/view/widget/auth/ButtonAuth.dart';
 import 'package:growify/view/widget/auth/textBodyAuth.dart';
 import 'package:growify/view/widget/auth/textFormAuth.dart';
@@ -49,8 +51,19 @@ class VerifyCode extends StatelessWidget {
         showFieldAsBox: true, 
         onCodeChanged: (String code) {        
         },
-        onSubmit: (String verificationCode){
-          controller.goToResetPassword();
+        onSubmit: (String verificationCode) async {
+          var message = await controller.goToResetPassword(verificationCode,email);
+          (message != null) ? showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CustomAlertDialog(
+                title: 'Error',
+                icon: Icons.error,
+                text: message,
+                buttonText: 'OK',
+              );
+            },
+          ) : null ;
         }, 
     ),
 

@@ -5,7 +5,7 @@ import 'package:growify/view/widget/auth/ButtonAuth.dart';
 
 class SuccessSignUp extends StatelessWidget {
   const SuccessSignUp({super.key});
-
+    
   @override
   Widget build(BuildContext context) {
     SuccessSignUpControllerImp controller=Get.put(SuccessSignUpControllerImp());

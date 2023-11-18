@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/auth/forgetPassword_controller.dart';
+import 'package:growify/core/functions/alertbox.dart';
+import 'package:growify/core/functions/validinput.dart';
+import 'package:growify/global.dart';
 import 'package:growify/view/widget/auth/ButtonAuth.dart';
 import 'package:growify/view/widget/auth/textBodyAuth.dart';
 import 'package:growify/view/widget/auth/textFormAuth.dart';
 import 'package:growify/view/widget/auth/textTitleAuth.dart';
 
 class ForgetPassword extends StatelessWidget {
-  const ForgetPassword({super.key});
+  ForgetPassword({super.key});
+
+  
+  GlobalKey<FormState> formstate = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -24,43 +30,64 @@ class ForgetPassword extends StatelessWidget {
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 50),
-        child: ListView(
-          children: [
-         
-            const TextTitleAuth(
-              text: "Forgot Your Password? ",
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            const TextBodyAuth(
-                text:
-                    "Enter Your Email We Will Sent You\n\n A Verification Code"),
-            const SizedBox(
-              height: 60,
-            ),
-
+          child: Form(
+          key: formstate,
+          child: ListView(
+            children: [
           
-          
-             TextFormAuth(
-              valid: (value){},
-              mycontroller: controller.email,
-              hinttext: "Enter Your Email",
-              labeltext: "Email",
-              iconData: Icons.email_outlined,
-            ),
+              const TextTitleAuth(
+                text: "Forgot Your Password? ",
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              const TextBodyAuth(
+                  text:
+                      "Enter Your Email We Will Sent You\n\n A Verification Code"),
+              const SizedBox(
+                height: 60,
+              ),
+
+            
+            
+              TextFormAuth(
+                valid: (value){
+                  email=value;
+                  return validInput(value!, 100, 2, "email");
+                },
+                mycontroller: controller.email,
+                hinttext: "Enter Your Email",
+                labeltext: "Email",
+                iconData: Icons.email_outlined,
+              ),
 
 
 
-          
-            ButtonAuth(
-              text: "Confirm",
-              onPressed: () {
-                controller.goToVerfiycode();
-              },
-            ),
-           
-          ],
+            
+              ButtonAuth(
+                text: "Confirm",
+                onPressed: () async {
+                  if(formstate.currentState!.validate()){
+                  var message = await controller.goToVerfiycode(email);
+                  (message != null) ? showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CustomAlertDialog(
+                        title: 'Error',
+                        icon: Icons.error,
+                        text: message,
+                        buttonText: 'OK',
+                      );
+                    },
+                  ) : null ;
+                  }else{
+                    print("Not Valid");
+                  }
+                },
+              ),
+            
+            ],
+          ),
         ),
       ),
     );
