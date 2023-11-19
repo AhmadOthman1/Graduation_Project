@@ -6,7 +6,7 @@ import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
 import 'package:http/http.dart' as http;
 abstract class ResetPasswordController extends GetxController{
-resetpassword();
+
 goToSuccessResetPassword(email,password);
 postChangePassword(email,password);
 }
@@ -14,7 +14,7 @@ postChangePassword(email,password);
 class ResetPasswordControllerImp extends ResetPasswordController{
 
 
-  late TextEditingController password;
+  /*late TextEditingController password;
   late TextEditingController repassword;
 
     bool isshowpass=true;
@@ -27,7 +27,28 @@ class ResetPasswordControllerImp extends ResetPasswordController{
   @override
   resetpassword() {
     
+  }*/
+
+  final newPassword = ''.obs;
+  final rewritePassword = ''.obs;
+  final obscureNewPassword = true.obs;
+  final obscureRewritePassword = true.obs;
+
+  String? passwordsMatch(String? value) {
+    if (value != null && value != newPassword.value) {
+      return 'Passwords do not match';
+    }
+    return null;
   }
+
+  void toggleNewPasswordVisibility() {
+    obscureNewPassword.toggle();
+  }
+
+  void toggleRewritePasswordVisibility() {
+    obscureRewritePassword.toggle();
+  }
+
      Future postChangePassword(email,password) async {
     var url = urlStarter + "/user/changepassword";
     var responce = await http.post(Uri.parse(url),
@@ -58,7 +79,7 @@ class ResetPasswordControllerImp extends ResetPasswordController{
 
  //Get.offNamed(AppRoute.SuccessResetPassword);
   
-
+/*
   @override
   void onInit() {
     password=TextEditingController();
@@ -75,6 +96,6 @@ class ResetPasswordControllerImp extends ResetPasswordController{
     repassword.dispose();
  
     super.dispose();
-  }
+  }*/
 
 }

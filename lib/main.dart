@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:growify/core/constant/routes.dart';
 import 'package:growify/routes.dart';
 import 'package:growify/view/screen/auth/SignIn&SignUp/login.dart';
 import 'package:growify/global.dart';
-void main() {
+import 'package:growify/view/screen/homescreen/homeScreen.dart';
+void main() async{
+
   firstName="";
   lastName="";
   userName="";
@@ -12,11 +16,14 @@ void main() {
   phone="";
    dateOfBirth="";
    code="";
-  runApp(const MyApp());
+   await GetStorage.init();
+  runApp( MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+   MyApp({super.key});
+    String? Email=GetStorage().read("loginemail") ;
+  
 
   // This widget is the root of your application.
   @override
@@ -33,7 +40,7 @@ class MyApp extends StatelessWidget {
      ),
       ),
       debugShowCheckedModeBanner: false,
-      home: Login(),
+      home:(Email==null)?Login():HomeScreen(),
       
       routes: routes,
     );
