@@ -16,6 +16,8 @@ import 'package:growify/view/screen/homescreen/chat/chatmainpage.dart';
 import 'package:growify/view/screen/homescreen/homeScreen.dart';
 import 'package:growify/view/screen/homescreen/homepages/homemainPage.dart';
 import 'package:growify/view/screen/homescreen/notificationspages/notificationmainpage.dart';
+import 'package:growify/view/screen/homescreen/settings/Profilesettings.dart';
+import 'package:growify/view/screen/homescreen/settings/settings.dart';
 
 
 Map<String, Widget Function(BuildContext)>routes={
@@ -35,5 +37,7 @@ Map<String, Widget Function(BuildContext)>routes={
   AppRoute.pages : (context)=>  Pages(),
   AppRoute.peopleifollow : (context)=>  PeopleIFollow(),
   AppRoute.chatmainpage : (context)=>  ChatMainPage(),
+  AppRoute.settings: (context)=>  Settings(),
+   // AppRoute.profilesetting: (context)=>  ProfileSettings(),
    
 };

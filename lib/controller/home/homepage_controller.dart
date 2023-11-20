@@ -9,6 +9,7 @@ goToSignup();
 goToForgetPassword();
 goToProfilePage();
 toggleConnectButton();
+goToSettingsPgae();
 }
 
 class HomePageControllerImp extends HomePageController {
@@ -40,6 +41,10 @@ class HomePageControllerImp extends HomePageController {
       print("Not Valid");
     }
   }
+
+  goToSettingsPgae(){
+  Get.toNamed(AppRoute.settings);
+}
 
   @override
   goToSignup() {

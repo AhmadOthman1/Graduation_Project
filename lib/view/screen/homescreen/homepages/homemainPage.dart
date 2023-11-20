@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/homepage_controller.dart';
+import 'package:growify/controller/home/logOutButton_controller.dart';
+import 'package:growify/controller/home/settings_controller.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/view/screen/homescreen/profilepages/profilemainpage.dart';
+import 'package:growify/view/screen/homescreen/settings/settings.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 
 class Homepage extends StatelessWidget {
@@ -12,6 +15,8 @@ class Homepage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HomePageControllerImp controller = Get.put(HomePageControllerImp());
+    
+    LogOutButtonControllerImp _logoutController = Get.put(LogOutButtonControllerImp());
     return Scaffold(
       body: Container(
           padding: EdgeInsets.symmetric(vertical: 10),
@@ -112,12 +117,17 @@ class Homepage extends StatelessWidget {
               ListTile(
                 title: Text("Settings"),
                 leading: Icon(Icons.settings),
-                onTap: () {},
+                onTap: () {
+                  controller.goToSettingsPgae();
+                },
               ),
               ListTile(
-                title: Text("Help"),
-                leading: Icon(Icons.help),
-                onTap: () {},
+                title: Text("Log Out"),
+                leading: Icon(Icons.logout_outlined),
+                onTap: () {
+                  _logoutController.goTosigninpage();
+
+                },
               ),
             ],
           ),
