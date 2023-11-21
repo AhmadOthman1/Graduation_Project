@@ -8,7 +8,8 @@ import 'package:growify/view/widget/auth/textTitleAuth.dart';
 class ChangePassword extends StatelessWidget {
   ChangePassword({super.key});
   GlobalKey<FormState> formstate = GlobalKey();
-  String? pas;
+  String? _oldPassword;
+  String? _newPassword;
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +67,7 @@ class ChangePassword extends StatelessWidget {
                     controller.oldPassword.value = value;
                   },
                   validator: (value) {
+                    _oldPassword=value;
                     return validInput(value!, 30, 8, "password");
                   })),
 
@@ -108,7 +110,7 @@ class ChangePassword extends StatelessWidget {
               Obx(() => TextFormField(
                   obscureText: controller.obscureRewritePassword.value,
                   decoration: InputDecoration(
-                    hintText: 'Enter Your New Password',
+                    hintText: 'Rewrite Your New Password',
                     hintStyle: const TextStyle(
                       fontSize: 14,
                     ),
@@ -134,7 +136,7 @@ class ChangePassword extends StatelessWidget {
                     controller.rewritePassword.value = value;
                   },
                   validator: (value) {
-                    pas = value;
+                    _newPassword = value;
 
                     return controller.passwordsMatch(value);
                   })),
@@ -144,19 +146,9 @@ class ChangePassword extends StatelessWidget {
                 onPressed: () async {
                   if (formstate.currentState!.validate()) {
                     print("Vaild");
-                    controller.goTosigninpage();
-                    /*  var message = await controller.goToSuccessResetPassword(email,pas);
-                          (message != null) ? showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return CustomAlertDialog(
-                                title: 'Error',
-                                icon: Icons.error,
-                                text: message,
-                                buttonText: 'OK',
-                              );
-                            },
-                          ) : null ;*/
+                    controller.SaveChanges(_oldPassword,_newPassword);
+
+ 
                   } else {
                     print("Not Valid");
                   }

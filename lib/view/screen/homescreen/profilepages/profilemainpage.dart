@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:growify/controller/home/homepage_controller.dart';
+import 'package:growify/view/screen/homescreen/settings/settings.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 import 'package:get/get.dart';
 
@@ -7,9 +8,7 @@ class ProfileMainPage extends StatelessWidget {
   final AssetImage _profileImage = AssetImage("images/obaida.jpeg");
   final AssetImage _coverImage = AssetImage("images/flutterimage.png");
 
-
-    final List<Map<String, dynamic>> posts = [
-
+  final List<Map<String, dynamic>> posts = [
     {
       'name': 'Obaida Aws',
       'time': '1 hour ago',
@@ -28,7 +27,7 @@ class ProfileMainPage extends StatelessWidget {
       'comment': 45,
       'share': 56,
     },
-    
+
     // Add more posts as needed
   ];
 
@@ -36,86 +35,176 @@ class ProfileMainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Obaida Profile"),
+        backgroundColor: Colors.white,
+        title: Text(
+          "My Profile",
+          style: TextStyle(color: Colors.black),
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
-      body: Stack(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _buildCoverPhoto(),
+            _buildProfileInfo(),
+            _buildBio(),
+            _Deatalis("The Details"),
+            _buildDivider(10),
+            _buildButtonsRow(),
+            _buildDivider(10),
+            _Deatalis("Your Posts"),
+            _buildPostSection(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCoverPhoto() {
+    return Container(
+      height: 200,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('images/cover.jpg'), // Replace with your image
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileInfo() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
         children: [
-          // Cover Image
-          Image(
-            image: _coverImage,
-            fit: BoxFit.cover,
-            height: 200, // Adjust the height as needed
+          CircleAvatar(
+            radius: 60,
+            backgroundImage:
+                AssetImage('images/obaida.jpeg'), // Replace with your image
           ),
-          // Profile Image and User Details
-          Container(
-            child: ListView(
-              padding: EdgeInsets.zero,
+          SizedBox(height: 16),
+          Text(
+            'John Doe',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            '@john_doe', // Replace with the actual username
+            style: TextStyle(fontSize: 16, color: Colors.blue),
+          ),
+          SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildInfoItem('Posts', '150'),
+              _buildInfoItem('Followers', '500'),
+              _buildInfoItem('Following', '300'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoItem(String label, String value) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          label,
+          style: TextStyle(color: Colors.grey),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBio() {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Bio",
+            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+              "Software developer passionate about Flutter and mobile app development."),
+        ],
+      ),
+    );
+  }
+
+  Widget _Deatalis(String text){
+    return Container(
+      margin: EdgeInsets.only(left: 5),
+      alignment: Alignment.bottomLeft,
+      child: Text(text,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),
+    );
+  }
+
+  Widget _buildButtonsRow() {
+    return Column(
+      children: [
+        InkWell(
+          onTap: (){
+            Get.to(Settings());
+          },
+          child: Container(
+            height: 35,
+            padding: EdgeInsets.only(left: 10),
+            child: Row(
               children: [
-                SizedBox(height: 160), // Space for the cover image
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16),
-                        child: CircleAvatar(
-                          radius: 80,
-                          backgroundImage: _profileImage,
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          padding: EdgeInsets.all(4),
-                          child: Icon(
-                            Icons.camera_alt,
-                            size: 40,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                Icon(Icons.edit),
+                SizedBox(width: 10),
+                Text(
+                  "Edit Profile",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16),
-                        child: Column(
-                          children: [
-                            Text(
-                              "John Doe",
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              "Frontend Developer",
-                              style: TextStyle(
-                                fontSize: 18,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 40),
-                      Divider(
-                        color: Color.fromARGB(255, 194, 193, 193),
-                        thickness: 2.0,
-                      ),
-                      SizedBox(height: 16),
-                      // Add a ListView.builder here
-                      Center(
+                Spacer(),
+                Icon(Icons.arrow_forward, size: 30),
+              ],
+            ),
+          ),
+        ),
+        _buildDivider(10),
+        Container(
+          height: 35,
+          padding: EdgeInsets.only(left: 10),
+          child: Row(
+            children: [
+              Icon(Icons.more_horiz),
+              SizedBox(width: 10),
+              Text(
+                "See your About info",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+              Spacer(),
+              Icon(Icons.arrow_forward, size: 30),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDivider(double HeigthBetween) {
+    return Column(
+      children: [
+        SizedBox(height: HeigthBetween),
+        Divider(
+          color: Color.fromARGB(255, 194, 193, 193),
+          thickness: 1.5,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPostSection() {
+    return Center(
       child: ListView.builder(
         itemCount: posts.length,
         physics: NeverScrollableScrollPhysics(),
@@ -157,13 +246,15 @@ class ProfileMainPage extends StatelessWidget {
                                       controller.goToProfilePage();
                                     },
                                     child: CircleAvatar(
-                                      backgroundImage: AssetImage(post['image']),
+                                      backgroundImage:
+                                          AssetImage(post['image']),
                                       radius: 30,
                                     ),
                                   ),
                                   const SizedBox(width: 10),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
@@ -204,38 +295,33 @@ class ProfileMainPage extends StatelessWidget {
                           Image.asset(post['image']),
                           const SizedBox(height: 30),
                           Divider(
-                color: Color.fromARGB(255, 194, 193, 193),
-                thickness: 1.0,
-              ),
-            
+                            color: Color.fromARGB(255, 194, 193, 193),
+                            thickness: 1.0,
+                          ),
                           Container(
                             margin: EdgeInsets.only(left: 20),
                             child: Row(
                               children: [
-                                
-                                 Column(
-                                   children: [
-                                     Icon(Icons.thumb_up, color: Colors.grey),
-                                     Text("Like")
-                                   ],
-                                 ),
-                                
-                                 SizedBox(width: 80),
-                                 Column(
-                                   children: [
-                                     Icon(Icons.comment, color: Colors.grey),
-                                     Text("Comment")
-                                   ],
-                                 ),
-                                
-                                 SizedBox(width: 80),
-                                 Column(
-                                   children: [
-                                     Icon(Icons.share, color: Colors.grey),
-                                     Text("Share")
-                                   ],
-                                 ),
-                                
+                                Column(
+                                  children: [
+                                    Icon(Icons.thumb_up, color: Colors.grey),
+                                    Text("Like")
+                                  ],
+                                ),
+                                SizedBox(width: 80),
+                                Column(
+                                  children: [
+                                    Icon(Icons.comment, color: Colors.grey),
+                                    Text("Comment")
+                                  ],
+                                ),
+                                SizedBox(width: 80),
+                                Column(
+                                  children: [
+                                    Icon(Icons.share, color: Colors.grey),
+                                    Text("Share")
+                                  ],
+                                ),
                               ],
                             ),
                           ),
@@ -248,15 +334,6 @@ class ProfileMainPage extends StatelessWidget {
             },
           );
         },
-      ),
-    )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

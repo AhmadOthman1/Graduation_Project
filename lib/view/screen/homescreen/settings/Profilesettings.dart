@@ -131,18 +131,7 @@ class ProfileSettings extends StatelessWidget {
                                       margin: const EdgeInsets.symmetric(
                                           horizontal: 9),
                                       child: Text("Firstname")),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      controller.isTextFieldPublic.value
-                                          ? Icons.public
-                                          : Icons.lock_outlined,
-                                    ),
-                                    onPressed: () {
-                                      //privcy public/private
-                                      controller.isTextFieldPublic.toggle();
-                                      controller.update(); // Trigger a rebuild
-                                    },
-                                  ),
+                                  suffixIcon: Icon(Icons.person_outlined),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
@@ -196,18 +185,7 @@ class ProfileSettings extends StatelessWidget {
                                       margin: const EdgeInsets.symmetric(
                                           horizontal: 9),
                                       child: Text("Lastname")),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      controller.isTextFieldPublic2.value
-                                          ? Icons.public
-                                          : Icons.lock_outlined,
-                                    ),
-                                    onPressed: () {
-                                      //privcy public/private
-                                      controller.isTextFieldPublic2.toggle();
-                                      controller.update(); // Trigger a rebuild
-                                    },
-                                  ),
+                                  suffixIcon: Icon(Icons.person_outlined),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
@@ -262,18 +240,7 @@ class ProfileSettings extends StatelessWidget {
                                       margin: const EdgeInsets.symmetric(
                                           horizontal: 9),
                                       child: Text("Address")),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      controller.isTextFieldPublic3.value
-                                          ? Icons.public
-                                          : Icons.lock_outlined,
-                                    ),
-                                    onPressed: () {
-                                      //privcy public/private
-                                      controller.isTextFieldPublic3.toggle();
-                                      controller.update(); // Trigger a rebuild
-                                    },
-                                  ),
+                                  suffixIcon: Icon(Icons.location_on),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
@@ -327,18 +294,7 @@ class ProfileSettings extends StatelessWidget {
                                       margin: const EdgeInsets.symmetric(
                                           horizontal: 9),
                                       child: Text("Country")),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      controller.isTextFieldPublic4.value
-                                          ? Icons.public
-                                          : Icons.lock_outlined,
-                                    ),
-                                    onPressed: () {
-                                      //Privcy public/private
-                                      controller.isTextFieldPublic4.toggle();
-                                      controller.update(); // Trigger a rebuild
-                                    },
-                                  ),
+                                  suffixIcon: Icon(Icons.location_on),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
@@ -393,18 +349,7 @@ class ProfileSettings extends StatelessWidget {
                                       margin: const EdgeInsets.symmetric(
                                           horizontal: 9),
                                       child: Text("DateOfBirth")),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      controller.isTextFieldPublic5.value
-                                          ? Icons.public
-                                          : Icons.lock_outlined,
-                                    ),
-                                    onPressed: () {
-                                      //Privcy public/private
-                                      controller.isTextFieldPublic5.toggle();
-                                      controller.update(); // Trigger a rebuild
-                                    },
-                                  ),
+                                  suffixIcon: Icon(Icons.event),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
@@ -459,18 +404,7 @@ class ProfileSettings extends StatelessWidget {
                                       margin: const EdgeInsets.symmetric(
                                           horizontal: 9),
                                       child: Text("Phone")),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      controller.isTextFieldPublic6.value
-                                          ? Icons.public
-                                          : Icons.lock_outlined,
-                                    ),
-                                    onPressed: () {
-                                      //Privcy public/private
-                                      controller.isTextFieldPublic6.toggle();
-                                      controller.update(); // Trigger a rebuild
-                                    },
-                                  ),
+                                  suffixIcon: Icon(Icons.phone_android_outlined),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
@@ -525,18 +459,7 @@ class ProfileSettings extends StatelessWidget {
                                       margin: const EdgeInsets.symmetric(
                                           horizontal: 9),
                                       child: Text("Bio")),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      controller.isTextFieldPublic7.value
-                                          ? Icons.public
-                                          : Icons.lock_outlined,
-                                    ),
-                                    onPressed: () {
-                                      //Privcy public/private
-                                      controller.isTextFieldPublic7.toggle();
-                                      controller.update(); // Trigger a rebuild
-                                    },
-                                  ),
+                                  suffixIcon: Icon(Icons.assignment),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
@@ -638,6 +561,7 @@ class ProfileSettings extends StatelessWidget {
                           vertical: 13, horizontal: 135),
                       onPressed: () {
                         //Save the change Information
+                        controller.SaveChanges();
                       },
                       color: Color.fromARGB(255, 85, 191, 218),
                       textColor: Colors.white,

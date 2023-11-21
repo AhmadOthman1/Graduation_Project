@@ -10,7 +10,8 @@ import 'package:growify/view/widget/auth/textTitleAuth.dart';
 class ChangeEmail extends StatelessWidget {
   ChangeEmail({super.key});
   GlobalKey<FormState> formstate = GlobalKey();
-  String? pas;
+  String? _password;
+  String?_newEmail;
 
   @override
   Widget build(BuildContext context) {
@@ -67,12 +68,13 @@ class ChangeEmail extends StatelessWidget {
                     controller.yourPassword.value = value;
                   },
                   validator: (value) {
+                    _password=value;
                     return validInput(value!, 30, 8, "password");
                   })),
               SizedBox(height: 16),
               TextFormAuth(
                 valid: (value) {
-                  email = value;
+                  _newEmail = value;
                   return validInput(value!, 100, 12, "email");
                 },
                 mycontroller: controller.email,
@@ -84,6 +86,7 @@ class ChangeEmail extends StatelessWidget {
                 text: "Save",
                 onPressed: () async {
                   if (formstate.currentState!.validate()) {
+                    controller.SaveChanges(_newEmail,_password);
                     Get.back();
                     print("Vaild");
                   } else {

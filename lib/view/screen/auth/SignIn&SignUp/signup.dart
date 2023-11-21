@@ -138,7 +138,7 @@ class SignUp extends StatelessWidget {
                 mycontroller: controller.dateOfBirth,
                 hinttext: "Enter Your date of birth",
                 labeltext: "date of birth",
-                iconData: Icons.phone_android_outlined,
+                iconData: Icons.event,
               ),
               
               ButtonAuth(

@@ -9,26 +9,7 @@ import 'package:growify/view/screen/homescreen/settings/changepassword.dart';
 class Settings extends StatelessWidget {
   Settings({super.key});
 
-  // put data from database here
-  static const String Firstname = 'Obaida';
-  static const String Lastname = 'Aws';
-  static const String Address = 'Aqraba';
-  static const String Country = 'Palestine';
-  static const String DateOfBirth = '2001-05-25';
-  static const String Phone = '0594376261';
-  static const String Bio = 'I will be the best wherever I am';
 
-  final List<Map<String, dynamic>> userData = const [
-    {
-      "name": Firstname,
-      "lastname": Lastname,
-      "address": Address,
-      "country": Country,
-      "dateOfBirth": DateOfBirth,
-      "phone": Phone,
-      "bio": Bio,
-    },
-  ];
 
   SettingsControllerImp controller = Get.put(SettingsControllerImp());
 
@@ -69,7 +50,7 @@ class Settings extends StatelessWidget {
                 margin: EdgeInsets.only(top: 10, bottom: 10),
                 child: InkWell(
                   onTap: () {
-                    Get.to(ProfileSettings(userData: userData));
+                    controller.goToProfileSettingsPgae();
                   },
                   child: Container(
                     height: 35,

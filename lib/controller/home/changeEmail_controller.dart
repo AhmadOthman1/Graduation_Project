@@ -6,7 +6,9 @@ import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
 import 'package:http/http.dart' as http;
 
-abstract class ChangeEmailController extends GetxController {}
+abstract class ChangeEmailController extends GetxController {
+  SaveChanges(_newEmail,_password);
+}
 
 class ChangeEmailControllerImp extends ChangeEmailController {
   late TextEditingController email;
@@ -35,5 +37,11 @@ class ChangeEmailControllerImp extends ChangeEmailController {
 
     // TODO: implement dispose
     super.dispose();
+  }
+  // here chould you check if password correct , update the email
+  @override
+  SaveChanges(_newEmail,_password) {
+    
+
   }
 }

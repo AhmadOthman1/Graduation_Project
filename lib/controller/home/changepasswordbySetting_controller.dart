@@ -7,9 +7,8 @@ import 'package:growify/global.dart';
 import 'package:http/http.dart' as http;
 abstract class ChangePasswordController extends GetxController{
 
-//goToSuccessResetPassword(email,password);
-//postChangePassword(email,password);
-goTosigninpage();
+
+SaveChanges(_oldPassword,_newPassword);
 }
 
 class ChangePasswordControllerImp extends ChangePasswordController{
@@ -41,38 +40,11 @@ class ChangePasswordControllerImp extends ChangePasswordController{
   void toggleRewritePasswordVisibility() {
     obscureRewritePassword.toggle();
   }
-
-  goTosigninpage(){
+// here check if the old password correct , update the password by the new password
+  SaveChanges(_oldPassword,_newPassword){
   Get.toNamed(AppRoute.login);
 }
-/*
-     Future postChangePassword(email,password) async {
-    var url = urlStarter + "/user/changepassword";
-    var responce = await http.post(Uri.parse(url),
-        body: jsonEncode({
-          "email": email.trim(),
-          "password": password.trim(),
 
-        }),
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-        });
-    return responce;
-  }
-
-  @override
-  goToSuccessResetPassword(email,password)async {
-    var res = await postChangePassword(email,password);
-    var resbody = jsonDecode(res.body);
-    print(resbody['message']);
-    print(res.statusCode);
-    if(res.statusCode == 409){
-      return resbody['message'];
-    }else if(res.statusCode == 200){
-      Get.offNamed(AppRoute.SuccessResetPassword);
-    }
-    
-  }*/
 
 
 }
