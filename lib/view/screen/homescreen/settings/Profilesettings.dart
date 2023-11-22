@@ -4,20 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/ProfileSettings_controller.dart';
 import 'package:growify/core/functions/validinput.dart';
+import 'package:growify/global.dart';
 import 'package:growify/view/widget/auth/ButtonAuth.dart';
 import 'package:growify/view/widget/auth/textFormAuth.dart';
 import 'package:file_picker/file_picker.dart';
-
+import 'dart:convert';
 class ProfileSettings extends StatelessWidget {
   ProfileSettings({Key? key, required this.userData}) {
-    _controller1.text = userData[0]["name"];
+    _controller1.text = userData[0]["firstname"];
     _controller2.text = userData[0]["lastname"];
-    _controller3.text = userData[0]["address"];
-    _controller4.text = userData[0]["country"];
+    _controller3.text = (userData[0]["address"]==null)?"":userData[0]["address"];
+    _controller4.text = (userData[0]["country"]==null)?"":userData[0]["country"];
     _controller5.text = userData[0]["dateOfBirth"];
     _controller6.text = userData[0]["phone"];
-    _controller7.text = userData[0]["bio"];
-
+    _controller7.text = (userData[0]["bio"]==null)?"":userData[0]["bio"];
+    profileImage = (userData[0]["photo"]==null)?"":userData[0]["photo"];
+    coverImage = (userData[0]["coverImage"]==null)?"":userData[0]["coverImage"];
     // Set initial values in the controller
     controller.textFieldText.value = _controller1.text;
     controller.textFieldText2.value = _controller2.text;
@@ -29,17 +31,23 @@ class ProfileSettings extends StatelessWidget {
 
     controller.update();
   }
-  final AssetImage _profileImage = AssetImage("images/obaida.jpeg");
-  List<int>? profileImageBytes;
+  
+  final AssetImage defultprofileImage = AssetImage("images/profileImage.jpg");
+  String? profileImageBytes;
   String? profileImageBytesName;
   String? profileImageExt;
-  List<int>? coverImageBytes;
+  String? coverImageBytes;
   String? coverImageBytesName;
   String? coverImageExt;
   List<int>? cvBytes ;
   String? cvName ;
   String? cvExt ;
-  final AssetImage _coverImage = AssetImage("images/flutterimage.png");
+  String? profileImage;
+  String? coverImage;
+ ImageProvider<Object>? profileBackgroundImage ;
+ late ImageProvider<Object> coverBackgroundImage ;
+
+  final AssetImage defultcoverImage = AssetImage("images/coverImage.jpg");
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
   final TextEditingController _controller3 = TextEditingController();
@@ -69,7 +77,14 @@ class ProfileSettings extends StatelessWidget {
     DateOfBirth = userData[0]["dateOfBirth"];
     Phone = userData[0]["phone"];
     Bio = userData[0]["bio"];
-
+    print(profileImage);
+    print(coverImage);
+    profileBackgroundImage = (profileImage != null && profileImage!="")
+        ? Image.network(urlStarter+"/"+profileImage!).image
+        : defultprofileImage;
+    coverBackgroundImage= (coverImage != null && coverImage!="")
+        ? Image.network(urlStarter+"/"+coverImage!).image
+        : defultcoverImage;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -95,8 +110,7 @@ class ProfileSettings extends StatelessWidget {
                       children: [
                         CircleAvatar(
                             radius: 60,
-                            backgroundImage:
-                                _profileImage // Replace with your photo URL
+                            backgroundImage:profileBackgroundImage,// Replace with your photo URL
                             ),
                         Container(
                           decoration: BoxDecoration(
@@ -116,12 +130,15 @@ class ProfileSettings extends StatelessWidget {
                                 if (file.extension == "jpg" ||
                                     file.extension == "jpeg" ||
                                     file.extension == "png") {
-                                  print(file.name);
-                                  //print(file.bytes);
-                                  print(file.size);
-                                  print(file.extension);
-                                  print(file.path);
-                                  profileImageBytes = file.bytes!.cast();
+                                  //print(file.name);
+                                  
+                                  //print(file.size);
+                                  //print(file.extension);
+                                  //print(file.path);
+                                  List<int> fileBytes = await File(file.path!).readAsBytes();
+                                  String base64String = base64Encode(fileBytes);
+                                  profileImageBytes = base64String;
+                                 // print(profileImageBytes);
                                   // * Get its name, will use it later.
                                   profileImageBytesName = file.name;
                                   profileImageExt=file.extension;
@@ -560,7 +577,7 @@ class ProfileSettings extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(20.0),
                                 image: DecorationImage(
                                   fit: BoxFit.cover,
-                                  image: _coverImage,
+                                  image: coverBackgroundImage,
                                 ),
                               ),
                             ),
@@ -582,12 +599,15 @@ class ProfileSettings extends StatelessWidget {
                                     if (file.extension == "jpg" ||
                                         file.extension == "jpeg" ||
                                         file.extension == "png") {
-                                      print(file.name);
-                                      //print(file.bytes);
-                                      print(file.size);
-                                      print(file.extension);
-                                      print(file.path);
-                                      coverImageBytes = file.bytes!.cast();
+                                      //print(file.name);
+                                      
+                                      //print(file.size);
+                                      //print(file.extension);
+                                      //print(file.path);
+                                      List<int> fileBytes = await File(file.path!).readAsBytes();
+                                      String base64String = base64Encode(fileBytes);
+                                      coverImageBytes = base64String;
+                                    // print(profileImageBytes);
                                       // * Get its name, will use it later.
                                       coverImageBytesName = file.name;
                                       coverImageExt=file.extension;
@@ -675,7 +695,7 @@ class ProfileSettings extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           vertical: 13, horizontal: 135),
                       onPressed: () {
-                        
+                        controller.SaveChanges( profileImageBytes,profileImageBytesName,profileImageExt,coverImageBytes,coverImageBytesName,coverImageExt,cvBytes,cvName,cvExt);
                       },
                       color: Color.fromARGB(255, 85, 191, 218),
                       textColor: Colors.white,

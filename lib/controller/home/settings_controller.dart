@@ -9,25 +9,9 @@ import 'package:http/http.dart' as http;
 abstract class SettingsController extends GetxController {
 
     // put data from database here
-  static const String Firstname = 'Obaida';
-  static const String Lastname = 'Aws';
-  static const String Address = 'Aqraba';
-  static const String Country = 'Palestine';
-  static const String DateOfBirth = '2001-05-25';
-  static const String Phone = '0594376261';
-  static const String Bio = 'I will be the best wherever I am';
+
   String? Email=GetStorage().read("loginemail") ;
-  final List<Map<String, dynamic>> userData = const [
-    {
-      "name": Firstname,
-      "lastname": Lastname,
-      "address": Address,
-      "country": Country,
-      "dateOfBirth": DateOfBirth,
-      "phone": Phone,
-      "bio": Bio,
-    },
-  ];
+  
 
 goToProfileSettingsPgae();
 getProfileSettingsPgae();
@@ -48,16 +32,18 @@ Future getProfileSettingsPgae() async {
 goToProfileSettingsPgae() async {
  // Get.toNamed(AppRoute.profilesetting);
  var res = await getProfileSettingsPgae();
-    /*var resbody = jsonDecode(res.body);
+    var resbody = jsonDecode(res.body);
     print(resbody['message']);
     print(res.statusCode);
+    print(resbody);
     if(res.statusCode == 409){
       return resbody['message'];
     }else if(res.statusCode == 200){
-      Get.offNamed(AppRoute.verifycodeaftersignup);
-    } */
+
+      Get.to(ProfileSettings(userData: [resbody["user"]]));
+    } 
     print("====================*");
- Get.to(ProfileSettings(userData: userData));
+ 
 
 
 }

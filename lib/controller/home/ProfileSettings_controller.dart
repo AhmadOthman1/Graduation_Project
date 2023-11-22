@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
 import 'package:http/http.dart' as http;
@@ -30,6 +31,7 @@ abstract class ProfileSettingsController extends GetxController {
       cvName,
       cvExt);
 }
+String? Email=GetStorage().read("loginemail") ;
 /**
  List<int>? profileImageBytes;
   String? profileImageBytesName;
@@ -74,21 +76,12 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
 
   
 
-  postSaveChanges(
-      profileImageBytes,
-      profileImageBytesName,
-      profileImageExt,
-      coverImageBytes,
-      coverImageBytesName,
-      coverImageExt,
-      cvBytes,
-      cvName,
-      cvExt) async {
+  postSaveChanges(profileImageBytes,profileImageBytesName,profileImageExt,coverImageBytes,coverImageBytesName,coverImageExt,cvBytes,cvName,cvExt) async {
     var url = urlStarter + "/user/settingsChangeMainInfo";
     var profileImageData = null;
     var coverImageData = null;
     var cvData = null;
-    if (profileImageBytes != null) {
+    /*if (profileImageBytes != null) {
       profileImageData = dio.FormData.fromMap({
         "file": dio.MultipartFile.fromBytes(
           profileImageBytes,
@@ -114,9 +107,10 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
           contentType: MediaType("file", cvExt),
         ),
       });
-    }
+    }*/
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
+          "email":Email, 
           "firstName":
               (isTextFieldEnabled == true) ? textFieldText!.trim() : null,
           "lastName":
@@ -130,9 +124,15 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
           "phone":
               (isTextFieldEnabled6 == true) ? textFieldText6!.trim() : null,
           "bio": (isTextFieldEnabled7 == true) ? textFieldText7!.trim() : null,
-          "photo":profileImageData,
-          "coverImage":coverImageData,
-          "cv":cvData,
+          "profileImageBytes":profileImageBytes,
+          "profileImageBytesName":profileImageBytesName,
+          "profileImageExt":profileImageExt,
+          "coverImageBytes":coverImageBytes,
+          "coverImageBytesName":coverImageBytesName,
+          "coverImageExt":coverImageExt,
+          "cvBytes":cvBytes,
+          "cvName":cvName,
+          "cvExt":cvExt,
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -165,7 +165,7 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
     if (res.statusCode == 409) {
       return resbody['message'];
     } else if (res.statusCode == 200) {
-      Get.offNamed(AppRoute.verifycodeaftersignup);
+      Get.offNamed(AppRoute.homescreen);
     }
   }
 }
