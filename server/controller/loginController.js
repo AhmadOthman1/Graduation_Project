@@ -34,12 +34,9 @@ exports.postLogin=async (req,res,next)=>{
     if (existingEmail) {
         // mail  exists
         const isMatch = await bcrypt.compare(password, existingEmail.password);
-        console.log(isMatch);
-        console.log(password);
         if(isMatch){
-            console.log(isMatch);
-            console.log(existingEmail.password);
             return res.status(200).json({
+                
                 message: 'logged',
                 body :req.body
                 });

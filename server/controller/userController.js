@@ -10,7 +10,6 @@ const moment = require('moment');
 
 
 exports.getPosts=(req,res,next)=>{
-    console.log("fgdfg");
     res.status(200).json({posts:[{title:"first post",content:"this is hte content"}]})
 };
 exports.postVerificationCode=async (req,res,next)=>{
@@ -27,8 +26,6 @@ exports.postVerificationCode=async (req,res,next)=>{
             const storedVerificationCode = existingUserInTemp.code;// get the hashed code from the thable
             //const hashedVerificationCode = await bcrypt.hash(VerificationCode.toString(), 10);// hash the code from the user
             //compare
-            console.log(storedVerificationCode);
-            console.log(existingUserInTemp);
             if(verificationCode == storedVerificationCode){
                 const newUser = await User.create({
                     firstname: existingUserInTemp.firstname,
@@ -54,7 +51,6 @@ exports.postVerificationCode=async (req,res,next)=>{
             
           } else {
             
-            console.log('User not found with the given email');
             return res.status(409).json({
                 message: 'Not Valid email',
                 body :req.body
@@ -76,8 +72,6 @@ exports.postVerificationCode=async (req,res,next)=>{
 
 exports.postSignup=async (req,res,next)=>{
     try {
-        console.log("==============================");
-        console.log(req.body);
     
         const { firstName,lastName,userName, email, password, phone, dateOfBirth } = req.body;
         // all values not empty 
@@ -88,13 +82,13 @@ exports.postSignup=async (req,res,next)=>{
               });
           }
         // all values are correct
-        if(!validator.isUsername(firstName) || firstName.length < 5 ||firstName.length > 50){
+        if(!validator.isUsername(firstName) || firstName.length < 1 ||firstName.length > 50){
             return res.status(409).json({
                 message: 'Not Valid firstName',
                 body :req.body
               });
         }
-        if(!validator.isUsername(lastName) || lastName.length < 5 ||lastName.length > 50){
+        if(!validator.isUsername(lastName) || lastName.length < 1 ||lastName.length > 50){
             return res.status(409).json({
                 message: 'Not Valid UserName',
                 body :req.body
@@ -200,8 +194,6 @@ exports.postSignup=async (req,res,next)=>{
       }
 }
 async function createUserInTemp(firstName,lastName,userName, email, password, phone, dateOfBirth){
-    console.log("========================");
-    console.log(dateOfBirth);
     var VerificationCode = Math.floor(10000 + Math.random() * 90000);
     //const hashedVerificationCode = await bcrypt.hash(VerificationCode.toString(), 10);
     await sendVerificationCode(email, VerificationCode);
@@ -238,7 +230,6 @@ async function sendVerificationCode(email, code) {
       try {
         // Send the email
         const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent:', info.response);
       } catch (error) {
         
         console.error('Error sending email:', error);
@@ -273,7 +264,6 @@ exports.createPost=(req,res,next)=>{
 
 
     }).then((result) =>{
-        console.log(result);
 
         res.status(201).json({message:"created sucsessfully",post:result
 })

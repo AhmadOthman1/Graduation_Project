@@ -6,9 +6,11 @@ const userRoutes = require('./routes/user');
 //const bodyParser=require('body-parser');
 
 const sequelize=require('./util/database');
+var cors = require('cors')
+
 
 const app = express();
-
+app.use(cors()); 
 // Use body-parser middleware
 app.use(bodyParser.json());
 
@@ -17,7 +19,6 @@ app.use(bodyParser.json());
 
 // Use feed routes
 app.use('/user', userRoutes);
-
 
 
 //{force:true}

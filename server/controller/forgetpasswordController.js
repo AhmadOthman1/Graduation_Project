@@ -30,7 +30,6 @@ exports.changePassword=async (req,res,next)=>{
             body :req.body
           });
       } else {
-        console.log('User not found with the given email');
         return res.status(409).json({
             message: 'Not Valid email',
             body :req.body
@@ -73,7 +72,6 @@ exports.postVerificationCode=async (req,res,next)=>{
             
           } else {
             
-            console.log('User not found with the given email');
             return res.status(409).json({
                 message: 'Not Valid email',
                 body :req.body
@@ -174,7 +172,6 @@ async function sendVerificationCode(email, code) {
       try {
         // Send the email
         const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent:', info.response);
       } catch (error) {
         
         console.error('Error sending email:', error);

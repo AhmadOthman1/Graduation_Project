@@ -1,0 +1,90 @@
+const User = require("../models/user");
+const { Op } = require('sequelize');
+const validator = require('./validator');
+const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer')
+
+exports.getMainInfo=async (req,res,next)=>{
+    try{
+        var email = req.query.email;
+        const existingEmail = await User.findOne({
+            where: {
+                    email: email 
+                },
+            });
+        if(existingEmail){
+            res.status(200).json({
+                message: 'User found',
+                user: {
+                  username: existingEmail.username,
+                  firstname: existingEmail.firstname,
+                  lastname: existingEmail.lastname,
+                  bio: existingEmail.bio,
+                  country: existingEmail.country,
+                  address: existingEmail.address,
+                  phone: existingEmail.phone,
+                  dateOfBirth: existingEmail.dateOfBirth,
+                  photo: existingEmail.photo,
+                  coverImage: existingEmail.coverImage,
+                  cv: existingEmail.cv,
+                  // Add other user properties as neededs
+                },
+              });
+        }else{
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+                });
+        }
+        console.log(email);
+        console.log("*************************");
+    }  catch(err){
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+            });
+    }
+}
+exports.changeMainInfo=async (req,res,next)=>{
+    try{
+        var email = req.query.email;
+        const existingEmail = await User.findOne({
+            where: {
+                    email: email 
+                },
+            });
+        if(existingEmail){
+            res.status(200).json({
+                message: 'User found',
+                user: {
+                  username: existingEmail.username,
+                  firstname: existingEmail.firstname,
+                  lastname: existingEmail.lastname,
+                  bio: existingEmail.bio,
+                  country: existingEmail.country,
+                  address: existingEmail.address,
+                  phone: existingEmail.phone,
+                  dateOfBirth: existingEmail.dateOfBirth,
+                  photo: existingEmail.photo,
+                  coverImage: existingEmail.coverImage,
+                  cv: existingEmail.cv,
+                  // Add other user properties as neededs
+                },
+              });
+        }else{
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+                });
+        }
+        console.log(email);
+        console.log("*************************");
+    }  catch(err){
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+            });
+    }
+}
