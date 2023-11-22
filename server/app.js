@@ -8,11 +8,12 @@ const userRoutes = require('./routes/user');
 const sequelize=require('./util/database');
 var cors = require('cors')
 
-
 const app = express();
 app.use(cors()); 
 // Use body-parser middleware
 app.use(bodyParser.json());
+
+app.use(express.static('images'));
 
 // Log middleware to see the request details
 
