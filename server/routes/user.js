@@ -13,6 +13,7 @@ router.post('/forgetpassword',forgetpasswordController.postForgetPassword);
 router.post('/changepassword',forgetpasswordController.changePassword);
 router.get('/settingsGetMainInfo',settingsController.getMainInfo);
 router.post('/settingsChangeMainInfo',settingsController.changeMainInfo);
+router.post('/settingChangepasswor',settingsController.changePassword);
 
 router.post('/Login',loginController.postLogin);
 router.get('/posts',userController.getPosts);
