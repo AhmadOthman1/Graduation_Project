@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/changepasswordbySetting_controller.dart';
+import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/core/functions/validinput.dart';
 import 'package:growify/view/widget/auth/ButtonAuth.dart';
 import 'package:growify/view/widget/auth/textTitleAuth.dart';
@@ -146,8 +147,18 @@ class ChangePassword extends StatelessWidget {
                 onPressed: () async {
                   if (formstate.currentState!.validate()) {
                     print("Vaild");
-                    controller.SaveChanges(_oldPassword,_newPassword);
-
+                    var message = await controller.SaveChanges(_oldPassword,_newPassword);
+                    (message != null) ? showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CustomAlertDialog(
+                              title: 'Error',
+                              icon: Icons.error,
+                              text: message,
+                              buttonText: 'OK',
+                            );
+                          },
+                        ) : null ;
  
                   } else {
                     print("Not Valid");

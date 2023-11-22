@@ -21,12 +21,13 @@ getProfileSettingsPgae();
 class SettingsControllerImp extends SettingsController {
 
 Future getProfileSettingsPgae() async {
+    print("///////////////////////////////");
     var url = urlStarter + "/user/settingsGetMainInfo?email=$Email";
     var responce = await http.get(Uri.parse(url),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
         });
-
+  print(responce);
     return responce;
   }
 goToProfileSettingsPgae() async {

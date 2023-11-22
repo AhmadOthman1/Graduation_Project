@@ -45,7 +45,6 @@ class ForgetPasswordControllerImp extends ForgetPasswordController{
       }else if(res.statusCode == 200 && resbody['message'] == email){
         print(res.statusCode);
         print(resbody['message']);
-        print("1111111111111111111111111111111");
         resbody['message'] = "";
         Get.offNamed(AppRoute.verifycode);
       }
