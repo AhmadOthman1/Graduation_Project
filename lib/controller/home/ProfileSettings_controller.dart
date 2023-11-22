@@ -1,15 +1,53 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:growify/core/constant/routes.dart';
+import 'package:growify/global.dart';
+import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart' as dio;
+import 'package:http_parser/http_parser.dart';
 
 abstract class ProfileSettingsController extends GetxController {
   goToSettingsPgae();
-  SaveChanges();
+  SaveChanges(
+      profileImageBytes,
+      profileImageBytesName,
+      profileImageExt,
+      coverImageBytes,
+      coverImageBytesName,
+      coverImageExt,
+      cvBytes,
+      cvName,
+      cvExt);
+  postSaveChanges(
+      profileImageBytes,
+      profileImageBytesName,
+      profileImageExt,
+      coverImageBytes,
+      coverImageBytesName,
+      coverImageExt,
+      cvBytes,
+      cvName,
+      cvExt);
 }
+/**
+ List<int>? profileImageBytes;
+  String? profileImageBytesName;
+  String? profileImageExt;
+  List<int>? coverImageBytes;
+  String? coverImageBytesName;
+  String? coverImageExt;
+  List<int>? cvBytes ;
+  String? cvName ;
+  String? cvExt ;
+ */
 
 class ProfileSettingsControllerImp extends ProfileSettingsController {
+  @override
   goToSettingsPgae() {
     Get.toNamed(AppRoute.settings);
   }
+
 // first textfiled
   RxBool isTextFieldEnabled = false.obs;
   RxString textFieldText = ''.obs;
@@ -21,7 +59,7 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
   RxString textFieldText3 = ''.obs;
   // four textfiled
   RxBool isTextFieldEnabled4 = false.obs;
-  RxString textFieldText4= ''.obs;
+  RxString textFieldText4 = ''.obs;
   // five textfiled
   RxBool isTextFieldEnabled5 = false.obs;
   RxString textFieldText5 = ''.obs;
@@ -31,15 +69,103 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
   // seven textfiled
   RxBool isTextFieldEnabled7 = false.obs;
   RxString textFieldText7 = ''.obs;
- 
-
 
   // you can take the data from the above variable textFieldText,textFieldText1 ......
-  
-  @override
-  SaveChanges() {
-    print(textFieldText);
-  
-  }
 
+  
+
+  postSaveChanges(
+      profileImageBytes,
+      profileImageBytesName,
+      profileImageExt,
+      coverImageBytes,
+      coverImageBytesName,
+      coverImageExt,
+      cvBytes,
+      cvName,
+      cvExt) async {
+    var url = urlStarter + "/user/settingsChangeMainInfo";
+    var profileImageData = null;
+    var coverImageData = null;
+    var cvData = null;
+    if (profileImageBytes != null) {
+      profileImageData = dio.FormData.fromMap({
+        "file": dio.MultipartFile.fromBytes(
+          profileImageBytes,
+          filename: profileImageBytesName,
+          contentType: MediaType("image", profileImageExt),
+        ),
+      });
+    }
+    if (coverImageBytes != null) {
+      coverImageData = dio.FormData.fromMap({
+        "file": dio.MultipartFile.fromBytes(
+          coverImageBytes,
+          filename: coverImageBytesName,
+          contentType: MediaType("image", coverImageExt),
+        ),
+      });
+    }
+    if (cvBytes != null) {
+      cvData = dio.FormData.fromMap({
+        "file": dio.MultipartFile.fromBytes(
+          cvBytes,
+          filename: cvName,
+          contentType: MediaType("file", cvExt),
+        ),
+      });
+    }
+    var responce = await http.post(Uri.parse(url),
+        body: jsonEncode({
+          "firstName":
+              (isTextFieldEnabled == true) ? textFieldText!.trim() : null,
+          "lastName":
+              (isTextFieldEnabled2 == true) ? textFieldText2!.trim() : null,
+          "address":
+              (isTextFieldEnabled3 == true) ? textFieldText3!.trim() : null,
+          "country":
+              (isTextFieldEnabled4 == true) ? textFieldText4!.trim() : null,
+          "dateOfBirth":
+              (isTextFieldEnabled5 == true) ? textFieldText5!.trim() : null,
+          "phone":
+              (isTextFieldEnabled6 == true) ? textFieldText6!.trim() : null,
+          "bio": (isTextFieldEnabled7 == true) ? textFieldText7!.trim() : null,
+          "photo":profileImageData,
+          "coverImage":coverImageData,
+          "cv":cvData,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        });
+    return responce;
+  }
+  SaveChanges(
+      profileImageBytes,
+      profileImageBytesName,
+      profileImageExt,
+      coverImageBytes,
+      coverImageBytesName,
+      coverImageExt,
+      cvBytes,
+      cvName,
+      cvExt) async {
+    var res = await postSaveChanges(
+        profileImageBytes,
+        profileImageBytesName,
+        profileImageExt,
+        coverImageBytes,
+        coverImageBytesName,
+        coverImageExt,
+        cvBytes,
+        cvName,
+        cvExt);
+    var resbody = jsonDecode(res.body);
+    print(resbody['message']);
+    print(res.statusCode);
+    if (res.statusCode == 409) {
+      return resbody['message'];
+    } else if (res.statusCode == 200) {
+      Get.offNamed(AppRoute.verifycodeaftersignup);
+    }
+  }
 }

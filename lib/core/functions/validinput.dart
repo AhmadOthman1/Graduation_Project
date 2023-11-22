@@ -18,6 +18,9 @@ validInput(String value ,int max ,int min ,String type){
   if(type=="username"){
     if(!GetUtils.isUsername(value)){return "Not Valid Name"; }
   }
+  if(type=="length"){
+    if(!GetUtils.isLengthBetween(value,min,max)){return "Not Valid text ($min - $max letters)"; }
+  }
 
 if(type=="dateOfBirth"){
     if(!isDate(value)){return "Not Valid Date Of Birth"; }

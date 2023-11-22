@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
      ),
       ),
       debugShowCheckedModeBanner: false,
-      home:(Email==null)?Login():HomeScreen(),
+      home:(Email==null || Email=="")?Login():HomeScreen(),
       
       routes: routes,
     );

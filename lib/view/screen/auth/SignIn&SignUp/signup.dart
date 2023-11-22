@@ -61,7 +61,7 @@ class SignUp extends StatelessWidget {
                 
                 valid: (value){
                   firstName= value;
-                  return validInput(value!, 50, 5, "username");
+                  return validInput(value!, 50, 1, "username");
                 },
                 mycontroller:controller.username ,
                 hinttext: "Enter Your first name",
@@ -72,7 +72,7 @@ class SignUp extends StatelessWidget {
                 
                 valid: (value){
                   lastName= value;
-                  return validInput(value!, 50, 5, "username");
+                  return validInput(value!, 50, 1, "username");
                 },
                 mycontroller:controller.username ,
                 hinttext: "Enter Your last name",

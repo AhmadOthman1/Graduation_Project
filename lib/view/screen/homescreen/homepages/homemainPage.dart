@@ -15,7 +15,9 @@ class Homepage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HomePageControllerImp controller = Get.put(HomePageControllerImp());
-    
+    if(true){
+      //bcrypt => enmail+pass > front , email bcrypt
+    }
     LogOutButtonControllerImp _logoutController = Get.put(LogOutButtonControllerImp());
     return Scaffold(
       body: Container(
