@@ -11,10 +11,13 @@ import 'package:growify/view/widget/auth/textTitleAuth.dart';
 import 'package:growify/global.dart';
 
 class VerifyCodeEmailChange extends StatelessWidget {
-  const VerifyCodeEmailChange({super.key});
+  final String newEmail;
 
+  VerifyCodeEmailChange({required this.newEmail, Key? key}) : super(key: key);
+  
   @override
   Widget build(BuildContext context) {
+    print(newEmail + "aaaaaaaaaa");
     VerifyCodeEmailChangeControllerImp controller =
         Get.put(VerifyCodeEmailChangeControllerImp());
     return Scaffold(
@@ -52,7 +55,7 @@ class VerifyCodeEmailChange extends StatelessWidget {
               onCodeChanged: (String code) {},
               onSubmit: (String verificationCode) async {
                 var message =
-                    await controller.VerificationCode(verificationCode, email);
+                    await controller.VerificationCode(verificationCode, newEmail);
                 (message != null)
                     ? showDialog(
                         context: context,

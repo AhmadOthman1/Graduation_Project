@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/changeEmail_controller.dart';
+import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/core/functions/validinput.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/settings/verfiycode_emailchange.dart';
@@ -86,9 +87,20 @@ class ChangeEmail extends StatelessWidget {
               ButtonAuth(
                 text: "Save",
                 onPressed: () async {
-                  Get.to(VerifyCodeEmailChange());
+                  //Get.to(VerifyCodeEmailChange());
                   if (formstate.currentState!.validate()) {
-                    controller.SaveChanges(_newEmail,_password);
+                    var message = await controller.SaveChanges(_newEmail,_password);
+                    (message != null) ? showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CustomAlertDialog(
+                              title: 'Error',
+                              icon: Icons.error,
+                              text: message,
+                              buttonText: 'OK',
+                            );
+                          },
+                        ) : null ;
                     
                     print("Vaild");
                   } else {

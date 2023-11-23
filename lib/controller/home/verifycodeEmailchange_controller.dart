@@ -9,8 +9,8 @@ import 'package:growify/global.dart';
 abstract class VerifyCodeEmailChangeController extends GetxController{
 
 
-postVerificationCode(verificationCode,email);
-VerificationCode(verificationCode,email);
+postVerificationCode(verificationCode,newEmail);
+VerificationCode(verificationCode,newEmail);
 }
 
 class VerifyCodeEmailChangeControllerImp extends VerifyCodeEmailChangeController{
@@ -21,30 +21,29 @@ late String verifycode;
 
   
 
-  Future postVerificationCode(verificationCode,email) async {
-   /* var url = urlStarter + "/user/verification";
+  Future postVerificationCode(verificationCode,newEmail) async {
+    print(newEmail+"ffffff");
+   var url = urlStarter + "/user/settingChangeemailVerificationCode";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
           "verificationCode": verificationCode,
-          "email": email,
+          "email": newEmail,
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
         });
-    var responceBody = jsonDecode(responce.body);
-    return responce;*/
+    return responce;
   }
-  VerificationCode(verificationCode,email) async {
-    Get.offNamed(AppRoute.settings);
-  /*  var res = await postVerificationCode(verificationCode,email);
+  VerificationCode(verificationCode,newEmail) async {
+    var res = await postVerificationCode(verificationCode,newEmail);
     var resbody = jsonDecode(res.body);
     print(resbody['message']);
     print(res.statusCode);
-    if(res.statusCode == 409){
+    if(res.statusCode == 409 || res.statusCode == 500){
       return resbody['message'];
     }else if(res.statusCode == 200){
-      Get.offNamed(AppRoute.SuccessSignUp);
-    }*/
+      Get.offNamed(AppRoute.settings);
+    }
     
     //Get.offNamed(AppRoute.verifycodeaftersignup);
   }
