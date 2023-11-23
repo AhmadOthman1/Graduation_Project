@@ -56,7 +56,7 @@ exports.getMainInfo=async (req,res,next)=>{
                 cv=null;
 
             }
-            console.log("fff"+photo);
+
             return res.status(200).json({
                 message: 'User found',
                 user: {
@@ -193,7 +193,7 @@ exports.changeMainInfo=async (req,res,next)=>{
                 }else{//change
                     validbio=true;
                 }
-            }
+            }console.log("fff"+profileImageBytes+"fff"+profileImageBytesName+"fff"+profileImageExt);
             if(profileImageBytes!=null && profileImageBytesName!=null&& profileImageExt!=null){//if feild change enables (!=null)
                 validphoto=true;
             }   
@@ -272,7 +272,7 @@ exports.changeMainInfo=async (req,res,next)=>{
 
                 // Save the image to the server
                 fs.writeFileSync(uploadPath, photoBuffer);
-
+                console.log("fff"+newphotoname);
                 // Update the user record in the database with the new photo name
                 const result = await User.update({ photo: newphotoname }, { where: { email }});
                 if(oldPhoto != null){
