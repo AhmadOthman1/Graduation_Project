@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/ProfileSettings_controller.dart';
+import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/core/functions/validinput.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/widget/auth/ButtonAuth.dart';
@@ -39,7 +40,7 @@ class ProfileSettings extends StatelessWidget {
   String? coverImageBytes;
   String? coverImageBytesName;
   String? coverImageExt;
-  List<int>? cvBytes ;
+  String? cvBytes ;
   String? cvName ;
   String? cvExt ;
   String? profileImage;
@@ -77,8 +78,6 @@ class ProfileSettings extends StatelessWidget {
     DateOfBirth = userData[0]["dateOfBirth"];
     Phone = userData[0]["phone"];
     Bio = userData[0]["bio"];
-    print(profileImage);
-    print(coverImage);
     profileBackgroundImage = (profileImage != null && profileImage!="")
         ? Image.network(urlStarter+"/"+profileImage!).image
         : defultprofileImage;
@@ -119,42 +118,47 @@ class ProfileSettings extends StatelessWidget {
                           ),
                           child: IconButton(
                             onPressed: () async {
-                              FilePickerResult? result =
-                                  await FilePicker.platform.pickFiles(
-                                type: FileType.custom,
-                                allowedExtensions: ['jpg', 'jpeg', 'png'],
-                              );
+                              try{
+                                final result =
+                                    await FilePicker.platform.pickFiles(
+                                  type: FileType.custom,
+                                  allowedExtensions: ['jpg', 'jpeg', 'png'],
+                                   allowMultiple: false,
+                                );
 
-                              if (result != null) {
-                                PlatformFile file = result.files.first;
-                                if (file.extension == "jpg" ||
-                                    file.extension == "jpeg" ||
-                                    file.extension == "png") {
-                                  //print(file.name);
-                                  
-                                  //print(file.size);
-                                  //print(file.extension);
-                                  //print(file.path);
-                                  List<int> fileBytes = await File(file.path!).readAsBytes();
-                                  String base64String = base64Encode(fileBytes);
-                                  profileImageBytes = base64String;
-                                 // print(profileImageBytes);
-                                  // * Get its name, will use it later.
-                                  profileImageBytesName = file.name;
-                                  profileImageExt=file.extension;
-                                  // * Send it to method that will make HTTP request.
-                                  //_projectProvider.test(bytes, name);
+                                if (result != null  && result.files.isNotEmpty) {
+                                  PlatformFile file = result.files.first;
+                                  if (file.extension == "jpg" ||
+                                      file.extension == "jpeg" ||
+                                      file.extension == "png") {
+                                    //print(file.name);
+                                    
+                                    //print(file.size);
+                                    //print(file.extension);
+                                    //print(file.path);
+                                    final fileBytes = file.bytes;
+                                    String base64String = base64Encode(fileBytes as List<int>);
+                                    profileImageBytes = base64String;
+                                  // print(profileImageBytes);
+                                    // * Get its name, will use it later.
+                                    profileImageBytesName = file.name;
+                                    profileImageExt=file.extension;
+                                    // * Send it to method that will make HTTP request.
+                                    //_projectProvider.test(bytes, name);
+                                  } else {
+                                    profileImageBytes = null;
+                                    profileImageBytesName = null;
+                                    profileImageExt=null;
+                                  }
                                 } else {
+                                  // User canceled the picker
                                   profileImageBytes = null;
                                   profileImageBytesName = null;
                                   profileImageExt=null;
                                 }
-                              } else {
-                                // User canceled the picker
-                                profileImageBytes = null;
-                                profileImageBytesName = null;
-                                profileImageExt=null;
-                              }
+                            }catch(err){
+                              print(err);
+                            }
                             },
                             icon: Icon(
                               Icons.camera_alt,
@@ -588,13 +592,14 @@ class ProfileSettings extends StatelessWidget {
                               ),
                               child: IconButton(
                                 onPressed: () async {
-                                  FilePickerResult? result =
+                                  final result =
                                       await FilePicker.platform.pickFiles(
                                     type: FileType.custom,
                                     allowedExtensions: ['jpg', 'jpeg', 'png'],
+                                    allowMultiple: false,
                                   );
 
-                                  if (result != null) {
+                                  if (result != null && result.files.isNotEmpty) {
                                     PlatformFile file = result.files.first;
                                     if (file.extension == "jpg" ||
                                         file.extension == "jpeg" ||
@@ -604,8 +609,8 @@ class ProfileSettings extends StatelessWidget {
                                       //print(file.size);
                                       //print(file.extension);
                                       //print(file.path);
-                                      List<int> fileBytes = await File(file.path!).readAsBytes();
-                                      String base64String = base64Encode(fileBytes);
+                                      final fileBytes = file.bytes;
+                                      String base64String = base64Encode(fileBytes as List<int>);
                                       coverImageBytes = base64String;
                                     // print(profileImageBytes);
                                       // * Get its name, will use it later.
@@ -641,26 +646,21 @@ class ProfileSettings extends StatelessWidget {
                     Container(
                       child: ElevatedButton.icon(
                         onPressed: () async {
-                          FilePickerResult? result =
-                              await FilePicker.platform.pickFiles(
+                          final result = await FilePicker.platform.pickFiles(
                             type: FileType.custom,
                             allowedExtensions: ['pdf'],
+                            allowMultiple: false,
                           );
 
-                          if (result != null) {
+                          if (result != null && result.files.isNotEmpty) {
                             PlatformFile file = result.files.first;
-                            if (file.extension == "pdf") {
-                              print(file.name);
-                              //print(file.bytes);
-                              print(file.size);
-                              print(file.extension);
-                              print(file.path);
-                              cvBytes = file.bytes!.cast();
-                              // * Get its name, will use it later.
-                              cvName = file.name;
-                              cvExt=file.extension;
-                              // * Send it to method that will make HTTP request.
-                              //_projectProvider.test(bytes, name);
+                            if (file.extension == "pdf"  ) {
+                                final fileBytes = file.bytes;
+                                String base64String = base64Encode(fileBytes as List<int>);
+                                cvBytes = base64String;
+                                cvName = file.name;
+                                cvExt = file.extension;
+                              
                             } else {
                               cvBytes = null;
                               cvName = null;
@@ -694,8 +694,19 @@ class ProfileSettings extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20)),
                       padding: const EdgeInsets.symmetric(
                           vertical: 13, horizontal: 135),
-                      onPressed: () {
-                        controller.SaveChanges( profileImageBytes,profileImageBytesName,profileImageExt,coverImageBytes,coverImageBytesName,coverImageExt,cvBytes,cvName,cvExt);
+                      onPressed: () async {
+                        var message = await controller.SaveChanges( profileImageBytes,profileImageBytesName,profileImageExt,coverImageBytes,coverImageBytesName,coverImageExt,cvBytes,cvName,cvExt);
+                        (message != null) ? showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CustomAlertDialog(
+                              title: 'Error',
+                              icon: Icons.error,
+                              text: message,
+                              buttonText: 'OK',
+                            );
+                          },
+                        ) : null ;
                       },
                       color: Color.fromARGB(255, 85, 191, 218),
                       textColor: Colors.white,

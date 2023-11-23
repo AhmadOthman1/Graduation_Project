@@ -81,59 +81,37 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
     var profileImageData = null;
     var coverImageData = null;
     var cvData = null;
-    /*if (profileImageBytes != null) {
-      profileImageData = dio.FormData.fromMap({
-        "file": dio.MultipartFile.fromBytes(
-          profileImageBytes,
-          filename: profileImageBytesName,
-          contentType: MediaType("image", profileImageExt),
-        ),
-      });
-    }
-    if (coverImageBytes != null) {
-      coverImageData = dio.FormData.fromMap({
-        "file": dio.MultipartFile.fromBytes(
-          coverImageBytes,
-          filename: coverImageBytesName,
-          contentType: MediaType("image", coverImageExt),
-        ),
-      });
-    }
-    if (cvBytes != null) {
-      cvData = dio.FormData.fromMap({
-        "file": dio.MultipartFile.fromBytes(
-          cvBytes,
-          filename: cvName,
-          contentType: MediaType("file", cvExt),
-        ),
-      });
-    }*/
+    
+    Map<String, dynamic> jsonData = {
+      "email":Email, 
+      "firstName":
+          (isTextFieldEnabled == true) ? textFieldText!.trim() : null,
+      "lastName":
+          (isTextFieldEnabled2 == true) ? textFieldText2!.trim() : null,
+      "address":
+          (isTextFieldEnabled3 == true) ? textFieldText3!.trim() : null,
+      "country":
+          (isTextFieldEnabled4 == true) ? textFieldText4!.trim() : null,
+      "dateOfBirth":
+          (isTextFieldEnabled5 == true) ? textFieldText5!.trim() : null,
+      "phone":
+          (isTextFieldEnabled6 == true) ? textFieldText6!.trim() : null,
+      "bio": (isTextFieldEnabled7 == true) ? textFieldText7!.trim() : null,
+      "profileImageBytes":profileImageBytes,
+      "profileImageBytesName":profileImageBytesName,
+      "profileImageExt":profileImageExt,
+      "coverImageBytes":coverImageBytes,
+      "coverImageBytesName":coverImageBytesName,
+      "coverImageExt":coverImageExt,
+      "cvBytes":cvBytes,
+      "cvName":cvName,
+      "cvExt":cvExt,
+  // other fields...
+  };
+    String jsonString = jsonEncode(jsonData);
+    int contentLength = utf8.encode(jsonString).length;
     var responce = await http.post(Uri.parse(url),
-        body: jsonEncode({
-          "email":Email, 
-          "firstName":
-              (isTextFieldEnabled == true) ? textFieldText!.trim() : null,
-          "lastName":
-              (isTextFieldEnabled2 == true) ? textFieldText2!.trim() : null,
-          "address":
-              (isTextFieldEnabled3 == true) ? textFieldText3!.trim() : null,
-          "country":
-              (isTextFieldEnabled4 == true) ? textFieldText4!.trim() : null,
-          "dateOfBirth":
-              (isTextFieldEnabled5 == true) ? textFieldText5!.trim() : null,
-          "phone":
-              (isTextFieldEnabled6 == true) ? textFieldText6!.trim() : null,
-          "bio": (isTextFieldEnabled7 == true) ? textFieldText7!.trim() : null,
-          "profileImageBytes":profileImageBytes,
-          "profileImageBytesName":profileImageBytesName,
-          "profileImageExt":profileImageExt,
-          "coverImageBytes":coverImageBytes,
-          "coverImageBytesName":coverImageBytesName,
-          "coverImageExt":coverImageExt,
-          "cvBytes":cvBytes,
-          "cvName":cvName,
-          "cvExt":cvExt,
-        }),
+        body: jsonString,
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
         });
@@ -162,8 +140,8 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
     var resbody = jsonDecode(res.body);
     print(resbody['message']);
     print(res.statusCode);
-    if (res.statusCode == 409) {
-      return resbody['message'];
+    if (res.statusCode == 409 || res.statusCode == 500 ) {
+      return res.statusCode+":"+resbody['message'];
     } else if (res.statusCode == 200) {
       Get.offNamed(AppRoute.homescreen);
     }
