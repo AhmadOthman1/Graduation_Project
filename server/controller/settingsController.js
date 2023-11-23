@@ -1,4 +1,6 @@
 const User = require("../models/user");
+const tempUser = require("../models/tempUser");
+const changeEmail = require("../models/changeEmail");
 const { Op } = require('sequelize');
 const validator = require('./validator');
 const bcrypt = require('bcrypt');
@@ -6,6 +8,7 @@ const nodemailer = require('nodemailer')
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+
 exports.getMainInfo=async (req,res,next)=>{
     try{
         var email = req.query.email;
@@ -413,5 +416,192 @@ exports.changePassword=async (req,res,next)=>{
             message: 'server Error',
             body: req.body
             });
+    }
+}
+exports.changeEmail=async (req,res,next)=>{
+    
+    try{
+    const { email, newEmail, Password } = req.body;
+    
+    if (!newEmail || !Password || !email) {
+        return res.status(409).json({
+            message: 'One or more fields are empty',
+            body :req.body
+          });
+    }
+    
+    if(!validator.isEmail(newEmail)|| email.length < 12 ||email.length > 100){
+    return res.status(409).json({
+        message: 'Not Valid email',
+        body :req.body
+        });
+    }
+    if(Password.length <8 || Password.length >30 ){
+        return res.status(409).json({
+            message: 'Not Valid password',
+            body :req.body
+          });
+    }
+    if(email == newEmail){
+        
+        return res.status(409).json({
+            message: 'its the same email',
+            body :req.body
+          });
+    }
+    console.log(email);
+        console.log(newEmail);
+        console.log(Password);
+    const existingEmail = await User.findOne({
+        where: {
+                email: email 
+            },
+        });
+        
+        if(existingEmail){//if user found by old email
+            
+            const isMatch = await bcrypt.compare(Password, existingEmail.password);
+            if(isMatch){//correct password
+                const existingNewEmail = await User.findOne({
+                    where: {
+                            email: newEmail 
+                        },
+                    });
+                    if(existingNewEmail){//if email already used
+                        return res.status(409).json({
+                            message: 'Email is already exists',
+                            body :req.body
+                            });
+                    }else {
+                        const existingNewEmailInTemp = await tempUser.findOne({
+                            where: {
+                                    email: newEmail 
+                                },
+                            });
+                            if(existingNewEmailInTemp){//if email under signup prosecc
+                                return res.status(409).json({
+                                    message: 'The email address is used for a registered account. Please complete the registration process through the signup page',
+                                    body :req.body
+                                    });
+                            }else{//change email 
+                                const existingNewEmailInChange = await changeEmail.findOne({
+                                    where: {
+                                            email: newEmail 
+                                        },
+                                    });
+                                if (existingNewEmailInChange) {
+                                    await existingNewEmailInChange.destroy();
+                                }  
+                                await createChangeEmail(existingEmail.username, newEmail);
+                                return res.status(200).json({    
+                                    message: 'code sent',
+                                    body :req.body
+                                    });
+                            }
+                    }
+            }else{
+                return res.status(409).json({
+                    message: 'Wrong Password',
+                    body :req.body
+                    });
+            }
+
+        }else{
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+                });
+        }
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+            });
+    }
+}
+async function createChangeEmail(userName, email){
+    var VerificationCode = Math.floor(10000 + Math.random() * 90000);
+    //const hashedVerificationCode = await bcrypt.hash(VerificationCode.toString(), 10);
+    await sendVerificationCode(email, VerificationCode);
+    const newUser = await changeEmail.create({
+        username: userName,
+        email: email,
+        code: VerificationCode,
+      });
+}
+async function sendVerificationCode(email, code) {
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+        user: 'growifygp2@gmail.com',
+        pass: 'zglg aoic kdiz gjwf',//growifygp2$P2
+        },
+    });
+    
+      const mailOptions = {
+        from: 'growifygp2@gmail.com',
+        to: email,
+        subject: 'Growify Verification Code',
+        text: `Your verification code is: ${code} and its valid unless you close the app`,
+      };
+    
+      
+      try {
+        // Send the email
+        const info = await transporter.sendMail(mailOptions);
+      } catch (error) {
+        
+        console.error('Error sending email:', error);
+        return res.status(500).json({
+            message: 'email not found',
+            body: req.body
+            });
+      }
+    
+  }
+  exports.postVerificationCode=async (req,res,next)=>{
+    try{
+
+        const { verificationCode , email} = req.body;//get data from req
+        //find the user by email in tempuser table
+        console.log(email);
+        const existingUserInChangeEamil = await changeEmail.findOne({
+            where: {
+                email: email 
+        }});
+        //if exists 
+        if (existingUserInChangeEamil) {
+            const storedVerificationCode = existingUserInChangeEamil.code;// get the hashed code from the thable
+            //compare
+            if(verificationCode == storedVerificationCode){
+                var username= existingUserInChangeEamil.username;
+                  const result = await User.update({ email: email }, { where: { username }});
+                  await existingUserInChangeEamil.destroy();
+                  return res.status(200).json({
+                    body :req.body
+                  });
+            }
+            else{
+                return res.status(409).json({
+                    message: 'Not Valid code',
+                    body :req.body
+                  });
+            }
+        
+            
+          } else {
+            
+            return res.status(409).json({
+                message: 'Not Valid email',
+                body :req.body
+              });
+          }
+    }catch(err){
+        console.log(err);
+        return res.status(409).json({
+            message: 'server error',
+            body :req.body
+          });
     }
 }

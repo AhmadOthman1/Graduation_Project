@@ -38,6 +38,7 @@ sequelize.sync().then(result =>{
 const User=require('./models/user');
 const TempUser=require('./models/tempUser');
 const forgetpasswordController=require('./models/forgetPasswordCode');
+const changeEmail=require('./models/changeEmail');
 //const bodyParser=require('body-parser');
 
 const sequelize=require('./util/database');

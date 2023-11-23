@@ -14,6 +14,8 @@ router.post('/changepassword',forgetpasswordController.changePassword);
 router.get('/settingsGetMainInfo',settingsController.getMainInfo);
 router.post('/settingsChangeMainInfo',settingsController.changeMainInfo);
 router.post('/settingChangepasswor',settingsController.changePassword);
+router.post('/settingChangeemailVerificationCode',settingsController.postVerificationCode);
+router.post('/settingChangeemail',settingsController.changeEmail);
 
 router.post('/Login',loginController.postLogin);
 router.get('/posts',userController.getPosts);
