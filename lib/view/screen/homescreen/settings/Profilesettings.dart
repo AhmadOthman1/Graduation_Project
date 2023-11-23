@@ -1,5 +1,6 @@
 import 'dart:io';
 
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/ProfileSettings_controller.dart';
@@ -10,6 +11,7 @@ import 'package:growify/view/widget/auth/ButtonAuth.dart';
 import 'package:growify/view/widget/auth/textFormAuth.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 class ProfileSettings extends StatelessWidget {
   ProfileSettings({Key? key, required this.userData}) {
     _controller1.text = userData[0]["firstname"];
@@ -125,26 +127,26 @@ class ProfileSettings extends StatelessWidget {
                                   allowedExtensions: ['jpg', 'jpeg', 'png'],
                                    allowMultiple: false,
                                 );
-
                                 if (result != null  && result.files.isNotEmpty) {
                                   PlatformFile file = result.files.first;
                                   if (file.extension == "jpg" ||
                                       file.extension == "jpeg" ||
                                       file.extension == "png") {
                                     //print(file.name);
-                                    
                                     //print(file.size);
                                     //print(file.extension);
                                     //print(file.path);
-                                    final fileBytes = file.bytes;
-                                    String base64String = base64Encode(fileBytes as List<int>);
+                                    String base64String;
+                                    if (kIsWeb) {
+                                        final fileBytes = file.bytes;
+                                       base64String =  base64Encode(fileBytes as List<int>);
+                                    } else {
+                                        List<int> fileBytes = await File(file.path!).readAsBytes();
+                                       base64String = base64Encode(fileBytes);
+                                    }
                                     profileImageBytes = base64String;
-                                  // print(profileImageBytes);
-                                    // * Get its name, will use it later.
                                     profileImageBytesName = file.name;
                                     profileImageExt=file.extension;
-                                    // * Send it to method that will make HTTP request.
-                                    //_projectProvider.test(bytes, name);
                                   } else {
                                     profileImageBytes = null;
                                     profileImageBytesName = null;
@@ -156,9 +158,9 @@ class ProfileSettings extends StatelessWidget {
                                   profileImageBytesName = null;
                                   profileImageExt=null;
                                 }
-                            }catch(err){
-                              print(err);
-                            }
+                              }catch(err){
+                                print(err);
+                              }
                             },
                             icon: Icon(
                               Icons.camera_alt,
@@ -604,20 +606,17 @@ class ProfileSettings extends StatelessWidget {
                                     if (file.extension == "jpg" ||
                                         file.extension == "jpeg" ||
                                         file.extension == "png") {
-                                      //print(file.name);
-                                      
-                                      //print(file.size);
-                                      //print(file.extension);
-                                      //print(file.path);
-                                      final fileBytes = file.bytes;
-                                      String base64String = base64Encode(fileBytes as List<int>);
+                                      String base64String;
+                                      if (kIsWeb) {
+                                          final fileBytes = file.bytes;
+                                        base64String =  base64Encode(fileBytes as List<int>);
+                                      } else {
+                                          List<int> fileBytes = await File(file.path!).readAsBytes();
+                                        base64String = base64Encode(fileBytes);
+                                      }
                                       coverImageBytes = base64String;
-                                    // print(profileImageBytes);
-                                      // * Get its name, will use it later.
                                       coverImageBytesName = file.name;
                                       coverImageExt=file.extension;
-                                      // * Send it to method that will make HTTP request.
-                                      //_projectProvider.test(bytes, name);
                                     } else {
                                       coverImageBytes = null;
                                       coverImageBytesName = null;
@@ -655,8 +654,14 @@ class ProfileSettings extends StatelessWidget {
                           if (result != null && result.files.isNotEmpty) {
                             PlatformFile file = result.files.first;
                             if (file.extension == "pdf"  ) {
-                                final fileBytes = file.bytes;
-                                String base64String = base64Encode(fileBytes as List<int>);
+                                String base64String;
+                                if (kIsWeb) {
+                                    final fileBytes = file.bytes;
+                                    base64String =  base64Encode(fileBytes as List<int>);
+                                } else {
+                                    List<int> fileBytes = await File(file.path!).readAsBytes();
+                                    base64String = base64Encode(fileBytes);
+                                }
                                 cvBytes = base64String;
                                 cvName = file.name;
                                 cvExt = file.extension;

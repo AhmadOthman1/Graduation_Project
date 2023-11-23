@@ -78,9 +78,7 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
 
   postSaveChanges(profileImageBytes,profileImageBytesName,profileImageExt,coverImageBytes,coverImageBytesName,coverImageExt,cvBytes,cvName,cvExt) async {
     var url = urlStarter + "/user/settingsChangeMainInfo";
-    var profileImageData = null;
-    var coverImageData = null;
-    var cvData = null;
+ 
     
     Map<String, dynamic> jsonData = {
       "email":Email, 
