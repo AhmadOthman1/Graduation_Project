@@ -5,6 +5,8 @@ import 'package:growify/controller/home/settings_controller.dart';
 import 'package:growify/view/screen/homescreen/settings/Profilesettings.dart';
 import 'package:growify/view/screen/homescreen/settings/changeemail.dart';
 import 'package:growify/view/screen/homescreen/settings/changepassword.dart';
+import 'package:growify/view/screen/homescreen/settings/theEducation.dart';
+import 'package:growify/view/screen/homescreen/settings/workexperience.dart';
 
 class Settings extends StatelessWidget {
   Settings({super.key});
@@ -129,6 +131,71 @@ class Settings extends StatelessWidget {
                   ),
                 ),
               ),
+              Divider(
+                color: Color.fromARGB(255, 194, 193, 193),
+                thickness: 2.0,
+              ),
+               Container(
+                margin: EdgeInsets.only(top: 10, bottom: 10),
+                child: InkWell(
+                  onTap: () {
+                  
+                  Get.to(WorkExperience());
+                  },
+                  child: Container(
+                    height: 35,
+                    padding: EdgeInsets.only(left: 10),
+                    child: Row(
+                      children: [
+                        Icon(Icons.business),
+                        SizedBox(width: 10),
+                        Text(
+                          "Work experience",
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        Spacer(),
+                        Icon(Icons.arrow_forward, size: 30),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Divider(
+                color: Color.fromARGB(255, 194, 193, 193),
+                thickness: 2.0,
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 10, bottom: 10),
+                child: InkWell(
+                  onTap: () {
+                  
+                  Get.to(Education());
+                  },
+                  child: Container(
+                    height: 35,
+                    padding: EdgeInsets.only(left: 10),
+                    child: Row(
+                      children: [
+                        Icon(Icons.school),
+                        SizedBox(width: 10),
+                        Text(
+                          "Education Level",
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        Spacer(),
+                        Icon(Icons.arrow_forward, size: 30),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Divider(
+                color: Color.fromARGB(255, 194, 193, 193),
+                thickness: 2.0,
+              ),
+
             ],
           ),
         ],

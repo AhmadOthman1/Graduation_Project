@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:growify/controller/home/changeEmail_controller.dart';
 import 'package:growify/core/functions/validinput.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/settings/verfiycode_emailchange.dart';
 import 'package:growify/view/widget/auth/ButtonAuth.dart';
 import 'package:growify/view/widget/auth/textFormAuth.dart';
 import 'package:growify/view/widget/auth/textTitleAuth.dart';
@@ -85,9 +86,10 @@ class ChangeEmail extends StatelessWidget {
               ButtonAuth(
                 text: "Save",
                 onPressed: () async {
+                  Get.to(VerifyCodeEmailChange());
                   if (formstate.currentState!.validate()) {
                     controller.SaveChanges(_newEmail,_password);
-                    Get.back();
+                    
                     print("Vaild");
                   } else {
                     print("Not Valid");
