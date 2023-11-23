@@ -18,19 +18,45 @@ exports.getMainInfo=async (req,res,next)=>{
             var photo;
             var coverimage;
             var cv;
-            if(existingEmail.photo==null){
+            if(existingEmail.photo==null) {
                 photo=null;
             }else{
-                photo=existingEmail.photo;
+                
+                const photoFilePath =  path.join('images', existingEmail.photo);
+
+                // Check if the file exists
+                try {
+                    await fs.promises.access(photoFilePath, fs.constants.F_OK);
+                    photo = existingEmail.photo;
+                  } catch (err) {
+                    console.error(err);
+                    photo = null;
+                    await User.update({ photo: photo }, { where: { email } });
+                  }
+                
             }
             if(existingEmail.coverImage==null){
                 coverimage=null;
             }else{
-                coverimage=existingEmail.coverImage;
+                const coverImageFilePath = await path.join('images', existingEmail.coverImage);
+                // Check if the file exists
+                try {
+                    await fs.promises.access(coverImageFilePath, fs.constants.F_OK);
+                    coverimage = existingEmail.coverImage;
+                    console.log("image fetched");
+
+                  } catch (err) {
+                    console.error(err);
+                    coverimage = null;
+                    await User.update({ coverImage: coverimage }, { where: { email } });
+                  }
+                
             }
             if(existingEmail.cv==null){
                 cv=null;
+
             }
+            console.log("fff"+photo);
             return res.status(200).json({
                 message: 'User found',
                 user: {
@@ -81,7 +107,7 @@ const storage = multer.diskStorage({
   const upload = multer({ storage });
 exports.changeMainInfo=async (req,res,next)=>{
     try{
-        const { email, firstName, lastName , address , country , dateOfBirth , phone , bio , profileImageBytes, profileImageBytesName, profileImageExt , coverImageBytes , coverImageBytesName,coverImageExt , cv} = req.body;
+        const { email, firstName, lastName , address , country , dateOfBirth , phone , bio , profileImageBytes, profileImageBytesName, profileImageExt , coverImageBytes , coverImageBytesName,coverImageExt , cvBytes,cvName,cvExt} = req.body;
         var validfirstName=false;
         var validlastName=false;
         var validaddress=false;
@@ -174,7 +200,7 @@ exports.changeMainInfo=async (req,res,next)=>{
             if(coverImageBytes!=null && coverImageBytesName!=null && coverImageExt!=null){//if feild change enables (!=null)
                 validcoverImage=true;
             }
-            if(cv!=null){//if feild change enables (!=null)
+            if(cvBytes!=null && cvName!=null &&cvExt!=null){//if feild change enables (!=null)
                 validcv=true;
             }
 
@@ -237,6 +263,8 @@ exports.changeMainInfo=async (req,res,next)=>{
                 );
             }
             if(validphoto){
+                var oldPhoto = existingEmail.photo;
+                
                 const photoBuffer = Buffer.from(profileImageBytes, 'base64');
                 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
                 const newphotoname = existingEmail.username+ +"-"+ uniqueSuffix +"."+ profileImageExt; // You can adjust the file extension based on the actual image type
@@ -247,9 +275,17 @@ exports.changeMainInfo=async (req,res,next)=>{
 
                 // Update the user record in the database with the new photo name
                 const result = await User.update({ photo: newphotoname }, { where: { email }});
+                if(oldPhoto != null){
+                    //delete the old photo from the  server image folder
+                    const oldPhotoPath = path.join('images', oldPhoto);
+
+                    fs.unlinkSync(oldPhotoPath);
+                }
 
             }
             if(validcoverImage){
+                var oldCover= existingEmail.coverImage;
+                
                 const photoBuffer = Buffer.from(coverImageBytes, 'base64');
                 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
                 const newphotoname = existingEmail.username+ +"-"+ uniqueSuffix +"."+ coverImageExt; // You can adjust the file extension based on the actual image type
@@ -260,7 +296,34 @@ exports.changeMainInfo=async (req,res,next)=>{
 
                 // Update the user record in the database with the new photo name
                 const result = await User.update({ coverImage: newphotoname }, { where: { email }});
+                if(oldCover != null){
+                    //delete the old photo from the  server image folder
+                    const oldCoverPath = path.join('images', oldCover);
 
+                    fs.unlinkSync(oldCoverPath);
+                }
+
+            }
+            if(validcv){
+                var oldCv = existingEmail.cv; // Change 'pdf' to the appropriate field in your database
+                
+                
+                const pdfBuffer = Buffer.from(cvBytes, 'base64');
+                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+                const newPdfName = existingEmail.username + '-' + uniqueSuffix + '.pdf'; // Adjust the file extension based on the actual PDF type
+                const uploadPath = path.join('cvs', newPdfName); // Update the folder path as needed
+
+                // Save the PDF to the server
+                fs.writeFileSync(uploadPath, pdfBuffer);
+
+                // Update the user record in the database with the new PDF name
+                const result = await User.update({ cv: newPdfName }, { where: { email } });
+                if (oldCv != null) {
+                    // Delete the old PDF file from the server folder
+                    const oldPdfPath = path.join('cvs', oldCv); // Update the folder path as needed
+
+                    fs.unlinkSync(oldPdfPath);
+                }
             }
             
             return res.status(200).json({
