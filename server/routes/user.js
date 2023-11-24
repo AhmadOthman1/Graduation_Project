@@ -2,7 +2,8 @@ const express=require('express');
 const userController=require('../controller/userController')
 const loginController=require('../controller/loginController')
 const forgetpasswordController=require('../controller/forgetpasswordController')
-const settingsController=require('../controller/settingsController')
+const settingsController=require('../controller/settings/settingsController')
+const workExperienceController=require('../controller/settings/workExperience')
 const router=express.Router();
 
 
@@ -16,6 +17,7 @@ router.post('/settingsChangeMainInfo',settingsController.changeMainInfo);
 router.post('/settingChangepasswor',settingsController.changePassword);
 router.post('/settingChangeemailVerificationCode',settingsController.postVerificationCode);
 router.post('/settingChangeemail',settingsController.changeEmail);
+router.get('/getworkExperience',workExperienceController.getWorkExperience);
 
 router.post('/Login',loginController.postLogin);
 router.get('/posts',userController.getPosts);
