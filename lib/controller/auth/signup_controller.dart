@@ -11,7 +11,42 @@ goToSignIn();
 postSignup(firstName,lastName,userName,email,password,phone,dateOfBirth);
 }
 
+
+
+
+
+//////////////
+
 class SignUpControllerImp extends SignUpController{
+
+  RxBool isTextFieldEnabled5 = true.obs;
+  // for date picker 
+final TextEditingController startDateController = TextEditingController();
+  final RxBool isSaveVisible = false.obs;
+  RxString textFieldText5 = ''.obs;
+ Future<void> pickStartDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1980),
+      lastDate: DateTime.now(),
+    );
+   
+
+    if (pickedDate != null && pickedDate != DateTime.now()) {
+      startDateController.text =
+          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+      isTextFieldEnabled5.value = true; // Show the "Save" button
+    }
+  }
+  //
+    void clearTextField() {
+    startDateController.text = '';
+    // You can also clear other related fields if needed
+    textFieldText5.value = ''; // Assuming you have this variable in your controller
+  }
+
+
 
   late TextEditingController username;
   late TextEditingController phone;
@@ -55,6 +90,7 @@ class SignUpControllerImp extends SignUpController{
       return resbody['message'];
     }else if(res.statusCode == 200){
       Get.offNamed(AppRoute.verifycodeaftersignup);
+      clearTextField();
     }
     
     //Get.offNamed(AppRoute.verifycodeaftersignup);
