@@ -139,8 +139,7 @@ class Settings extends StatelessWidget {
                 margin: EdgeInsets.only(top: 10, bottom: 10),
                 child: InkWell(
                   onTap: () {
-                  
-                  Get.to(WorkExperience());
+                  controller.goToWorkExperiencePgae();
                   },
                   child: Container(
                     height: 35,
