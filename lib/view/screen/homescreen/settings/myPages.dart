@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:growify/controller/home/myPages_controller.dart';
+import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/settings/PageDetails.dart';
 import 'package:growify/view/screen/homescreen/settings/createPage.dart';
 import 'package:get/get.dart';
 
 class MyPages extends StatelessWidget {
   final MyPagesController controller = MyPagesController();
-
+  final AssetImage defultprofileImage = AssetImage("images/profileImage.jpg");
+  ImageProvider<Object>? profileBackgroundImage;
   @override
   Widget build(BuildContext context) {
+    //Image.network(pages[index].image)
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -19,7 +24,6 @@ class MyPages extends StatelessWidget {
           color: Colors.black,
         ),
         actions: [
-          
           TextButton(
             onPressed: () {
               Get.to(CreatePage());
@@ -55,7 +59,6 @@ class MyPages extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      // Navigate to the corresponding page with the id
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -64,11 +67,45 @@ class MyPages extends StatelessWidget {
                       );
                     },
                     child: Card(
-                      child: Column(
-                        children: [
-                          Image.network(pages[index].image),
-                          Text(pages[index].name),
-                        ],
+                      elevation: 5,
+                      //margin: EdgeInsets.all(10),
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Row(
+                          children: [
+                            Container(
+                              //padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Color.fromARGB(255, 85, 191, 218),
+                                  width: 2,
+                                ),
+                              ),
+                              child: CircleAvatar(
+                                radius: 30,
+                                backgroundImage: pages[index].photo != null &&
+                                        pages[index].photo != ""
+                                    ? NetworkImage(
+                                        urlStarter + "/" + pages[index].photo!)
+                                    : AssetImage("images/profileImage.jpg")
+                                        as ImageProvider<Object>,
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              pages[index].name,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Divider(
+                              color: Color.fromARGB(255, 194, 193, 193),
+                              thickness: 2.0,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -77,25 +114,6 @@ class MyPages extends StatelessWidget {
             }
           },
         ),
-      ),
-    );
-  }
-}
-
-class PageDetails extends StatelessWidget {
-  final int pageId;
-
-  PageDetails(this.pageId);
-
-  @override
-  Widget build(BuildContext context) {
-    // Implement your page details UI using the pageId
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Page Details'),
-      ),
-      body: Center(
-        child: Text('Details for Page ID: $pageId'),
       ),
     );
   }

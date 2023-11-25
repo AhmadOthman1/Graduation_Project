@@ -36,12 +36,13 @@ sequelize.sync().then(result =>{
 });
 /*const express=require('express');
 const pageAdmin=require('./models/pageAdmin');
-const user=require('./models/user');
+//const user=require('./models/user');
 //const TempUser=require('./models/tempUser');
 //const forgetpasswordController=require('./models/forgetPasswordCode');
 //const changeEmail=require('./models/changeEmail');
-const workExperience=require('./models/workExperience');
-const EducationLevel=require('./models/educationLevel');
+//const workExperience=require('./models/workExperience');
+//const EducationLevel=require('./models/educationLevel');
+const pages=require('./models/pages');
 
 //const bodyParser=require('body-parser');
 
@@ -50,7 +51,7 @@ const sequelize=require('./util/database');
 const app=express();
 
 //{force:true}
-sequelize.sync({force:true}).then(result =>{
+sequelize.sync().then(result =>{
     console.log(result);
     app.listen(3000);
   
