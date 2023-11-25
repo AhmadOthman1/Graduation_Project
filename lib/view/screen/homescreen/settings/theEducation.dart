@@ -10,6 +10,23 @@ class Education extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    //RECIVE data from the setting controller from database 
+
+                      var args = Get.arguments;
+    List<Map<String, String>> educationLevel =
+        args != null ? args['educationLevel'] : [];
+
+            // Set the data in educationLevels
+    controller.setEducationLevels(educationLevel);
+
+
+
+
+
+
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text(

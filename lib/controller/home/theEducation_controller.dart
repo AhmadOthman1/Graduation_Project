@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class EducationController extends GetxController {
-  final RxList<Map<String, String>> educationLevels =
+/*  final RxList<Map<String, String>> educationLevels =
       <Map<String, String>>[
     {
       'Specialty': 'Software Developer',
@@ -40,7 +40,20 @@ class EducationController extends GetxController {
       'Start Date': '2018-04-20',
       'End Date': '2019-09-20',
     },
-  ].obs;
+  ].obs;*/
+
+    // Define a dynamic RxList
+  final RxList<Map<String, String>> educationLevels = <Map<String, String>>[].obs;
+
+  // Function to set data in educationLevels
+  void setEducationLevels(List<Map<String, String>> data) {
+    educationLevels.assignAll(data);
+
+  }
+
+
+
+  
 
   final TextEditingController specialtyController = TextEditingController();
   final TextEditingController schoolController = TextEditingController();
@@ -115,6 +128,11 @@ class EducationController extends GetxController {
           'Description': descriptionController.text,
           'Start Date': startDateController.text,
           'End Date': endDateController.text,
+          // take new data from array save in database just use assignAll() 
+          // see setEducationLevels() in the top
+
+
+
         });
       } else {
         // Edit existing experience
@@ -124,6 +142,8 @@ class EducationController extends GetxController {
           'Description': descriptionController.text,
           'Start Date': startDateController.text,
           'End Date': endDateController.text,
+          // take the edit data from array save in database just use assignAll()
+          // see setEducationLevels() in the top
         };
 
         // Reset editingIndex after editing
