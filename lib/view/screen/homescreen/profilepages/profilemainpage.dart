@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:growify/controller/home/homepage_controller.dart';
+import 'package:growify/controller/home/profileMainPage_controller.dart';
 import 'package:growify/view/screen/homescreen/profilepages/seeaboutinfo.dart';
 import 'package:growify/view/screen/homescreen/settings/settings.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
@@ -8,6 +9,7 @@ import 'package:get/get.dart';
 class ProfileMainPage extends StatelessWidget {
   final AssetImage _profileImage = AssetImage("images/obaida.jpeg");
   final AssetImage _coverImage = AssetImage("images/flutterimage.png");
+   final ProfileMainPageControllerImp controller = Get.put(ProfileMainPageControllerImp());
 
   final List<Map<String, dynamic>> posts = [
     {
@@ -175,7 +177,9 @@ class ProfileMainPage extends StatelessWidget {
         InkWell(
           onTap: () {
             ///// go to about info
-            Get.to(SeeAboutInfo());
+           // Get.to(SeeAboutInfo());
+           controller.goToAboutInfo();
+
           },
           child: Container(
             height: 35,

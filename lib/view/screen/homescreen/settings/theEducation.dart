@@ -198,7 +198,8 @@ class Education extends StatelessWidget {
                             Expanded(
                               child: TextFormField(
                                 controller: controller.endDateController,
-                                readOnly: !controller.isSaveVisible.value,
+                               // readOnly: !controller.isSaveVisible.value,
+                               readOnly: true,
                                 decoration: InputDecoration(
                                   hintText: "Enter the End Date",
                                   hintStyle: const TextStyle(
