@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:growify/controller/home/homepage_controller.dart';
+import 'package:growify/view/screen/homescreen/profilepages/seeaboutinfo.dart';
 import 'package:growify/view/screen/homescreen/settings/settings.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 import 'package:get/get.dart';
@@ -174,6 +175,7 @@ class ProfileMainPage extends StatelessWidget {
         InkWell(
           onTap: () {
             ///// go to about info
+            Get.to(SeeAboutInfo());
           },
           child: Container(
             height: 35,
