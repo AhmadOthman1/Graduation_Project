@@ -9,14 +9,14 @@ class WorkExperience extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    
     // store data from the database in my array by use setPracticalExperiences function
                   var args = Get.arguments;
     List<Map<String, String>> workExperiences =
         args != null ? args['workExperiences'] : [];
 
         controller.setPracticalExperiences(workExperiences);
-
+        controller.undoExperience();
     
  
 

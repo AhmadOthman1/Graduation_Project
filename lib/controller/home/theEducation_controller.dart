@@ -1,6 +1,10 @@
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:growify/global.dart';
+import 'package:http/http.dart' as http;
 
 class EducationController extends GetxController {
 /*  final RxList<Map<String, String>> educationLevels =
@@ -42,18 +46,14 @@ class EducationController extends GetxController {
     },
   ].obs;*/
 
-    // Define a dynamic RxList
-  final RxList<Map<String, String>> educationLevels = <Map<String, String>>[].obs;
+  // Define a dynamic RxList
+  final RxList<Map<String, String>> educationLevels =
+      <Map<String, String>>[].obs;
 
   // Function to set data in educationLevels
   void setEducationLevels(List<Map<String, String>> data) {
     educationLevels.assignAll(data);
-
   }
-
-
-
-  
 
   final TextEditingController specialtyController = TextEditingController();
   final TextEditingController schoolController = TextEditingController();
@@ -118,36 +118,80 @@ class EducationController extends GetxController {
     isAddingEducation.value = false; // Hide the Form
   }
 
- void saveEducation() {
+  Future<void> saveEducation() async {
     if (educationFormKey.currentState!.validate()) {
       if (editingIndex.value == -1) {
-        // Add new experience
-        educationLevels.add({
+        //send the data for the server
+        var url = urlStarter + "/user/addEducationLevel";
+        var Email = GetStorage().read("loginemail");
+        Map<String, dynamic> jsonData = {
+          'email': Email,
           'Specialty': specialtyController.text,
           'School': schoolController.text,
           'Description': descriptionController.text,
-          'Start Date': startDateController.text,
-          'End Date': endDateController.text,
-          // take new data from array save in database just use assignAll() 
-          // see setEducationLevels() in the top
-
-
-
-        });
-      } else {
-        // Edit existing experience
-        educationLevels[editingIndex.value] = {
-          'Specialty': specialtyController.text,
-          'School': schoolController.text,
-          'Description': descriptionController.text,
-          'Start Date': startDateController.text,
-          'End Date': endDateController.text,
-          // take the edit data from array save in database just use assignAll()
-          // see setEducationLevels() in the top
+          'StartDate': startDateController.text,
+          'EndDate': endDateController.text,
         };
+        String jsonString = jsonEncode(jsonData);
+        var responce =
+            await http.post(Uri.parse(url), body: jsonString, headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        });
 
-        // Reset editingIndex after editing
-        editingIndex.value = -1;
+        if (responce.statusCode == 409 || responce.statusCode == 500) {
+          var resbody = jsonDecode(responce.body);
+          return resbody['message'];
+        } else if (responce.statusCode == 200) {
+          var resbody = jsonDecode(responce.body);
+          print(resbody['message']);
+          // Add new experience
+          educationLevels.add({
+            'id': resbody['message'].toString(),
+            'Specialty': specialtyController.text,
+            'School': schoolController.text,
+            'Description': descriptionController.text,
+            'Start Date': startDateController.text,
+            'End Date': (endDateController.text != "")
+                ? endDateController.text
+                : "Present",
+          });
+        }
+      } else {
+        var url = urlStarter + "/user/editEducationLevel";
+        var Email = GetStorage().read("loginemail");
+        Map<String, dynamic> jsonData = {
+          'email': Email,
+          'id': educationLevels[editingIndex.value]['id'],
+          'Specialty': specialtyController.text,
+          'School': schoolController.text,
+          'Description': descriptionController.text,
+          'StartDate': startDateController.text,
+          'EndDate': endDateController.text,
+        };
+        String jsonString = jsonEncode(jsonData);
+        var responce =
+            await http.post(Uri.parse(url), body: jsonString, headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        });
+
+        if (responce.statusCode == 409 || responce.statusCode == 500) {
+          var resbody = jsonDecode(responce.body);
+          return resbody['message'];
+        } else if (responce.statusCode == 200) {
+          educationLevels[editingIndex.value] = {
+            'Specialty': specialtyController.text,
+            'School': schoolController.text,
+            'Description': descriptionController.text,
+            'Start Date': startDateController.text,
+            'End Date': endDateController.text,
+            // take edit data from array save in database just use assignAll()
+            // see setPracticalExperiences() in the top
+          };
+
+          // Reset editingIndex after editing
+          editingIndex.value = -1;
+        }
+        // Edit existing experience
       }
 
       // Clear controllers
@@ -169,15 +213,33 @@ class EducationController extends GetxController {
     schoolController.text = educationLevels[index]['School'] ?? '';
     descriptionController.text = educationLevels[index]['Description'] ?? '';
     startDateController.text = educationLevels[index]['Start Date'] ?? '';
-    endDateController.text = educationLevels[index]['End Date'] ?? '';
+    endDateController.text = educationLevels[index]['End Date'] == "Present"
+        ? ""
+        : educationLevels[index]['End Date'] ?? '';
     // Set isAddingExperience to true to show the form for editing
     isAddingEducation.value = true;
     isSaveVisible.value = true; // Show the "Save" button
   }
 
-  void removeEducation(int index) {
-    educationLevels.removeAt(index);
-    isSaveVisible.value = false; // Hide the "Save" button
-    isAddingEducation.value = false; // Hide the Form
+  Future<void> removeEducation(int index) async {
+    var url = urlStarter + "/user/deleteEducationLevele";
+    var Email = GetStorage().read("loginemail");
+    Map<String, dynamic> jsonData = {
+      'email': Email,
+      'id': educationLevels[index]['id'],
+    };
+    String jsonString = jsonEncode(jsonData);
+    var responce = await http.post(Uri.parse(url), body: jsonString, headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+    });
+
+    if (responce.statusCode == 409 || responce.statusCode == 500) {
+      var resbody = jsonDecode(responce.body);
+      return resbody['message'];
+    } else if (responce.statusCode == 200) {
+      educationLevels.removeAt(index);
+      isSaveVisible.value = false; // Hide the "Save" button
+      isAddingEducation.value = false; // Hide the Form
+    }
   }
 }

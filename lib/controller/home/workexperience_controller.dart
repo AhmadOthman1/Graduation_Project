@@ -1,9 +1,14 @@
 // experience_controller.dart
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:growify/global.dart';
+import 'package:http/http.dart' as http;
 
 class ExperienceController extends GetxController {
- /* final RxList<Map<String, String>> practicalExperiences =
+  /* final RxList<Map<String, String>> practicalExperiences =
       <Map<String, String>>[
     {
       'Specialty': 'Software Developer',
@@ -42,22 +47,13 @@ class ExperienceController extends GetxController {
     },
   ].obs;*/
 
-    final RxList<Map<String, String>> practicalExperiences = <Map<String, String>>[].obs;
+  final RxList<Map<String, String>> practicalExperiences =
+      <Map<String, String>>[].obs;
 
   // Function to set data in practicalExperiences
   void setPracticalExperiences(List<Map<String, String>> data) {
     practicalExperiences.assignAll(data);
   }
-
-
-
-
-
-
-
-
-
-
 
   final TextEditingController specialtyController = TextEditingController();
   final TextEditingController companyController = TextEditingController();
@@ -122,34 +118,81 @@ class ExperienceController extends GetxController {
     isAddingExperience.value = false; // Hide the Form
   }
 
- void saveExperience() {
+  Future<void> saveExperience() async {
     if (experienceFormKey.currentState!.validate()) {
       if (editingIndex.value == -1) {
-        // Add new experience
-        practicalExperiences.add({
+        //send the data for the server
+        var url = urlStarter + "/user/addworkExperience";
+        var Email = GetStorage().read("loginemail");
+        Map<String, dynamic> jsonData = {
+          'email': Email,
           'Specialty': specialtyController.text,
           'Company': companyController.text,
           'Description': descriptionController.text,
-          'Start Date': startDateController.text,
-          'End Date': endDateController.text,
-
-           // take new data from array save in database just use assignAll() 
-          // see setPracticalExperiences() in the top
+          'StartDate': startDateController.text,
+          'EndDate': endDateController.text,
+        };
+        String jsonString = jsonEncode(jsonData);
+        var responce =
+            await http.post(Uri.parse(url), body: jsonString, headers: {
+          'Content-type': 'application/json; charset=UTF-8',
         });
+
+        if (responce.statusCode == 409 || responce.statusCode == 500) {
+          var resbody = jsonDecode(responce.body);
+          return resbody['message'];
+        } else if (responce.statusCode == 200) {
+          var resbody = jsonDecode(responce.body);
+          print(resbody['message']);
+          // Add new experience
+          practicalExperiences.add({
+            'id': resbody['message'].toString(),
+            'Specialty': specialtyController.text,
+            'Company': companyController.text,
+            'Description': descriptionController.text,
+            'Start Date': startDateController.text,
+            'End Date': (endDateController.text != "")
+                ? endDateController.text
+                : "Present",
+          });
+        }
       } else {
         // Edit existing experience
-        practicalExperiences[editingIndex.value] = {
+        var url = urlStarter + "/user/editworkExperience";
+        var Email = GetStorage().read("loginemail");
+        Map<String, dynamic> jsonData = {
+          'email': Email,
+          'id': practicalExperiences[editingIndex.value]['id'],
           'Specialty': specialtyController.text,
           'Company': companyController.text,
           'Description': descriptionController.text,
-          'Start Date': startDateController.text,
-          'End Date': endDateController.text,
-           // take edit data from array save in database just use assignAll() 
-          // see setPracticalExperiences() in the top
+          'StartDate': startDateController.text,
+          'EndDate': endDateController.text,
         };
+        String jsonString = jsonEncode(jsonData);
+        var responce =
+            await http.post(Uri.parse(url), body: jsonString, headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        });
 
-        // Reset editingIndex after editing
-        editingIndex.value = -1;
+        if (responce.statusCode == 409 || responce.statusCode == 500) {
+          var resbody = jsonDecode(responce.body);
+          return resbody['message'];
+        } else if (responce.statusCode == 200) {
+          practicalExperiences[editingIndex.value] = {
+            'Specialty': specialtyController.text,
+            'Company': companyController.text,
+            'Description': descriptionController.text,
+            'Start Date': startDateController.text,
+            'End Date': endDateController.text,
+            // take edit data from array save in database just use assignAll()
+            // see setPracticalExperiences() in the top
+          };
+
+          // Reset editingIndex after editing
+          editingIndex.value = -1;
+        }
+        
       }
 
       // Clear controllers
@@ -169,17 +212,36 @@ class ExperienceController extends GetxController {
     // Set controllers with existing values for editing
     specialtyController.text = practicalExperiences[index]['Specialty'] ?? '';
     companyController.text = practicalExperiences[index]['Company'] ?? '';
-    descriptionController.text = practicalExperiences[index]['Description'] ?? '';
+    descriptionController.text =practicalExperiences[index]['Description'] ?? '';
     startDateController.text = practicalExperiences[index]['Start Date'] ?? '';
-    endDateController.text = practicalExperiences[index]['End Date'] ?? '';
+    endDateController.text =
+        practicalExperiences[index]['End Date'] == "Present"
+            ? ""
+            : practicalExperiences[index]['End Date'] ?? '';
     // Set isAddingExperience to true to show the form for editing
     isAddingExperience.value = true;
     isSaveVisible.value = true; // Show the "Save" button
   }
 
-  void removeExperience(int index) {
-    practicalExperiences.removeAt(index);
-    isSaveVisible.value = false; // Hide the "Save" button
-    isAddingExperience.value = false; // Hide the Form
+  Future<void> removeExperience(int index) async {
+    var url = urlStarter + "/user/deleteworkExperience";
+    var Email = GetStorage().read("loginemail");
+    Map<String, dynamic> jsonData = {
+      'email': Email,
+      'id': practicalExperiences[index]['id'],
+    };
+    String jsonString = jsonEncode(jsonData);
+    var responce = await http.post(Uri.parse(url), body: jsonString, headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+    });
+
+    if (responce.statusCode == 409 || responce.statusCode == 500) {
+      var resbody = jsonDecode(responce.body);
+      return resbody['message'];
+    } else if (responce.statusCode == 200) {
+      practicalExperiences.removeAt(index);
+      isSaveVisible.value = false; // Hide the "Save" button
+      isAddingExperience.value = false; // Hide the Form
+    }
   }
 }

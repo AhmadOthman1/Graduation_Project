@@ -163,7 +163,6 @@ final TextEditingController startDateController = TextEditingController();
       "cvBytes":cvBytes,
       "cvName":cvName,
       "cvExt":cvExt,
-  // other fields...
   };
     String jsonString = jsonEncode(jsonData);
     int contentLength = utf8.encode(jsonString).length;

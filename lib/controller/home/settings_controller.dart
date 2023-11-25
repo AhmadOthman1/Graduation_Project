@@ -10,14 +10,14 @@ import 'package:growify/view/screen/homescreen/settings/workexperience.dart';
 import 'package:http/http.dart' as http;
 abstract class SettingsController extends GetxController {
 
-    // put data from database here
 
   String? Email=GetStorage().read("loginemail") ;
 getWorkExperiencePgae();
 goToWorkExperiencePgae();
 goToProfileSettingsPgae();
 getProfileSettingsPgae();
-
+getEducationLevel();
+ goToEducationLevel();
 }
 
 class SettingsControllerImp extends SettingsController {
@@ -32,7 +32,6 @@ Future getProfileSettingsPgae() async {
     return responce;
   }
 goToProfileSettingsPgae() async {
- // Get.toNamed(AppRoute.profilesetting);
  var res = await getProfileSettingsPgae();
     var resbody = jsonDecode(res.body);
     print(resbody['message']);
@@ -63,31 +62,48 @@ goToProfileSettingsPgae() async {
       return resbody['message'];
     }else if(res.statusCode == 200){
     var responseBody = jsonDecode(res.body);
+    print(responseBody);
     var workExperiences = (responseBody['workExperiences'] as List<dynamic>)
         .map((dynamic experience) =>
             Map<String, String>.from(experience as Map<String, dynamic>))
         .toList();
     print(workExperiences);
-    //Get.to(WorkExperience(List<Map<String, String>>.from(responseBody['workExperiences'])));
     Get.to(
         WorkExperience(),
         arguments: {'workExperiences': workExperiences},
       );
       
     } 
-    //Get.to(WorkExperience());
   }
 
-//////////////////////////////////////
-  // here for education 
-
-  goToEducationLevel(){
-    /* Active this code , create educationLevel list
-        Get.to(
+getEducationLevel() async {
+var url = urlStarter + "/user/getEducationLevel?email=$Email";
+    var responce = await http.get(Uri.parse(url),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        });
+    print(responce);
+    return responce;
+}
+  goToEducationLevel() async {
+    var res = await getEducationLevel();
+    var resbody = jsonDecode(res.body);
+    if(res.statusCode == 409 || res.statusCode == 500){
+      return resbody['message'];
+    }else if(res.statusCode == 200){
+    var responseBody = jsonDecode(res.body);
+    print(responseBody);
+    var EducationLevel = (responseBody['educationLevel'] as List<dynamic>)
+        .map((dynamic experience) =>
+            Map<String, String>.from(experience as Map<String, dynamic>))
+        .toList();
+    print(EducationLevel);
+    Get.to(
         Education(),
-        arguments: {'educationLevel': educationLevel},
-      );*/
-
+        arguments: {'educationLevel': EducationLevel},
+      );
+      
+    } 
 
    
   }
