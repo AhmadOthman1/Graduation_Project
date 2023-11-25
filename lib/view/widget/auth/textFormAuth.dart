@@ -8,7 +8,12 @@ class TextFormAuth extends StatelessWidget {
   final String? Function(String?) valid;
   final bool? obscureText;
   final void Function()? onTapIcon;
-  const TextFormAuth({super.key, required this.hinttext, required this.labeltext, required this.iconData, this.mycontroller, required this.valid,  this.obscureText, this.onTapIcon});
+  late void Function(String?)? onsaved;
+  
+  final maxLines;
+  TextFormAuth({super.key, String? Function(String?)? onsaved ,this.maxLines, required this.hinttext, required this.labeltext, required this.iconData, this.mycontroller, required this.valid,  this.obscureText, this.onTapIcon}){
+    this.onsaved = onsaved;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +21,8 @@ class TextFormAuth extends StatelessWidget {
       margin:const EdgeInsets.only(bottom: 20),
       child: TextFormField(
         validator: valid,
+        onSaved: onsaved ?? (val){},
+        maxLines: (maxLines == null)? 1 : maxLines,
         obscureText: obscureText==null  || obscureText==false ?false:true,
                 decoration: InputDecoration(
                   hintText: hinttext,

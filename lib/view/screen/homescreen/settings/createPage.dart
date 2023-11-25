@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:growify/controller/home/createPage_controller.dart';
 import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/core/functions/validinput.dart';
@@ -10,113 +11,249 @@ class CreatePage extends StatefulWidget {
 }
 
 class _CreatePageState extends State<CreatePage> {
-  String? pageId;
+  String? pageId="";
+  String? pageName="";
+  String? description="";
+  String? country="";
+  String? address="";
+  String? contactInfo="";
+  String? speciality="";
+  String? pageType="";
   final CreatePageController controller = CreatePageController();
   GlobalKey<FormState> formstate = GlobalKey();
 
   // Define controllers for text fields
-  final TextEditingController _pageIdController = TextEditingController();
-  final TextEditingController _pageNameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _CountryController = TextEditingController();
-  final TextEditingController _AddressController = TextEditingController();
-  final TextEditingController _ContactInfoController = TextEditingController();
-  final TextEditingController _SpecialityController = TextEditingController();
-  final TextEditingController _PageTypeController = TextEditingController();
   // Add controllers for other fields...
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Create Page"),
+        title: Text(
+          "Create Page",
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: formstate,
-          child: ListView(
-            children: [
+          child: SingleChildScrollView(
+            child: Column(children: [
               Container(
                 height: 20,
               ),
               TextFormAuth(
                 valid: (value) {
-                  pageId = value;
                   return validInput(value!, 50, 5, "username");
                 },
-                mycontroller: _pageIdController,
+                onsaved: (val){
+                  pageId = val;
+                },
                 hinttext: "Enter a unique page id",
                 labeltext: "Page id ",
                 iconData: Icons.person_outlined,
               ),
               TextFormAuth(
                 valid: (value) {
-                  pageId = value;
-                  return validInput(value!, 50, 1, "username");
+                  return validInput(value!, 50, 1, "length");
                 },
-                mycontroller: _pageNameController,
+                onsaved: (val){
+                  pageName = val;
+                },
                 hinttext: "Enter a unique page name",
                 labeltext: "Page Name ",
                 iconData: Icons.person_outlined,
               ),
               TextFormAuth(
                 valid: (value) {
-                  pageId = value;
                   return validInput(value!, 2000, 1, "length");
                 },
-                mycontroller: _descriptionController,
+                onsaved: (val){
+                  description = val;
+                },
                 hinttext: "Enter Your page description",
                 labeltext: "Description",
-                iconData: Icons.person_outlined,
+                maxLines: 10,
+                iconData: Icons.description,
               ),
               TextFormAuth(
                 valid: (value) {
-                  pageId = value;
-                  return validInput(value!, 50, 1, "length");
-                },
-                mycontroller: _CountryController,
-                hinttext: "Enter Your page country",
-                labeltext: "Country",
-                iconData: Icons.person_outlined,
-              ),
-              TextFormAuth(
-                valid: (value) {
-                  pageId = value;
                   return validInput(value!, 2000, 1, "length");
                 },
-                mycontroller: _AddressController,
+                onsaved: (val){
+                  address = val;
+                },
                 hinttext: "Enter Your page address",
                 labeltext: "Address",
-                iconData: Icons.person_outlined,
+                maxLines: 10,
+                iconData: Icons.location_city,
+              ),
+              
+              TextFormAuth(
+                valid: (value) {
+                  return validInput(value!, 2000, 1, "length");
+                },
+                onsaved: (val){
+                  contactInfo = val;
+                },
+                hinttext: "Enter Your page contact Info",
+                maxLines: 10,
+                labeltext: "ContactInfo",
+                iconData: Icons.contacts_outlined,
               ),
               TextFormAuth(
                 valid: (value) {
-                  pageId = value;
                   return validInput(value!, 2000, 1, "length");
                 },
-                mycontroller: _ContactInfoController,
-                hinttext: "Enter Your page contact Info",
-                labeltext: "ContactInfo",
-                iconData: Icons.person_outlined,
+                onsaved: (val){
+                  speciality = val;
+                },
+                hinttext: "Enter Your page Speciality",
+                labeltext: "Speciality",
+                maxLines: 10,
+                iconData: Icons.build,
               ),
-              // Add other TextFormField widgets for other fields...
+              Container(
+                height: 20,
+              ),
+              Obx(
+                () => Row(
+                  children: [
+                    Container(
+                      width: 300,
+                      margin: EdgeInsets.only(right: 10),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: DropdownButtonFormField(
+                          decoration: InputDecoration(
+                            alignLabelWithHint: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            hintStyle: const TextStyle(
+                              fontSize: 14,
+                            ),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 30),
+                            label: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 9),
+                              child: Text("Your Country"),
+                            ),
+                          ),
+                          isExpanded: true,
+                          hint: Text('Select Country',
+                              style: TextStyle(color: Colors.grey)),
+                          items: controller.countryList.map((value) {
+                            return DropdownMenuItem(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          value: controller.country.value.isEmpty
+                              ? null
+                              : controller.country.value,
+                          onChanged: (value) {
+                            controller.country.value = value.toString();
+                            print(controller.country.value);
+                          }, // Disable the dropdown when not enabled
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select country';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                height: 20,
+              ),
+              Obx(
+                () => Row(
+                  children: [
+                    Container(
+                      width: 300,
+                      margin: EdgeInsets.only(right: 10),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: DropdownButtonFormField(
+                          decoration: InputDecoration(
+                            alignLabelWithHint: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            hintStyle: const TextStyle(
+                              fontSize: 14,
+                            ),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 30),
+                            label: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 9),
+                              child: Text("Your field of Page Type"),
+                            ),
+                          ),
+                          isExpanded: true,
+                          hint: Text('Select Page Type',
+                              style: TextStyle(color: Colors.grey)),
+                          items: controller.PageTypeList.map((value) {
+                            return DropdownMenuItem(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          value: controller.PageType.value.isEmpty
+                              ? null
+                              : controller.PageType.value,
+                          onChanged: (value) {
+                            controller.PageType.value = value.toString();
+                            print(controller.PageType.value);
+                          }, // Disable the dropdown when not enabled
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select Page Type';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                height: 20,
+              ),
               MaterialButton(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
                 padding:
                     const EdgeInsets.symmetric(vertical: 13, horizontal: 135),
                 onPressed: () async {
-                  if (formstate.currentState!.validate()) {
-                    var message = await controller.createPage(
-                      pageId: _pageIdController.text,
-                      pageName: _pageNameController.text,
-                      description: _descriptionController.text,
-                      country: _CountryController.text,
-                      address: _AddressController.text,
-                      contactInfo: _ContactInfoController.text,
-                      speciality: _SpecialityController.text,
-                      pageType: _PageTypeController.text,
+                  if (!formstate.currentState!.validate()) {
+                    return;
+                  }
+
+                  formstate.currentState!.save();
+
+                  var message = await controller.createPage(
+                      pageId: pageId,
+                      pageName: pageName,
+                      description: description,
+                      address: address,
+                      contactInfo: contactInfo,
+                      country: controller.country.value,
+                      speciality: speciality,
+                      pageType: controller.PageType.value,
                       // Include other parameters...
                     );
                     (message != null)
@@ -132,32 +269,13 @@ class _CreatePageState extends State<CreatePage> {
                             },
                           )
                         : null;
-                  }
                 },
                 color: Color.fromARGB(255, 85, 191, 218),
                 textColor: Colors.white,
                 child: Text("Save Changes"),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  if (formstate.currentState!.validate()) {
-                    // Call the function to create the page
-                    controller.createPage(
-                      pageId: _pageIdController.text,
-                      pageName: _pageNameController.text,
-                      description: _descriptionController.text,
-                      country: _CountryController.text,
-                      address: _AddressController.text,
-                      contactInfo: _ContactInfoController.text,
-                      speciality: _SpecialityController.text,
-                      pageType: _PageTypeController.text,
-                      // Include other parameters...
-                    );
-                  }
-                },
-                child: Text('Create'),
-              ),
             ],
+            )
           ),
         ),
       ),
