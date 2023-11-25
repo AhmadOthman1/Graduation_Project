@@ -28,6 +28,8 @@ const pageAdmin = sequelize.define('pageAdmin', {
 });
 
 // Define foreign key constraint
+pages.hasMany(pageAdmin, { foreignKey: 'pageId', onDelete: 'CASCADE' });
 pageAdmin.belongsTo(pages, { foreignKey: 'pageId', onDelete: 'CASCADE' });
+User.hasMany(pageAdmin, { foreignKey: 'username', onDelete: 'CASCADE' });
 pageAdmin.belongsTo(User, { foreignKey: 'username', onDelete: 'CASCADE' });
 module.exports = pageAdmin;

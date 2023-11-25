@@ -32,7 +32,15 @@ const pages = sequelize.define('pages', {
     },
     pageType:{
         type: Sequelize.STRING, allowNull: false
-    }
+    },
+    photo:{
+        type: Sequelize.STRING(2000),
+        allowNull: true
+    },
+    coverImage:{
+        type: Sequelize.STRING(2000),
+        allowNull: true
+    },
 });
 
 // Define foreign key constraint

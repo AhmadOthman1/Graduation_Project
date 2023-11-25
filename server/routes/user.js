@@ -30,6 +30,7 @@ router.post('/deleteEducationLevele',educationLevelController.postDeleteEducatio
 
 
 router.get('/getMyPages',myPagesController.getMyPageInfo);
+router.post('/postCreatePage',myPagesController.postCreatePage);
 
 router.post('/Login',loginController.postLogin);
 router.get('/posts',userController.getPosts);
