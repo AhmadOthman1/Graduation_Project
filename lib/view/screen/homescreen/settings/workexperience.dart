@@ -5,8 +5,21 @@ import 'package:growify/controller/home/workexperience_controller.dart';
 class WorkExperience extends StatelessWidget {
   final ExperienceController controller = Get.put(ExperienceController());
 
+
+
   @override
   Widget build(BuildContext context) {
+
+    // store data from the database in my array by use setPracticalExperiences function
+                  var args = Get.arguments;
+    List<Map<String, String>> workExperiences =
+        args != null ? args['workExperiences'] : [];
+
+        controller.setPracticalExperiences(workExperiences);
+
+    
+ 
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -269,6 +282,7 @@ class WorkExperience extends StatelessWidget {
         children: controller.practicalExperiences.asMap().entries.map((entry) {
           final index = entry.key;
           final experience = entry.value;
+
 
           return Column(
             children: [

@@ -12,10 +12,10 @@ const WorkExperience = sequelize.define('workExperience', {
   username: {
     type: Sequelize.STRING,
     allowNull: false,
-    references: {
+    /*references: {
       model: User,
       key: 'username',
-    },
+    },*/
   },
   specialty: {
     type: Sequelize.STRING,
@@ -38,5 +38,5 @@ const WorkExperience = sequelize.define('workExperience', {
 });
 
 // Define foreign key constraint
-
+//WorkExperience.belongsTo(User, { foreignKey: 'username' , onDelete: 'CASCADE' });
 module.exports = WorkExperience;

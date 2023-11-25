@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ExperienceController extends GetxController {
-  final RxList<Map<String, String>> practicalExperiences =
+ /* final RxList<Map<String, String>> practicalExperiences =
       <Map<String, String>>[
     {
       'Specialty': 'Software Developer',
@@ -40,7 +40,24 @@ class ExperienceController extends GetxController {
       'Start Date': '2018-04-20',
       'End Date': '2019-09-20',
     },
-  ].obs;
+  ].obs;*/
+
+    final RxList<Map<String, String>> practicalExperiences = <Map<String, String>>[].obs;
+
+  // Function to set data in practicalExperiences
+  void setPracticalExperiences(List<Map<String, String>> data) {
+    practicalExperiences.assignAll(data);
+  }
+
+
+
+
+
+
+
+
+
+
 
   final TextEditingController specialtyController = TextEditingController();
   final TextEditingController companyController = TextEditingController();

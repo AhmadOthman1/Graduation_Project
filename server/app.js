@@ -39,7 +39,7 @@ const User=require('./models/user');
 //const TempUser=require('./models/tempUser');
 //const forgetpasswordController=require('./models/forgetPasswordCode');
 //const changeEmail=require('./models/changeEmail');
-const workExperience=require('./models/workExperience');
+//const workExperience=require('./models/workExperience');
 //const bodyParser=require('body-parser');
 
 const sequelize=require('./util/database');
@@ -47,7 +47,7 @@ const sequelize=require('./util/database');
 const app=express();
 
 //{force:true}
-sequelize.sync().then(result =>{
+sequelize.sync({force:true}).then(result =>{
     console.log(result);
     app.listen(3000);
   

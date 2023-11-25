@@ -68,6 +68,11 @@ goToProfileSettingsPgae() async {
         .toList();
     print(workExperiences);
     //Get.to(WorkExperience(List<Map<String, String>>.from(responseBody['workExperiences'])));
+    Get.to(
+        WorkExperience(),
+        arguments: {'workExperiences': workExperiences},
+      );
+      
     } 
     //Get.to(WorkExperience());
   }
