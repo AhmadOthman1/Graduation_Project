@@ -1,7 +1,6 @@
 const Sequelize=require('sequelize');
 
 const sequelize=require('../util/database');
-const WorkExperience = require('./workExperience');
 const User=sequelize.define('user',{
     username:{
         type:Sequelize.STRING,
@@ -55,5 +54,7 @@ const User=sequelize.define('user',{
 
 
 });
-User.hasMany(WorkExperience, { foreignKey: 'username' , onDelete: 'CASCADE' });
+
+
+
 module.exports=User;

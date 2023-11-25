@@ -93,21 +93,7 @@ exports.getMainInfo=async (req,res,next)=>{
             });
     }
 }
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      const uploadPath = 'images'; // Set your desired upload path
-      if (!fs.existsSync(uploadPath)) {
-        fs.mkdirSync(uploadPath);
-      }
-      cb(null, uploadPath);
-    },
-    filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-    },
-  });
-  
-  const upload = multer({ storage });
+
 exports.changeMainInfo=async (req,res,next)=>{
     try{
         const { email, firstName, lastName , address , country , dateOfBirth , phone , bio , profileImageBytes, profileImageBytesName, profileImageExt , coverImageBytes , coverImageBytesName,coverImageExt , cvBytes,cvName,cvExt} = req.body;
@@ -140,7 +126,7 @@ exports.changeMainInfo=async (req,res,next)=>{
             if(lastName!=null){//if feild change enables (!=null)
                 if(!validator.isUsername(lastName) || lastName.length < 1 ||lastName.length > 50){//validate
                     return res.status(409).json({
-                        message: 'Not Valid firstName',
+                        message: 'Not Valid lastName',
                         body :req.body
                       });
                 }else{//change
@@ -150,7 +136,7 @@ exports.changeMainInfo=async (req,res,next)=>{
             if(address!=null){//if feild change enables (!=null)
                 if(address.length < 1 ||address.length > 50){//validate
                     return res.status(409).json({
-                        message: 'Not Valid firstName',
+                        message: 'Not Valid address',
                         body :req.body
                       });
                 }else{//change
@@ -160,7 +146,7 @@ exports.changeMainInfo=async (req,res,next)=>{
             if(country!=null){//if feild change enables (!=null)
                 if( country.length < 1 ||country.length > 50){//validate
                     return res.status(409).json({
-                        message: 'Not Valid firstName',
+                        message: 'Not Valid country',
                         body :req.body
                       });
                 }else{//change
@@ -170,7 +156,7 @@ exports.changeMainInfo=async (req,res,next)=>{
             if(dateOfBirth!=null){//if feild change enables (!=null)
                 if(!validator.isDate(dateOfBirth) || dateOfBirth.length < 8 ||dateOfBirth.length > 10){//validate
                     return res.status(409).json({
-                        message: 'Not Valid firstName',
+                        message: 'Not Valid dateOfBirth',
                         body :req.body
                       });
                 }else{//change
@@ -180,7 +166,7 @@ exports.changeMainInfo=async (req,res,next)=>{
             if(phone!=null){//if feild change enables (!=null)
                 if(!validator.isPhoneNumbere(phone) || phone.length < 8 ||phone.length > 10){//validate
                     return res.status(409).json({
-                        message: 'Not Valid firstName',
+                        message: 'Not Valid phone',
                         body :req.body
                       });
                 }else{//change
@@ -190,7 +176,7 @@ exports.changeMainInfo=async (req,res,next)=>{
             if(bio!=null){//if feild change enables (!=null)
                 if( bio.length < 1 ||bio.length > 250){//validate
                     return res.status(409).json({
-                        message: 'Not Valid firstName',
+                        message: 'Not Valid bio',
                         body :req.body
                       });
                 }else{//change

@@ -3,7 +3,9 @@ const userController=require('../controller/userController')
 const loginController=require('../controller/loginController')
 const forgetpasswordController=require('../controller/forgetpasswordController')
 const settingsController=require('../controller/settings/settingsController')
-const workExperienceController=require('../controller/settings/workExperience')
+const workExperienceController=require('../controller/settings/workExperienceController')
+const educationLevelController=require('../controller/settings/educationLevelController')
+const myPagesController=require('../controller/settings/myPagesController')
 const router=express.Router();
 
 
@@ -18,6 +20,16 @@ router.post('/settingChangepasswor',settingsController.changePassword);
 router.post('/settingChangeemailVerificationCode',settingsController.postVerificationCode);
 router.post('/settingChangeemail',settingsController.changeEmail);
 router.get('/getworkExperience',workExperienceController.getWorkExperience);
+router.post('/addworkExperience',workExperienceController.postAddworkExperience);
+router.post('/editworkExperience',workExperienceController.postEditworkExperience);
+router.post('/deleteworkExperience',workExperienceController.postDeleteworkExperience);
+router.get('/getEducationLevel',educationLevelController.getEducationLevel);
+router.post('/addEducationLevel',educationLevelController.postAddEducationLevel);
+router.post('/editEducationLevel',educationLevelController.postEditEducationLevel);
+router.post('/deleteEducationLevele',educationLevelController.postDeleteEducationLevel);
+
+
+router.get('/getMyPages',myPagesController.getMyPageInfo);
 
 router.post('/Login',loginController.postLogin);
 router.get('/posts',userController.getPosts);

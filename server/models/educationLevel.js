@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const sequelize = require('../util/database');
 const User = require('./user');
 
-const WorkExperience = sequelize.define('workExperience', {
+const EducationLevel = sequelize.define('educationLevel', {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
@@ -17,7 +17,7 @@ const WorkExperience = sequelize.define('workExperience', {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  company: {
+  School: {
     type: Sequelize.STRING,
     allowNull: false,
   },
@@ -32,8 +32,8 @@ const WorkExperience = sequelize.define('workExperience', {
     type: Sequelize.DATE,
   },
 });
-User.hasMany(WorkExperience, { foreignKey: 'username', onDelete: 'CASCADE' });
-WorkExperience.belongsTo(User, { foreignKey: 'username', onDelete: 'CASCADE' });
 
+User.hasMany(EducationLevel, { foreignKey: 'username', onDelete: 'CASCADE' });
+EducationLevel.belongsTo(User, { foreignKey: 'username', onDelete: 'CASCADE' });
 // Define foreign key constraint
-module.exports = WorkExperience;
+module.exports = EducationLevel;
