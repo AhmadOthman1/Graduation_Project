@@ -132,6 +132,9 @@ class ExperienceController extends GetxController {
           'Description': descriptionController.text,
           'Start Date': startDateController.text,
           'End Date': endDateController.text,
+
+           // take new data from array save in database just use assignAll() 
+          // see setPracticalExperiences() in the top
         });
       } else {
         // Edit existing experience
@@ -141,6 +144,8 @@ class ExperienceController extends GetxController {
           'Description': descriptionController.text,
           'Start Date': startDateController.text,
           'End Date': endDateController.text,
+           // take edit data from array save in database just use assignAll() 
+          // see setPracticalExperiences() in the top
         };
 
         // Reset editingIndex after editing

@@ -171,20 +171,25 @@ class ProfileMainPage extends StatelessWidget {
           ),
         ),
         _buildDivider(10),
-        Container(
-          height: 35,
-          padding: EdgeInsets.only(left: 10),
-          child: Row(
-            children: [
-              Icon(Icons.more_horiz),
-              SizedBox(width: 10),
-              Text(
-                "See your About info",
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-              ),
-              Spacer(),
-              Icon(Icons.arrow_forward, size: 30),
-            ],
+        InkWell(
+          onTap: () {
+            ///// go to about info
+          },
+          child: Container(
+            height: 35,
+            padding: EdgeInsets.only(left: 10),
+            child: Row(
+              children: [
+                Icon(Icons.more_horiz),
+                SizedBox(width: 10),
+                Text(
+                  "See About info",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                Spacer(),
+                Icon(Icons.arrow_forward, size: 30),
+              ],
+            ),
           ),
         ),
       ],

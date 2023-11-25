@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/settings/Profilesettings.dart';
+import 'package:growify/view/screen/homescreen/settings/theEducation.dart';
 import 'package:growify/view/screen/homescreen/settings/workexperience.dart';
 import 'package:http/http.dart' as http;
 abstract class SettingsController extends GetxController {
@@ -75,6 +76,20 @@ goToProfileSettingsPgae() async {
       
     } 
     //Get.to(WorkExperience());
+  }
+
+//////////////////////////////////////
+  // here for education 
+
+  goToEducationLevel(){
+    /* Active this code , create educationLevel list
+        Get.to(
+        Education(),
+        arguments: {'educationLevel': educationLevel},
+      );*/
+
+
+   
   }
   
 
