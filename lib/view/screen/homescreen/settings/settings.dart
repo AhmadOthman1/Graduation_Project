@@ -5,6 +5,7 @@ import 'package:growify/controller/home/settings_controller.dart';
 import 'package:growify/view/screen/homescreen/settings/Profilesettings.dart';
 import 'package:growify/view/screen/homescreen/settings/changeemail.dart';
 import 'package:growify/view/screen/homescreen/settings/changepassword.dart';
+import 'package:growify/view/screen/homescreen/settings/myPages.dart';
 import 'package:growify/view/screen/homescreen/settings/theEducation.dart';
 import 'package:growify/view/screen/homescreen/settings/workexperience.dart';
 
@@ -194,7 +195,32 @@ class Settings extends StatelessWidget {
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 2.0,
               ),
-
+              Container(
+                margin: EdgeInsets.only(top: 10, bottom: 10),
+                child: InkWell(
+                  onTap: () {
+                  
+                  Get.to(MyPages());
+                  },
+                  child: Container(
+                    height: 35,
+                    padding: EdgeInsets.only(left: 10),
+                    child: Row(
+                      children: [
+                        Icon(Icons.contact_page),
+                        SizedBox(width: 10),
+                        Text(
+                          "My Pages",
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        Spacer(),
+                        Icon(Icons.arrow_forward, size: 30),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
