@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 
 class SeeAboutInfoController extends GetxController {
 
-    final RxList<Map<String, String>> personalData =
-      <Map<String, String>>[].obs;
+    final RxMap personalData =
+     {}.obs;
 
       final RxList<Map<String, String>> educationLevels =
       <Map<String, String>>[].obs;
@@ -12,7 +12,7 @@ class SeeAboutInfoController extends GetxController {
         final RxList<Map<String, String>> practicalExperiences =
       <Map<String, String>>[].obs;
 
-    void setpersonalData(List<Map<String, String>> data) {
+    void setpersonalData(RxMap data) {
     personalData.assignAll(data);
   }
 

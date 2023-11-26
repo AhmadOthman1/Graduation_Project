@@ -10,15 +10,15 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ProfileMainPage extends StatelessWidget {
-  ProfileMainPage({Key? key, required this.userData}){
-     profileImage = (userData[0]["photo"] == null) ? "" : userData[0]["photo"];
-       coverImage =
+  ProfileMainPage({Key? key, required this.userData}) {
+    profileImage = (userData[0]["photo"] == null) ? "" : userData[0]["photo"];
+    coverImage =
         (userData[0]["coverImage"] == null) ? "" : userData[0]["coverImage"];
-        Bio = (userData[0]["bio"] == null) ? "" : userData[0]["bio"];
+    Bio = (userData[0]["bio"] == null) ? "" : userData[0]["bio"];
   }
-  
 
-   final ProfileMainPageControllerImp controller = Get.put(ProfileMainPageControllerImp());
+  final ProfileMainPageControllerImp controller =
+      Get.put(ProfileMainPageControllerImp());
 
   final List<Map<String, dynamic>> posts = [
     {
@@ -43,50 +43,41 @@ class ProfileMainPage extends StatelessWidget {
     // Add more posts as needed
   ];
   final List<Map<String, dynamic>> userData;
-    String? firstName;
-    String? lastName;
-    ////////////////////////////////
+  String? firstName;
+  String? lastName;
+  ////////////////////////////////
   final AssetImage defultprofileImage = AssetImage("images/profileImage.jpg");
   String? profileImageBytes;
   String? profileImageBytesName;
   String? profileImageExt;
   String? profileImage;
-   ImageProvider<Object>? profileBackgroundImage;
-   String? coverImage;
-     String? coverImageBytes;
+  ImageProvider<Object>? profileBackgroundImage;
+  String? coverImage;
+  String? coverImageBytes;
   String? coverImageBytesName;
   String? coverImageExt;
   final AssetImage defultcoverImage = AssetImage("images/coverImage.jpg");
   late ImageProvider<Object> coverBackgroundImage;
   String? Bio;
 
-
   @override
   Widget build(BuildContext context) {
-    
     //final List<Map<String, dynamic>> userData;
 
     // Extract 'user' from arguments
 
-        profileBackgroundImage = (profileImage != null && profileImage != "")
+    profileBackgroundImage = (profileImage != null && profileImage != "")
         ? Image.network(urlStarter + "/" + profileImage!).image
         : defultprofileImage;
 
-            coverBackgroundImage = (coverImage != null && coverImage != "")
+    coverBackgroundImage = (coverImage != null && coverImage != "")
         ? Image.network(urlStarter + "/" + coverImage!).image
         : defultcoverImage;
-   
 
-
-
-
-
-    
-    firstName;//=userData[0]["firstname"];
+    firstName; //=userData[0]["firstname"];
     lastName;
-    final ss=firstName;
+    final ss = firstName;
 
-    
     //String userName
     return Scaffold(
       appBar: AppBar(
@@ -102,7 +93,6 @@ class ProfileMainPage extends StatelessWidget {
           children: [
             _buildCoverPhoto(),
             _buildProfileInfo(),
-            _buildBio(),
             _Deatalis("The Details"),
             _buildDivider(10),
             _buildButtonsRow(),
@@ -116,16 +106,14 @@ class ProfileMainPage extends StatelessWidget {
   }
 
   Widget _buildCoverPhoto() {
-    return 
-    Container(
+    return Container(
       height: 200,
       decoration: BoxDecoration(
         image: DecorationImage(
           image: controller.coverImageBytes.isNotEmpty
-                                          ? MemoryImage(base64Decode(
-                                              controller.coverImageBytes.value))
-                                          : coverBackgroundImage, 
-          
+              ? MemoryImage(base64Decode(controller.coverImageBytes.value))
+              : coverBackgroundImage,
+
           //NetworkImage('${urlStarter}/${userData[0]["coverImage"]}'),
           //AssetImage('images/cover.jpg'), // Replace with your image
           fit: BoxFit.cover,
@@ -136,25 +124,15 @@ class ProfileMainPage extends StatelessWidget {
 
   Widget _buildProfileInfo() {
     return Padding(
-      
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-
-           CircleAvatar(
-                              radius: 60,
-                              backgroundImage: controller
-                                      .profileImageBytes.isNotEmpty
-                                  ? MemoryImage(base64Decode(
-                                      controller.profileImageBytes.value))
-                                  : profileBackgroundImage, // Replace with your default photo URL
-                            ),
-        /*  CircleAvatar(
+          CircleAvatar(
             radius: 60,
-            backgroundImage:
-               // AssetImage('${Image.network(urlStarter + "/" + userData[0]["photo"]!).image}'), // Replace with your image
-               NetworkImage('${urlStarter}/${userData[0]["photo"]}'),
-          ),*/
+            backgroundImage: controller.profileImageBytes.isNotEmpty
+                ? MemoryImage(base64Decode(controller.profileImageBytes.value))
+                : profileBackgroundImage, // Replace with your default photo URL
+          ),
           SizedBox(height: 16),
           Text(
             '${userData[0]["firstname"]} ${userData[0]["lastname"]}',
@@ -163,6 +141,19 @@ class ProfileMainPage extends StatelessWidget {
           Text(
             '@${userData[0]["username"]}', // Replace with the actual username
             style: TextStyle(fontSize: 16, color: Colors.blue),
+          ),
+          
+          Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8.0),
+                Text('$Bio',
+                 style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal, color: Colors.grey[700])
+                 ),
+              ],
+            ),
           ),
           SizedBox(height: 16),
           Row(
@@ -193,29 +184,14 @@ class ProfileMainPage extends StatelessWidget {
     );
   }
 
-  Widget _buildBio() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Bio",
-            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8.0),
-          Text(
-              '$Bio'),
-        ],
-      ),
-    );
-  }
-
-  Widget _Deatalis(String text){
+  Widget _Deatalis(String text) {
     return Container(
       margin: EdgeInsets.only(left: 5),
       alignment: Alignment.bottomLeft,
-      child: Text(text,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),
+      child: Text(
+        text,
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      ),
     );
   }
 
@@ -223,7 +199,7 @@ class ProfileMainPage extends StatelessWidget {
     return Column(
       children: [
         InkWell(
-          onTap: (){
+          onTap: () {
             Get.to(Settings());
           },
           child: Container(
@@ -247,10 +223,9 @@ class ProfileMainPage extends StatelessWidget {
         InkWell(
           onTap: () {
             ///// go to about info
-           // Get.to(SeeAboutInfo());
-         //  controller.goToAboutInfo();
-         controller.goToAboutInfo();
-
+            // Get.to(SeeAboutInfo());
+            //  controller.goToAboutInfo();
+            controller.goToAboutInfo();
           },
           child: Container(
             height: 35,
@@ -325,7 +300,7 @@ class ProfileMainPage extends StatelessWidget {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                     // controller.goToProfilePage();
+                                      // controller.goToProfilePage();
                                     },
                                     child: CircleAvatar(
                                       backgroundImage:

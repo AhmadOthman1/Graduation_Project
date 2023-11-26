@@ -40,7 +40,7 @@ goToProfileSettingsPgae() async {
     if(res.statusCode == 409){
       return resbody['message'];
     }else if(res.statusCode == 200){
-
+      
       Get.to(ProfileSettings(userData: [resbody["user"]]));
     } 
  
