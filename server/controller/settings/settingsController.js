@@ -57,9 +57,21 @@ exports.getMainInfo=async (req,res,next)=>{
             }
             if(existingEmail.cv==null){
                 cv=null;
+            }else{
+                const cvFilePath = await path.join('cvs', existingEmail.cv);
+                // Check if the file exists
+                try {
+                    await fs.promises.access(cvFilePath, fs.constants.F_OK);
+                    cv = existingEmail.cv;
+                    console.log("cv fetched");
 
+                  } catch (err) {
+                    console.error(err);
+                    cv = null;
+                    await User.update({ cv: cv }, { where: { email } });
+                  }
+                
             }
-
             return res.status(200).json({
                 message: 'User found',
                 user: {
