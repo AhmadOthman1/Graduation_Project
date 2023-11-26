@@ -19,6 +19,7 @@ toggleConnectButton();
 goToSettingsPgae();
 goToprofilepage();
 getprfilepage();
+getprfileColleaguespage();
 }
 
 class HomePageControllerImp extends HomePageController {
@@ -79,10 +80,7 @@ class HomePageControllerImp extends HomePageController {
     Get.offNamed(AppRoute.forgetpassword);
   }
   
-  @override
-  goToProfileColleaguesPage() {
-    Get.to(ColleaguesProfile());
-  }
+
   
   @override
   toggleConnectButton() {
@@ -127,6 +125,37 @@ class HomePageControllerImp extends HomePageController {
    // Get.to(ProfileMainPage());
 
   }
+  @override
+
+   Future getprfileColleaguespage() async{
+        var url = urlStarter + "/user/settingsGetMainInfo?email=$Email";
+    var responce = await http.get(Uri.parse(url),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        });
+  print(responce);
+    return responce;
+
+  }
+
+  
+
+  
+
+    @override
+  goToProfileColleaguesPage()async {
+         var res = await getprfileColleaguespage();
+    var resbody = jsonDecode(res.body);
+    print(resbody['message']);
+    print(res.statusCode);
+    print(resbody);
+    if(res.statusCode == 409){
+      return resbody['message'];
+    }else if(res.statusCode == 200){
+
+
+    Get.to(ColleaguesProfile(userData: [resbody["user"]]));
+  }
   
  
-}
+}}

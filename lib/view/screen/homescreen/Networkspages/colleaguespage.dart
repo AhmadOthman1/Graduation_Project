@@ -67,7 +67,7 @@ class ColleaguesPage extends StatelessWidget {
                     ListTile(
                       leading: InkWell(
                         onTap: (){
-                          Get.to(ColleaguesProfile());
+                       //   Get.to(ColleaguesProfile());
                         },
                         child: CircleAvatar(
                           backgroundImage: AssetImage(colleague['image']),

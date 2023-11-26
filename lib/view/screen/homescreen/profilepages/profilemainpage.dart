@@ -6,9 +6,16 @@ import 'package:growify/view/screen/homescreen/profilepages/seeaboutinfo.dart';
 import 'package:growify/view/screen/homescreen/settings/settings.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 import 'package:get/get.dart';
+import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ProfileMainPage extends StatelessWidget {
-  ProfileMainPage({Key? key, required this.userData});
+  ProfileMainPage({Key? key, required this.userData}){
+     profileImage = (userData[0]["photo"] == null) ? "" : userData[0]["photo"];
+       coverImage =
+        (userData[0]["coverImage"] == null) ? "" : userData[0]["coverImage"];
+        Bio = (userData[0]["bio"] == null) ? "" : userData[0]["bio"];
+  }
   
 
    final ProfileMainPageControllerImp controller = Get.put(ProfileMainPageControllerImp());
@@ -38,6 +45,21 @@ class ProfileMainPage extends StatelessWidget {
   final List<Map<String, dynamic>> userData;
     String? firstName;
     String? lastName;
+    ////////////////////////////////
+  final AssetImage defultprofileImage = AssetImage("images/profileImage.jpg");
+  String? profileImageBytes;
+  String? profileImageBytesName;
+  String? profileImageExt;
+  String? profileImage;
+   ImageProvider<Object>? profileBackgroundImage;
+   String? coverImage;
+     String? coverImageBytes;
+  String? coverImageBytesName;
+  String? coverImageExt;
+  final AssetImage defultcoverImage = AssetImage("images/coverImage.jpg");
+  late ImageProvider<Object> coverBackgroundImage;
+  String? Bio;
+
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +67,14 @@ class ProfileMainPage extends StatelessWidget {
     //final List<Map<String, dynamic>> userData;
 
     // Extract 'user' from arguments
+
+        profileBackgroundImage = (profileImage != null && profileImage != "")
+        ? Image.network(urlStarter + "/" + profileImage!).image
+        : defultprofileImage;
+
+            coverBackgroundImage = (coverImage != null && coverImage != "")
+        ? Image.network(urlStarter + "/" + coverImage!).image
+        : defultcoverImage;
    
 
 
@@ -55,6 +85,8 @@ class ProfileMainPage extends StatelessWidget {
     firstName;//=userData[0]["firstname"];
     lastName;
     final ss=firstName;
+
+    
     //String userName
     return Scaffold(
       appBar: AppBar(
@@ -84,11 +116,17 @@ class ProfileMainPage extends StatelessWidget {
   }
 
   Widget _buildCoverPhoto() {
-    return Container(
+    return 
+    Container(
       height: 200,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: NetworkImage('${urlStarter}/${userData[0]["coverImage"]}'),
+          image: controller.coverImageBytes.isNotEmpty
+                                          ? MemoryImage(base64Decode(
+                                              controller.coverImageBytes.value))
+                                          : coverBackgroundImage, 
+          
+          //NetworkImage('${urlStarter}/${userData[0]["coverImage"]}'),
           //AssetImage('images/cover.jpg'), // Replace with your image
           fit: BoxFit.cover,
         ),
@@ -102,12 +140,21 @@ class ProfileMainPage extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          CircleAvatar(
+
+           CircleAvatar(
+                              radius: 60,
+                              backgroundImage: controller
+                                      .profileImageBytes.isNotEmpty
+                                  ? MemoryImage(base64Decode(
+                                      controller.profileImageBytes.value))
+                                  : profileBackgroundImage, // Replace with your default photo URL
+                            ),
+        /*  CircleAvatar(
             radius: 60,
             backgroundImage:
                // AssetImage('${Image.network(urlStarter + "/" + userData[0]["photo"]!).image}'), // Replace with your image
                NetworkImage('${urlStarter}/${userData[0]["photo"]}'),
-          ),
+          ),*/
           SizedBox(height: 16),
           Text(
             '${userData[0]["firstname"]} ${userData[0]["lastname"]}',
@@ -158,7 +205,7 @@ class ProfileMainPage extends StatelessWidget {
           ),
           const SizedBox(height: 8.0),
           Text(
-              '${userData[0]["bio"]}'),
+              '$Bio'),
         ],
       ),
     );
@@ -201,7 +248,8 @@ class ProfileMainPage extends StatelessWidget {
           onTap: () {
             ///// go to about info
            // Get.to(SeeAboutInfo());
-           controller.goToAboutInfo();
+         //  controller.goToAboutInfo();
+         controller.goToAboutInfo();
 
           },
           child: Container(

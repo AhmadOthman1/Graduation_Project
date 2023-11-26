@@ -10,8 +10,11 @@ goTosigninpage();
 
 class LogOutButtonControllerImp extends GetxController {
 goTosigninpage(){
-  GetStorage().write("loginemail", "");
-  GetStorage().write("loginpassword", "");
+ // GetStorage().write("loginemail", "");
+ // GetStorage().write("loginpassword", "");
+  GetStorage().remove('loginemail');
+  GetStorage().remove('loginpassword');
+
   Get.toNamed(AppRoute.login);
 }
 }

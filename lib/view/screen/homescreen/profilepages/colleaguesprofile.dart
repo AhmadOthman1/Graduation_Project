@@ -2,9 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/ColleaguesProfile_controller.dart';
 import 'package:growify/controller/home/homepage_controller.dart';
+import 'package:growify/global.dart';
+import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ColleaguesProfile extends StatelessWidget {
-  ColleaguesProfile({super.key});
+  ColleaguesProfile({super.key, required this.userData}){
+         profileImage = (userData[0]["photo"] == null) ? "" : userData[0]["photo"];
+       coverImage =
+        (userData[0]["coverImage"] == null) ? "" : userData[0]["coverImage"];
+        Bio = (userData[0]["bio"] == null) ? "" : userData[0]["bio"];
+  }
   final ColleaguesProfileControllerImp controller =
       Get.put(ColleaguesProfileControllerImp());
 
@@ -30,15 +38,37 @@ class ColleaguesProfile extends StatelessWidget {
 
     // Add more posts as needed
   ];
+  final List<Map<String, dynamic>> userData;
+  final AssetImage defultprofileImage = AssetImage("images/profileImage.jpg");
+  String? profileImageBytes;
+  String? profileImageBytesName;
+  String? profileImageExt;
+  String? profileImage;
+  ImageProvider<Object>? profileBackgroundImage;
+  String? coverImage;
+  String? coverImageBytes;
+  String? coverImageBytesName;
+  String? coverImageExt;
+  final AssetImage defultcoverImage = AssetImage("images/coverImage.jpg");
+  late ImageProvider<Object> coverBackgroundImage;
+  String? Bio;
 
   @override
   Widget build(BuildContext context) {
+    profileBackgroundImage = (profileImage != null && profileImage != "")
+        ? Image.network(urlStarter + "/" + profileImage!).image
+        : defultprofileImage;
+
+    coverBackgroundImage = (coverImage != null && coverImage != "")
+        ? Image.network(urlStarter + "/" + coverImage!).image
+        : defultcoverImage;
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
-              margin: EdgeInsets.only(top: 50, bottom: 10),
+              margin: EdgeInsets.only(top: 50, ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -51,8 +81,9 @@ class ColleaguesProfile extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
-                      "Asem Aws",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      '${userData[0]["firstname"]} ${userData[0]["lastname"]}',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ),
                   SizedBox(width: 180),
@@ -63,21 +94,15 @@ class ColleaguesProfile extends StatelessWidget {
               color: Color.fromARGB(255, 194, 193, 193),
               thickness: 2.0,
             ),
-            
-        
-                  _buildCoverPhoto(),
-                  _buildProfileInfo(),
-                  _buildBio(),
-                   _Deatalis("The Details"),
-                   _buildDivider(10),
-                  _buildButtonsRow(),
-                  _buildDivider(10),
-                  _Deatalis("The Posts"),
-                  _buildPostSection(),
-                  
-                    
-                
-            
+            _buildCoverPhoto(),
+            _buildProfileInfo(),
+            _buildBio(),
+            _Deatalis("The Details"),
+            _buildDivider(10),
+            _buildButtonsRow(),
+            _buildDivider(10),
+            _Deatalis("The Posts"),
+            _buildPostSection(),
           ],
         ),
       ),
@@ -89,30 +114,41 @@ class ColleaguesProfile extends StatelessWidget {
       height: 200,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('images/cover.jpg'), // Replace with your image
+          image: controller.coverImageBytes.isNotEmpty
+              ? MemoryImage(base64Decode(controller.coverImageBytes.value))
+              : coverBackgroundImage,
+          //('${urlStarter}/${userData[0]["coverImage"]}'),
+          //AssetImage('images/cover.jpg'), // Replace with your image
           fit: BoxFit.cover,
         ),
       ),
     );
   }
 
-    Widget _buildProfileInfo() {
+  Widget _buildProfileInfo() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
           CircleAvatar(
             radius: 60,
-            backgroundImage:
-                AssetImage('images/obaida.jpeg'), // Replace with your image
+            backgroundImage: controller.profileImageBytes.isNotEmpty
+                ? MemoryImage(base64Decode(controller.profileImageBytes.value))
+                : profileBackgroundImage, // Replace with your default photo URL
           ),
+          /*CircleAvatar(
+            radius: 60,
+            backgroundImage:
+                //AssetImage('images/obaida.jpeg'), // Replace with your image
+                NetworkImage('${urlStarter}/${userData[0]["photo"]}'),
+          ),*/
           SizedBox(height: 16),
           Text(
-            'Asem Aws',
+            '${userData[0]["firstname"]} ${userData[0]["lastname"]}',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           Text(
-            '@asem_aws', // Replace with the actual username
+            '@${userData[0]["username"]}', // Replace with the actual username
             style: TextStyle(fontSize: 16, color: Colors.blue),
           ),
           SizedBox(height: 16),
@@ -124,30 +160,23 @@ class ColleaguesProfile extends StatelessWidget {
               _buildInfoItem('Following', '243'),
             ],
           ),
-                      
-              Container(
-                margin: EdgeInsets.only(top: 10),
-                child: MaterialButton(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 13, horizontal: 140),
-                  onPressed: (){},
-                  color: Color.fromARGB(255, 85, 191, 218),
-                  textColor: Colors.white,
-                  child: Text('Follow Up'),
-                ),
-              ),
+          Container(
+            margin: EdgeInsets.only(top: 10),
+            child: MaterialButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 13, horizontal: 140),
+              onPressed: () {},
+              color: Color.fromARGB(255, 85, 191, 218),
+              textColor: Colors.white,
+              child: Text('Follow Up'),
+            ),
+          ),
         ],
       ),
     );
   }
-
-
-
-
-
-
 
   Widget _buildInfoItem(String label, String value) {
     return Column(
@@ -164,7 +193,7 @@ class ColleaguesProfile extends StatelessWidget {
     );
   }
 
-    Widget _buildBio() {
+  Widget _buildBio() {
     return Container(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -175,22 +204,24 @@ class ColleaguesProfile extends StatelessWidget {
             style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8.0),
-          Text(
-              "Software developer passionate about Flutter and mobile app development."),
+          Text('$Bio'),
         ],
       ),
     );
   }
 
-  Widget _Deatalis(String text){
+  Widget _Deatalis(String text) {
     return Container(
       margin: EdgeInsets.only(left: 5),
       alignment: Alignment.bottomLeft,
-      child: Text(text,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),
+      child: Text(
+        text,
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      ),
     );
   }
 
-    Widget _buildDivider(double HeigthBetween) {
+  Widget _buildDivider(double HeigthBetween) {
     return Column(
       children: [
         SizedBox(height: HeigthBetween),
@@ -202,15 +233,12 @@ class ColleaguesProfile extends StatelessWidget {
     );
   }
 
-    Widget _buildButtonsRow() {
+  Widget _buildButtonsRow() {
     return Column(
       children: [
-  
         InkWell(
           onTap: () {
             controller.goToAboutInfo();
-
-
           },
           child: Container(
             height: 35,
@@ -233,7 +261,7 @@ class ColleaguesProfile extends StatelessWidget {
     );
   }
 
-    Widget _buildPostSection() {
+  Widget _buildPostSection() {
     return Center(
       child: ListView.builder(
         itemCount: posts.length,
@@ -273,7 +301,7 @@ class ColleaguesProfile extends StatelessWidget {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                     // controller.goToProfilePage();
+                                      // controller.goToProfilePage();
                                     },
                                     child: CircleAvatar(
                                       backgroundImage:
@@ -367,7 +395,4 @@ class ColleaguesProfile extends StatelessWidget {
       ),
     );
   }
-
-  
-
 }

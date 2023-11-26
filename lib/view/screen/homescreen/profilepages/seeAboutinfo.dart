@@ -3,24 +3,57 @@ import 'package:get/get.dart';
 import 'package:growify/controller/home/SeeAboutInfo_Controller.dart';
 
 class SeeAboutInfo extends StatelessWidget {
-  SeeAboutInfo({super.key});
+  SeeAboutInfo({super.key}){
+   // profileImage = (userData[0]["photo"] == null) ? "" : userData[0]["photo"];
+  }
   final SeeAboutInfoController controller = Get.put(SeeAboutInfoController());
+final AssetImage defultprofileImage = AssetImage("images/profileImage.jpg");
+  String? profileImage;
+    String? profileImageBytes;
+  String? profileImageBytesName;
+  String? profileImageExt;
+
+
+
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
- 
-    final Map<String, dynamic> arguments = Get.arguments;
-    final RxList<Map<String, String>> personalDetails =
-        arguments['personalDetails'];
-    final RxList<Map<String, String>> educationLevels =
-        arguments['educationLevels'];
-            final RxList<Map<String, String>> practicalExperiences =
-        arguments['practicalExperiences'];
 
-
-    controller.setpersonalData(personalDetails);
+    
+                           var args = Get.arguments;
+    List<Map<String, String>> educationLevels =
+        args != null ? args['educationLevel'] : [].obs;
     controller.setEducationLevels(educationLevels);
-    controller.setPracticalExperiences(practicalExperiences);
+
+                    
+    List<Map<String, String>> practicalExperiences =
+        args != null ? args['practicalExperiences'] : [].obs;
+
+        controller.setPracticalExperiences(practicalExperiences);
+
+          /*  List<Map<String, String>> personalDetails =
+        args != null ? args['practicalExperiences'] : [].obs;
+
+        controller.setPracticalExperiences(practicalExperiences);*/
+ 
+   // final Map<String, dynamic> arguments = Get.arguments;
+   // final RxList<Map<String, String>> personalDetails =
+     //   arguments['personalDetails'];
+   // List<Map<String, String>> educationLevel =
+//args != null ? args['educationLevel'] : [];
+           // final RxList<Map<String, String>> practicalExperiences =
+       // arguments['practicalExperiences'];
+
+
+
+   // controller.setpersonalData(personalDetails);
+    
+   // controller.setPracticalExperiences(practicalExperiences);
 
     return Scaffold(
       appBar: AppBar(
@@ -36,9 +69,9 @@ class SeeAboutInfo extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildPersonalDetails(controller),
+           // _buildPersonalDetails(controller),
             _buildEducationList(controller),
-            _buildExperienceList(controller),
+           _buildExperienceList(controller),
           ],
         ),
       ),
@@ -204,6 +237,7 @@ class SeeAboutInfo extends StatelessWidget {
                   children: [
                     
                     ListTile(
+                      
                       title: Text('Specialty: ${education['Specialty']}'),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
