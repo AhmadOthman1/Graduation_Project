@@ -57,8 +57,9 @@ class LoginControllerImp extends LoginController {
         return resbody['message'];
       } else if (res.statusCode == 200 && resbody['message'] == "logged") {
         resbody['message'] = "";
-        GetStorage().write("loginemail", email);
-        GetStorage().write("loginpassword", password);
+        GetStorage().write("loginemail", resbody['body']['email']);
+        GetStorage().write("loginpassword", resbody['body']['password']);
+
         Get.offNamed(AppRoute.homescreen);
       }
     } catch (err) {

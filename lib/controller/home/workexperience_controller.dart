@@ -123,9 +123,8 @@ class ExperienceController extends GetxController {
       if (editingIndex.value == -1) {
         //send the data for the server
         var url = urlStarter + "/user/addworkExperience";
-        var Email = GetStorage().read("loginemail");
         Map<String, dynamic> jsonData = {
-          'email': Email,
+          'email': GetStorage().read("loginemail"),
           'Specialty': specialtyController.text,
           'Company': companyController.text,
           'Description': descriptionController.text,
@@ -159,9 +158,8 @@ class ExperienceController extends GetxController {
       } else {
         // Edit existing experience
         var url = urlStarter + "/user/editworkExperience";
-        var Email = GetStorage().read("loginemail");
         Map<String, dynamic> jsonData = {
-          'email': Email,
+          'email': GetStorage().read("loginemail"),
           'id': practicalExperiences[editingIndex.value]['id'],
           'Specialty': specialtyController.text,
           'Company': companyController.text,
@@ -225,9 +223,8 @@ class ExperienceController extends GetxController {
 
   Future<void> removeExperience(int index) async {
     var url = urlStarter + "/user/deleteworkExperience";
-    var Email = GetStorage().read("loginemail");
     Map<String, dynamic> jsonData = {
-      'email': Email,
+      'email': GetStorage().read("loginemail"),
       'id': practicalExperiences[index]['id'],
     };
     String jsonString = jsonEncode(jsonData);

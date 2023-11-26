@@ -19,7 +19,7 @@ class Education extends StatelessWidget {
 
             // Set the data in educationLevels
     controller.setEducationLevels(educationLevel);
-
+controller.undoEducation();
 
 
 

@@ -10,7 +10,6 @@ abstract class ChangePasswordController extends GetxController{
 
 postSaveChanges(_oldPassword,_newPassword);
 SaveChanges(_oldPassword,_newPassword);
-String? Email=GetStorage().read("loginemail") ;
 }
 
 class ChangePasswordControllerImp extends ChangePasswordController{
@@ -48,7 +47,7 @@ postSaveChanges(_oldPassword,_newPassword)async {
     var url = urlStarter + "/user/settingChangepasswor";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
-          "email": Email,
+          "email": GetStorage().read("loginemail"),
           "oldPassword": _oldPassword,
           "newPassword": _newPassword,
         }),

@@ -32,7 +32,6 @@ abstract class ProfileSettingsController extends GetxController {
       cvName,
       cvExt);
 }
-String? Email=GetStorage().read("loginemail") ;
 /**
  List<int>? profileImageBytes;
   String? profileImageBytesName;
@@ -140,7 +139,7 @@ final TextEditingController startDateController = TextEditingController();
  
     
     Map<String, dynamic> jsonData = {
-      "email":Email, 
+      "email":GetStorage().read("loginemail"), 
       "firstName":
           (isTextFieldEnabled == true) ? textFieldText!.trim() : null,
       "lastName":

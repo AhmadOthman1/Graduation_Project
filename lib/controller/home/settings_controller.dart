@@ -11,7 +11,6 @@ import 'package:http/http.dart' as http;
 abstract class SettingsController extends GetxController {
 
 
-  String? Email=GetStorage().read("loginemail") ;
 getWorkExperiencePgae();
 goToWorkExperiencePgae();
 goToProfileSettingsPgae();
@@ -23,7 +22,8 @@ getEducationLevel();
 class SettingsControllerImp extends SettingsController {
 
 Future getProfileSettingsPgae() async {
-    var url = urlStarter + "/user/settingsGetMainInfo?email=$Email";
+  print("ffffffffffffffffffffff");
+    var url = urlStarter + "/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -47,7 +47,7 @@ goToProfileSettingsPgae() async {
 
   }
    Future getWorkExperiencePgae() async {
-    var url = urlStarter + "/user/getworkExperience?email=$Email";
+    var url = urlStarter + "/user/getworkExperience?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -77,7 +77,7 @@ goToProfileSettingsPgae() async {
   }
 
 getEducationLevel() async {
-var url = urlStarter + "/user/getEducationLevel?email=$Email";
+var url = urlStarter + "/user/getEducationLevel?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',

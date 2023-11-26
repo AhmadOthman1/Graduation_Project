@@ -109,7 +109,6 @@ class Login extends StatelessWidget {
                       onPressed: () async {
                        
                        if(formstate.currentState!.validate()){
-                        print("Vaild");
                         var message = await controller.login(email , password);
                         (message != null) ? showDialog(
                           context: context,

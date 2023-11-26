@@ -17,7 +17,6 @@ class ChangeEmailControllerImp extends ChangeEmailController {
   late TextEditingController email;
 
   final yourPassword = ''.obs;
-  String Email = GetStorage().read("loginemail");
   final obscureyourPassword = true.obs;
 
   void toggleYourPasswordVisibility() {
@@ -46,7 +45,7 @@ class ChangeEmailControllerImp extends ChangeEmailController {
     var url = urlStarter + "/user/settingChangeemail";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
-          "email": Email,
+          "email": GetStorage().read("loginemail"),
           "newEmail": newEmail.trim(),
           "Password": password.toString(),
         }),

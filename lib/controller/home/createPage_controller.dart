@@ -20,10 +20,9 @@ class CreatePageController {
 
   Future postCreatePage(pageId,pageName,description,address,contactInfo,country,speciality,pageType) async {
     var url = urlStarter + "/user/postCreatePage";
-    var Email = GetStorage().read("loginemail");
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
-          "email":Email,
+          "email":GetStorage().read("loginemail"),
           "pageId": pageId.trim(),
           "pageName": pageName.trim(),
           "description": description.trim(),

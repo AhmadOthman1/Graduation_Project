@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/myPages_controller.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
@@ -92,7 +93,7 @@ class HomePageControllerImp extends HomePageController {
   ///////////////////////////////////////////////////////
    
   Future getprfilepage() async{
-        var url = urlStarter + "/user/settingsGetMainInfo?email=$Email";
+        var url = urlStarter + "/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -128,7 +129,7 @@ class HomePageControllerImp extends HomePageController {
   @override
 
    Future getprfileColleaguespage() async{
-        var url = urlStarter + "/user/settingsGetMainInfo?email=$Email";
+        var url = urlStarter + "/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',

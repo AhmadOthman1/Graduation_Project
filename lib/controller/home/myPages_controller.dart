@@ -18,11 +18,10 @@ class PageInfo {
   PageInfo(this.id, this.name, this.description, this.country, this.address, this.contactInfo, this.specialty, this.pageType, this.photo, this.coverImage);
 }
 
-String? Email = GetStorage().read("loginemail");
 
 class MyPagesController {
   Future<List<PageInfo>?> getMyPagesData() async {
-    var url = urlStarter + "/user/getMyPages?email=$Email";
+    var url = urlStarter + "/user/getMyPages?email=${GetStorage().read("loginemail")}";
     var response = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
     });

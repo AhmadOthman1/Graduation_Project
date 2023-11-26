@@ -123,9 +123,8 @@ class EducationController extends GetxController {
       if (editingIndex.value == -1) {
         //send the data for the server
         var url = urlStarter + "/user/addEducationLevel";
-        var Email = GetStorage().read("loginemail");
         Map<String, dynamic> jsonData = {
-          'email': Email,
+          'email': GetStorage().read("loginemail"),
           'Specialty': specialtyController.text,
           'School': schoolController.text,
           'Description': descriptionController.text,
@@ -158,9 +157,8 @@ class EducationController extends GetxController {
         }
       } else {
         var url = urlStarter + "/user/editEducationLevel";
-        var Email = GetStorage().read("loginemail");
         Map<String, dynamic> jsonData = {
-          'email': Email,
+          'email': GetStorage().read("loginemail"),
           'id': educationLevels[editingIndex.value]['id'],
           'Specialty': specialtyController.text,
           'School': schoolController.text,
@@ -223,9 +221,8 @@ class EducationController extends GetxController {
 
   Future<void> removeEducation(int index) async {
     var url = urlStarter + "/user/deleteEducationLevele";
-    var Email = GetStorage().read("loginemail");
     Map<String, dynamic> jsonData = {
-      'email': Email,
+      'email': GetStorage().read("loginemail"),
       'id': educationLevels[index]['id'],
     };
     String jsonString = jsonEncode(jsonData);
