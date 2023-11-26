@@ -1,15 +1,24 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:growify/controller/home/myPages_controller.dart';
 import 'package:growify/core/constant/routes.dart';
+import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/notificationspages/notificationmainpage.dart';
+import 'package:growify/view/screen/homescreen/profilepages/colleaguesprofile.dart';
+import 'package:growify/view/screen/homescreen/profilepages/profilemainpage.dart';
+import 'package:http/http.dart' as http;
 
 abstract class HomePageController extends GetxController{
 login();
 goToSignup();
 goToForgetPassword();
-goToProfilePage();
+goToProfileColleaguesPage();
 toggleConnectButton();
 goToSettingsPgae();
+goToprofilepage();
+getprfilepage();
 }
 
 class HomePageControllerImp extends HomePageController {
@@ -71,8 +80,8 @@ class HomePageControllerImp extends HomePageController {
   }
   
   @override
-  goToProfilePage() {
-    
+  goToProfileColleaguesPage() {
+    Get.to(ColleaguesProfile());
   }
   
   @override
@@ -81,4 +90,43 @@ class HomePageControllerImp extends HomePageController {
     update();
     
   }
+
+  ///////////////////////////////////////////////////////
+   
+  Future getprfilepage() async{
+        var url = urlStarter + "/user/settingsGetMainInfo?email=$Email";
+    var responce = await http.get(Uri.parse(url),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        });
+  print(responce);
+    return responce;
+
+  }
+  
+  
+  @override
+  goToprofilepage() async{
+
+     var res = await getprfilepage();
+    var resbody = jsonDecode(res.body);
+    print(resbody['message']);
+    print(res.statusCode);
+    print(resbody);
+    if(res.statusCode == 409){
+      return resbody['message'];
+    }else if(res.statusCode == 200){
+     // Get.to(ProfileMainPage(), arguments: {'user': resbody["user"]});
+
+
+      Get.to(ProfileMainPage(userData: [resbody["user"]]));
+    } 
+ 
+
+
+   // Get.to(ProfileMainPage());
+
+  }
+  
+ 
 }

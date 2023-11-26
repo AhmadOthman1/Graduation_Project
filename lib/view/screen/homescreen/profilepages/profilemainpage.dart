@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:growify/controller/home/homepage_controller.dart';
 import 'package:growify/controller/home/profileMainPage_controller.dart';
+import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/profilepages/seeaboutinfo.dart';
 import 'package:growify/view/screen/homescreen/settings/settings.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 import 'package:get/get.dart';
 
 class ProfileMainPage extends StatelessWidget {
-  final AssetImage _profileImage = AssetImage("images/obaida.jpeg");
-  final AssetImage _coverImage = AssetImage("images/flutterimage.png");
+  ProfileMainPage({Key? key, required this.userData});
+  
+
    final ProfileMainPageControllerImp controller = Get.put(ProfileMainPageControllerImp());
 
   final List<Map<String, dynamic>> posts = [
@@ -33,9 +35,27 @@ class ProfileMainPage extends StatelessWidget {
 
     // Add more posts as needed
   ];
+  final List<Map<String, dynamic>> userData;
+    String? firstName;
+    String? lastName;
 
   @override
   Widget build(BuildContext context) {
+    
+    //final List<Map<String, dynamic>> userData;
+
+    // Extract 'user' from arguments
+   
+
+
+
+
+
+    
+    firstName;//=userData[0]["firstname"];
+    lastName;
+    final ss=firstName;
+    //String userName
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -68,7 +88,8 @@ class ProfileMainPage extends StatelessWidget {
       height: 200,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('images/cover.jpg'), // Replace with your image
+          image: NetworkImage('${urlStarter}/${userData[0]["coverImage"]}'),
+          //AssetImage('images/cover.jpg'), // Replace with your image
           fit: BoxFit.cover,
         ),
       ),
@@ -77,21 +98,23 @@ class ProfileMainPage extends StatelessWidget {
 
   Widget _buildProfileInfo() {
     return Padding(
+      
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
           CircleAvatar(
             radius: 60,
             backgroundImage:
-                AssetImage('images/obaida.jpeg'), // Replace with your image
+               // AssetImage('${Image.network(urlStarter + "/" + userData[0]["photo"]!).image}'), // Replace with your image
+               NetworkImage('${urlStarter}/${userData[0]["photo"]}'),
           ),
           SizedBox(height: 16),
           Text(
-            'John Doe',
+            '${userData[0]["firstname"]} ${userData[0]["lastname"]}',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           Text(
-            '@john_doe', // Replace with the actual username
+            '@${userData[0]["username"]}', // Replace with the actual username
             style: TextStyle(fontSize: 16, color: Colors.blue),
           ),
           SizedBox(height: 16),
@@ -135,7 +158,7 @@ class ProfileMainPage extends StatelessWidget {
           ),
           const SizedBox(height: 8.0),
           Text(
-              "Software developer passionate about Flutter and mobile app development."),
+              '${userData[0]["bio"]}'),
         ],
       ),
     );
@@ -254,7 +277,7 @@ class ProfileMainPage extends StatelessWidget {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      controller.goToProfilePage();
+                                     // controller.goToProfilePage();
                                     },
                                     child: CircleAvatar(
                                       backgroundImage:

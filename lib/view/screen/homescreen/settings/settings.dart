@@ -170,7 +170,7 @@ class Settings extends StatelessWidget {
                 child: InkWell(
                   onTap: () {
                   
-                 // Get.to(Education());
+                 
                  controller.goToEducationLevel();
                   },
                   child: Container(

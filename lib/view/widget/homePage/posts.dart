@@ -70,7 +70,7 @@ class Post extends StatelessWidget {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      controller.goToProfilePage();
+                                      controller.goToProfileColleaguesPage();
                                     },
                                     child: CircleAvatar(
                                       backgroundImage: AssetImage(post['image']),

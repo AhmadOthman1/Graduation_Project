@@ -88,7 +88,8 @@ class Homepage extends StatelessWidget {
         backgroundColor: Colors.white,
         child: InkWell(
           onTap: (){
-            Get.to(ProfileMainPage());
+           // Get.to(ProfileMainPage());
+           controller.goToprofilepage();
           },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
