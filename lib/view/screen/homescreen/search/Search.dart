@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
+import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class Search extends StatelessWidget {
   final SearchControllerImp controller = Get.put(SearchControllerImp());
   GlobalKey<FormState> formstate = GlobalKey();
 
   final AssetImage defultprofileImage = AssetImage("images/profileImage.jpg");
-  String? profileImageBytes;
-  String? profileImageBytesName;
-  String? profileImageExt;
+  ImageProvider<Object>? profileBackgroundImage;
   String? profileImage;
-  
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +21,12 @@ class Search extends StatelessWidget {
         child: AppBar(
           centerTitle: true,
           backgroundColor: Colors.white,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Get.back(); // Navigate back
+            },
+          ),
           title: Form(
             key: formstate,
             child: Column(
@@ -38,7 +43,7 @@ class Search extends StatelessWidget {
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 15, horizontal: 30),
                       suffixIcon: InkWell(
-                        child: const Icon(Icons.search),
+                        child: const Icon(Icons.search,color: Colors.black,),
                         onTap: () {},
                       ),
                       border: OutlineInputBorder(
@@ -61,9 +66,9 @@ class Search extends StatelessWidget {
               onPressed: () {
                 if (formstate.currentState!.validate()) {
                   controller.searchInDataBase();
-                  print("Vaild");
-                }else{
-                  print("notVaild");
+                  print("Valid");
+                } else {
+                  print("Not Valid");
                 }
               },
               child: const Text(
@@ -135,6 +140,8 @@ class Search extends StatelessWidget {
                 children: [
                   Obx(
                     () => ListView.separated(
+                      // for user
+
                       padding: const EdgeInsets.all(15),
                       itemCount: controller.userList.length,
                       separatorBuilder: (BuildContext context, int index) =>
@@ -165,6 +172,24 @@ class Search extends StatelessWidget {
                         final name = controller.pageList[index]['name'];
                         final username = controller.pageList[index]['username'];
                         final imageUrl = controller.pageList[index]['imageUrl'];
+
+                        // we you git from database active this to check if null
+                        //profileImage = (controller.pageList[index]['imageUrl'] == null) ? "" : controller.pageList[index]['imageUrl'];
+                        /*     profileBackgroundImage = (profileImage != null && profileImage != "")
+        ? Image.network(urlStarter + "/" + profileImage!).image
+        : defultprofileImage;
+
+                        */
+                        /*
+                         CircleAvatar(
+            
+            backgroundImage: controller.profileImageBytes.isNotEmpty
+                ? MemoryImage(base64Decode(controller.profileImageBytes.value))
+                : profileBackgroundImage, // Replace with your default photo URL
+          ),
+
+
+                        */
 
                         return ListTile(
                           onTap: () {},

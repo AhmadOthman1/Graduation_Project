@@ -9,7 +9,14 @@ class SearchControllerImp extends GetxController {
   RxList<Map<String, String>> pageList = <Map<String, String>>[].obs;
 
 
-  
+    // for user and page chek null
+  final RxString profileImageBytes = ''.obs;
+  final RxString profileImageBytesName = ''.obs;
+  final RxString profileImageExt = ''.obs;
+
+  RxBool checkTheSearch = false.obs;
+
+ 
 
 searchInDataBase(){
 
