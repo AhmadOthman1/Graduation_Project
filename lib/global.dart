@@ -1,4 +1,4 @@
-var urlStarter= "http://192.168.59.173:3000";
+var urlStarter= "http://10.119.214.17:3000";
   String? firstName;
   String? lastName;
   String? userName;
