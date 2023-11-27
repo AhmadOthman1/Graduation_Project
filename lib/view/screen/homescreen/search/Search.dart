@@ -178,7 +178,9 @@ class Search extends StatelessWidget {
                         final username = controller.pageList[index]['username'];
                         final imageUrl = controller.pageList[index]['imageUrl'];
 
-                        // we you git from database active this to check if null
+                        // when you git from database active this to {check if null}
+
+
                         //profileImage = (controller.pageList[index]['imageUrl'] == null) ? "" : controller.pageList[index]['imageUrl'];
                         /*     profileBackgroundImage = (profileImage != null && profileImage != "")
         ? Image.network(urlStarter + "/" + profileImage!).image
@@ -197,7 +199,9 @@ class Search extends StatelessWidget {
                         */
 
                         return ListTile(
-                          onTap: () {},
+                          onTap: () {
+                            // the same thing in the above 
+                          },
                           title: Text('$name'),
                           subtitle: Text('$username'),
                           trailing: CircleAvatar(

@@ -29,6 +29,10 @@ class Comments extends StatelessWidget {
                         borderRadius: BorderRadius.circular(30),
                       ),
                       child: ListTile(
+                        onTap: (){
+                          controller.gotoprofileFromcomment(comment.email);
+
+                        },
                         contentPadding: const EdgeInsets.all(8.0),
                         leading: CircleAvatar(
                           backgroundImage: comment.userImage,
@@ -50,6 +54,7 @@ class Comments extends StatelessWidget {
                                     controller.toggleLikecomment(index);
                                   },
                                 ),
+
                                 Obx(() => Text('${comment.likes} Likes')),
                                 const SizedBox(width: 16),
                                 Text(
@@ -95,7 +100,8 @@ class Comments extends StatelessWidget {
                         onPressed: () {
                           final username = 'Current User';
                           final newComment = commentController.text;
-                          controller.addComment(username, newComment);
+                          final  Email='awsobaida07@gmail.com';
+                          controller.addComment(username, newComment,Email);
                           commentController.clear();
                         },
                       ),

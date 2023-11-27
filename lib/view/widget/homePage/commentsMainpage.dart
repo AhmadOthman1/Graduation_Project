@@ -8,7 +8,14 @@ class CommentsMainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Comments"),),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Text(
+          "Comments",
+          style: TextStyle(color: Colors.black),
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
       body: Comments(),
          
         
