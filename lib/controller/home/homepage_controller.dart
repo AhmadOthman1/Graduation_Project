@@ -11,48 +11,196 @@ import 'package:growify/view/screen/homescreen/profilepages/colleaguesprofile.da
 import 'package:growify/view/screen/homescreen/profilepages/profilemainpage.dart';
 import 'package:http/http.dart' as http;
 
+class Comment {
+  final String username;
+  final String comment;
+  final AssetImage userImage;
+  final DateTime time;
+  final RxInt likes;
+
+  Comment({
+    required this.username,
+    required this.comment,
+    required this.userImage,
+    required this.time,
+    int likes = 0,
+  }) : likes = likes.obs;
+}
+
+
 abstract class HomePageController extends GetxController{
-login();
+
 goToSignup();
 goToForgetPassword();
-goToProfileColleaguesPage();
-toggleConnectButton();
+goToProfileColleaguesPage(String email);
+
 goToSettingsPgae();
 goToprofilepage();
 getprfilepage();
-getprfileColleaguespage();
+getprfileColleaguespage(String email);
 }
 
 class HomePageControllerImp extends HomePageController {
-  GlobalKey<FormState> formstate = GlobalKey<FormState>();
 
-  late TextEditingController email;
-  late TextEditingController password;
-  var isConnectButtonPressed = false.obs;
+/// for comment 
+  final RxList<Comment> comments = <Comment>[
+    Comment(
+      username: 'User1',
+      comment: 'This is a comment.',
+      userImage: AssetImage('images/islam.jpeg'),
+      time: DateTime.now(),
+    ),
+    Comment(
+      username: 'User2',
+      comment: 'Nice post!',
+      userImage: AssetImage('images/Netflix.png'),
+      time: DateTime.now().subtract(const Duration(minutes: 30)),
+      likes: 5,
+    ),
+    Comment(
+      username: 'User3',
+      comment: 'Great content.',
+      userImage: AssetImage('images/harri.png'),
+      time: DateTime.now().subtract(const Duration(hours: 2)),
+      likes: 10,
+    ),
+  ].obs;
 
-  bool isshowpass=true;
+    void addComment(String username, String newComment) {
+    final userImage = AssetImage('images/obaida.jpeg');
+    final time = DateTime.now();
+    comments.add(Comment(username: username, comment: newComment, userImage: userImage, time: time));
+  }
 
-  showPassord(){
-    isshowpass=isshowpass==true?false:true;
-    update();
+  void toggleLikecomment(int index) {
+    final comment = comments[index];
+    comment.likes(comment.likes.value > 0 ? 0 : 1);
   }
 
 
-  LoginControllerImp() {
-    // Initialize formstate in the constructor.
-    formstate = GlobalKey<FormState>();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /////////////////////////////////////////////////
+
+//// for the page of likes
+  RxList<Map<String, dynamic>> likes = <Map<String, dynamic>>[
+    {
+      'name': 'Islam Aws',
+      'username': '@islam_aws',
+      'image': 'images/islam.jpeg',
+
+    },
+    {
+      'name': 'Obaida Aws',
+      'username': '@obaida_aws',
+      'image': 'images/obaida.jpeg',
+  
+    },
+    // Add more colleagues as needed
+  ].obs;
+
+   void addLike(Map<String, dynamic> newLike) {
+    likes.add(newLike);
+    update(); // Notify listeners
   }
 
-  @override
-  login() {
-    // Check if formstate.currentState is not null before using it.
-    if (formstate.currentState != null && formstate.currentState!.validate()) {
-      print("Valid");
+/////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+// for the posts
+
+  RxList<Map<String, dynamic>> posts = <Map<String, dynamic>>[
+    {
+      'name': 'Obaida Aws',
+      'time': '1 hour ago',
+      'content': 'Computer engineer in my fifth year at Al Najah University.',
+      'image': 'images/obaida.jpeg',
+      'like': 165,
+      'isLiked': false,
+      'email': 's11923787@stu.najah.edu'
+      
+    },
+    {
+      'name': 'Islam Aws',
+      'time': '2 hours ago',
+      'content': 'This is my brother, and he is 8 months old.',
+      'image': 'images/islam.jpeg',
+      'like': 123,
+      'isLiked': false,
+      'email':'awsobaida07@gmail.com'
+    },
+  ].obs;
+
+  void toggleLike(int index) {
+    final post = posts[index];
+    post['isLiked'] = !post['isLiked'];
+
+    if (post['isLiked']) {
+      post['like']++;
     } else {
-      print("Not Valid");
+      post['like']--;
+    }
+
+    update(); // Notify GetBuilder to rebuild
+  }
+
+  bool isLiked(int index) {
+    return posts[index]['isLiked'];
+  }
+
+  int getLikes(int index) {
+    return posts[index]['like'];
+  }
+
+    RxList<String> moreOptions = <String>[
+    'Save Post',
+    'Hide Post',
+  ].obs;
+
+    void onMoreOptionSelected(String option) {
+    // Handle the selected option here
+    switch (option) {
+      case 'Save Post':
+        // Implement save post functionality
+        break;
+      case 'Hide Post':
+        // Implement hide post functionality
+        break;
+      // Add more options as needed
     }
   }
 
+
+  
+
+  
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////
   goToSettingsPgae(){
   Get.toNamed(AppRoute.settings);
 }
@@ -62,19 +210,8 @@ class HomePageControllerImp extends HomePageController {
     Get.offNamed(AppRoute.signup);
   }
 
-  @override
-  void onInit() {
-    email = TextEditingController();
-    password = TextEditingController();
-    super.onInit();
-  }
-
-  @override
-  void dispose() {
-    email.dispose();
-    password.dispose();
-    super.dispose();
-  }
+  
+ 
 
   @override
   goToForgetPassword() {
@@ -83,12 +220,6 @@ class HomePageControllerImp extends HomePageController {
   
 
   
-  @override
-  toggleConnectButton() {
-    isConnectButtonPressed.value = !isConnectButtonPressed.value;
-    update();
-    
-  }
 
   ///////////////////////////////////////////////////////
    
@@ -129,8 +260,8 @@ class HomePageControllerImp extends HomePageController {
   }
   @override
 
-   Future getprfileColleaguespage() async{
-        var url = urlStarter + "/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
+   Future getprfileColleaguespage(String email) async{
+        var url = urlStarter + "/user/settingsGetMainInfo?email=${email}";
     var responce = await http.get(Uri.parse(url),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -145,8 +276,8 @@ class HomePageControllerImp extends HomePageController {
   
 
     @override
-  goToProfileColleaguesPage()async {
-         var res = await getprfileColleaguespage();
+  goToProfileColleaguesPage(String email)async {
+         var res = await getprfileColleaguespage(email);
     var resbody = jsonDecode(res.body);
     print(resbody['message']);
     print(res.statusCode);
@@ -160,4 +291,6 @@ class HomePageControllerImp extends HomePageController {
   }
   
  
-}}
+}
+
+  }

@@ -22,7 +22,7 @@ class Search extends StatelessWidget {
           centerTitle: true,
           backgroundColor: Colors.white,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back,color: Colors.black,),
             onPressed: () {
               Get.back(); // Navigate back
             },
@@ -64,6 +64,7 @@ class Search extends StatelessWidget {
           actions: [
             MaterialButton(
               onPressed: () {
+             
                 if (formstate.currentState!.validate()) {
                   controller.searchInDataBase();
                   print("Valid");
@@ -152,7 +153,11 @@ class Search extends StatelessWidget {
                         final imageUrl = controller.userList[index]['imageUrl'];
 
                         return ListTile(
-                          onTap: () {},
+                          onTap: () {
+                           final email=controller.userList[index]['email'];
+                            controller.goToProfileColleaguesPage(email!);
+                          //  controller.goToprofile(email)
+                          },
                           title: Text('$name'),
                           subtitle: Text('$username'),
                           trailing: CircleAvatar(

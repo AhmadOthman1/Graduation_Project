@@ -1,111 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:growify/controller/home/homepage_controller.dart';
 
 class Like extends StatelessWidget {
-   Like({super.key});
-    final List<Map<String, dynamic>> Likes = [
-    {
-      'name': 'Islam Aws',
-      'jobTitle': 'UI Designer',
-      'image': 'images/islam.jpeg',
-      'deleteIcon': Icons.delete,
-      'messageIcon': Icons.message,
-    },
-    {
-      'name': 'Obaida Aws',
-      'jobTitle': 'Software Engineer',
-      'image': 'images/obaida.jpeg',
-      'deleteIcon': Icons.delete,
-      'messageIcon': Icons.message,
-    },
+  Like({super.key});
 
-    {
-      'name': 'Obaida Aws',
-      'jobTitle': 'Software Engineer',
-      'image': 'images/obaida.jpeg',
-      'deleteIcon': Icons.delete,
-      'messageIcon': Icons.message,
-    },
-
-    {
-      'name': 'Obaida Aws',
-      'jobTitle': 'Software Engineer',
-      'image': 'images/obaida.jpeg',
-      'deleteIcon': Icons.delete,
-      'messageIcon': Icons.message,
-    },
-
-    {
-      'name': 'Obaida Aws',
-      'jobTitle': 'Software Engineer',
-      'image': 'images/obaida.jpeg',
-      'deleteIcon': Icons.delete,
-      'messageIcon': Icons.message,
-    },
-
-    {
-      'name': 'Obaida Aws',
-      'jobTitle': 'Software Engineer',
-      'image': 'images/obaida.jpeg',
-      'deleteIcon': Icons.delete,
-      'messageIcon': Icons.message,
-    },
-
-    {
-      'name': 'Obaida Aws',
-      'jobTitle': 'Software Engineer',
-      'image': 'images/obaida.jpeg',
-      'deleteIcon': Icons.delete,
-      'messageIcon': Icons.message,
-    },
-
-    {
-      'name': 'Obaida Aws',
-      'jobTitle': 'Software Engineer',
-      'image': 'images/obaida.jpeg',
-      'deleteIcon': Icons.delete,
-      'messageIcon': Icons.message,
-    },
-
-    {
-      'name': 'Obaida Aws',
-      'jobTitle': 'Software Engineer',
-      'image': 'images/obaida.jpeg',
-      'deleteIcon': Icons.delete,
-      'messageIcon': Icons.message,
-    },
-
-    {
-      'name': 'Obaida Aws',
-      'jobTitle': 'Software Engineer',
-      'image': 'images/obaida.jpeg',
-      'deleteIcon': Icons.delete,
-      'messageIcon': Icons.message,
-    },
-
-    {
-      'name': 'Obaida Aws',
-      'jobTitle': 'Software Engineer',
-      'image': 'images/obaida.jpeg',
-      'deleteIcon': Icons.delete,
-      'messageIcon': Icons.message,
-    },
-
-    {
-      'name': 'Obaida Aws',
-      'jobTitle': 'Software Engineer',
-      'image': 'images/obaida.jpeg',
-
-    },
-
-    {
-      'name': 'Obaida Aws',
-      'jobTitle': 'Software Engineer',
-      'image': 'images/obaida.jpeg',
-    
-    },
-    // Add more colleagues as needed
-  ];
+  final HomePageControllerImp likeController = Get.put(HomePageControllerImp());
 
   @override
   Widget build(BuildContext context) {
@@ -118,21 +18,21 @@ class Like extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 IconButton(
-                    onPressed: () {
-                      Get.back();
-                    },
-                    icon: Icon(
-                      Icons.arrow_back,
-                      size: 30,
-                    )),
-                // put the icons action
+                  onPressed: () {
+                    Get.back();
+                  },
+                  icon: Icon(
+                    Icons.arrow_back,
+                    size: 30,
+                  ),
+                ),
                 Container(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Text(
-                      "Likes",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    )),
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                    "Likes",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ),
               ],
             ),
           ),
@@ -141,38 +41,40 @@ class Like extends StatelessWidget {
             thickness: 2.0,
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: Likes.length,
-              itemBuilder: (context, index) {
-                final colleague = Likes[index];
+            child: GetBuilder<HomePageControllerImp>(
+              builder: (likeController) {
+                return ListView.builder(
+                  itemCount: likeController.likes.length,
+                  itemBuilder: (context, index) {
+                    final colleague = likeController.likes[index];
 
-                return Column(
-                  children: [
-                    ListTile(
-                      leading: InkWell(
-                        onTap: (){
-                       //   Get.to(ColleaguesProfile());
-                        },
-                        child: CircleAvatar(
-                          backgroundImage: AssetImage(colleague['image']),
+                    return Column(
+                      children: [
+                        ListTile(
+                          leading: InkWell(
+                            onTap: () {
+                              // Get.to(ColleaguesProfile());
+                            },
+                            child: CircleAvatar(
+                              backgroundImage: AssetImage(colleague['image']),
+                            ),
+                          ),
+                          title: Text(colleague['name']),
+                          subtitle: Text(colleague['username']),
                         ),
-                      ),
-                      title: Text(colleague['name']),
-                      subtitle: Text(colleague['jobTitle']),
-                      
-                    ),
-                    Divider(
-                      color: Color.fromARGB(255, 194, 193, 193),
-                      thickness: 2.0,
-                    ),
-                  ],
+                        Divider(
+                          color: Color.fromARGB(255, 194, 193, 193),
+                          thickness: 2.0,
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
             ),
           ),
         ],
       ),
-
     );
   }
 }

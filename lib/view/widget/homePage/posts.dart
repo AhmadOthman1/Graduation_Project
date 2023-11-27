@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/homepage_controller.dart';
+import 'package:growify/view/widget/homePage/commentsMainpage.dart';
 
 import 'package:growify/view/widget/homePage/like.dart';
 import 'package:growify/view/widget/homePage/thecomments.dart';
@@ -8,41 +9,19 @@ import 'package:growify/view/widget/homePage/thecomments.dart';
 class Post extends StatelessWidget {
   Post({Key? key});
 
-  final List<Map<String, dynamic>> posts = [
-    {
-      'name': 'Obaida Aws',
-      'time': '1 hour ago',
-      'content': 'Computer engineer in my fifth year at Al Najah University.',
-      'image': 'images/obaida.jpeg',
-      'like': 165,
-      
-    },
-    {
-      'name': 'Islam Aws',
-      'time': '2 hours ago',
-      'content': 'This is my brother, and he is 8 months old.',
-      'image': 'images/islam.jpeg',
-      'like': 123,
-     
-    },
-
-    // Add more posts as needed
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ListView.builder(
-        itemCount: posts.length,
-        physics: NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          final post = posts[index];
-          final controller = HomePageControllerImp();
+      child: GetBuilder<HomePageControllerImp>(
+        init: HomePageControllerImp(),
+        builder: (controller) {
+          return ListView.builder(
+            itemCount: controller.posts.length,
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              final post = controller.posts[index];
 
-          return GetBuilder<HomePageControllerImp>(
-            init: controller,
-            builder: (postController) {
               return Container(
                 margin: const EdgeInsets.all(16.0),
                 padding: const EdgeInsets.all(16.0),
@@ -71,18 +50,18 @@ class Post extends StatelessWidget {
                                   InkWell(
                                     onTap: () {
                                       // controller.goToProfilePage();
-                                      controller.goToProfileColleaguesPage();
+                                      // For testing purposes, toggle like on image tap
+                                     // controller.toggleLike(index);
+                                     controller.goToProfileColleaguesPage(post['email']);
                                     },
                                     child: CircleAvatar(
-                                      backgroundImage:
-                                          AssetImage(post['image']),
+                                      backgroundImage: AssetImage(post['image']),
                                       radius: 30,
                                     ),
                                   ),
                                   const SizedBox(width: 10),
                                   Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
@@ -105,14 +84,31 @@ class Post extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              // "Connect" icon here
-                              IconButton(
-                                onPressed: () {
-                                  //show  more cjoise
-                                  
+
+                               PopupMenuButton<String>(
+                                icon: const Icon(Icons.more_vert),
+                                onSelected: (String option) {
+                                  controller.onMoreOptionSelected(option);
                                 },
-                                icon: Icon(Icons.more_vert),
-                              )
+                                itemBuilder: (BuildContext context) {
+                                  return controller.moreOptions.map((String option) {
+                                    return PopupMenuItem<String>(
+                                      value: option,
+                                      child: Text(option),
+                                    );
+                                  }).toList();
+                                })
+
+
+
+
+                            /*  IconButton(
+                                onPressed: () {
+                                  // Show more choice
+
+                                },
+                                icon: const Icon(Icons.more_vert),
+                              )*/
                             ],
                           ),
                           const SizedBox(height: 10),
@@ -124,34 +120,41 @@ class Post extends StatelessWidget {
                           Image.asset(post['image']),
                           const SizedBox(height: 5),
                           Container(
-                          //  width: 200,
                             child: Row(
                               children: [
                                 InkWell(
-                                  onTap: (){
+                                  onTap: () {
                                     //go to like page
                                     Get.to(Like());
+                                   
                                   },
                                   child: Row(
                                     children: [
-                                      Icon(Icons.thumb_up,color: Colors.grey,),
+                                      Icon(
+                                        Icons.thumb_up,
+                                        color: Colors.blue,
+                                      ),
                                       Container(
-                                          margin: EdgeInsets.only(left: 10,right: 5),
-                                         
-                                            child: Text(
-                                              '${post['like']}',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 15,color: Colors.grey),
-                                            ),
+                                        margin: EdgeInsets.only(left: 10, right: 5),
+                                        child: Text(
+                                          '${controller.getLikes(index)}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15,
+                                            color: Colors.grey,
                                           ),
-                                          Text('Likes',style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold),)
-                                          
+                                        ),
+                                      ),
+                                      const Text(
+                                        'Likes',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
-                                
-                                
                               ],
                             ),
                           ),
@@ -163,36 +166,35 @@ class Post extends StatelessWidget {
                             margin: EdgeInsets.only(left: 20),
                             child: Row(
                               children: [
-                                Container(
-                                  margin: EdgeInsets.only(left: 35),
-                                  child: Column(
-                                    children: [
-                                      Icon(Icons.thumb_up, color: Colors.grey),
-                                      Text("Like")
-                                    ],
+                                InkWell(
+                                  onTap: (){
+                                    controller.toggleLike(index);
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.only(left: 35),
+                                    child: Column(
+                                      children: [
+                                        Icon(Icons.thumb_up, color:controller.isLiked(index)
+                                            ? Colors.blue
+                                            : Colors.grey,),
+                                        Text("Like")
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 SizedBox(width: 135),
                                 InkWell(
-                                  onTap: (){
+                                  onTap: () {
                                     //go to comment page
-                                   // Get.to(CommentPage());
-                                   Get.to(Like());
+                                    Get.to(CommentsMainPage());
                                   },
                                   child: Column(
                                     children: [
-                                      Icon(Icons.comment, color: Colors.grey),
+                                      Icon(Icons.comment,color: Colors.grey, ),
                                       Text("Comment")
                                     ],
                                   ),
                                 ),
-                                // SizedBox(width: 80),
-                                /*  Column(
-                                  children: [
-                                    Icon(Icons.share, color: Colors.grey),
-                                    Text("Share")
-                                  ],
-                                ),*/
                               ],
                             ),
                           ),

@@ -12,6 +12,10 @@ class ColleaguesProfile extends StatelessWidget {
     coverImage =
         (userData[0]["coverImage"] == null) ? "" : userData[0]["coverImage"];
     Bio = (userData[0]["bio"] == null) ? "" : userData[0]["bio"];
+
+    // get from database
+
+   // controller.result.value= Follow/Following/Requested
   }
   final ColleaguesProfileControllerImp controller =
       Get.put(ColleaguesProfileControllerImp());
