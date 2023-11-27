@@ -8,6 +8,27 @@ import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart' as dio;
 
 class ColleaguesProfileControllerImp extends GetxController {
+
+
+  RxString result = 'Follow'.obs;
+
+  void toggleResult() {
+    if (result.value == 'Following') {
+      result.value = 'Follow';
+    } else if (result.value == 'Follow') {
+      result.value = 'Requested';
+    } else if (result.value == 'Requested') {
+      result.value = 'Follow';
+    }
+    update();
+  }
+
+
+
+
+
+
+  //////////////////////////////////////
     final RxMap personalDetails = {}.obs;
 
   final RxList<Map<String, String>> educationLevels =

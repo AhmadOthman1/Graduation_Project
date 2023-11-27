@@ -7,11 +7,11 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ColleaguesProfile extends StatelessWidget {
-  ColleaguesProfile({super.key, required this.userData}){
-         profileImage = (userData[0]["photo"] == null) ? "" : userData[0]["photo"];
-       coverImage =
+  ColleaguesProfile({super.key, required this.userData}) {
+    profileImage = (userData[0]["photo"] == null) ? "" : userData[0]["photo"];
+    coverImage =
         (userData[0]["coverImage"] == null) ? "" : userData[0]["coverImage"];
-        Bio = (userData[0]["bio"] == null) ? "" : userData[0]["bio"];
+    Bio = (userData[0]["bio"] == null) ? "" : userData[0]["bio"];
   }
   final ColleaguesProfileControllerImp controller =
       Get.put(ColleaguesProfileControllerImp());
@@ -52,9 +52,20 @@ class ColleaguesProfile extends StatelessWidget {
   final AssetImage defultcoverImage = AssetImage("images/coverImage.jpg");
   late ImageProvider<Object> coverBackgroundImage;
   String? Bio;
+  ///////////
+  String? Follow;
+  String? Following;
+  String? Requested;
+  String? Result;
 
   @override
   Widget build(BuildContext context) {
+    Follow = 'Follow';
+    Requested='Requested';
+    Following='Following';
+
+    Result = Requested;
+
     profileBackgroundImage = (profileImage != null && profileImage != "")
         ? Image.network(urlStarter + "/" + profileImage!).image
         : defultprofileImage;
@@ -68,7 +79,9 @@ class ColleaguesProfile extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              margin: EdgeInsets.only(top: 50, ),
+              margin: EdgeInsets.only(
+                top: 50,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -160,19 +173,25 @@ class ColleaguesProfile extends StatelessWidget {
               _buildInfoItem('Following', '243'),
             ],
           ),
-          Container(
-            margin: EdgeInsets.only(top: 10),
-            child: MaterialButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              padding:
-                  const EdgeInsets.symmetric(vertical: 13, horizontal: 140),
-              onPressed: () {},
-              color: Color.fromARGB(255, 85, 191, 218),
-              textColor: Colors.white,
-              child: Text('Follow Up'),
-            ),
-          ),
+          GetBuilder<ColleaguesProfileControllerImp>(
+  builder: (controller) =>Container(
+    margin: EdgeInsets.only(top: 10),
+    child: MaterialButton(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 140),
+      onPressed: () {
+        controller.toggleResult();
+      },
+      color: controller.result.value == 'Follow'
+          ? Color.fromARGB(255, 85, 191, 218)
+          : Colors.grey,
+      textColor: Colors.white,
+      child: Text('${controller.result.value}'),
+    ),
+  ),
+)
         ],
       ),
     );

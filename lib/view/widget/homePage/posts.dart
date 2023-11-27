@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/homepage_controller.dart';
 
+import 'package:growify/view/widget/homePage/like.dart';
+import 'package:growify/view/widget/homePage/thecomments.dart';
+
 class Post extends StatelessWidget {
   Post({Key? key});
 
   final List<Map<String, dynamic>> posts = [
-
     {
       'name': 'Obaida Aws',
       'time': '1 hour ago',
       'content': 'Computer engineer in my fifth year at Al Najah University.',
       'image': 'images/obaida.jpeg',
-      'like': 85,
-      'comment': 33,
-      'share': 37,
+      'like': 165,
+      
     },
     {
       'name': 'Islam Aws',
@@ -22,10 +23,9 @@ class Post extends StatelessWidget {
       'content': 'This is my brother, and he is 8 months old.',
       'image': 'images/islam.jpeg',
       'like': 123,
-      'comment': 45,
-      'share': 56,
+     
     },
-    
+
     // Add more posts as needed
   ];
 
@@ -70,16 +70,19 @@ class Post extends StatelessWidget {
                                 children: [
                                   InkWell(
                                     onTap: () {
+                                      // controller.goToProfilePage();
                                       controller.goToProfileColleaguesPage();
                                     },
                                     child: CircleAvatar(
-                                      backgroundImage: AssetImage(post['image']),
+                                      backgroundImage:
+                                          AssetImage(post['image']),
                                       radius: 30,
                                     ),
                                   ),
                                   const SizedBox(width: 10),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
@@ -103,30 +106,12 @@ class Post extends StatelessWidget {
                                 ],
                               ),
                               // "Connect" icon here
-                              Row(
-                                children :[IconButton(
-                                  onPressed: () {
-                                    postController.toggleConnectButton();
-                                  },
-                                  icon: Icon(
-                                    postController.isConnectButtonPressed.value
-                                        ? Icons.people
-                                        : Icons.person_add,
-                                    size: 32,
-                                    color: postController.isConnectButtonPressed.value
-                                        ? Colors.blue
-                                        : Colors.grey,
-                                  ),
-                                ),
-                               /* IconButton(
+                              IconButton(
                                 onPressed: () {
                                   //show  more cjoise
+                                  
                                 },
                                 icon: Icon(Icons.more_vert),
-                              ),*/
-                                
-                                
-                                ]
                               )
                             ],
                           ),
@@ -137,40 +122,77 @@ class Post extends StatelessWidget {
                           ),
                           const SizedBox(height: 10),
                           Image.asset(post['image']),
-                          const SizedBox(height: 30),
+                          const SizedBox(height: 5),
+                          Container(
+                          //  width: 200,
+                            child: Row(
+                              children: [
+                                InkWell(
+                                  onTap: (){
+                                    //go to like page
+                                    Get.to(Like());
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.thumb_up,color: Colors.grey,),
+                                      Container(
+                                          margin: EdgeInsets.only(left: 10,right: 5),
+                                         
+                                            child: Text(
+                                              '${post['like']}',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15,color: Colors.grey),
+                                            ),
+                                          ),
+                                          Text('Likes',style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold),)
+                                          
+                                    ],
+                                  ),
+                                ),
+                                
+                                
+                              ],
+                            ),
+                          ),
                           Divider(
-                color: Color.fromARGB(255, 194, 193, 193),
-                thickness: 1.0,
-              ),
-            
+                            color: Color.fromARGB(255, 194, 193, 193),
+                            thickness: 1.0,
+                          ),
                           Container(
                             margin: EdgeInsets.only(left: 20),
                             child: Row(
                               children: [
-                                
-                                 Column(
-                                   children: [
-                                     Icon(Icons.thumb_up, color: Colors.grey),
-                                     Text("Like")
-                                   ],
-                                 ),
-                                
-                                 SizedBox(width: 80),
-                                 Column(
-                                   children: [
-                                     Icon(Icons.comment, color: Colors.grey),
-                                     Text("Comment")
-                                   ],
-                                 ),
-                                
-                                 SizedBox(width: 80),
-                                 Column(
-                                   children: [
-                                     Icon(Icons.share, color: Colors.grey),
-                                     Text("Share")
-                                   ],
-                                 ),
-                                
+                                Container(
+                                  margin: EdgeInsets.only(left: 35),
+                                  child: Column(
+                                    children: [
+                                      Icon(Icons.thumb_up, color: Colors.grey),
+                                      Text("Like")
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(width: 135),
+                                InkWell(
+                                  onTap: (){
+                                    //go to comment page
+                                   // Get.to(CommentPage());
+                                   Get.to(Like());
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Icon(Icons.comment, color: Colors.grey),
+                                      Text("Comment")
+                                    ],
+                                  ),
+                                ),
+                                // SizedBox(width: 80),
+                                /*  Column(
+                                  children: [
+                                    Icon(Icons.share, color: Colors.grey),
+                                    Text("Share")
+                                  ],
+                                ),*/
                               ],
                             ),
                           ),
