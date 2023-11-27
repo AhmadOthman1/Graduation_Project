@@ -22,7 +22,6 @@ getEducationLevel();
 class SettingsControllerImp extends SettingsController {
 
 Future getProfileSettingsPgae() async {
-  print("ffffffffffffffffffffff");
     var url = urlStarter + "/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url),
         headers: {

@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:growify/controller/home/myPage_Controller/PageDetails_controller.dart';
 
-class PageDetails extends StatelessWidget {
+class PageDetails extends StatefulWidget {
   final String pageId;
 
   PageDetails(this.pageId);
+
+  @override
+  _PageDetailsState createState() => _PageDetailsState();
+}
+
+class _PageDetailsState extends State<PageDetails> {
+  final PageDetailsController controller = PageDetailsController();
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +27,7 @@ class PageDetails extends StatelessWidget {
         ),
       ),
       body: Center(
-        child: Text('Details for Page ID: $pageId'),
+        child: Text('Details for Page ID: ${widget.pageId}'),
       ),
     );
   }

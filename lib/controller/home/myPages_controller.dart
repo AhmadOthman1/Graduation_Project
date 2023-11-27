@@ -32,7 +32,6 @@ class MyPagesController {
       List<PageInfo> pages = [];
 
       for (var page in responseBody['pages']) {
-        print(page);
         pages.add(PageInfo(page['id'], page['name'], page['description'], page['country'], page['address'], page['contactInfo'], page['specialty'], page['pageType'], page['photo'], page['coverImage']));
         print('Page ID: ${page['id']}');
         print('Page Name: ${page['name']}');

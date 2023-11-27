@@ -93,6 +93,7 @@ class HomePageControllerImp extends HomePageController {
   ///////////////////////////////////////////////////////
    
   Future getprfilepage() async{
+    
         var url = urlStarter + "/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url),
         headers: {
