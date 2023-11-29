@@ -3,10 +3,12 @@ import 'package:get/get.dart';
 import 'package:growify/view/widget/homePage/comments.dart';
 
 class CommentsMainPage extends StatelessWidget {
-  const CommentsMainPage({super.key});
+  const CommentsMainPage({super.key,required this.id});
+  final int id;
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -16,7 +18,7 @@ class CommentsMainPage extends StatelessWidget {
         ),
         iconTheme: IconThemeData(color: Colors.black),
       ),
-      body: Comments(),
+      body: Comments(postId:id),
          
         
 

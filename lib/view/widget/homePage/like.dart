@@ -50,10 +50,12 @@ class Like extends StatelessWidget {
 
                     return Column(
                       children: [
+                        
                         ListTile(
                           leading: InkWell(
                             onTap: () {
                               // Get.to(ColleaguesProfile());
+                              likeController.gotoprofileFromlike(colleague['email']);
                             },
                             child: CircleAvatar(
                               backgroundImage: AssetImage(colleague['image']),
