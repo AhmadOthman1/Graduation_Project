@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/controller/home/myPages_controller.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
@@ -10,6 +11,9 @@ import 'package:growify/view/screen/homescreen/notificationspages/notificationma
 import 'package:growify/view/screen/homescreen/profilepages/colleaguesprofile.dart';
 import 'package:growify/view/screen/homescreen/profilepages/profilemainpage.dart';
 import 'package:http/http.dart' as http;
+
+LogOutButtonControllerImp _logoutController =
+    Get.put(LogOutButtonControllerImp());
 
 class CommentModel {
   final String username;
@@ -19,7 +23,7 @@ class CommentModel {
   final RxInt likes;
   final String email;
 
-  CommentModel( {
+  CommentModel({
     required this.username,
     required this.comment,
     required this.userImage,
@@ -29,56 +33,54 @@ class CommentModel {
   }) : likes = likes.obs;
 }
 
+abstract class HomePageController extends GetxController {
+  goToSignup();
+  goToForgetPassword();
+  goToProfileColleaguesPage(String email);
 
-abstract class HomePageController extends GetxController{
-
-goToSignup();
-goToForgetPassword();
-goToProfileColleaguesPage(String email);
-
-goToSettingsPgae();
-goToprofilepage();
-getprfilepage();
-getprfileColleaguespage(String email);
+  goToSettingsPgae();
+  goToprofilepage();
+  getprfilepage();
+  getprfileColleaguespage(String email);
 //// for comment
-getprofilefromcomment(String email);
-gotoprofileFromcomment(String email);
+  getprofilefromcomment(String email);
+  gotoprofileFromcomment(String email);
 }
 
 class HomePageControllerImp extends HomePageController {
-
-/// for comment 
+  /// for comment
   final RxList<CommentModel> comments = <CommentModel>[
     CommentModel(
-      username: 'User1',
-      comment: 'This is a comment.',
-      userImage: AssetImage('images/islam.jpeg'),
-      time: DateTime.now(),
-      email: 'awsobaida07@gmail.com'
-      
-    ),
+        username: 'User1',
+        comment: 'This is a comment.',
+        userImage: AssetImage('images/islam.jpeg'),
+        time: DateTime.now(),
+        email: 'awsobaida07@gmail.com'),
     CommentModel(
-      username: 'User2',
-      comment: 'Nice post!',
-      userImage: AssetImage('images/Netflix.png'),
-      time: DateTime.now().subtract(const Duration(minutes: 30)),
-      likes: 5,
-      email: 'awsobaida07@gmail.com'
-    ),
+        username: 'User2',
+        comment: 'Nice post!',
+        userImage: AssetImage('images/Netflix.png'),
+        time: DateTime.now().subtract(const Duration(minutes: 30)),
+        likes: 5,
+        email: 'awsobaida07@gmail.com'),
     CommentModel(
-      username: 'User3',
-      comment: 'Great content.',
-      userImage: AssetImage('images/harri.png'),
-      time: DateTime.now().subtract(const Duration(hours: 2)),
-      likes: 10,
-      email: 's11923787@stu.najah.edu'
-    ),
+        username: 'User3',
+        comment: 'Great content.',
+        userImage: AssetImage('images/harri.png'),
+        time: DateTime.now().subtract(const Duration(hours: 2)),
+        likes: 10,
+        email: 's11923787@stu.najah.edu'),
   ].obs;
 
-    void addComment(String username, String newComment,String email) {
+  void addComment(String username, String newComment, String email) {
     final userImage = AssetImage('images/obaida.jpeg');
     final time = DateTime.now();
-    comments.add(CommentModel(username: username, comment: newComment, userImage: userImage, time: time,email:email));
+    comments.add(CommentModel(
+        username: username,
+        comment: newComment,
+        userImage: userImage,
+        time: time,
+        email: email));
   }
 
   void toggleLikecomment(int index) {
@@ -86,57 +88,35 @@ class HomePageControllerImp extends HomePageController {
     comment.likes(comment.likes.value > 0 ? 0 : 1);
   }
 
+  @override
+  Future getprofilefromcomment(String email) async {
+    var url = urlStarter + "/user/settingsGetMainInfo?email=${email}";
+    var responce = await http.get(Uri.parse(url), headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
 
-    @override
-  Future getprofilefromcomment(String email) async{
-          var url = urlStarter + "/user/settingsGetMainInfo?email=${email}";
-    var responce = await http.get(Uri.parse(url),
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-        });
-  print(responce);
+    });
+    print(responce);
     return responce;
-
   }
 
   @override
-  Future gotoprofileFromcomment(String email)async {
-             var res = await getprofilefromcomment(email);
+  Future gotoprofileFromcomment(String email) async {
+    var res = await getprofilefromcomment(email);
+    if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      gotoprofileFromcomment(email);
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
     var resbody = jsonDecode(res.body);
-    print(resbody['message']);
-    print(res.statusCode);
-    print(resbody);
-    if(res.statusCode == 409){
+    if (res.statusCode == 409) {
       return resbody['message'];
-    }else if(res.statusCode == 200){
-
-
-    Get.to(ColleaguesProfile(userData: [resbody["user"]]));
+    } else if (res.statusCode == 200) {
+      Get.to(ColleaguesProfile(userData: [resbody["user"]]));
+    }
   }
-    
-  }
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  /////////////////////////////////////////////////
 
 //// for the page of likes
   RxList<Map<String, dynamic>> likes = <Map<String, dynamic>>[
@@ -144,37 +124,28 @@ class HomePageControllerImp extends HomePageController {
       'name': 'Islam Aws',
       'username': '@islam_aws',
       'image': 'images/islam.jpeg',
-      'email':'awsobaida07@gmail.com'
-
+      'email': 'awsobaida07@gmail.com'
     },
     {
       'name': 'Obaida Aws',
       'username': '@obaida_aws',
       'image': 'images/obaida.jpeg',
-      'email':'s11923787@stu.najah.edu'
-  
+      'email': 's11923787@stu.najah.edu'
     },
     // Add more colleagues as needed
   ].obs;
 
-   void addLike(Map<String, dynamic> newLike) {
+  void addLike(Map<String, dynamic> newLike) {
     likes.add(newLike);
     update(); // Notify listeners
   }
 
   void removeLike(String email) {
-  likes.removeWhere((like) => like['username'] == email);
-  update(); // Notify listeners
-}
-
+    likes.removeWhere((like) => like['username'] == email);
+    update(); // Notify listeners
+  }
 
 /////////////////////////////////////////////////////////
-
-
-
-
-
-
 
 // for the posts
 
@@ -187,7 +158,6 @@ class HomePageControllerImp extends HomePageController {
       'like': 165,
       'isLiked': false,
       'email': 's11923787@stu.najah.edu'
-      
     },
     {
       'name': 'Islam Aws',
@@ -196,7 +166,7 @@ class HomePageControllerImp extends HomePageController {
       'image': 'images/islam.jpeg',
       'like': 123,
       'isLiked': false,
-      'email':'awsobaida07@gmail.com'
+      'email': 'awsobaida07@gmail.com'
     },
   ].obs;
 
@@ -221,12 +191,12 @@ class HomePageControllerImp extends HomePageController {
     return posts[index]['like'];
   }
 
-    RxList<String> moreOptions = <String>[
+  RxList<String> moreOptions = <String>[
     'Save Post',
     'Hide Post',
   ].obs;
 
-    void onMoreOptionSelected(String option) {
+  void onMoreOptionSelected(String option) {
     // Handle the selected option here
     switch (option) {
       case 'Save Post':
@@ -239,112 +209,82 @@ class HomePageControllerImp extends HomePageController {
     }
   }
 
-
-  
-
-  
-
-
-
-
-
-
-
-
-
 ////////////////////////////////////////////////////////////////////////
-  goToSettingsPgae(){
-  Get.toNamed(AppRoute.settings);
-}
+  goToSettingsPgae() {
+    Get.toNamed(AppRoute.settings);
+  }
 
   @override
   goToSignup() {
     Get.offNamed(AppRoute.signup);
   }
 
-  
- 
-
   @override
   goToForgetPassword() {
     Get.offNamed(AppRoute.forgetpassword);
   }
-  
-
-  
 
   ///////////////////////////////////////////////////////
-   
-  Future getprfilepage() async{
-    
-        var url = urlStarter + "/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
-    var responce = await http.get(Uri.parse(url),
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-        });
-  print(responce);
+
+  Future getprfilepage() async {
+    var url = urlStarter +
+        "/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
+    var responce = await http.get(Uri.parse(url), headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+    print(responce);
     return responce;
-
   }
-  
-  
+
   @override
-  goToprofilepage() async{
-
-     var res = await getprfilepage();
+  goToprofilepage() async {
+    var res = await getprfilepage();
+    if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      goToprofilepage();
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
     var resbody = jsonDecode(res.body);
-    print(resbody['message']);
-    print(res.statusCode);
-    print(resbody);
-    if(res.statusCode == 409){
+    if (res.statusCode == 409) {
       return resbody['message'];
-    }else if(res.statusCode == 200){
-     // Get.to(ProfileMainPage(), arguments: {'user': resbody["user"]});
-
+    } else if (res.statusCode == 200) {
+      // Get.to(ProfileMainPage(), arguments: {'user': resbody["user"]});
 
       Get.to(ProfileMainPage(userData: [resbody["user"]]));
-    } 
- 
+    }
 
-
-   // Get.to(ProfileMainPage());
-
+    // Get.to(ProfileMainPage());
   }
+
   @override
-
-   Future getprfileColleaguespage(String email) async{
-        var url = urlStarter + "/user/settingsGetMainInfo?email=${email}";
-    var responce = await http.get(Uri.parse(url),
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-        });
-  print(responce);
+  Future getprfileColleaguespage(String email) async {
+    var url = urlStarter + "/user/settingsGetMainInfo?email=${email}";
+    var responce = await http.get(Uri.parse(url), headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+    print(responce);
     return responce;
-
   }
 
-  
-
-  
-
-    @override
-  goToProfileColleaguesPage(String email)async {
-         var res = await getprfileColleaguespage(email);
+  @override
+  goToProfileColleaguesPage(String email) async {
+    var res = await getprfileColleaguespage(email);
+    if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      goToProfileColleaguesPage(email);
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
     var resbody = jsonDecode(res.body);
-    print(resbody['message']);
-    print(res.statusCode);
-    print(resbody);
-    if(res.statusCode == 409){
+    if (res.statusCode == 409) {
       return resbody['message'];
-    }else if(res.statusCode == 200){
-
-
-    Get.to(ColleaguesProfile(userData: [resbody["user"]]));
+    } else if (res.statusCode == 200) {
+      Get.to(ColleaguesProfile(userData: [resbody["user"]]));
+    }
   }
-  
- 
 }
-
-
-
-  }

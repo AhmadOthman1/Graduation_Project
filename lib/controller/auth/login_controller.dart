@@ -51,16 +51,16 @@ class LoginControllerImp extends LoginController {
     try {
       var res = await postLogin(email, password);
       var resbody = jsonDecode(res.body);
-      print(resbody['message']);
-      print(res.statusCode);
       if (res.statusCode == 409) {
         return resbody['message'];
-      } else if (res.statusCode == 200 && resbody['message'] == "logged") {
+      } else if (res.statusCode == 200 ) {
         resbody['message'] = "";
-        GetStorage().write("loginemail", resbody['body']['email']);
-        GetStorage().write("loginpassword", resbody['body']['password']);
+       GetStorage().write("accessToken", resbody['accessToken']);
+      GetStorage().write("refreshToken",resbody['refreshToken'] );
+      GetStorage().write("loginemail", email);
 
-        Get.offNamed(AppRoute.homescreen);
+      
+      Get.offNamed(AppRoute.homescreen);
       }
     } catch (err) {
       print(err);

@@ -2,10 +2,13 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/profilepages/seeaboutInfoColleagues.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart' as dio;
+LogOutButtonControllerImp _logoutController =
+    Get.put(LogOutButtonControllerImp());
 
 class ColleaguesProfileControllerImp extends GetxController {
 
@@ -51,16 +54,21 @@ class ColleaguesProfileControllerImp extends GetxController {
     var responce = await http.get(Uri.parse(url),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
         });
   print(responce);
     return responce;
   }
 goToProfileMainInfo() async {
  var res = await getProfileSettingsPgae();
+ if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      goToProfileMainInfo();
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
     var resbody = jsonDecode(res.body);
-    print(resbody['message']);
-    print(res.statusCode);
-    print(resbody);
     if(res.statusCode == 409){
       return resbody['message'];
     }else if(res.statusCode == 200){
@@ -78,6 +86,7 @@ goToProfileMainInfo() async {
     var url = urlStarter + "/user/getEducationLevel?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
     });
     print(responce);
     return responce;
@@ -86,6 +95,13 @@ goToProfileMainInfo() async {
   goToEducationLevel() async {
     var res = await getEducationLevel();
     var resbody = jsonDecode(res.body);
+    if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      goToEducationLevel();
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
     if (res.statusCode == 409 || res.statusCode == 500) {
       return resbody['message'];
     } else if (res.statusCode == 200) {
@@ -105,6 +121,7 @@ goToProfileMainInfo() async {
     var url = urlStarter + "/user/getworkExperience?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
     });
     print(responce);
     return responce;
@@ -113,6 +130,13 @@ goToProfileMainInfo() async {
   goToWorkExperiencePgae() async {
     var res = await getWorkExperiencePgae();
     var resbody = jsonDecode(res.body);
+    if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      goToWorkExperiencePgae();
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
     if (res.statusCode == 409 || res.statusCode == 500) {
       return resbody['message'];
     } else if (res.statusCode == 200) {

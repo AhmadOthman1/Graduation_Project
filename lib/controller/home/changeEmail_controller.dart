@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/settings/verfiycode_emailchange.dart';
 import 'package:http/http.dart' as http;
+LogOutButtonControllerImp _logoutController =
+    Get.put(LogOutButtonControllerImp());
 
 abstract class ChangeEmailController extends GetxController {
   SaveChanges(newEmail,password);
@@ -51,6 +54,7 @@ class ChangeEmailControllerImp extends ChangeEmailController {
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
         });
     return responce;
   }
@@ -58,6 +62,13 @@ class ChangeEmailControllerImp extends ChangeEmailController {
   SaveChanges(newEmail,password) async {
     try {
       var res = await postSaveChanges(newEmail,password);
+      if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      postSaveChanges(newEmail,password);
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
       var resbody = jsonDecode(res.body);
       print(resbody['message']);
       print(res.statusCode);

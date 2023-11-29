@@ -14,6 +14,8 @@ goTosigninpage(){
  // GetStorage().write("loginpassword", "");
   GetStorage().remove('loginemail');
   GetStorage().remove('loginpassword');
+  GetStorage().remove('refreshToken');
+  GetStorage().remove('accessToken');
   print(GetStorage().read('loginemail'));
   print(GetStorage().read("loginemail"));
     firstName="";

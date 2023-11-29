@@ -4,49 +4,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
 import 'package:http/http.dart' as http;
 
-class ExperienceController extends GetxController {
-  /* final RxList<Map<String, String>> practicalExperiences =
-      <Map<String, String>>[
-    {
-      'Specialty': 'Software Developer',
-      'Company': 'ABC Tech',
-      'Description': 'Developing awesome apps',
-      'Start Date': '2022-01-01',
-      'End Date': '2022-12-31',
-    },
-    {
-      'Specialty': 'UI/UX Designer',
-      'Company': 'XYZ Design',
-      'Description': 'Creating beautiful interfaces',
-      'Start Date': '2021-06-15',
-      'End Date': '2022-01-15',
-    },
-    {
-      'Specialty': 'Project Manager',
-      'Company': '123 Projects',
-      'Description': 'Managing various projects',
-      'Start Date': '2020-03-10',
-      'End Date': '2021-06-10',
-    },
-    {
-      'Specialty': 'Data Analyst',
-      'Company': 'Data Insights',
-      'Description': 'Analyzing and interpreting data',
-      'Start Date': '2019-09-05',
-      'End Date': '2020-03-05',
-    },
-    {
-      'Specialty': 'Marketing Specialist',
-      'Company': 'Marketing Pro',
-      'Description': 'Executing marketing campaigns',
-      'Start Date': '2018-04-20',
-      'End Date': '2019-09-20',
-    },
-  ].obs;*/
+LogOutButtonControllerImp _logoutController =
+    Get.put(LogOutButtonControllerImp());
 
+class ExperienceController extends GetxController {
   final RxList<Map<String, String>> practicalExperiences =
       <Map<String, String>>[].obs;
 
@@ -135,14 +100,20 @@ class ExperienceController extends GetxController {
         var responce =
             await http.post(Uri.parse(url), body: jsonString, headers: {
           'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
         });
-
+        if (responce.statusCode == 403) {
+          await getRefreshToken(GetStorage().read('refreshToken'));
+          saveExperience();
+          return;
+        } else if (responce.statusCode == 401) {
+          _logoutController.goTosigninpage();
+        }
         if (responce.statusCode == 409 || responce.statusCode == 500) {
           var resbody = jsonDecode(responce.body);
           return resbody['message'];
         } else if (responce.statusCode == 200) {
           var resbody = jsonDecode(responce.body);
-          print(resbody['message']);
           // Add new experience
           practicalExperiences.add({
             'id': resbody['message'].toString(),
@@ -171,8 +142,15 @@ class ExperienceController extends GetxController {
         var responce =
             await http.post(Uri.parse(url), body: jsonString, headers: {
           'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
         });
-
+        if (responce.statusCode == 403) {
+          await getRefreshToken(GetStorage().read('refreshToken'));
+          saveExperience();
+          return;
+        } else if (responce.statusCode == 401) {
+          _logoutController.goTosigninpage();
+        }
         if (responce.statusCode == 409 || responce.statusCode == 500) {
           var resbody = jsonDecode(responce.body);
           return resbody['message'];
@@ -190,7 +168,6 @@ class ExperienceController extends GetxController {
           // Reset editingIndex after editing
           editingIndex.value = -1;
         }
-        
       }
 
       // Clear controllers
@@ -210,7 +187,8 @@ class ExperienceController extends GetxController {
     // Set controllers with existing values for editing
     specialtyController.text = practicalExperiences[index]['Specialty'] ?? '';
     companyController.text = practicalExperiences[index]['Company'] ?? '';
-    descriptionController.text =practicalExperiences[index]['Description'] ?? '';
+    descriptionController.text =
+        practicalExperiences[index]['Description'] ?? '';
     startDateController.text = practicalExperiences[index]['Start Date'] ?? '';
     endDateController.text =
         practicalExperiences[index]['End Date'] == "Present"
@@ -230,8 +208,15 @@ class ExperienceController extends GetxController {
     String jsonString = jsonEncode(jsonData);
     var responce = await http.post(Uri.parse(url), body: jsonString, headers: {
       'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
     });
-
+    if (responce.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      removeExperience(index);
+      return;
+    } else if (responce.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
     if (responce.statusCode == 409 || responce.statusCode == 500) {
       var resbody = jsonDecode(responce.body);
       return resbody['message'];

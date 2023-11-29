@@ -3,25 +3,26 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
 import 'package:http/http.dart' as http;
-abstract class ChangePasswordController extends GetxController{
 
-postSaveChanges(_oldPassword,_newPassword);
-SaveChanges(_oldPassword,_newPassword);
+abstract class ChangePasswordController extends GetxController {
+  postSaveChanges(_oldPassword, _newPassword);
+  SaveChanges(_oldPassword, _newPassword);
 }
 
-class ChangePasswordControllerImp extends ChangePasswordController{
+LogOutButtonControllerImp _logoutController =
+    Get.put(LogOutButtonControllerImp());
 
-
-
+class ChangePasswordControllerImp extends ChangePasswordController {
   final newPassword = ''.obs;
   final rewritePassword = ''.obs;
   final oldPassword = ''.obs;
   final obscureNewPassword = true.obs;
   final obscureRewritePassword = true.obs;
-    final obscureOldPassword = true.obs;
+  final obscureOldPassword = true.obs;
 
   String? passwordsMatch(String? value) {
     if (value != null && value != newPassword.value) {
@@ -30,7 +31,7 @@ class ChangePasswordControllerImp extends ChangePasswordController{
     return null;
   }
 
-    void toggleOldPasswordVisibility() {
+  void toggleOldPasswordVisibility() {
     obscureOldPassword.toggle();
   }
 
@@ -43,7 +44,7 @@ class ChangePasswordControllerImp extends ChangePasswordController{
   }
 // here check if the old password correct , update the password by the new password
 
-postSaveChanges(_oldPassword,_newPassword)async {
+  postSaveChanges(_oldPassword, _newPassword) async {
     var url = urlStarter + "/user/settingChangepasswor";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
@@ -53,34 +54,33 @@ postSaveChanges(_oldPassword,_newPassword)async {
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
         });
     return responce;
   }
+
   @override
-  SaveChanges(_oldPassword,_newPassword)async {
+  SaveChanges(_oldPassword, _newPassword) async {
     try {
-      var res = await postSaveChanges(_oldPassword,_newPassword);
+      var res = await postSaveChanges(_oldPassword, _newPassword);
+      if (res.statusCode == 403) {
+        await getRefreshToken(GetStorage().read('refreshToken'));
+        SaveChanges(_oldPassword, _newPassword);
+        return;
+      } else if (res.statusCode == 401) {
+        _logoutController.goTosigninpage();
+      }
       var resbody = jsonDecode(res.body);
-      print(resbody['message']);
-      print(res.statusCode);
-      if(res.statusCode == 409 ||res.statusCode == 500  ){
-        print(res.statusCode);
-        return res.statusCode+":" + resbody['message'];
-      }else if(res.statusCode == 200){
-        print(res.statusCode);
-        print(resbody['message']);
+      if (res.statusCode == 409 || res.statusCode == 500) {
+        return res.statusCode + ":" + resbody['message'];
+      } else if (res.statusCode == 200) {
         resbody['message'] = "";
         GetStorage().write("loginpassword", _newPassword);
         Get.offNamed(AppRoute.homescreen);
       }
-
-    } catch(err) {
+    } catch (err) {
       print(err);
       return "server error";
     }
-
- 
   }
-
-
 }

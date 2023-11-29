@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
 import 'package:http/http.dart' as http;
+LogOutButtonControllerImp _logoutController =
+    Get.put(LogOutButtonControllerImp());
 
 class CreatePageController {
   // Implement the function to send the request to the server
@@ -34,6 +37,7 @@ class CreatePageController {
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
         });
     
     return responce;
@@ -52,9 +56,14 @@ class CreatePageController {
 
   }) async {
     var res = await postCreatePage(pageId,pageName,description,address,contactInfo,country,speciality,pageType);
+    if (res.statusCode == 403) {
+          await getRefreshToken(GetStorage().read('refreshToken'));
+          postCreatePage(pageId,pageName,description,address,contactInfo,country,speciality,pageType);
+          return;
+        } else if (res.statusCode == 401) {
+          _logoutController.goTosigninpage();
+        }
     var resbody = jsonDecode(res.body);
-    print(resbody['message']);
-    print(res.statusCode);
     if(res.statusCode == 409){
       return resbody['message'];
     }else if(res.statusCode == 200){

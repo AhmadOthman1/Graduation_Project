@@ -2,25 +2,17 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/profilepages/colleaguesprofile.dart';
 import 'package:http/http.dart' as http;
+LogOutButtonControllerImp _logoutController =
+    Get.put(LogOutButtonControllerImp());
 
 class SearchControllerImp extends GetxController {
   // Define a dynamic list to store user data
   RxList<Map<String, String>> userList = <Map<String, String>>[
-    {
-        'name': 'islam',
-        'username': '@username',
-        'imageUrl': 'images/obaida.jpeg',
-        'email':'awsobaida07@gmail.com'
-      },
-      {
-        'name': 'islam',
-        'username': '@username',
-        'imageUrl': 'images/obaida.jpeg',
-        'email':'s11923787@stu.najah.edu'
-      },
 
 
   ].obs;
@@ -38,13 +30,34 @@ class SearchControllerImp extends GetxController {
 
  
 
-searchInDataBase(){
+searchInDataBase()async {
+    var url = urlStarter + "/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
+    var responce = await http.get(Uri.parse(url),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+        });
+  print(responce);
+    return responce;
+  }
+goTosearchPgae() async {
+ var res = await searchInDataBase();
+ if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      goTosearchPgae();
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+    var resbody = jsonDecode(res.body);
+    if(res.statusCode == 409){
+      return resbody['message'];
+    }else if(res.statusCode == 200){
+      userList=resbody["user"];
+    } 
+ 
 
-  // here define new global list your result in it 
-  // by yourList.assginall(result)
-  // the store the global list in the userList or pageList in the onInit() to rebuild the page
-}
-
+  }
 // when i press on the result users
 //////////////////////////////////////////////////////////
   @override
@@ -54,6 +67,7 @@ searchInDataBase(){
     var responce = await http.get(Uri.parse(url),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
         });
   print(responce);
     return responce;
@@ -67,10 +81,14 @@ searchInDataBase(){
     @override
   goToProfileColleaguesPage(String email)async {
          var res = await getprfileColleaguespage(email);
+         if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      goToProfileColleaguesPage(email);
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
     var resbody = jsonDecode(res.body);
-    print(resbody['message']);
-    print(res.statusCode);
-    print(resbody);
     if(res.statusCode == 409){
       return resbody['message'];
     }else if(res.statusCode == 200){

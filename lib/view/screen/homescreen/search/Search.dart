@@ -22,7 +22,10 @@ class Search extends StatelessWidget {
           centerTitle: true,
           backgroundColor: Colors.white,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back,color: Colors.black,),
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.black,
+            ),
             onPressed: () {
               Get.back(); // Navigate back
             },
@@ -43,8 +46,18 @@ class Search extends StatelessWidget {
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 15, horizontal: 30),
                       suffixIcon: InkWell(
-                        child: const Icon(Icons.search,color: Colors.black,),
-                        onTap: () {},
+                        child: const Icon(
+                          Icons.search,
+                          color: Colors.black,
+                        ),
+                        onTap: () {
+                          if (formstate.currentState!.validate()) {
+                            controller.searchInDataBase();
+                            print("Valid");
+                          } else {
+                            print("Not Valid");
+                          }
+                        },
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -52,7 +65,7 @@ class Search extends StatelessWidget {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Field cannot be empty';
+                        return "";
                       }
                       return null;
                     },
@@ -61,27 +74,6 @@ class Search extends StatelessWidget {
               ],
             ),
           ),
-          actions: [
-            MaterialButton(
-              onPressed: () {
-             
-                if (formstate.currentState!.validate()) {
-                  controller.searchInDataBase();
-                  print("Valid");
-                } else {
-                  print("Not Valid");
-                }
-              },
-              child: const Text(
-                'Search',
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
         ),
       ),
       body: DefaultTabController(
@@ -154,9 +146,9 @@ class Search extends StatelessWidget {
 
                         return ListTile(
                           onTap: () {
-                           final email=controller.userList[index]['email'];
+                            final email = controller.userList[index]['email'];
                             controller.goToProfileColleaguesPage(email!);
-                          //  controller.goToprofile(email)
+                            //  controller.goToprofile(email)
                           },
                           title: Text('$name'),
                           subtitle: Text('$username'),
@@ -180,7 +172,6 @@ class Search extends StatelessWidget {
 
                         // when you git from database active this to {check if null}
 
-
                         //profileImage = (controller.pageList[index]['imageUrl'] == null) ? "" : controller.pageList[index]['imageUrl'];
                         /*     profileBackgroundImage = (profileImage != null && profileImage != "")
         ? Image.network(urlStarter + "/" + profileImage!).image
@@ -200,7 +191,7 @@ class Search extends StatelessWidget {
 
                         return ListTile(
                           onTap: () {
-                            // the same thing in the above 
+                            // the same thing in the above
                           },
                           title: Text('$name'),
                           subtitle: Text('$username'),
