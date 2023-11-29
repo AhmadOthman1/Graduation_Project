@@ -10,12 +10,14 @@ import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/notificationspages/notificationmainpage.dart';
 import 'package:growify/view/screen/homescreen/profilepages/colleaguesprofile.dart';
 import 'package:growify/view/screen/homescreen/profilepages/profilemainpage.dart';
+import 'package:growify/view/widget/homePage/like.dart';
 import 'package:http/http.dart' as http;
 
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
 class CommentModel {
+  final int postId;
   final String username;
   final String comment;
   final AssetImage userImage;
@@ -25,6 +27,7 @@ class CommentModel {
 
   CommentModel({
     required this.username,
+    required this.postId,
     required this.comment,
     required this.userImage,
     required this.time,
@@ -43,44 +46,43 @@ abstract class HomePageController extends GetxController {
   getprfilepage();
   getprfileColleaguespage(String email);
 //// for comment
-  getprofilefromcomment(String email);
-  gotoprofileFromcomment(String email);
+getprofilefromcomment(String email);
+gotoprofileFromcomment(String email);
 }
 
 class HomePageControllerImp extends HomePageController {
   /// for comment
   final RxList<CommentModel> comments = <CommentModel>[
     CommentModel(
-        username: 'User1',
-        comment: 'This is a comment.',
-        userImage: AssetImage('images/islam.jpeg'),
-        time: DateTime.now(),
-        email: 'awsobaida07@gmail.com'),
+      username: 'User1',
+      comment: 'This is a comment.',
+      userImage: AssetImage('images/islam.jpeg'),
+      time: DateTime.now(),
+      email: 'awsobaida07@gmail.com'
+      
+    ),
     CommentModel(
-        username: 'User2',
-        comment: 'Nice post!',
-        userImage: AssetImage('images/Netflix.png'),
-        time: DateTime.now().subtract(const Duration(minutes: 30)),
-        likes: 5,
-        email: 'awsobaida07@gmail.com'),
+      username: 'User2',
+      comment: 'Nice post!',
+      userImage: AssetImage('images/Netflix.png'),
+      time: DateTime.now().subtract(const Duration(minutes: 30)),
+      likes: 5,
+      email: 'awsobaida07@gmail.com'
+    ),
     CommentModel(
-        username: 'User3',
-        comment: 'Great content.',
-        userImage: AssetImage('images/harri.png'),
-        time: DateTime.now().subtract(const Duration(hours: 2)),
-        likes: 10,
-        email: 's11923787@stu.najah.edu'),
+      username: 'User3',
+      comment: 'Great content.',
+      userImage: AssetImage('images/harri.png'),
+      time: DateTime.now().subtract(const Duration(hours: 2)),
+      likes: 10,
+      email: 's11923787@stu.najah.edu'
+    ),
   ].obs;
 
-  void addComment(String username, String newComment, String email) {
+    void addComment(String username, String newComment,String email) {
     final userImage = AssetImage('images/obaida.jpeg');
     final time = DateTime.now();
-    comments.add(CommentModel(
-        username: username,
-        comment: newComment,
-        userImage: userImage,
-        time: time,
-        email: email));
+    comments.add(CommentModel(username: username, comment: newComment, userImage: userImage, time: time,email:email));
   }
 
   void toggleLikecomment(int index) {
@@ -113,9 +115,12 @@ class HomePageControllerImp extends HomePageController {
     var resbody = jsonDecode(res.body);
     if (res.statusCode == 409) {
       return resbody['message'];
-    } else if (res.statusCode == 200) {
-      Get.to(ColleaguesProfile(userData: [resbody["user"]]));
-    }
+    }else if(res.statusCode == 200){
+
+
+    Get.to(ColleaguesProfile(userData: [resbody["user"]]));
+  }
+    
   }
 
 //// for the page of likes
@@ -141,9 +146,9 @@ class HomePageControllerImp extends HomePageController {
   }
 
   void removeLike(String email) {
-    likes.removeWhere((like) => like['username'] == email);
-    update(); // Notify listeners
-  }
+  likes.removeWhere((like) => like['username'] == email);
+  update(); // Notify listeners
+}
 
 /////////////////////////////////////////////////////////
 
@@ -152,19 +157,23 @@ class HomePageControllerImp extends HomePageController {
   RxList<Map<String, dynamic>> posts = <Map<String, dynamic>>[
     {
       'name': 'Obaida Aws',
+      'id':1,
       'time': '1 hour ago',
       'content': 'Computer engineer in my fifth year at Al Najah University.',
       'image': 'images/obaida.jpeg',
       'like': 165,
+      'comment':87,
       'isLiked': false,
       'email': 's11923787@stu.najah.edu'
     },
     {
       'name': 'Islam Aws',
+      'id':2,
       'time': '2 hours ago',
       'content': 'This is my brother, and he is 8 months old.',
       'image': 'images/islam.jpeg',
       'like': 123,
+      'comment':46,
       'isLiked': false,
       'email': 'awsobaida07@gmail.com'
     },
@@ -176,8 +185,18 @@ class HomePageControllerImp extends HomePageController {
 
     if (post['isLiked']) {
       post['like']++;
+      addLike({
+      'name': 'Islam Aws',
+      'username': '@islam_aws',
+      'image': 'images/islam.jpeg',
+      'email':'awsobaida07@gmail.com'
+
+    },);
+
     } else {
+      removeLike('awsobaida07@gmail.com');
       post['like']--;
+
     }
 
     update(); // Notify GetBuilder to rebuild
@@ -190,6 +209,12 @@ class HomePageControllerImp extends HomePageController {
   int getLikes(int index) {
     return posts[index]['like'];
   }
+
+  int getComments(int index) {
+    return posts[index]['comment'];
+  }
+
+  
 
   RxList<String> moreOptions = <String>[
     'Save Post',

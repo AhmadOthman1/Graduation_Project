@@ -4,8 +4,17 @@ import 'package:growify/controller/home/homepage_controller.dart';
 
 
 class Comments extends StatelessWidget {
+  Comments({Key? key, required this.postId}){
+    thePostId=postId;
+    
+
+
+
+  }
   final HomePageControllerImp controller = Get.put(HomePageControllerImp());
   final TextEditingController commentController = TextEditingController();
+   final int postId;
+   late int thePostId;
 
   @override
   Widget build(BuildContext context) {
@@ -15,12 +24,19 @@ class Comments extends StatelessWidget {
       child: Obx(
         () => 
          Column(
+          
             children: [
+          /*    MaterialButton(onPressed: (){
+                Get.delete<HomePageControllerImp>();
+                Get.back();
+              },child: Text("back"),),*/
               Flexible(
                 
                 child: ListView.builder(
                   itemCount: controller.comments.length,
                   itemBuilder: (context, index) {
+                    if(thePostId==controller.comments[index].postId)
+                    {
                     final comment = controller.comments[index];
                     return Container(
                       margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -67,6 +83,9 @@ class Comments extends StatelessWidget {
                         ),
                       ),
                     );
+                  }else{
+                    return Container();
+                  }
                   },
                 ),
               ),
@@ -101,7 +120,10 @@ class Comments extends StatelessWidget {
                           final username = 'Current User';
                           final newComment = commentController.text;
                           final  Email='awsobaida07@gmail.com';
-                          controller.addComment(username, newComment,Email);
+                          
+                          controller.addComment(username, newComment,Email,thePostId);
+                          print(username );
+                          print(thePostId);
                           commentController.clear();
                         },
                       ),
