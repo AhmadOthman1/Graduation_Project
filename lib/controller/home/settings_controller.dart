@@ -27,7 +27,7 @@ class SettingsControllerImp extends SettingsController {
     var url = "$urlStarter/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
-      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+      'Authorization': 'bearer ' + GetStorage().read('accessToken') ?? "",
     });
     print(responce);
     return responce;
@@ -41,6 +41,8 @@ class SettingsControllerImp extends SettingsController {
       goToProfileSettingsPgae();
       return;
     } else if (res.statusCode == 401) {
+            print("2222222222222222222222222");
+
       _logoutController.goTosigninpage();
     }
     var resbody = jsonDecode(res.body);

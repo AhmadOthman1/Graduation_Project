@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
+import 'package:growify/global.dart';
 
-class Search extends StatelessWidget {
+class Search extends StatefulWidget {
+  const Search({Key? key}) : super(key: key);
+
+  @override
+  _SearchState createState() => _SearchState();
+}
+
+class _SearchState extends State<Search> {
   final SearchControllerImp controller = Get.put(SearchControllerImp());
-  GlobalKey<FormState> formstate = GlobalKey();
+  final GlobalKey<FormState> formstate = GlobalKey();
+  bool isLoading = false;
 
-  final AssetImage defultprofileImage = const AssetImage("images/profileImage.jpg");
+  final AssetImage defultprofileImage =
+      const AssetImage("images/profileImage.jpg");
   ImageProvider<Object>? profileBackgroundImage;
   String? profileImage;
-
-  Search({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +60,17 @@ class Search extends StatelessWidget {
                         ),
                         onTap: () {
                           if (formstate.currentState!.validate()) {
-                            controller.searchInDataBase();
-                            print("Valid");
+                            setState(() {
+                              isLoading =
+                                  false;
+                              controller.Upage=1;
+                              controller.userList.clear();
+                              controller.userList.clear();
+                            });
+                            controller.goTosearchPage(
+                              controller.searchValue,
+                              controller.Upage,
+                            );
                           } else {
                             print("Not Valid");
                           }
@@ -64,6 +81,7 @@ class Search extends StatelessWidget {
                       ),
                     ),
                     validator: (value) {
+                      controller.searchValue = value;
                       if (value == null || value.isEmpty) {
                         return "";
                       }
@@ -100,8 +118,9 @@ class Search extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
                           border: Border.all(
-                              color: const Color.fromARGB(255, 85, 191, 218),
-                              width: 1),
+                            color: const Color.fromARGB(255, 85, 191, 218),
+                            width: 1,
+                          ),
                         ),
                         child: const Align(
                           alignment: Alignment.center,
@@ -115,8 +134,9 @@ class Search extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
                           border: Border.all(
-                              color: const Color.fromARGB(255, 85, 191, 218),
-                              width: 1),
+                            color: const Color.fromARGB(255, 85, 191, 218),
+                            width: 1,
+                          ),
                         ),
                         child: const Align(
                           alignment: Alignment.center,
@@ -131,75 +151,101 @@ class Search extends StatelessWidget {
             Expanded(
               child: TabBarView(
                 children: [
-                  Obx(
-                    () => ListView.separated(
-                      // for user
+                  NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      if (!isLoading &&
+                          scrollInfo.metrics.pixels ==
+                              scrollInfo.metrics.maxScrollExtent) {
+                        setState(() {
+                          isLoading =
+                              true; // Set loading to true to avoid multiple requests
+                          controller.Upage++;
+                        });
 
-                      padding: const EdgeInsets.all(15),
-                      itemCount: controller.userList.length,
-                      separatorBuilder: (BuildContext context, int index) =>
-                          const Divider(),
-                      itemBuilder: (context, index) {
-                        final name = controller.userList[index]['name'];
-                        final username = controller.userList[index]['username'];
-                        final imageUrl = controller.userList[index]['imageUrl'];
+                        controller
+                            .goTosearchPage(
+                                controller.searchValue, controller.Upage)
+                            .then((result) {
+                          if (result != null && result.isNotEmpty) {
+                            setState(() {
+                              isLoading =
+                                  false; // Reset loading when the data is fetched
+                            });
+                          }
+                        });
+                      }
+                      return false;
+                    },
+                    child: Obx(
+                      () => ListView.builder(
+                        // for user
 
-                        return ListTile(
-                          onTap: () {
-                            final email = controller.userList[index]['email'];
-                            controller.goToProfileColleaguesPage(email!);
-                            //  controller.goToprofile(email)
-                          },
-                          title: Text('$name'),
-                          subtitle: Text('$username'),
-                          trailing: CircleAvatar(
-                            backgroundImage: AssetImage('$imageUrl'),
-                          ),
-                        );
-                      },
+                        padding: const EdgeInsets.all(15),
+                        itemCount: controller.userList.length,
+                        itemBuilder: (context, index) {
+                          final firstname =
+                              controller.userList[index]['firstname'];
+                          final lastname =
+                              controller.userList[index]['lastname'];
+                          final username =
+                              controller.userList[index]['username'];
+                          final photo = controller.userList[index]['photo'];
+                          profileBackgroundImage =
+                              (photo != null && photo != "null" && photo != "")
+                                  ? Image.network("$urlStarter/" + photo!).image
+                                  : defultprofileImage;
+                          return ListTile(
+                            onTap: () {
+                              final userUsername = username;
+                              controller.goToUserPage(userUsername!);
+                              //  controller.goToprofile(email)
+                            },
+                            title: Text('$firstname $lastname'),
+                            subtitle: Text('$username'),
+                            trailing: CircleAvatar(
+                              backgroundImage: profileBackgroundImage,
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
-                  Obx(
-                    () => ListView.separated(
-                      padding: const EdgeInsets.all(15),
-                      itemCount: controller.pageList.length,
-                      separatorBuilder: (BuildContext context, int index) =>
-                          const Divider(),
-                      itemBuilder: (context, index) {
-                        final name = controller.pageList[index]['name'];
-                        final username = controller.pageList[index]['username'];
-                        final imageUrl = controller.pageList[index]['imageUrl'];
+                  NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      if (scrollInfo.metrics.pixels ==
+                          scrollInfo.metrics.maxScrollExtent) {
+                        // User reached the bottom, load more results
+                        setState(() {
+                          controller.Ppage++;
+                        });
+                        controller.goTosearchPage(
+                            controller.searchValue, controller.Ppage);
+                      }
+                      return false;
+                    },
+                    child: Obx(
+                      () => ListView.builder(
+                        padding: const EdgeInsets.all(15),
+                        itemCount: controller.pageList.length,
+                        itemBuilder: (context, index) {
+                          final name = controller.pageList[index]['name'];
+                          final username =
+                              controller.pageList[index]['username'];
+                          final imageUrl =
+                              controller.pageList[index]['imageUrl'];
 
-                        // when you git from database active this to {check if null}
-
-                        //profileImage = (controller.pageList[index]['imageUrl'] == null) ? "" : controller.pageList[index]['imageUrl'];
-                        /*     profileBackgroundImage = (profileImage != null && profileImage != "")
-        ? Image.network(urlStarter + "/" + profileImage!).image
-        : defultprofileImage;
-
-                        */
-                        /*
-                         CircleAvatar(
-            
-            backgroundImage: controller.profileImageBytes.isNotEmpty
-                ? MemoryImage(base64Decode(controller.profileImageBytes.value))
-                : profileBackgroundImage, // Replace with your default photo URL
-          ),
-
-
-                        */
-
-                        return ListTile(
-                          onTap: () {
-                            // the same thing in the above
-                          },
-                          title: Text('$name'),
-                          subtitle: Text('$username'),
-                          trailing: CircleAvatar(
-                            backgroundImage: AssetImage('$imageUrl'),
-                          ),
-                        );
-                      },
+                          return ListTile(
+                            onTap: () {
+                              // the same thing in the above
+                            },
+                            title: Text('$name'),
+                            subtitle: Text('$username'),
+                            trailing: CircleAvatar(
+                              backgroundImage: AssetImage('$imageUrl'),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],
