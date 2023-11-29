@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/auth/forgetPassword_controller.dart';
 import 'package:growify/controller/auth/verifycode_controller.dart';
 import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/global.dart';
-import 'package:growify/view/widget/auth/ButtonAuth.dart';
 import 'package:growify/view/widget/auth/textBodyAuth.dart';
-import 'package:growify/view/widget/auth/textFormAuth.dart';
 import 'package:growify/view/widget/auth/textTitleAuth.dart';
 
 class VerifyCode extends StatelessWidget {
@@ -47,7 +44,7 @@ class VerifyCode extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               fieldWidth: 50,
         numberOfFields: 5,
-        borderColor: Color(0xFF512DA8),
+        borderColor: const Color(0xFF512DA8),
         showFieldAsBox: true, 
         onCodeChanged: (String code) {        
         },

@@ -3,11 +3,9 @@ import 'package:get/get.dart';
 import 'package:growify/controller/home/homepage_controller.dart';
 import 'package:growify/view/widget/homePage/commentsMainpage.dart';
 
-import 'package:growify/view/widget/homePage/like.dart';
-import 'package:growify/view/widget/homePage/thecomments.dart';
 
 class Post extends StatelessWidget {
-  Post({Key? key});
+  const Post({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +15,7 @@ class Post extends StatelessWidget {
         builder: (controller) {
           return ListView.builder(
             itemCount: controller.posts.length,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemBuilder: (context, index) {
               final post = controller.posts[index];
@@ -33,7 +31,7 @@ class Post extends StatelessWidget {
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 3,
                       blurRadius: 5,
-                      offset: Offset(0, 3),
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -114,7 +112,7 @@ class Post extends StatelessWidget {
                           const SizedBox(height: 10),
                           Text(
                             post['content'],
-                            style: TextStyle(fontSize: 18),
+                            style: const TextStyle(fontSize: 18),
                           ),
                           const SizedBox(height: 10),
                           Image.asset(post['image']),
@@ -126,20 +124,20 @@ class Post extends StatelessWidget {
                                   onTap: () {
                                     //go to like page
                                     int postId =post['id'];
-                                    controller.goToLikePage(postId);
+                                    //controller.goToLikePage(postId);
                                   },
                                   child: Row(
                                     children: [
-                                      Icon(
+                                      const Icon(
                                         Icons.thumb_up,
                                         color: Colors.blue,
                                       ),
                                       Container(
                                         margin:
-                                            EdgeInsets.only(left: 10, right: 5),
+                                            const EdgeInsets.only(left: 10, right: 5),
                                         child: Text(
                                           '${controller.getLikes(index)}',
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 15,
                                             color: Colors.grey,
@@ -156,7 +154,7 @@ class Post extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 100,
                                 ),
                                 InkWell(
@@ -173,10 +171,10 @@ class Post extends StatelessWidget {
                                     children: [
                                       Container(
                                         margin:
-                                            EdgeInsets.only(left: 10, right: 5),
+                                            const EdgeInsets.only(left: 10, right: 5),
                                         child: Text(
                                           '${controller.getComments(index)}',
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 15,
                                             color: Colors.grey,
@@ -196,12 +194,12 @@ class Post extends StatelessWidget {
                               ],
                             ),
                           ),
-                          Divider(
+                          const Divider(
                             color: Color.fromARGB(255, 194, 193, 193),
                             thickness: 1.0,
                           ),
                           Container(
-                            margin: EdgeInsets.only(left: 20),
+                            margin: const EdgeInsets.only(left: 20),
                             child: Row(
                               children: [
                                 InkWell(
@@ -209,7 +207,7 @@ class Post extends StatelessWidget {
                                     controller.toggleLike(index);
                                   },
                                   child: Container(
-                                    margin: EdgeInsets.only(left: 35),
+                                    margin: const EdgeInsets.only(left: 35),
                                     child: Column(
                                       children: [
                                         Icon(
@@ -218,19 +216,19 @@ class Post extends StatelessWidget {
                                               ? Colors.blue
                                               : Colors.grey,
                                         ),
-                                        Text("Like")
+                                        const Text("Like")
                                       ],
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 135),
+                                const SizedBox(width: 135),
                                 InkWell(
                                   onTap: () {
                                     //go to comment page
                                     int postId =post['id'];
                                     Get.to(CommentsMainPage(id: postId,));
                                   },
-                                  child: Column(
+                                  child: const Column(
                                     children: [
                                       Icon(
                                         Icons.comment,

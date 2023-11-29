@@ -4,7 +4,7 @@ import 'package:growify/controller/home/homepage_controller.dart';
 
 
 class Comments extends StatelessWidget {
-  Comments({Key? key, required this.postId}){
+  Comments({super.key, required this.postId}){
     thePostId=postId;
     
 
@@ -20,7 +20,7 @@ class Comments extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
             height: MediaQuery.of(context).size.height * 0.75, // Adjust the height as needed
-      margin: EdgeInsets.symmetric(horizontal: 5),
+      margin: const EdgeInsets.symmetric(horizontal: 5),
       child: Obx(
         () => 
          Column(
@@ -75,7 +75,7 @@ class Comments extends StatelessWidget {
                                 const SizedBox(width: 16),
                                 Text(
                                   'Posted ${timeAgoSinceDate(comment.time)}',
-                                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                                  style: const TextStyle(fontSize: 12, color: Colors.grey),
                                 ),
                               ],
                             ),
@@ -100,11 +100,11 @@ class Comments extends StatelessWidget {
                           controller: commentController,
                           decoration: const InputDecoration(
                             hintText: 'Write a comment...',
-                            hintStyle: const TextStyle(
+                            hintStyle: TextStyle(
                               fontSize: 14,
                             ),
                             floatingLabelBehavior: FloatingLabelBehavior.always,
-                            contentPadding: const EdgeInsets.symmetric(
+                            contentPadding: EdgeInsets.symmetric(
                               vertical: 15,
                               horizontal: 30,
                             ),
@@ -117,9 +117,9 @@ class Comments extends StatelessWidget {
                       IconButton(
                         icon: const Icon(Icons.send),
                         onPressed: () {
-                          final username = 'Current User';
+                          const username = 'Current User';
                           final newComment = commentController.text;
-                          final  Email='awsobaida07@gmail.com';
+                          const  Email='awsobaida07@gmail.com';
                           
                           controller.addComment(username, newComment,Email,thePostId);
                           print(username );

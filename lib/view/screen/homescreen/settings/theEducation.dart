@@ -8,6 +8,8 @@ import 'package:growify/controller/home/theEducation_controller.dart';
 class Education extends StatelessWidget {
   final EducationController controller = Get.put(EducationController());
 
+   Education({super.key});
+
   @override
   Widget build(BuildContext context) {
 
@@ -29,12 +31,12 @@ controller.undoEducation();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Education Level",
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.black,
         ),
       ),
@@ -50,11 +52,11 @@ controller.undoEducation();
                 padding:
                     const EdgeInsets.symmetric(vertical: 13, horizontal: 15),
                 onPressed: controller.addNewEducation,
-                color: Color.fromARGB(255, 85, 191, 218),
+                color: const Color.fromARGB(255, 85, 191, 218),
                 textColor: Colors.white,
-                child: Text('Add New Education Level'),
+                child: const Text('Add New Education Level'),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Obx(() {
                 return Visibility(
                   visible: controller.isAddingEducation.value,
@@ -75,9 +77,9 @@ controller.undoEducation();
                             label: Container(
                                 margin:
                                     const EdgeInsets.symmetric(horizontal: 9),
-                                child: Text("Specialty")),
+                                child: const Text("Specialty")),
                             suffixIcon: InkWell(
-                                child: Icon(Icons.work_history_sharp),
+                                child: const Icon(Icons.work_history_sharp),
                                 onTap: () {}),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
@@ -90,7 +92,7 @@ controller.undoEducation();
                             return null;
                           },
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 16,
                         ),
                         TextFormField(
@@ -107,9 +109,9 @@ controller.undoEducation();
                             label: Container(
                                 margin:
                                     const EdgeInsets.symmetric(horizontal: 9),
-                                child: Text("School/University")),
+                                child: const Text("School/University")),
                             suffixIcon: InkWell(
-                                child: Icon(Icons.business), onTap: () {}),
+                                child: const Icon(Icons.business), onTap: () {}),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -122,7 +124,7 @@ controller.undoEducation();
                             return null;
                           },
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 13,
                         ),
                         TextFormField(
@@ -141,9 +143,9 @@ controller.undoEducation();
                             label: Container(
                                 margin:
                                     const EdgeInsets.symmetric(horizontal: 9),
-                                child: Text("Description")),
+                                child: const Text("Description")),
                             suffixIcon: InkWell(
-                                child: Icon(Icons.description), onTap: () {}),
+                                child: const Icon(Icons.description), onTap: () {}),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -156,7 +158,7 @@ controller.undoEducation();
                             return null;
                           },
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 13,
                         ),
                         TextFormField(
@@ -173,9 +175,9 @@ controller.undoEducation();
                             label: Container(
                                 margin:
                                     const EdgeInsets.symmetric(horizontal: 9),
-                                child: Text("Start Date")),
+                                child: const Text("Start Date")),
                             suffixIcon: IconButton(
-                              icon: Icon(Icons.date_range),
+                              icon: const Icon(Icons.date_range),
                               onPressed: () =>
                                   controller.pickStartDate(context),
                             ),
@@ -190,7 +192,7 @@ controller.undoEducation();
                             return null;
                           },
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 13,
                         ),
                         Row(
@@ -212,9 +214,9 @@ controller.undoEducation();
                                   label: Container(
                                       margin: const EdgeInsets.symmetric(
                                           horizontal: 9),
-                                      child: Text("End Date")),
+                                      child: const Text("End Date")),
                                   suffixIcon: IconButton(
-                                    icon: Icon(Icons.date_range),
+                                    icon: const Icon(Icons.date_range),
                                     onPressed: controller.isSaveVisible.value
                                         ? () => controller.pickEndDate(context)
                                         : null,
@@ -241,7 +243,7 @@ controller.undoEducation();
                             ),
                           ],
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         Row(
                           children: [
                             MaterialButton(
@@ -249,19 +251,19 @@ controller.undoEducation();
                                   borderRadius: BorderRadius.circular(20)),
                               padding: const EdgeInsets.symmetric(vertical: 13),
                               onPressed: controller.saveEducation,
-                              color: Color.fromARGB(255, 85, 191, 218),
+                              color: const Color.fromARGB(255, 85, 191, 218),
                               textColor: Colors.white,
-                              child: Text('Save'),
+                              child: const Text('Save'),
                             ),
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                             MaterialButton(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20)),
                               padding: const EdgeInsets.symmetric(vertical: 13),
                               onPressed: controller.undoEducation,
-                              color: Color.fromARGB(255, 85, 191, 218),
+                              color: const Color.fromARGB(255, 85, 191, 218),
                               textColor: Colors.white,
-                              child: Text('Undo'),
+                              child: const Text('Undo'),
                             ),
                           ],
                         ),
@@ -270,8 +272,8 @@ controller.undoEducation();
                   ),
                 );
               }),
-              SizedBox(height: 16),
-              Text(
+              const SizedBox(height: 16),
+              const Text(
                 'Education Level List:',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
@@ -308,18 +310,18 @@ controller.undoEducation();
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: Icon(Icons.edit),
+                      icon: const Icon(Icons.edit),
                       onPressed: () => controller.editEducation(index),
                     ),
                     IconButton(
-                      icon: Icon(Icons.delete),
+                      icon: const Icon(Icons.delete),
                       onPressed: () => controller.removeEducation(index),
                     ),
                   ],
                 ),
               ),
               if (index < controller.educationLevels.length - 1)
-                Divider(
+                const Divider(
                   color: Color.fromARGB(255, 194, 193, 193),
                   thickness: 1.5,
                 ),

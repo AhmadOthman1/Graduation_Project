@@ -4,20 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
-import 'package:growify/controller/home/myPages_controller.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
-import 'package:growify/view/screen/homescreen/notificationspages/notificationmainpage.dart';
 import 'package:growify/view/screen/homescreen/profilepages/colleaguesprofile.dart';
 import 'package:growify/view/screen/homescreen/profilepages/profilemainpage.dart';
-import 'package:growify/view/widget/homePage/like.dart';
 import 'package:http/http.dart' as http;
 
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
 class CommentModel {
-  final int postId;
+  final int? postId;
   final String username;
   final String comment;
   final AssetImage userImage;
@@ -27,7 +24,7 @@ class CommentModel {
 
   CommentModel({
     required this.username,
-    required this.postId,
+     this.postId,
     required this.comment,
     required this.userImage,
     required this.time,
@@ -56,7 +53,7 @@ class HomePageControllerImp extends HomePageController {
     CommentModel(
       username: 'User1',
       comment: 'This is a comment.',
-      userImage: AssetImage('images/islam.jpeg'),
+      userImage: const AssetImage('images/islam.jpeg'),
       time: DateTime.now(),
       email: 'awsobaida07@gmail.com'
       
@@ -64,7 +61,7 @@ class HomePageControllerImp extends HomePageController {
     CommentModel(
       username: 'User2',
       comment: 'Nice post!',
-      userImage: AssetImage('images/Netflix.png'),
+      userImage: const AssetImage('images/Netflix.png'),
       time: DateTime.now().subtract(const Duration(minutes: 30)),
       likes: 5,
       email: 'awsobaida07@gmail.com'
@@ -72,15 +69,15 @@ class HomePageControllerImp extends HomePageController {
     CommentModel(
       username: 'User3',
       comment: 'Great content.',
-      userImage: AssetImage('images/harri.png'),
+      userImage: const AssetImage('images/harri.png'),
       time: DateTime.now().subtract(const Duration(hours: 2)),
       likes: 10,
       email: 's11923787@stu.najah.edu'
     ),
   ].obs;
 
-    void addComment(String username, String newComment,String email) {
-    final userImage = AssetImage('images/obaida.jpeg');
+    void addComment(String username, String newComment,String email,int thePostId) {
+    const userImage = AssetImage('images/obaida.jpeg');
     final time = DateTime.now();
     comments.add(CommentModel(username: username, comment: newComment, userImage: userImage, time: time,email:email));
   }
@@ -92,7 +89,7 @@ class HomePageControllerImp extends HomePageController {
 
   @override
   Future getprofilefromcomment(String email) async {
-    var url = urlStarter + "/user/settingsGetMainInfo?email=${email}";
+    var url = "$urlStarter/user/settingsGetMainInfo?email=$email";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -235,6 +232,7 @@ class HomePageControllerImp extends HomePageController {
   }
 
 ////////////////////////////////////////////////////////////////////////
+  @override
   goToSettingsPgae() {
     Get.toNamed(AppRoute.settings);
   }
@@ -251,9 +249,9 @@ class HomePageControllerImp extends HomePageController {
 
   ///////////////////////////////////////////////////////
 
+  @override
   Future getprfilepage() async {
-    var url = urlStarter +
-        "/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
+    var url = "$urlStarter/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -286,7 +284,7 @@ class HomePageControllerImp extends HomePageController {
 
   @override
   Future getprfileColleaguespage(String email) async {
-    var url = urlStarter + "/user/settingsGetMainInfo?email=${email}";
+    var url = "$urlStarter/user/settingsGetMainInfo?email=$email";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),

@@ -6,13 +6,13 @@ class NotificationsPage extends StatelessWidget {
   final List<Map<String, dynamic>> notifications = [
     {
       'title': 'New poll in MYSQL about how many computer engineer like his position ',
-      'time': 'Before ' + 2.toString() + ' minutes',
+      'time': 'Before ${2} minutes',
       'image': 'images/islam.jpeg',
       'messageIcon': Icons.more_vert,
     },
     {
       'title': 'Obaida Aws Post published about the recent events in the Gaza Strip, and about Israeli terrorism.',
-      'time': 'Before ' + 1.toString() + ' hour',
+      'time': 'Before ${1} hour',
       'image': 'images/obaida.jpeg',
       'messageIcon': Icons.more_vert,
     },
@@ -25,15 +25,15 @@ class NotificationsPage extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            margin: EdgeInsets.only(top: 50, bottom: 10),
+            margin: const EdgeInsets.only(top: 50, bottom: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                IconButton(onPressed: (){}, icon: Icon(Icons.arrow_back,size: 30,)),
+                IconButton(onPressed: (){}, icon: const Icon(Icons.arrow_back,size: 30,)),
                 // put the icons action
                 Container(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Text(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: const Text(
                       "Notices",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -43,7 +43,7 @@ class NotificationsPage extends StatelessWidget {
               ],
             ),
           ),
-          Divider(
+          const Divider(
             color: Color.fromARGB(255, 194, 193, 193),
             thickness: 2.0,
           ),
@@ -73,7 +73,7 @@ class NotificationsPage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Divider(
+                    const Divider(
                       color: Color.fromARGB(255, 194, 193, 193),
                       thickness: 2.0,
                     ),

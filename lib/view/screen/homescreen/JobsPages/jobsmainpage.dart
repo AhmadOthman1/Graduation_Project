@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/core/constant/routes.dart';
 import 'package:growify/view/screen/homescreen/JobsPages/showthejob.dart';
-import 'package:growify/view/screen/homescreen/homepages/homemainPage.dart';
 
 class JobsPage extends StatelessWidget {
   JobsPage({super.key});
@@ -106,7 +104,7 @@ class JobsPage extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            margin: EdgeInsets.only(top: 50, bottom: 10),
+            margin: const EdgeInsets.only(top: 50, bottom: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -114,21 +112,21 @@ class JobsPage extends StatelessWidget {
                   onPressed: () {
                    
                   },
-                  icon: Icon(Icons.arrow_back, size: 30),
+                  icon: const Icon(Icons.arrow_back, size: 30),
                 ),
                 // put the icons action
                 Container(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Text(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: const Text(
                     "Jobs",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
-                SizedBox(width: 180),
+                const SizedBox(width: 180),
               ],
             ),
           ),
-          Divider(
+          const Divider(
             color: Color.fromARGB(255, 194, 193, 193),
             thickness: 2.0,
           ),
@@ -143,9 +141,9 @@ class JobsPage extends StatelessWidget {
                     ListTile(
                       leading: InkWell(
                         onTap: (){
-                          Get.to(ShowJob());
+                          Get.to(const ShowJob());
                         },
-                        child: Container(
+                        child: SizedBox(
                           width: 60, // Set your desired width
                           height: 60, // Set your desired height
                           child: ClipRRect(
@@ -178,7 +176,7 @@ class JobsPage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Divider(
+                    const Divider(
                       color: Color.fromARGB(255, 194, 193, 193),
                       thickness: 2.0,
                     ),

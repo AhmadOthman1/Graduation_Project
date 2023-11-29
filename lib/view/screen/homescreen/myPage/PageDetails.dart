@@ -4,7 +4,7 @@ import 'package:growify/controller/home/myPage_Controller/PageDetails_controller
 class PageDetails extends StatefulWidget {
   final String pageId;
 
-  PageDetails(this.pageId);
+  const PageDetails(this.pageId, {super.key});
 
   @override
   _PageDetailsState createState() => _PageDetailsState();
@@ -17,12 +17,12 @@ class _PageDetailsState extends State<PageDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "My Pages",
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.black,
         ),
       ),

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
-import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/settings/verfiycode_emailchange.dart';
 import 'package:http/http.dart' as http;
@@ -44,8 +43,9 @@ class ChangeEmailControllerImp extends ChangeEmailController {
     super.dispose();
   }
   // here chould you check if password correct , update the email
+  @override
   postSaveChanges(newEmail,password)async {
-    var url = urlStarter + "/user/settingChangeemail";
+    var url = "$urlStarter/user/settingChangeemail";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
           "email": GetStorage().read("loginemail"),

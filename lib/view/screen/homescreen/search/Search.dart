@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
-import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class Search extends StatelessWidget {
   final SearchControllerImp controller = Get.put(SearchControllerImp());
   GlobalKey<FormState> formstate = GlobalKey();
 
-  final AssetImage defultprofileImage = AssetImage("images/profileImage.jpg");
+  final AssetImage defultprofileImage = const AssetImage("images/profileImage.jpg");
   ImageProvider<Object>? profileBackgroundImage;
   String? profileImage;
+
+  Search({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(70),
+        preferredSize: const Size.fromHeight(70),
         child: AppBar(
           centerTitle: true,
           backgroundColor: Colors.white,
           leading: IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back,
               color: Colors.black,
             ),
@@ -103,9 +103,9 @@ class Search extends StatelessWidget {
                               color: const Color.fromARGB(255, 85, 191, 218),
                               width: 1),
                         ),
-                        child: Align(
+                        child: const Align(
                           alignment: Alignment.center,
-                          child: const Text("Users"),
+                          child: Text("Users"),
                         ),
                       ),
                     ),
@@ -118,9 +118,9 @@ class Search extends StatelessWidget {
                               color: const Color.fromARGB(255, 85, 191, 218),
                               width: 1),
                         ),
-                        child: Align(
+                        child: const Align(
                           alignment: Alignment.center,
-                          child: const Text("Pages"),
+                          child: Text("Pages"),
                         ),
                       ),
                     ),

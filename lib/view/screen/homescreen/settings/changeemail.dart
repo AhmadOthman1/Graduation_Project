@@ -4,7 +4,6 @@ import 'package:growify/controller/home/changeEmail_controller.dart';
 import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/core/functions/validinput.dart';
 import 'package:growify/global.dart';
-import 'package:growify/view/screen/homescreen/settings/verfiycode_emailchange.dart';
 import 'package:growify/view/widget/auth/ButtonAuth.dart';
 import 'package:growify/view/widget/auth/textFormAuth.dart';
 import 'package:growify/view/widget/auth/textTitleAuth.dart';
@@ -20,12 +19,12 @@ class ChangeEmail extends StatelessWidget {
     ChangeEmailControllerImp controller = Get.put(ChangeEmailControllerImp());
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Change Email",
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.black,
         ),
       ),
@@ -53,7 +52,7 @@ class ChangeEmail extends StatelessWidget {
                         vertical: 15, horizontal: 30),
                     label: Container(
                         margin: const EdgeInsets.symmetric(horizontal: 9),
-                        child: Text("Password")),
+                        child: const Text("Password")),
                     suffixIcon: IconButton(
                       icon: Icon(
                         controller.obscureyourPassword.value
@@ -73,7 +72,7 @@ class ChangeEmail extends StatelessWidget {
                     _password=value;
                     return validInput(value!, 30, 8, "password");
                   })),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextFormAuth(
                 valid: (value) {
                   _newEmail = value;

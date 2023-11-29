@@ -5,6 +5,8 @@ import 'package:growify/controller/home/newpost_controller.dart';
 class NewPost extends StatelessWidget {
   final NewPostControllerImp controller = Get.put(NewPostControllerImp());
 
+   NewPost({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,8 +26,8 @@ class NewPost extends StatelessWidget {
                         Get.back();
                       },
                       child: Container(
-                        margin: EdgeInsets.only(top: 5, right: 15),
-                        child: Icon(
+                        margin: const EdgeInsets.only(top: 5, right: 15),
+                        child: const Icon(
                           Icons.close,
                           size: 30,
                         ),
@@ -33,7 +35,7 @@ class NewPost extends StatelessWidget {
                     ),
                     // go to chat and messages
                     Padding(
-                      padding: EdgeInsets.only(left: 2, right: 15),
+                      padding: const EdgeInsets.only(left: 2, right: 15),
                       child: InkWell(
                         onTap: () {
                           // go to the profile Page
@@ -63,30 +65,30 @@ class NewPost extends StatelessWidget {
                         print('Privacy edited: $newValue');
                       },
                     ),
-                    Spacer(),
-                    SizedBox(width: 16),
+                    const Spacer(),
+                    const SizedBox(width: 16),
                     TextButton(
                       onPressed: () {},
-                      child: Text(
+                      child: const Text(
                         "Post",
                         style: TextStyle(color: Colors.grey, fontSize: 17),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 // Text area for post content
                 TextFormField(
                   onChanged: (value) => controller.postContent.value = value,
                   maxLines: 12,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'What do you want to talk about?',
                     border: OutlineInputBorder(
                       borderSide: BorderSide.none, // Remove the border
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 // Additional options (e.g., upload image/video)
                 Expanded(
                   child: Column(
@@ -98,14 +100,14 @@ class NewPost extends StatelessWidget {
                         children: [
                           IconButton(
                             onPressed: controller.uploadImage,
-                            icon: Icon(Icons.image),
+                            icon: const Icon(Icons.image),
                             tooltip: 'Upload Image',
                             iconSize: 35,
                             color: Colors.grey,
                           ),
                           IconButton(
                             onPressed: controller.uploadVideo,
-                            icon: Icon(Icons.videocam_sharp),
+                            icon: const Icon(Icons.videocam_sharp),
                             tooltip: 'Upload Video',
                             iconSize: 35,
                             color: Colors.grey,
@@ -113,14 +115,14 @@ class NewPost extends StatelessWidget {
 
                           IconButton(
                             onPressed: controller.uploadVideo,
-                            icon: Icon(Icons.more_vert),
+                            icon: const Icon(Icons.more_vert),
                             tooltip: 'Upload Video',
                             iconSize: 35,
                             color: Colors.grey,
                           ),
                         ],
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),

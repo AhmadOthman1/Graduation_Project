@@ -6,7 +6,6 @@ import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/profilepages/seeaboutInfoColleagues.dart';
 import 'package:http/http.dart' as http;
-import 'package:dio/dio.dart' as dio;
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
@@ -50,7 +49,7 @@ class ColleaguesProfileControllerImp extends GetxController {
   final RxString coverImageBytesName = ''.obs;
   final RxString coverImageExt = ''.obs;
  getProfileSettingsPgae() async {
-    var url = urlStarter + "/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
+    var url = "$urlStarter/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -83,7 +82,7 @@ goToProfileMainInfo() async {
 
   }
   getEducationLevel() async {
-    var url = urlStarter + "/user/getEducationLevel?email=${GetStorage().read("loginemail")}";
+    var url = "$urlStarter/user/getEducationLevel?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -118,7 +117,7 @@ goToProfileMainInfo() async {
   }
 
   Future getWorkExperiencePgae() async {
-    var url = urlStarter + "/user/getworkExperience?email=${GetStorage().read("loginemail")}";
+    var url = "$urlStarter/user/getworkExperience?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),

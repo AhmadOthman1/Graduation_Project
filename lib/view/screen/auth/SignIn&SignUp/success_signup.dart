@@ -24,10 +24,10 @@ class SuccessSignUp extends StatelessWidget {
         child: Column(
           children: [
           const  Center(child: Icon(Icons.check_circle_outline,size: 200,color:Color.fromARGB(255, 85, 191, 218),)),
-            Text("Go to ..."),
+            const Text("Go to ..."),
             
-            Spacer(),
-            Container(
+            const Spacer(),
+            SizedBox(
               width: double.infinity,
               child: ButtonAuth(
                 text: "Go To Login",
@@ -36,7 +36,7 @@ class SuccessSignUp extends StatelessWidget {
                 },
               ),
             ),
-            SizedBox(height: 30,)
+            const SizedBox(height: 30,)
 
             
           ],

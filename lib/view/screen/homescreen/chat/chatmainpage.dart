@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:growify/view/screen/homescreen/chat/chatpagemessages.dart';
 
 class ChatMainPage extends StatelessWidget {
@@ -90,7 +89,7 @@ class ChatMainPage extends StatelessWidget {
         //centerTitle: true,
         backgroundColor: Colors.grey[200],
         elevation: 0.0,
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.grey,
         ),
       ),
@@ -99,7 +98,7 @@ class ChatMainPage extends StatelessWidget {
     children: [
       // Search bar and Active colleagues section
       Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -111,17 +110,17 @@ class ChatMainPage extends StatelessWidget {
                 ),
                 fillColor: Colors.grey[200],
                 filled: true,
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 hintText: "Search",
               ),
             ),
-            SizedBox(height: 30),
-            Text(
+            const SizedBox(height: 30),
+            const Text(
               "Active colleagues",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
-            SizedBox(height: 20),
-            Container(
+            const SizedBox(height: 20),
+            SizedBox(
               height: 100,
               child: ListView.builder(
                 itemCount: Categories.length,
@@ -135,7 +134,7 @@ class ChatMainPage extends StatelessWidget {
                     child: Column(
                       children: [
                         Container(
-                          margin: EdgeInsets.only(right: 10),
+                          margin: const EdgeInsets.only(right: 10),
                           decoration: BoxDecoration(
                             color: Colors.grey[200],
                             borderRadius: BorderRadius.circular(100),
@@ -170,7 +169,7 @@ class ChatMainPage extends StatelessWidget {
       ListView.builder(
         itemCount: Categories.length,
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
          // final cate = Categories[index];
           return InkWell(

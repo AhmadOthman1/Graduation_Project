@@ -10,12 +10,12 @@ Future<bool> alertExitApp() {
       actions: [
         TextButton(onPressed: () {
           exit(0);
-        }, child: Text("Confirm")),
+        }, child: const Text("Confirm")),
         TextButton(
             onPressed: () {
               Get.back();
             },
-            child: Text("Cancel"))
+            child: const Text("Cancel"))
       ]);
     
       return Future.value(true);

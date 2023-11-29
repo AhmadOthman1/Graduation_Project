@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';

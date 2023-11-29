@@ -1,7 +1,8 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:growify/core/constant/routes.dart';
 import 'package:growify/routes.dart';
 import 'package:growify/view/screen/auth/SignIn&SignUp/login.dart';
 import 'package:growify/global.dart';
@@ -32,15 +33,15 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
      textTheme: const TextTheme(
-      headline1:  TextStyle(fontWeight: FontWeight.bold, fontSize: 26),
+      displayLarge:  TextStyle(fontWeight: FontWeight.bold, fontSize: 26),
                
-      bodyText1: TextStyle(fontSize: 14, color: Colors.grey),
+      bodyLarge: TextStyle(fontSize: 14, color: Colors.grey),
 
 
      ),
       ),
       debugShowCheckedModeBanner: false,
-      home:(Email==null || Email=="")?Login():HomeScreen(),
+      home:(Email==null || Email=="")?Login():const HomeScreen(),
       
       routes: routes,
     );

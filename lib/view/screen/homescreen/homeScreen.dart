@@ -14,9 +14,9 @@ class HomeScreen extends StatelessWidget {
         builder: (controller) => Scaffold(
             floatingActionButton: FloatingActionButton(
               onPressed: () {
-                Get.to(NewPost());
+                Get.to( NewPost());
               },
-              child: Icon(Icons.post_add_outlined),
+              child: const Icon(Icons.post_add_outlined),
             ),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,

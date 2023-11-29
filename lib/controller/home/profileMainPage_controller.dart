@@ -1,14 +1,11 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
-import 'package:growify/controller/home/myPages_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/profilepages/seeAboutinfo.dart';
 import 'package:http/http.dart' as http;
-import 'package:dio/dio.dart' as dio;
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
@@ -32,7 +29,7 @@ class ProfileMainPageControllerImp extends GetxController {
   final RxString coverImageBytesName = ''.obs;
   final RxString coverImageExt = ''.obs;
  getProfileSettingsPgae() async {
-    var url = urlStarter + "/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
+    var url = "$urlStarter/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -66,7 +63,7 @@ goToProfileMainInfo() async {
 
   }
   getEducationLevel() async {
-    var url = urlStarter + "/user/getEducationLevel?email=${GetStorage().read("loginemail")}";
+    var url = "$urlStarter/user/getEducationLevel?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -101,7 +98,7 @@ goToProfileMainInfo() async {
   }
 
   Future getWorkExperiencePgae() async {
-    var url = urlStarter + "/user/getworkExperience?email=${GetStorage().read("loginemail")}";
+    var url = "$urlStarter/user/getworkExperience?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -7,8 +6,6 @@ import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
 import 'package:http/http.dart' as http;
-import 'package:dio/dio.dart' as dio;
-import 'package:http_parser/http_parser.dart';
 
 abstract class ProfileSettingsController extends GetxController {
   goToSettingsPgae();
@@ -372,6 +369,7 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
 
   //////
 
+  @override
   postSaveChanges(
       profileImageBytes,
       profileImageBytesName,
@@ -382,18 +380,18 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
       cvBytes,
       cvName,
       cvExt) async {
-    var url = urlStarter + "/user/settingsChangeMainInfo";
+    var url = "$urlStarter/user/settingsChangeMainInfo";
 
     Map<String, dynamic> jsonData = {
       "email": GetStorage().read("loginemail"),
-      "firstName": (isTextFieldEnabled == true) ? textFieldText!.trim() : null,
-      "lastName": (isTextFieldEnabled2 == true) ? textFieldText2!.trim() : null,
-      "address": (isTextFieldEnabled3 == true) ? textFieldText3!.trim() : null,
-      "country": (isTextFieldEnabled11 == true) ? country!.trim() : null,
+      "firstName": (isTextFieldEnabled == true) ? textFieldText.trim() : null,
+      "lastName": (isTextFieldEnabled2 == true) ? textFieldText2.trim() : null,
+      "address": (isTextFieldEnabled3 == true) ? textFieldText3.trim() : null,
+      "country": (isTextFieldEnabled11 == true) ? country.trim() : null,
       "dateOfBirth":
-          (isTextFieldEnabled5 == true) ? textFieldText5!.trim() : null,
-      "phone": (isTextFieldEnabled6 == true) ? textFieldText6!.trim() : null,
-      "bio": (isTextFieldEnabled7 == true) ? textFieldText7!.trim() : null,
+          (isTextFieldEnabled5 == true) ? textFieldText5.trim() : null,
+      "phone": (isTextFieldEnabled6 == true) ? textFieldText6.trim() : null,
+      "bio": (isTextFieldEnabled7 == true) ? textFieldText7.trim() : null,
       "profileImageBytes": profileImageBytes,
       "profileImageBytesName": profileImageBytesName,
       "profileImageExt": profileImageExt,
@@ -413,6 +411,7 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
     return responce;
   }
 
+  @override
   SaveChanges(
       profileImageBytes,
       profileImageBytesName,

@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:growify/controller/home/homepage_controller.dart';
 import 'package:growify/controller/home/profileMainPage_controller.dart';
 import 'package:growify/global.dart';
-import 'package:growify/view/screen/homescreen/profilepages/seeaboutinfo.dart';
 import 'package:growify/view/screen/homescreen/settings/settings.dart';
-import 'package:growify/view/widget/homePage/posts.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ProfileMainPage extends StatelessWidget {
-  ProfileMainPage({Key? key, required this.userData}) {
+  ProfileMainPage({super.key, required this.userData}) {
     profileImage = (userData[0]["photo"] == null) ? "" : userData[0]["photo"];
     coverImage =
         (userData[0]["coverImage"] == null) ? "" : userData[0]["coverImage"];
@@ -46,7 +43,7 @@ class ProfileMainPage extends StatelessWidget {
   String? firstName;
   String? lastName;
   ////////////////////////////////
-  final AssetImage defultprofileImage = AssetImage("images/profileImage.jpg");
+  final AssetImage defultprofileImage = const AssetImage("images/profileImage.jpg");
   String? profileImageBytes;
   String? profileImageBytesName;
   String? profileImageExt;
@@ -56,7 +53,7 @@ class ProfileMainPage extends StatelessWidget {
   String? coverImageBytes;
   String? coverImageBytesName;
   String? coverImageExt;
-  final AssetImage defultcoverImage = AssetImage("images/coverImage.jpg");
+  final AssetImage defultcoverImage = const AssetImage("images/coverImage.jpg");
   late ImageProvider<Object> coverBackgroundImage;
   String? Bio;
 
@@ -67,11 +64,11 @@ class ProfileMainPage extends StatelessWidget {
     // Extract 'user' from arguments
 
     profileBackgroundImage = (profileImage != null && profileImage != "")
-        ? Image.network(urlStarter + "/" + profileImage!).image
+        ? Image.network("$urlStarter/" + profileImage!).image
         : defultprofileImage;
 
     coverBackgroundImage = (coverImage != null && coverImage != "")
-        ? Image.network(urlStarter + "/" + coverImage!).image
+        ? Image.network("$urlStarter/" + coverImage!).image
         : defultcoverImage;
 
     firstName; //=userData[0]["firstname"];
@@ -82,11 +79,11 @@ class ProfileMainPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text(
+        title: const Text(
           "My Profile",
           style: TextStyle(color: Colors.black),
         ),
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -133,14 +130,14 @@ class ProfileMainPage extends StatelessWidget {
                 ? MemoryImage(base64Decode(controller.profileImageBytes.value))
                 : profileBackgroundImage, // Replace with your default photo URL
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             '${userData[0]["firstname"]} ${userData[0]["lastname"]}',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           Text(
             '@${userData[0]["username"]}', // Replace with the actual username
-            style: TextStyle(fontSize: 16, color: Colors.blue),
+            style: const TextStyle(fontSize: 16, color: Colors.blue),
           ),
           
           Container(
@@ -155,7 +152,7 @@ class ProfileMainPage extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -174,11 +171,11 @@ class ProfileMainPage extends StatelessWidget {
       children: [
         Text(
           value,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         Text(
           label,
-          style: TextStyle(color: Colors.grey),
+          style: const TextStyle(color: Colors.grey),
         ),
       ],
     );
@@ -186,11 +183,11 @@ class ProfileMainPage extends StatelessWidget {
 
   Widget _Deatalis(String text) {
     return Container(
-      margin: EdgeInsets.only(left: 5),
+      margin: const EdgeInsets.only(left: 5),
       alignment: Alignment.bottomLeft,
       child: Text(
         text,
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
       ),
     );
   }
@@ -204,8 +201,8 @@ class ProfileMainPage extends StatelessWidget {
           },
           child: Container(
             height: 35,
-            padding: EdgeInsets.only(left: 10),
-            child: Row(
+            padding: const EdgeInsets.only(left: 10),
+            child: const Row(
               children: [
                 Icon(Icons.edit),
                 SizedBox(width: 10),
@@ -229,8 +226,8 @@ class ProfileMainPage extends StatelessWidget {
           },
           child: Container(
             height: 35,
-            padding: EdgeInsets.only(left: 10),
-            child: Row(
+            padding: const EdgeInsets.only(left: 10),
+            child: const Row(
               children: [
                 Icon(Icons.more_horiz),
                 SizedBox(width: 10),
@@ -252,7 +249,7 @@ class ProfileMainPage extends StatelessWidget {
     return Column(
       children: [
         SizedBox(height: HeigthBetween),
-        Divider(
+        const Divider(
           color: Color.fromARGB(255, 194, 193, 193),
           thickness: 1.5,
         ),
@@ -264,7 +261,7 @@ class ProfileMainPage extends StatelessWidget {
     return Center(
       child: ListView.builder(
         itemCount: posts.length,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemBuilder: (context, index) {
           final post = posts[index];
@@ -284,7 +281,7 @@ class ProfileMainPage extends StatelessWidget {
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 3,
                       blurRadius: 5,
-                      offset: Offset(0, 3),
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -339,25 +336,25 @@ class ProfileMainPage extends StatelessWidget {
                                 onPressed: () {
                                   //show  more cjoise
                                 },
-                                icon: Icon(Icons.more_vert),
+                                icon: const Icon(Icons.more_vert),
                               )
                             ],
                           ),
                           const SizedBox(height: 10),
                           Text(
                             post['content'],
-                            style: TextStyle(fontSize: 18),
+                            style: const TextStyle(fontSize: 18),
                           ),
                           const SizedBox(height: 10),
                           Image.asset(post['image']),
                           const SizedBox(height: 30),
-                          Divider(
+                          const Divider(
                             color: Color.fromARGB(255, 194, 193, 193),
                             thickness: 1.0,
                           ),
                           Container(
-                            margin: EdgeInsets.only(left: 20),
-                            child: Row(
+                            margin: const EdgeInsets.only(left: 20),
+                            child: const Row(
                               children: [
                                 Column(
                                   children: [

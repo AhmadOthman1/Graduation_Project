@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/auth/login_controller.dart';
-import 'package:growify/core/constant/imagesAssets.dart';
 import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/core/functions/alertexitapp.dart';
 import 'package:growify/core/functions/validinput.dart';
@@ -50,7 +48,7 @@ class Login extends StatelessWidget {
                 key: formstate,
                 child: ListView(
                   children: [
-                    LogoAuth(),
+                    const LogoAuth(),
                 const    SizedBox(
                       height: 30,
                     ),

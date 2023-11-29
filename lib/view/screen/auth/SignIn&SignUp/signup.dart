@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,7 +9,6 @@ import 'package:growify/view/widget/auth/textBodyAuth.dart';
 import 'package:growify/view/widget/auth/textFormAuth.dart';
 import 'package:growify/view/widget/auth/textSignupORsignIn.dart';
 import 'package:growify/view/widget/auth/textTitleAuth.dart';
-import 'package:http/http.dart' as http;
 import 'package:growify/global.dart';
 import 'package:growify/core/functions/alertbox.dart';
 
@@ -129,7 +127,7 @@ class SignUp extends StatelessWidget {
                   Obx(
                     () => Row(
                       children: [
-                        Container(
+                        SizedBox(
                           width: 322,
                           // margin: EdgeInsets.only(right: 10),
                           child: Align(
@@ -158,10 +156,10 @@ class SignUp extends StatelessWidget {
                                 label: Container(
                                   margin:
                                       const EdgeInsets.symmetric(horizontal: 9),
-                                  child: Text("DateOfBirth"),
+                                  child: const Text("DateOfBirth"),
                                 ),
                                 suffixIcon: IconButton(
-                                  icon: Icon(Icons.date_range),
+                                  icon: const Icon(Icons.date_range),
                                   onPressed: () =>
                                       controller.pickStartDate(context),
                                 ),

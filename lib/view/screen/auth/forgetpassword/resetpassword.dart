@@ -5,7 +5,6 @@ import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/core/functions/validinput.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/widget/auth/ButtonAuth.dart';
-import 'package:growify/view/widget/auth/textFormAuth.dart';
 import 'package:growify/view/widget/auth/textTitleAuth.dart';
 
 class ResetPassword extends StatelessWidget {
@@ -50,7 +49,7 @@ String? pas;
                             vertical: 15, horizontal: 30),
                         label: Container(
                             margin: const EdgeInsets.symmetric(horizontal: 9),
-                            child: Text("Password")),
+                            child: const Text("Password")),
                         suffixIcon: IconButton(
                           icon: Icon(
                             controller.obscureNewPassword.value
@@ -70,7 +69,7 @@ String? pas;
                       validator: (value) {
                        return validInput(value!, 30, 8, "password");}
                     )),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                 Obx(() => TextFormField(
                       obscureText:
                           controller.obscureRewritePassword.value,
@@ -84,7 +83,7 @@ String? pas;
                             vertical: 15, horizontal: 30),
                         label: Container(
                             margin: const EdgeInsets.symmetric(horizontal: 9),
-                            child: Text("Password")),
+                            child: const Text("Password")),
                         suffixIcon: IconButton(
                           icon: Icon(
                             controller.obscureRewritePassword.value

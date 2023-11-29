@@ -25,7 +25,7 @@ class PageInfo {
 
 class MyPagesController {
   Future<List<PageInfo>?> getMyPagesData() async {
-    var url = urlStarter + "/user/getMyPages?email=${GetStorage().read("loginemail")}";
+    var url = "$urlStarter/user/getMyPages?email=${GetStorage().read("loginemail")}";
     var response = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -53,5 +53,6 @@ class MyPagesController {
     } else if (response.statusCode == 409 || response.statusCode == 500) {
       return null;
     }
+    return null;
   }
 }

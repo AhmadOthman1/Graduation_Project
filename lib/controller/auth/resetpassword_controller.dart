@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
@@ -49,8 +48,9 @@ class ResetPasswordControllerImp extends ResetPasswordController{
     obscureRewritePassword.toggle();
   }
 
-     Future postChangePassword(email,password) async {
-    var url = urlStarter + "/user/changepassword";
+     @override
+  Future postChangePassword(email,password) async {
+    var url = "$urlStarter/user/changepassword";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
           "email": email.trim(),

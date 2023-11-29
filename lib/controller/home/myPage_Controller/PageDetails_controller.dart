@@ -9,8 +9,7 @@ LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
 getMyPageInfo(pageId) async {
-  var url = urlStarter +
-      "/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
+  var url = "$urlStarter/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
   var responce = await http.get(Uri.parse(url), headers: {
     'Content-type': 'application/json; charset=UTF-8',
     'Authorization': 'bearer ' + GetStorage().read('accessToken'),

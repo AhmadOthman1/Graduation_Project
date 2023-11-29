@@ -27,25 +27,25 @@ class GroupsPage extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            margin: EdgeInsets.only(top: 50, bottom: 10),
+            margin: const EdgeInsets.only(top: 50, bottom: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 IconButton(onPressed: (){
                   Get.back();
-                }, icon: Icon(Icons.arrow_back,size: 30,)),
+                }, icon: const Icon(Icons.arrow_back,size: 30,)),
                 // put the icons action
                 Container(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Text(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: const Text(
                       "Groups",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     )),
-                SizedBox(width: 180,),
+                const SizedBox(width: 180,),
                 TextButton(
                     onPressed: () {},
-                    child: Text(
+                    child: const Text(
                       "Create",
                       style: TextStyle(
                           fontSize: 18,
@@ -55,7 +55,7 @@ class GroupsPage extends StatelessWidget {
               ],
             ),
           ),
-          Divider(
+          const Divider(
             color: Color.fromARGB(255, 194, 193, 193),
             thickness: 2.0,
           ),
@@ -70,7 +70,7 @@ class GroupsPage extends StatelessWidget {
                     ListTile(
                       leading: InkWell(
                         onTap: (){
-                          Get.to(ShowGroup());
+                          Get.to(const ShowGroup());
                         },
                         child: CircleAvatar(
                           backgroundImage: AssetImage(group['image']),
@@ -90,7 +90,7 @@ class GroupsPage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Divider(
+                    const Divider(
                       color: Color.fromARGB(255, 194, 193, 193),
                       thickness: 2.0,
                     ),

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
@@ -9,8 +8,8 @@ import 'package:growify/global.dart';
 import 'package:http/http.dart' as http;
 
 abstract class ChangePasswordController extends GetxController {
-  postSaveChanges(_oldPassword, _newPassword);
-  SaveChanges(_oldPassword, _newPassword);
+  postSaveChanges(oldPassword, newPassword);
+  SaveChanges(oldPassword, newPassword);
 }
 
 LogOutButtonControllerImp _logoutController =
@@ -44,13 +43,14 @@ class ChangePasswordControllerImp extends ChangePasswordController {
   }
 // here check if the old password correct , update the password by the new password
 
-  postSaveChanges(_oldPassword, _newPassword) async {
-    var url = urlStarter + "/user/settingChangepasswor";
+  @override
+  postSaveChanges(oldPassword, newPassword) async {
+    var url = "$urlStarter/user/settingChangepasswor";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
           "email": GetStorage().read("loginemail"),
-          "oldPassword": _oldPassword,
-          "newPassword": _newPassword,
+          "oldPassword": oldPassword,
+          "newPassword": newPassword,
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -60,12 +60,12 @@ class ChangePasswordControllerImp extends ChangePasswordController {
   }
 
   @override
-  SaveChanges(_oldPassword, _newPassword) async {
+  SaveChanges(oldPassword, newPassword) async {
     try {
-      var res = await postSaveChanges(_oldPassword, _newPassword);
+      var res = await postSaveChanges(oldPassword, newPassword);
       if (res.statusCode == 403) {
         await getRefreshToken(GetStorage().read('refreshToken'));
-        SaveChanges(_oldPassword, _newPassword);
+        SaveChanges(oldPassword, newPassword);
         return;
       } else if (res.statusCode == 401) {
         _logoutController.goTosigninpage();
@@ -75,7 +75,7 @@ class ChangePasswordControllerImp extends ChangePasswordController {
         return res.statusCode + ":" + resbody['message'];
       } else if (res.statusCode == 200) {
         resbody['message'] = "";
-        GetStorage().write("loginpassword", _newPassword);
+        GetStorage().write("loginpassword", newPassword);
         Get.offNamed(AppRoute.homescreen);
       }
     } catch (err) {

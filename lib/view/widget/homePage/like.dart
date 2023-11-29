@@ -13,7 +13,7 @@ class Like extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            margin: EdgeInsets.only(top: 50, bottom: 10),
+            margin: const EdgeInsets.only(top: 50, bottom: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -21,14 +21,14 @@ class Like extends StatelessWidget {
                   onPressed: () {
                     Get.back();
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.arrow_back,
                     size: 30,
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Text(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: const Text(
                     "Likes",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
@@ -36,7 +36,7 @@ class Like extends StatelessWidget {
               ],
             ),
           ),
-          Divider(
+          const Divider(
             color: Color.fromARGB(255, 194, 193, 193),
             thickness: 2.0,
           ),
@@ -55,7 +55,7 @@ class Like extends StatelessWidget {
                           leading: InkWell(
                             onTap: () {
                               // Get.to(ColleaguesProfile());
-                              likeController.gotoprofileFromlike(colleague['email']);
+                              //likeController.gotoprofileFromlike(colleague['email']);
                             },
                             child: CircleAvatar(
                               backgroundImage: AssetImage(colleague['image']),
@@ -64,7 +64,7 @@ class Like extends StatelessWidget {
                           title: Text(colleague['name']),
                           subtitle: Text(colleague['username']),
                         ),
-                        Divider(
+                        const Divider(
                           color: Color.fromARGB(255, 194, 193, 193),
                           thickness: 2.0,
                         ),

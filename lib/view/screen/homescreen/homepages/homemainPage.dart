@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/homepage_controller.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
-import 'package:growify/controller/home/settings_controller.dart';
 import 'package:growify/core/constant/routes.dart';
-import 'package:growify/view/screen/homescreen/profilepages/profilemainpage.dart';
 import 'package:growify/view/screen/homescreen/search/Search.dart';
-import 'package:growify/view/screen/homescreen/settings/settings.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 
 class Homepage extends StatelessWidget {
-  Homepage({super.key});
+  const Homepage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,20 +15,20 @@ class Homepage extends StatelessWidget {
     if(true){
       //bcrypt => enmail+pass > front , email bcrypt
     }
-    LogOutButtonControllerImp _logoutController = Get.put(LogOutButtonControllerImp());
+    LogOutButtonControllerImp logoutController = Get.put(LogOutButtonControllerImp());
     return Scaffold(
       body: Container(
-          padding: EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: ListView(
             children: [
               Container(
                 height: 50,
-                margin: EdgeInsets.symmetric(horizontal: 5),
+                margin: const EdgeInsets.symmetric(horizontal: 5),
                 child: Row(
                   children: [
                     Builder(builder: (context) {
                       return Padding(
-                          padding: EdgeInsets.only(right: 2),
+                          padding: const EdgeInsets.only(right: 2),
                           child: InkWell(
                             onTap: () {
                               // go to the profile Page
@@ -58,7 +54,7 @@ class Homepage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10)),
                           fillColor: Colors.grey[200],
                           filled: true,
-                          prefixIcon: Icon(Icons.search),
+                          prefixIcon: const Icon(Icons.search),
                           hintText: "Search",
                         ),
                       ),
@@ -68,8 +64,8 @@ class Homepage extends StatelessWidget {
                         Get.toNamed(AppRoute.chatmainpage);
                       },
                       child: Container(
-                        margin: EdgeInsets.only(top: 5, left: 3),
-                        child: Icon(
+                        margin: const EdgeInsets.only(top: 5, left: 3),
+                        child: const Icon(
                           Icons.message_rounded,
                           size: 45,
                         ),
@@ -85,7 +81,7 @@ class Homepage extends StatelessWidget {
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 4.0,
               ),
-              Post(),
+              const Post(),
             ],
           )),
       drawer: Drawer(
@@ -100,7 +96,7 @@ class Homepage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              UserAccountsDrawerHeader(
+              const UserAccountsDrawerHeader(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border(
@@ -123,17 +119,17 @@ class Homepage extends StatelessWidget {
                 ),
               ),
               ListTile(
-                title: Text("Settings"),
-                leading: Icon(Icons.settings),
+                title: const Text("Settings"),
+                leading: const Icon(Icons.settings),
                 onTap: () {
                   controller.goToSettingsPgae();
                 },
               ),
               ListTile(
-                title: Text("Log Out"),
-                leading: Icon(Icons.logout_outlined),
+                title: const Text("Log Out"),
+                leading: const Icon(Icons.logout_outlined),
                 onTap: () {
-                  _logoutController.goTosigninpage();
+                  logoutController.goTosigninpage();
 
                 },
               ),

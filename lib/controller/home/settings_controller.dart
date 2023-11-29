@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
-import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/settings/Profilesettings.dart';
 import 'package:growify/view/screen/homescreen/settings/theEducation.dart';
@@ -23,9 +22,9 @@ abstract class SettingsController extends GetxController {
 }
 
 class SettingsControllerImp extends SettingsController {
+  @override
   Future getProfileSettingsPgae() async {
-    var url = urlStarter +
-        "/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
+    var url = "$urlStarter/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -34,6 +33,7 @@ class SettingsControllerImp extends SettingsController {
     return responce;
   }
 
+  @override
   goToProfileSettingsPgae() async {
     var res = await getProfileSettingsPgae();
     if (res.statusCode == 403) {
@@ -51,9 +51,9 @@ class SettingsControllerImp extends SettingsController {
     }
   }
 
+  @override
   Future getWorkExperiencePgae() async {
-    var url = urlStarter +
-        "/user/getworkExperience?email=${GetStorage().read("loginemail")}";
+    var url = "$urlStarter/user/getworkExperience?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -62,6 +62,7 @@ class SettingsControllerImp extends SettingsController {
     return responce;
   }
 
+  @override
   goToWorkExperiencePgae() async {
     var res = await getWorkExperiencePgae();
     if (res.statusCode == 403) {
@@ -81,15 +82,15 @@ class SettingsControllerImp extends SettingsController {
               Map<String, String>.from(experience as Map<String, dynamic>))
           .toList();
       Get.to(
-        WorkExperience(),
+         WorkExperience(),
         arguments: {'workExperiences': workExperiences},
       );
     }
   }
 
+  @override
   getEducationLevel() async {
-    var url = urlStarter +
-        "/user/getEducationLevel?email=${GetStorage().read("loginemail")}";
+    var url = "$urlStarter/user/getEducationLevel?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -98,6 +99,7 @@ class SettingsControllerImp extends SettingsController {
     return responce;
   }
 
+  @override
   goToEducationLevel() async {
     var res = await getEducationLevel();
     if (res.statusCode == 403) {
@@ -117,7 +119,7 @@ class SettingsControllerImp extends SettingsController {
               Map<String, String>.from(experience as Map<String, dynamic>))
           .toList();
       Get.to(
-        Education(),
+         Education(),
         arguments: {'educationLevel': EducationLevel},
       );
     }

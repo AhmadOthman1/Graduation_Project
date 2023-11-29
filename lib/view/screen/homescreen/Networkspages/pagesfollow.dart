@@ -27,27 +27,27 @@ class Pages extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            margin: EdgeInsets.only(top: 50, bottom: 10),
+            margin: const EdgeInsets.only(top: 50, bottom: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 IconButton(onPressed: (){
                   Get.back();
-                }, icon: Icon(Icons.arrow_back,size: 30,)),
+                }, icon: const Icon(Icons.arrow_back,size: 30,)),
                 // put the icons action
                 Container(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Text(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: const Text(
                       "Pages",
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     )),
-                SizedBox(width: 180,),
+                const SizedBox(width: 180,),
                 
               ],
             ),
           ),
-          Divider(
+          const Divider(
             color: Color.fromARGB(255, 194, 193, 193),
             thickness: 2.0,
           ),
@@ -62,7 +62,7 @@ class Pages extends StatelessWidget {
                     ListTile(
                       leading: InkWell(
                         onTap: (){
-                          Get.to(ShowPage());
+                          Get.to(const ShowPage());
                         },
                         child: CircleAvatar(
                           backgroundImage: AssetImage(page['image']),
@@ -82,7 +82,7 @@ class Pages extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Divider(
+                    const Divider(
                       color: Color.fromARGB(255, 194, 193, 193),
                       thickness: 2.0,
                     ),

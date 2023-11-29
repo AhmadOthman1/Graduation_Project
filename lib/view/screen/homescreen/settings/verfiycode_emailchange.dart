@@ -13,7 +13,7 @@ import 'package:growify/global.dart';
 class VerifyCodeEmailChange extends StatelessWidget {
   final String newEmail;
 
-  VerifyCodeEmailChange({required this.newEmail, Key? key}) : super(key: key);
+  const VerifyCodeEmailChange({required this.newEmail, Key? key}) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class VerifyCodeEmailChange extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               fieldWidth: 50,
               numberOfFields: 5,
-              borderColor: Color(0xFF512DA8),
+              borderColor: const Color(0xFF512DA8),
               showFieldAsBox: true,
               onCodeChanged: (String code) {},
               onSubmit: (String verificationCode) async {

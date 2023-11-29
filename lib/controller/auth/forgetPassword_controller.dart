@@ -21,8 +21,9 @@ class ForgetPasswordControllerImp extends ForgetPasswordController{
   checkemail() {
     
   }
+  @override
   postForgetPassword(email)async {
-    var url = urlStarter + "/user/forgetpassword";
+    var url = "$urlStarter/user/forgetpassword";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
           "email": email.trim(),

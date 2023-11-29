@@ -1,11 +1,8 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/SeeAboutInfo_Controller.dart';
 import 'package:growify/global.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -15,7 +12,7 @@ class SeeAboutInfo extends StatelessWidget {
     // profileImage = (userData[0]["photo"] == null) ? "" : userData[0]["photo"];
   }
   final SeeAboutInfoController controller = Get.put(SeeAboutInfoController());
-  final AssetImage defultprofileImage = AssetImage("images/profileImage.jpg");
+  final AssetImage defultprofileImage = const AssetImage("images/profileImage.jpg");
   String? profileImage;
   String? profileImageBytes;
   String? profileImageBytesName;
@@ -52,12 +49,12 @@ class SeeAboutInfo extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "About Info",
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.black,
         ),
       ),
@@ -132,7 +129,7 @@ Future<void> downloadFromWeb(String url, String filename) async {
   ///
   Widget _buildPersonalDetails(SeeAboutInfoController controller) {
     return Container(
-      margin: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 10),
+      margin: const EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 10),
       child: Obx(() {
         final personalData = controller.personalData.value;
 
@@ -140,8 +137,8 @@ Future<void> downloadFromWeb(String url, String filename) async {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.only(top: 10, bottom: 5),
-              child: Column(
+              margin: const EdgeInsets.only(top: 10, bottom: 5),
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -163,7 +160,7 @@ Future<void> downloadFromWeb(String url, String filename) async {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(left: 10, bottom: 10),
+              margin: const EdgeInsets.only(left: 10, bottom: 10),
               child: Column(
                 children: [
                   ...personalData.entries.map((entry) {
@@ -178,14 +175,14 @@ Future<void> downloadFromWeb(String url, String filename) async {
                               key != "cv") ...[
                             Text(
                               '$key: ',
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontWeight: FontWeight.w500, fontSize: 16.0),
                             ),
                             Text(value ?? ""),
                           ] else if (key == "cv") ...[
                             Text(
                               '$key: ',
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontWeight: FontWeight.w500, fontSize: 16.0),
                             ),
                             if (value != null && value != "") ...{
@@ -194,7 +191,7 @@ Future<void> downloadFromWeb(String url, String filename) async {
                                     const EdgeInsets.symmetric(horizontal: 20),
                                 onPressed: () async {
                                   if (kIsWeb) {
-                                    var url = urlStarter + "/" + value;
+                                    var url = "$urlStarter/" + value;
                                     if (await canLaunch(url)) {
                                       await launch(
                                         url,
@@ -210,17 +207,17 @@ Future<void> downloadFromWeb(String url, String filename) async {
                                       throw "Could not launch $url";
                                     }
                                   } else {
-                                    download(urlStarter + "/" + value, value);
+                                    download("$urlStarter/" + value, value);
                                   }
                                 },
                                 textColor: Colors.blue,
-                                child: Text("Download"),
+                                child: const Text("Download"),
                               ),
                             }
                           ]
                         ],
                       ),
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
                     ]);
                   }).toList(),
                 ],
@@ -235,12 +232,12 @@ Future<void> downloadFromWeb(String url, String filename) async {
 //
   Widget _buildEducationList(SeeAboutInfoController controller) {
     return Container(
-      margin: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 10),
+      margin: const EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 10),
       child: Column(
         children: [
           Container(
-            margin: EdgeInsets.only(top: 10, bottom: 5),
-            child: Column(
+            margin: const EdgeInsets.only(top: 10, bottom: 5),
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -270,13 +267,13 @@ Future<void> downloadFromWeb(String url, String filename) async {
 
                 return Column(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     ListTile(
                       title: Text(
                         '${education['School']}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
@@ -287,18 +284,18 @@ Future<void> downloadFromWeb(String url, String filename) async {
                         children: [
                           Text(
                             '${education['Specialty']}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                               color: Colors.black,
                             ),
                           ),
                           Container(
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               border: Border(
                                   left: BorderSide(
                                       color: Colors.grey, width: 2.0)),
                             ),
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 5.0), // Adjust the left padding as needed
                             child: Text('${education['Description']}'),
                           ),
@@ -307,14 +304,14 @@ Future<void> downloadFromWeb(String url, String filename) async {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     if (index < controller.educationLevels.length - 1)
                       Container(
                         height: 1.5,
                         width: 300,
-                        color: Color.fromARGB(255, 194, 193, 193),
+                        color: const Color.fromARGB(255, 194, 193, 193),
                       )
                   ],
                 );
@@ -329,12 +326,12 @@ Future<void> downloadFromWeb(String url, String filename) async {
   ///
   Widget _buildExperienceList(SeeAboutInfoController controller) {
     return Container(
-      margin: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 100),
+      margin: const EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 100),
       child: Column(
         children: [
           Container(
-            margin: EdgeInsets.only(top: 10, bottom: 5),
-            child: Column(
+            margin: const EdgeInsets.only(top: 10, bottom: 5),
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -365,13 +362,13 @@ Future<void> downloadFromWeb(String url, String filename) async {
 
                 return Column(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     ListTile(
                       title: Text(
                         '${experience['Specialty']}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
@@ -382,18 +379,18 @@ Future<void> downloadFromWeb(String url, String filename) async {
                         children: [
                           Text(
                             '${experience['Company']}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                               color: Colors.black,
                             ),
                           ),
                           Container(
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               border: Border(
                                   left: BorderSide(
                                       color: Colors.grey, width: 2.0)),
                             ),
-                            padding: EdgeInsets.only(left: 5.0),
+                            padding: const EdgeInsets.only(left: 5.0),
                             child: Text('${experience['Description']}'),
                           ),
                           Text(
@@ -401,14 +398,14 @@ Future<void> downloadFromWeb(String url, String filename) async {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     if (index < controller.practicalExperiences.length - 1)
                       Container(
                         height: 1.5,
                         width: 300,
-                        color: Color.fromARGB(255, 194, 193, 193),
+                        color: const Color.fromARGB(255, 194, 193, 193),
                       )
                   ],
                 );

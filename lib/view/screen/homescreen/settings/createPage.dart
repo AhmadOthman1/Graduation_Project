@@ -6,6 +6,8 @@ import 'package:growify/core/functions/validinput.dart';
 import 'package:growify/view/widget/auth/textFormAuth.dart';
 
 class CreatePage extends StatefulWidget {
+  const CreatePage({super.key});
+
   @override
   _CreatePageState createState() => _CreatePageState();
 }
@@ -29,12 +31,12 @@ class _CreatePageState extends State<CreatePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Create Page",
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.black,
         ),
       ),
@@ -53,6 +55,7 @@ class _CreatePageState extends State<CreatePage> {
                 },
                 onsaved: (val){
                   pageId = val;
+                  return null;
                 },
                 hinttext: "Enter a unique page id",
                 labeltext: "Page id ",
@@ -64,6 +67,7 @@ class _CreatePageState extends State<CreatePage> {
                 },
                 onsaved: (val){
                   pageName = val;
+                  return null;
                 },
                 hinttext: "Enter a unique page name",
                 labeltext: "Page Name ",
@@ -75,6 +79,7 @@ class _CreatePageState extends State<CreatePage> {
                 },
                 onsaved: (val){
                   description = val;
+                  return null;
                 },
                 hinttext: "Enter Your page description",
                 labeltext: "Description",
@@ -87,6 +92,7 @@ class _CreatePageState extends State<CreatePage> {
                 },
                 onsaved: (val){
                   address = val;
+                  return null;
                 },
                 hinttext: "Enter Your page address",
                 labeltext: "Address",
@@ -100,6 +106,7 @@ class _CreatePageState extends State<CreatePage> {
                 },
                 onsaved: (val){
                   contactInfo = val;
+                  return null;
                 },
                 hinttext: "Enter Your page contact Info",
                 maxLines: 10,
@@ -112,6 +119,7 @@ class _CreatePageState extends State<CreatePage> {
                 },
                 onsaved: (val){
                   speciality = val;
+                  return null;
                 },
                 hinttext: "Enter Your page Speciality",
                 labeltext: "Speciality",
@@ -126,7 +134,7 @@ class _CreatePageState extends State<CreatePage> {
                   children: [
                     Container(
                       width: 300,
-                      margin: EdgeInsets.only(right: 10),
+                      margin: const EdgeInsets.only(right: 10),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: DropdownButtonFormField(
@@ -143,11 +151,11 @@ class _CreatePageState extends State<CreatePage> {
                                 vertical: 15, horizontal: 30),
                             label: Container(
                               margin: const EdgeInsets.symmetric(horizontal: 9),
-                              child: Text("Your Country"),
+                              child: const Text("Your Country"),
                             ),
                           ),
                           isExpanded: true,
-                          hint: Text('Select Country',
+                          hint: const Text('Select Country',
                               style: TextStyle(color: Colors.grey)),
                           items: controller.countryList.map((value) {
                             return DropdownMenuItem(
@@ -182,7 +190,7 @@ class _CreatePageState extends State<CreatePage> {
                   children: [
                     Container(
                       width: 300,
-                      margin: EdgeInsets.only(right: 10),
+                      margin: const EdgeInsets.only(right: 10),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: DropdownButtonFormField(
@@ -199,11 +207,11 @@ class _CreatePageState extends State<CreatePage> {
                                 vertical: 15, horizontal: 30),
                             label: Container(
                               margin: const EdgeInsets.symmetric(horizontal: 9),
-                              child: Text("Your field of Page Type"),
+                              child: const Text("Your field of Page Type"),
                             ),
                           ),
                           isExpanded: true,
-                          hint: Text('Select Page Type',
+                          hint: const Text('Select Page Type',
                               style: TextStyle(color: Colors.grey)),
                           items: controller.PageTypeList.map((value) {
                             return DropdownMenuItem(
@@ -270,9 +278,9 @@ class _CreatePageState extends State<CreatePage> {
                           )
                         : null;
                 },
-                color: Color.fromARGB(255, 85, 191, 218),
+                color: const Color.fromARGB(255, 85, 191, 218),
                 textColor: Colors.white,
-                child: Text("Save Changes"),
+                child: const Text("Save Changes"),
               ),
             ],
             )

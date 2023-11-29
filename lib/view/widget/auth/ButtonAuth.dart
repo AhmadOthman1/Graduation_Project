@@ -13,7 +13,7 @@ class ButtonAuth extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         padding: const EdgeInsets.symmetric(vertical: 13),
         onPressed: onPressed,
-        color: Color.fromARGB(255, 85, 191, 218),
+        color: const Color.fromARGB(255, 85, 191, 218),
         textColor: Colors.white,
         child: Text(text),
       ),

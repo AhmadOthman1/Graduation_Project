@@ -18,12 +18,12 @@ class ChangePassword extends StatelessWidget {
         Get.put(ChangePasswordControllerImp());
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Change Password",
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.black,
         ),
       ),
@@ -51,7 +51,7 @@ class ChangePassword extends StatelessWidget {
                         vertical: 15, horizontal: 30),
                     label: Container(
                         margin: const EdgeInsets.symmetric(horizontal: 9),
-                        child: Text("Password")),
+                        child: const Text("Password")),
                     suffixIcon: IconButton(
                       icon: Icon(
                         controller.obscureOldPassword.value
@@ -73,7 +73,7 @@ class ChangePassword extends StatelessWidget {
                   })),
 
               ///
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
               Obx(() => TextFormField(
@@ -88,7 +88,7 @@ class ChangePassword extends StatelessWidget {
                         vertical: 15, horizontal: 30),
                     label: Container(
                         margin: const EdgeInsets.symmetric(horizontal: 9),
-                        child: Text("Password")),
+                        child: const Text("Password")),
                     suffixIcon: IconButton(
                       icon: Icon(
                         controller.obscureNewPassword.value
@@ -107,7 +107,7 @@ class ChangePassword extends StatelessWidget {
                   validator: (value) {
                     return validInput(value!, 30, 8, "password");
                   })),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Obx(() => TextFormField(
                   obscureText: controller.obscureRewritePassword.value,
                   decoration: InputDecoration(
@@ -120,7 +120,7 @@ class ChangePassword extends StatelessWidget {
                         vertical: 15, horizontal: 30),
                     label: Container(
                         margin: const EdgeInsets.symmetric(horizontal: 9),
-                        child: Text("Password")),
+                        child: const Text("Password")),
                     suffixIcon: IconButton(
                       icon: Icon(
                         controller.obscureRewritePassword.value

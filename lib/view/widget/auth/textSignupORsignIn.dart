@@ -16,7 +16,7 @@ class SignUporSignIn extends StatelessWidget {
           onTap: onTap,
           child:  Text(
             textTwo,
-            style: TextStyle(
+            style: const TextStyle(
                 color:Color.fromARGB(255, 85, 191, 218),
                 fontWeight: FontWeight.bold),
           ),

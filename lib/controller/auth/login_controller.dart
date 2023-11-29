@@ -31,8 +31,9 @@ class LoginControllerImp extends LoginController {
     // Initialize formstate in the constructor.
     formstate = GlobalKey<FormState>();
   }
+  @override
   Future postLogin(email, password) async {
-    var url = urlStarter + "/user/Login";
+    var url = "$urlStarter/user/Login";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
           "email": email.trim(),

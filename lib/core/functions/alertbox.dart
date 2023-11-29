@@ -6,7 +6,7 @@ class CustomAlertDialog extends StatelessWidget {
   final String text;
   final String buttonText;
 
-  const CustomAlertDialog({
+  const CustomAlertDialog({super.key, 
     required this.title,
     required this.icon,
     required this.text,
@@ -19,7 +19,7 @@ class CustomAlertDialog extends StatelessWidget {
       title: Row(
         children: [
           Icon(icon),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Text(title),
         ],
       ),

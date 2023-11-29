@@ -1,13 +1,11 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
 import 'package:http/http.dart' as http;
-import 'package:growify/global.dart';
 abstract class VerifyCodeEmailChangeController extends GetxController{
 
 
@@ -19,14 +17,15 @@ LogOutButtonControllerImp _logoutController =
 class VerifyCodeEmailChangeControllerImp extends VerifyCodeEmailChangeController{
 
 
-late String verifycode;
+late String verifyCode;
 
 
   
 
+  @override
   Future postVerificationCode(verificationCode,newEmail) async {
     print(newEmail+"ffffff");
-   var url = urlStarter + "/user/settingChangeemailVerificationCode";
+   var url = "$urlStarter/user/settingChangeemailVerificationCode";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
           "verificationCode": verificationCode,
@@ -38,6 +37,7 @@ late String verifycode;
         });
     return responce;
   }
+  @override
   VerificationCode(verificationCode,newEmail) async {
     var res = await postVerificationCode(verificationCode,newEmail);
     if (res.statusCode == 403) {

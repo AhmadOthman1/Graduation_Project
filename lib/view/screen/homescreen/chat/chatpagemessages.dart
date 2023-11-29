@@ -34,37 +34,37 @@ class ChatPageMessages extends StatelessWidget {
 
   Widget _buildAppBar() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       color: Colors.blue,
       child: Row(
         children: [
-          Icon(Icons.arrow_back, color: Colors.white),
-          SizedBox(width: 16),
+          const Icon(Icons.arrow_back, color: Colors.white),
+          const SizedBox(width: 16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Container(
+                  SizedBox(
                     width: 80,
                     child: Text(
                       data['name'],
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: const TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
-                  SizedBox(width: 140),
+                  const SizedBox(width: 140),
 
                   Container(
                     child: Row(children: [
                       IconButton(
-                      icon: Icon(Icons.video_call),
+                      icon: const Icon(Icons.video_call),
                       color: Colors.white,
                       onPressed: () {
                         // Add your video call logic here
                       },
                     ),
                     IconButton(
-                      icon: Icon(Icons.more_vert),
+                      icon: const Icon(Icons.more_vert),
                       color: Colors.white,
                       onPressed: () {
                         // Add your audio call logic here
@@ -83,7 +83,7 @@ class ChatPageMessages extends StatelessWidget {
 
   Widget _buildMessageComposer() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -96,13 +96,13 @@ class ChatPageMessages extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            icon: Icon(Icons.camera_alt),
+            icon: const Icon(Icons.camera_alt),
             onPressed: () {
               // Add your camera capture logic here
             },
           ),
           IconButton(
-            icon: Icon(Icons.photo),
+            icon: const Icon(Icons.photo),
             onPressed: () {
               // Add your image upload logic here
             },
@@ -110,14 +110,14 @@ class ChatPageMessages extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: chatController.textController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: "Type a message...",
                 border: InputBorder.none,
               ),
             ),
           ),
           IconButton(
-            icon: Icon(Icons.send),
+            icon: const Icon(Icons.send),
             onPressed: () {
               chatController.sendMessage(chatController.textController.text);
             },

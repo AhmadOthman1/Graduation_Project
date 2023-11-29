@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/core/constant/routes.dart';
@@ -22,7 +21,7 @@ class CreatePageController {
 
 
   Future postCreatePage(pageId,pageName,description,address,contactInfo,country,speciality,pageType) async {
-    var url = urlStarter + "/user/postCreatePage";
+    var url = "$urlStarter/user/postCreatePage";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
           "email":GetStorage().read("loginemail"),

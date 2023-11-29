@@ -14,9 +14,7 @@ import 'package:growify/view/screen/homescreen/Networkspages/pagesfollow.dart';
 import 'package:growify/view/screen/homescreen/Networkspages/peopleifollow.dart';
 import 'package:growify/view/screen/homescreen/chat/chatmainpage.dart';
 import 'package:growify/view/screen/homescreen/homeScreen.dart';
-import 'package:growify/view/screen/homescreen/homepages/homemainPage.dart';
 import 'package:growify/view/screen/homescreen/notificationspages/notificationmainpage.dart';
-import 'package:growify/view/screen/homescreen/settings/Profilesettings.dart';
 import 'package:growify/view/screen/homescreen/settings/settings.dart';
 
 
@@ -30,7 +28,7 @@ Map<String, Widget Function(BuildContext)>routes={
   AppRoute.SuccessSignUp : (context)=> const SuccessSignUp(),
   AppRoute.SuccessResetPassword : (context)=> const SuccessResetPassword(),
   AppRoute.verifycodeaftersignup : (context)=> const VerifyCodeAfterSignUp(),
-  AppRoute.homescreen : (context)=>  HomeScreen(),
+  AppRoute.homescreen : (context)=>  const HomeScreen(),
   AppRoute.notificationspage : (context)=>  NotificationsPage(),
   AppRoute.colleaguespage : (context)=>  ColleaguesPage(),  
   AppRoute.groupspage : (context)=>  GroupsPage(), 

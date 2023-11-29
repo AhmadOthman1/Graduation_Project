@@ -17,22 +17,22 @@ class NetworkSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 10, bottom: 10),
+      margin: const EdgeInsets.only(top: 10, bottom: 10),
       child: InkWell(
         onTap: onPressed,
         child: Container(
           height: 35,
-          padding: EdgeInsets.only(left: 10),
+          padding: const EdgeInsets.only(left: 10),
           child: Row(
             children: [
               Icon(icondata),
-              SizedBox(width: 10), // Use the sizedBoxWidth parameter
+              const SizedBox(width: 10), // Use the sizedBoxWidth parameter
               Text(
                 textsection,
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
-              Spacer(), // Adjust this value if needed
-              Icon(Icons.arrow_forward, size: 30),
+              const Spacer(), // Adjust this value if needed
+              const Icon(Icons.arrow_forward, size: 30),
             ],
           ),
         ),

@@ -12,17 +12,17 @@ class _TestState extends State<Test> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("title"),),
+      appBar: AppBar(title: const Text("title"),),
 
       body: Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: ListView(
           children: [
             OtpTextField(
               borderRadius: BorderRadius.circular(20),
               fieldWidth: 50,
         numberOfFields: 5,
-        borderColor: Color(0xFF512DA8),
+        borderColor: const Color(0xFF512DA8),
         showFieldAsBox: true, 
         onCodeChanged: (String code) {        
         },

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/core/constant/routes.dart';
-import 'package:growify/view/screen/auth/SignIn&SignUp/signup.dart';
 import 'package:http/http.dart' as http;
 import 'package:growify/global.dart';
 abstract class SignUpController extends GetxController{
@@ -60,8 +59,9 @@ final TextEditingController startDateController = TextEditingController();
     isshowpass=isshowpass==true?false:true;
     update();
   }
-   Future postSignup(firstName,lastName,userName,email,password,phone,dateOfBirth) async {
-    var url = urlStarter + "/user/signup";
+   @override
+  Future postSignup(firstName,lastName,userName,email,password,phone,dateOfBirth) async {
+    var url = "$urlStarter/user/signup";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
           "userName": userName.trim(),

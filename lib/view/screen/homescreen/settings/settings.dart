@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/ProfileSettings_controller.dart';
 import 'package:growify/controller/home/settings_controller.dart';
-import 'package:growify/view/screen/homescreen/settings/Profilesettings.dart';
 import 'package:growify/view/screen/homescreen/settings/changeemail.dart';
 import 'package:growify/view/screen/homescreen/settings/changepassword.dart';
 import 'package:growify/view/screen/homescreen/settings/myPages.dart';
-import 'package:growify/view/screen/homescreen/settings/theEducation.dart';
-import 'package:growify/view/screen/homescreen/settings/workexperience.dart';
 
 class Settings extends StatelessWidget {
   Settings({super.key});
@@ -22,7 +18,7 @@ class Settings extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            margin: EdgeInsets.only(top: 50, bottom: 10),
+            margin: const EdgeInsets.only(top: 50, bottom: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -30,35 +26,35 @@ class Settings extends StatelessWidget {
                   onPressed: () {
                     Get.back();
                   },
-                  icon: Icon(Icons.arrow_back, size: 30),
+                  icon: const Icon(Icons.arrow_back, size: 30),
                 ),
                 Container(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Text(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: const Text(
                     "Settings",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
-                SizedBox(width: 180),
+                const SizedBox(width: 180),
               ],
             ),
           ),
-          Divider(
+          const Divider(
             color: Color.fromARGB(255, 194, 193, 193),
             thickness: 2.0,
           ),
           Column(
             children: [
               Container(
-                margin: EdgeInsets.only(top: 10, bottom: 10),
+                margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: InkWell(
                   onTap: () {
                     controller.goToProfileSettingsPgae();
                   },
                   child: Container(
                     height: 35,
-                    padding: EdgeInsets.only(left: 10),
-                    child: Row(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: const Row(
                       children: [
                         Icon(Icons.settings),
                         SizedBox(width: 10),
@@ -74,20 +70,20 @@ class Settings extends StatelessWidget {
                   ),
                 ),
               ),
-              Divider(
+              const Divider(
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 2.0,
               ),
               Container(
-                margin: EdgeInsets.only(top: 10, bottom: 10),
+                margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: InkWell(
                   onTap: () {
                     Get.to(ChangePassword());
                   },
                   child: Container(
                     height: 35,
-                    padding: EdgeInsets.only(left: 10),
-                    child: Row(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: const Row(
                       children: [
                         Icon(Icons.lock_outlined),
                         SizedBox(width: 10),
@@ -103,20 +99,20 @@ class Settings extends StatelessWidget {
                   ),
                 ),
               ),
-              Divider(
+              const Divider(
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 2.0,
               ),
               Container(
-                margin: EdgeInsets.only(top: 10, bottom: 10),
+                margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: InkWell(
                   onTap: () {
                     Get.to(ChangeEmail());
                   },
                   child: Container(
                     height: 35,
-                    padding: EdgeInsets.only(left: 10),
-                    child: Row(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: const Row(
                       children: [
                         Icon(Icons.email_outlined),
                         SizedBox(width: 10),
@@ -132,20 +128,20 @@ class Settings extends StatelessWidget {
                   ),
                 ),
               ),
-              Divider(
+              const Divider(
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 2.0,
               ),
                Container(
-                margin: EdgeInsets.only(top: 10, bottom: 10),
+                margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: InkWell(
                   onTap: () {
                   controller.goToWorkExperiencePgae();
                   },
                   child: Container(
                     height: 35,
-                    padding: EdgeInsets.only(left: 10),
-                    child: Row(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: const Row(
                       children: [
                         Icon(Icons.business),
                         SizedBox(width: 10),
@@ -161,12 +157,12 @@ class Settings extends StatelessWidget {
                   ),
                 ),
               ),
-              Divider(
+              const Divider(
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 2.0,
               ),
               Container(
-                margin: EdgeInsets.only(top: 10, bottom: 10),
+                margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: InkWell(
                   onTap: () {
                   
@@ -175,8 +171,8 @@ class Settings extends StatelessWidget {
                   },
                   child: Container(
                     height: 35,
-                    padding: EdgeInsets.only(left: 10),
-                    child: Row(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: const Row(
                       children: [
                         Icon(Icons.school),
                         SizedBox(width: 10),
@@ -192,12 +188,12 @@ class Settings extends StatelessWidget {
                   ),
                 ),
               ),
-              Divider(
+              const Divider(
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 2.0,
               ),
               Container(
-                margin: EdgeInsets.only(top: 10, bottom: 10),
+                margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: InkWell(
                   onTap: () {
                   
@@ -205,8 +201,8 @@ class Settings extends StatelessWidget {
                   },
                   child: Container(
                     height: 35,
-                    padding: EdgeInsets.only(left: 10),
-                    child: Row(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: const Row(
                       children: [
                         Icon(Icons.contact_page),
                         SizedBox(width: 10),

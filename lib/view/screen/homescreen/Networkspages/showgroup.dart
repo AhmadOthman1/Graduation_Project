@@ -6,7 +6,7 @@ class ShowGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("My Group"),),
+      appBar: AppBar(title: const Text("My Group"),),
     );
   }
 }

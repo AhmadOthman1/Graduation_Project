@@ -31,6 +31,8 @@ class NetworksPage extends StatelessWidget {
     },
   ];
 
+   NetworksPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -41,7 +43,7 @@ class NetworksPage extends StatelessWidget {
           return Column(
             children: [
               Container(
-                margin: EdgeInsets.only(top: 10, bottom: 10),
+                margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child:const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

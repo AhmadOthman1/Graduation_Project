@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
@@ -31,7 +30,7 @@ class SearchControllerImp extends GetxController {
  
 
 searchInDataBase()async {
-    var url = urlStarter + "/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
+    var url = "$urlStarter/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -63,7 +62,7 @@ goTosearchPgae() async {
   @override
 
    Future getprfileColleaguespage(String email) async{
-        var url = urlStarter + "/user/settingsGetMainInfo?email=${email}";
+        var url = "$urlStarter/user/settingsGetMainInfo?email=$email";
     var responce = await http.get(Uri.parse(url),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',

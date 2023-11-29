@@ -87,7 +87,7 @@ class ExperienceController extends GetxController {
     if (experienceFormKey.currentState!.validate()) {
       if (editingIndex.value == -1) {
         //send the data for the server
-        var url = urlStarter + "/user/addworkExperience";
+        var url = "$urlStarter/user/addworkExperience";
         Map<String, dynamic> jsonData = {
           'email': GetStorage().read("loginemail"),
           'Specialty': specialtyController.text,
@@ -128,7 +128,7 @@ class ExperienceController extends GetxController {
         }
       } else {
         // Edit existing experience
-        var url = urlStarter + "/user/editworkExperience";
+        var url = "$urlStarter/user/editworkExperience";
         Map<String, dynamic> jsonData = {
           'email': GetStorage().read("loginemail"),
           'id': practicalExperiences[editingIndex.value]['id'],
@@ -200,7 +200,7 @@ class ExperienceController extends GetxController {
   }
 
   Future<void> removeExperience(int index) async {
-    var url = urlStarter + "/user/deleteworkExperience";
+    var url = "$urlStarter/user/deleteworkExperience";
     Map<String, dynamic> jsonData = {
       'email': GetStorage().read("loginemail"),
       'id': practicalExperiences[index]['id'],

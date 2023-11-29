@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
@@ -21,7 +20,7 @@ late String verifycode;
   }
   @override
   Future postVerificationCode(verificationCode,email) async {
-    var url = urlStarter + "/user/forgetpasswordverification";
+    var url = "$urlStarter/user/forgetpasswordverification";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
           "verificationCode": verificationCode,

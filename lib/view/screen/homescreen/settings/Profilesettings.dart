@@ -11,7 +11,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ProfileSettings extends StatelessWidget {
-  ProfileSettings({Key? key, required this.userData}) {
+  ProfileSettings({super.key, required this.userData}) {
     _controller1.text = userData[0]["firstname"];
     _controller2.text = userData[0]["lastname"];
     _controller3.text =
@@ -36,7 +36,7 @@ class ProfileSettings extends StatelessWidget {
     controller.update();
   }
 
-  final AssetImage defultprofileImage = AssetImage("images/profileImage.jpg");
+  final AssetImage defultprofileImage = const AssetImage("images/profileImage.jpg");
   String? profileImageBytes;
   String? profileImageBytesName;
   String? profileImageExt;
@@ -51,7 +51,7 @@ class ProfileSettings extends StatelessWidget {
   ImageProvider<Object>? profileBackgroundImage;
   late ImageProvider<Object> coverBackgroundImage;
 
-  final AssetImage defultcoverImage = AssetImage("images/coverImage.jpg");
+  final AssetImage defultcoverImage = const AssetImage("images/coverImage.jpg");
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
   final TextEditingController _controller3 = TextEditingController();
@@ -84,11 +84,11 @@ class ProfileSettings extends StatelessWidget {
     Bio = userData[0]["bio"];
 
     profileBackgroundImage = (profileImage != null && profileImage != "")
-        ? Image.network(urlStarter + "/" + profileImage!).image
+        ? Image.network("$urlStarter/" + profileImage!).image
         : defultprofileImage;
 
     coverBackgroundImage = (coverImage != null && coverImage != "")
-        ? Image.network(urlStarter + "/" + coverImage!).image
+        ? Image.network("$urlStarter/" + coverImage!).image
         : defultcoverImage;
     return WillPopScope(
       onWillPop: () async {
@@ -107,12 +107,12 @@ class ProfileSettings extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             "Profile Settings",
             style: TextStyle(color: Colors.black),
           ),
           backgroundColor: Colors.white,
-          iconTheme: IconThemeData(
+          iconTheme: const IconThemeData(
             color: Colors.black,
           ),
         ),
@@ -139,7 +139,7 @@ class ProfileSettings extends StatelessWidget {
                             ),
                             Container(
                               decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 85, 191, 218),
+                                color: const Color.fromARGB(255, 85, 191, 218),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: IconButton(
@@ -191,7 +191,7 @@ class ProfileSettings extends StatelessWidget {
                                     print(err);
                                   }
                                 },
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.camera_alt,
                                   color: Colors.white,
                                 ),
@@ -201,13 +201,13 @@ class ProfileSettings extends StatelessWidget {
                         ),
                       ),
     
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Obx(
                         () => Row(
                           children: [
                             Container(
                               width: 300,
-                              margin: EdgeInsets.only(right: 10),
+                              margin: const EdgeInsets.only(right: 10),
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: TextFormField(
@@ -231,7 +231,7 @@ class ProfileSettings extends StatelessWidget {
                                     label: Container(
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 9),
-                                        child: Text("Firstname")),
+                                        child: const Text("Firstname")),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30),
                                     ),
@@ -247,7 +247,7 @@ class ProfileSettings extends StatelessWidget {
                                     controller.textFieldText.value;
                                 controller.update();
                               },
-                              icon: Icon(Icons.edit),
+                              icon: const Icon(Icons.edit),
                               color: controller.isTextFieldEnabled.value
                                   ? Colors.blue
                                   : Colors.grey,
@@ -256,13 +256,13 @@ class ProfileSettings extends StatelessWidget {
                         ),
                       ),
     
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Obx(
                         () => Row(
                           children: [
                             Container(
                               width: 300,
-                              margin: EdgeInsets.only(right: 10),
+                              margin: const EdgeInsets.only(right: 10),
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: TextFormField(
@@ -286,7 +286,7 @@ class ProfileSettings extends StatelessWidget {
                                     label: Container(
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 9),
-                                        child: Text("Lastname")),
+                                        child: const Text("Lastname")),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30),
                                     ),
@@ -302,7 +302,7 @@ class ProfileSettings extends StatelessWidget {
                                     controller.textFieldText2.value;
                                 controller.update();
                               },
-                              icon: Icon(Icons.edit),
+                              icon: const Icon(Icons.edit),
                               color: controller.isTextFieldEnabled2.value
                                   ? Colors.blue
                                   : Colors.grey,
@@ -312,13 +312,13 @@ class ProfileSettings extends StatelessWidget {
                       ),
     
                       //////////////////
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Obx(
                         () => Row(
                           children: [
                             Container(
                               width: 300,
-                              margin: EdgeInsets.only(right: 10),
+                              margin: const EdgeInsets.only(right: 10),
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: TextFormField(
@@ -342,7 +342,7 @@ class ProfileSettings extends StatelessWidget {
                                     label: Container(
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 9),
-                                        child: Text("Address")),
+                                        child: const Text("Address")),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30),
                                     ),
@@ -358,7 +358,7 @@ class ProfileSettings extends StatelessWidget {
                                     controller.textFieldText3.value;
                                 controller.update();
                               },
-                              icon: Icon(Icons.edit),
+                              icon: const Icon(Icons.edit),
                               color: controller.isTextFieldEnabled3.value
                                   ? Colors.blue
                                   : Colors.grey,
@@ -367,14 +367,14 @@ class ProfileSettings extends StatelessWidget {
                         ),
                       ),
                       //////////////////
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
     
                        Obx(
                         () => Row(
                           children: [
                             Container(
                               width: 300,
-                              margin: EdgeInsets.only(right: 10),
+                              margin: const EdgeInsets.only(right: 10),
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: DropdownButtonFormField(
@@ -393,11 +393,11 @@ class ProfileSettings extends StatelessWidget {
                                     label: Container(
                                       margin: const EdgeInsets.symmetric(
                                           horizontal: 9),
-                                      child: Text("Your Country"),
+                                      child: const Text("Your Country"),
                                     ),
                                   ),
                                   isExpanded: true,
-                                  hint: Text('Select Country',
+                                  hint: const Text('Select Country',
                                       style: TextStyle(color: Colors.grey)),
                                   items: controller.countryList.map((value) {
                                     return DropdownMenuItem(
@@ -429,7 +429,7 @@ class ProfileSettings extends StatelessWidget {
                                 // Toggle the enable state of the dropdown
                                 controller.isTextFieldEnabled11.toggle();
                               },
-                              icon: Icon(Icons.edit),
+                              icon: const Icon(Icons.edit),
                               color: controller.isTextFieldEnabled11.value
                                   ? Colors.blue
                                   : Colors.grey,
@@ -495,13 +495,13 @@ class ProfileSettings extends StatelessWidget {
                       ),*/
     
                       //////////////////
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Obx(
                         () => Row(
                           children: [
                             Container(
                               width: 300,
-                              margin: EdgeInsets.only(right: 10),
+                              margin: const EdgeInsets.only(right: 10),
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: TextFormField(
@@ -530,9 +530,9 @@ class ProfileSettings extends StatelessWidget {
                                     label: Container(
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 9),
-                                        child: Text("DateOfBirth")),
+                                        child: const Text("DateOfBirth")),
                                     suffixIcon: IconButton(
-                                      icon: Icon(Icons.date_range),
+                                      icon: const Icon(Icons.date_range),
                                       onPressed: () =>
                                           controller.pickStartDate(context),
                                     ),
@@ -551,7 +551,7 @@ class ProfileSettings extends StatelessWidget {
                                     controller.textFieldText5.value;
                                 controller.update();
                               },
-                              icon: Icon(Icons.edit),
+                              icon: const Icon(Icons.edit),
                               color: controller.isTextFieldEnabled5.value
                                   ? Colors.blue
                                   : Colors.grey,
@@ -561,13 +561,13 @@ class ProfileSettings extends StatelessWidget {
                       ),
     
                       //////////////////
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Obx(
                         () => Row(
                           children: [
                             Container(
                               width: 300,
-                              margin: EdgeInsets.only(right: 10),
+                              margin: const EdgeInsets.only(right: 10),
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: TextFormField(
@@ -591,7 +591,7 @@ class ProfileSettings extends StatelessWidget {
                                     label: Container(
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 9),
-                                        child: Text("Phone")),
+                                        child: const Text("Phone")),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30),
                                     ),
@@ -607,7 +607,7 @@ class ProfileSettings extends StatelessWidget {
                                     controller.textFieldText6.value;
                                 controller.update();
                               },
-                              icon: Icon(Icons.edit),
+                              icon: const Icon(Icons.edit),
                               color: controller.isTextFieldEnabled6.value
                                   ? Colors.blue
                                   : Colors.grey,
@@ -617,13 +617,13 @@ class ProfileSettings extends StatelessWidget {
                       ),
     
                       //////////////////
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Obx(
                         () => Row(
                           children: [
                             Container(
                               width: 300,
-                              margin: EdgeInsets.only(right: 10),
+                              margin: const EdgeInsets.only(right: 10),
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: TextFormField(
@@ -647,7 +647,7 @@ class ProfileSettings extends StatelessWidget {
                                     label: Container(
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 9),
-                                        child: Text("Bio")),
+                                        child: const Text("Bio")),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30),
                                     ),
@@ -663,7 +663,7 @@ class ProfileSettings extends StatelessWidget {
                                     controller.textFieldText7.value;
                                 controller.update();
                               },
-                              icon: Icon(Icons.edit),
+                              icon: const Icon(Icons.edit),
                               color: controller.isTextFieldEnabled7.value
                                   ? Colors.blue
                                   : Colors.grey,
@@ -671,16 +671,16 @@ class ProfileSettings extends StatelessWidget {
                           ],
                         ),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
     
                       Container(
-                        child: Text(
+                        child: const Text(
                           "Cover Page",
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
                       // change cover page
                       Row(
                         children: [
@@ -705,7 +705,7 @@ class ProfileSettings extends StatelessWidget {
                                 ),
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: Color.fromARGB(255, 85, 191, 218),
+                                    color: const Color.fromARGB(255, 85, 191, 218),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: IconButton(
@@ -763,7 +763,7 @@ class ProfileSettings extends StatelessWidget {
                                         print(err);
                                       }
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.camera_alt,
                                       color: Colors.white,
                                     ),
@@ -775,7 +775,7 @@ class ProfileSettings extends StatelessWidget {
                         ],
                       ),
     
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
     
                       Container(
                         child: ElevatedButton.icon(
@@ -814,21 +814,20 @@ class ProfileSettings extends StatelessWidget {
                               cvExt = null;
                             }
                           },
-                          icon: Icon(Icons.cloud_upload),
-                          label: Text('Upload CV'),
+                          icon: const Icon(Icons.cloud_upload),
+                          label: const Text('Upload CV'),
                           style: ElevatedButton.styleFrom(
-                            primary: Color.fromARGB(255, 85, 191, 218),
-                            onPrimary: Colors.white,
+                            foregroundColor: Colors.white, backgroundColor: const Color.fromARGB(255, 85, 191, 218),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 130, vertical: 13),
                           ),
                         ),
                       ),
     
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
     
                       MaterialButton(
                         shape: RoundedRectangleBorder(
@@ -860,9 +859,9 @@ class ProfileSettings extends StatelessWidget {
                                 )
                               : null;
                         },
-                        color: Color.fromARGB(255, 85, 191, 218),
+                        color: const Color.fromARGB(255, 85, 191, 218),
                         textColor: Colors.white,
-                        child: Text("Save Changes"),
+                        child: const Text("Save Changes"),
                       ),
                     ],
                   ),

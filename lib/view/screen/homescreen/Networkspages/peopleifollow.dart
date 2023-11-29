@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/view/screen/homescreen/profilepages/colleaguesprofile.dart';
 
 class PeopleIFollow extends StatelessWidget {
    PeopleIFollow({super.key});
@@ -26,7 +25,7 @@ class PeopleIFollow extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            margin: EdgeInsets.only(top: 50, bottom: 10),
+            margin: const EdgeInsets.only(top: 50, bottom: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -34,14 +33,14 @@ class PeopleIFollow extends StatelessWidget {
                     onPressed: () {
                       Get.back();
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.arrow_back,
                       size: 30,
                     )),
                 // put the icons action
                 Container(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Text(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: const Text(
                       "People I Follow",
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -49,7 +48,7 @@ class PeopleIFollow extends StatelessWidget {
               ],
             ),
           ),
-          Divider(
+          const Divider(
             color: Color.fromARGB(255, 194, 193, 193),
             thickness: 2.0,
           ),
@@ -85,7 +84,7 @@ class PeopleIFollow extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Divider(
+                    const Divider(
                       color: Color.fromARGB(255, 194, 193, 193),
                       thickness: 2.0,
                     ),

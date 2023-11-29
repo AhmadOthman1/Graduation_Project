@@ -4,7 +4,6 @@ import 'package:growify/controller/home/ColleaguesProfile_controller.dart';
 import 'package:growify/controller/home/homepage_controller.dart';
 import 'package:growify/global.dart';
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ColleaguesProfile extends StatelessWidget {
   ColleaguesProfile({super.key, required this.userData}) {
@@ -43,7 +42,7 @@ class ColleaguesProfile extends StatelessWidget {
     // Add more posts as needed
   ];
   final List<Map<String, dynamic>> userData;
-  final AssetImage defultprofileImage = AssetImage("images/profileImage.jpg");
+  final AssetImage defultprofileImage = const AssetImage("images/profileImage.jpg");
   String? profileImageBytes;
   String? profileImageBytesName;
   String? profileImageExt;
@@ -53,7 +52,7 @@ class ColleaguesProfile extends StatelessWidget {
   String? coverImageBytes;
   String? coverImageBytesName;
   String? coverImageExt;
-  final AssetImage defultcoverImage = AssetImage("images/coverImage.jpg");
+  final AssetImage defultcoverImage = const AssetImage("images/coverImage.jpg");
   late ImageProvider<Object> coverBackgroundImage;
   String? Bio;
   ///////////
@@ -71,11 +70,11 @@ class ColleaguesProfile extends StatelessWidget {
     Result = Requested;
 
     profileBackgroundImage = (profileImage != null && profileImage != "")
-        ? Image.network(urlStarter + "/" + profileImage!).image
+        ? Image.network("$urlStarter/" + profileImage!).image
         : defultprofileImage;
 
     coverBackgroundImage = (coverImage != null && coverImage != "")
-        ? Image.network(urlStarter + "/" + coverImage!).image
+        ? Image.network("$urlStarter/" + coverImage!).image
         : defultcoverImage;
 
     return Scaffold(
@@ -83,7 +82,7 @@ class ColleaguesProfile extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              margin: EdgeInsets.only(
+              margin: const EdgeInsets.only(
                 top: 50,
               ),
               child: Row(
@@ -93,21 +92,21 @@ class ColleaguesProfile extends StatelessWidget {
                     onPressed: () {
                       Get.back();
                     },
-                    icon: Icon(Icons.arrow_back, size: 30),
+                    icon: const Icon(Icons.arrow_back, size: 30),
                   ),
                   Container(
-                    padding: EdgeInsets.only(left: 10),
+                    padding: const EdgeInsets.only(left: 10),
                     child: Text(
                       '${userData[0]["firstname"]} ${userData[0]["lastname"]}',
                       style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  SizedBox(width: 180),
+                  const SizedBox(width: 180),
                 ],
               ),
             ),
-            Divider(
+            const Divider(
               color: Color.fromARGB(255, 194, 193, 193),
               thickness: 2.0,
             ),
@@ -159,16 +158,16 @@ class ColleaguesProfile extends StatelessWidget {
                 //AssetImage('images/obaida.jpeg'), // Replace with your image
                 NetworkImage('${urlStarter}/${userData[0]["photo"]}'),
           ),*/
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             '${userData[0]["firstname"]} ${userData[0]["lastname"]}',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           Text(
             '@${userData[0]["username"]}', // Replace with the actual username
-            style: TextStyle(fontSize: 16, color: Colors.blue),
+            style: const TextStyle(fontSize: 16, color: Colors.blue),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -179,7 +178,7 @@ class ColleaguesProfile extends StatelessWidget {
           ),
           GetBuilder<ColleaguesProfileControllerImp>(
   builder: (controller) =>Container(
-    margin: EdgeInsets.only(top: 10),
+    margin: const EdgeInsets.only(top: 10),
     child: MaterialButton(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -189,10 +188,10 @@ class ColleaguesProfile extends StatelessWidget {
         controller.toggleResult();
       },
       color: controller.result.value == 'Follow'
-          ? Color.fromARGB(255, 85, 191, 218)
+          ? const Color.fromARGB(255, 85, 191, 218)
           : Colors.grey,
       textColor: Colors.white,
-      child: Text('${controller.result.value}'),
+      child: Text(controller.result.value),
     ),
   ),
 )
@@ -206,11 +205,11 @@ class ColleaguesProfile extends StatelessWidget {
       children: [
         Text(
           value,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         Text(
           label,
-          style: TextStyle(color: Colors.grey),
+          style: const TextStyle(color: Colors.grey),
         ),
       ],
     );
@@ -222,7 +221,7 @@ class ColleaguesProfile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             "Bio",
             style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
           ),
@@ -235,11 +234,11 @@ class ColleaguesProfile extends StatelessWidget {
 
   Widget _Deatalis(String text) {
     return Container(
-      margin: EdgeInsets.only(left: 5),
+      margin: const EdgeInsets.only(left: 5),
       alignment: Alignment.bottomLeft,
       child: Text(
         text,
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
       ),
     );
   }
@@ -248,7 +247,7 @@ class ColleaguesProfile extends StatelessWidget {
     return Column(
       children: [
         SizedBox(height: HeigthBetween),
-        Divider(
+        const Divider(
           color: Color.fromARGB(255, 194, 193, 193),
           thickness: 1.5,
         ),
@@ -265,8 +264,8 @@ class ColleaguesProfile extends StatelessWidget {
           },
           child: Container(
             height: 35,
-            padding: EdgeInsets.only(left: 10),
-            child: Row(
+            padding: const EdgeInsets.only(left: 10),
+            child: const Row(
               children: [
                 Icon(Icons.more_horiz),
                 SizedBox(width: 10),
@@ -288,7 +287,7 @@ class ColleaguesProfile extends StatelessWidget {
     return Center(
       child: ListView.builder(
         itemCount: posts.length,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemBuilder: (context, index) {
           final post = posts[index];
@@ -308,7 +307,7 @@ class ColleaguesProfile extends StatelessWidget {
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 3,
                       blurRadius: 5,
-                      offset: Offset(0, 3),
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -363,25 +362,25 @@ class ColleaguesProfile extends StatelessWidget {
                                 onPressed: () {
                                   //show  more cjoise
                                 },
-                                icon: Icon(Icons.more_vert),
+                                icon: const Icon(Icons.more_vert),
                               )
                             ],
                           ),
                           const SizedBox(height: 10),
                           Text(
                             post['content'],
-                            style: TextStyle(fontSize: 18),
+                            style: const TextStyle(fontSize: 18),
                           ),
                           const SizedBox(height: 10),
                           Image.asset(post['image']),
                           const SizedBox(height: 30),
-                          Divider(
+                          const Divider(
                             color: Color.fromARGB(255, 194, 193, 193),
                             thickness: 1.0,
                           ),
                           Container(
-                            margin: EdgeInsets.only(left: 20),
-                            child: Row(
+                            margin: const EdgeInsets.only(left: 20),
+                            child: const Row(
                               children: [
                                 Column(
                                   children: [
