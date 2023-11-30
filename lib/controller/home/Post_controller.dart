@@ -48,7 +48,7 @@ abstract class PostController extends GetxController {
      //// for comment
   getprofilefromcomment(String email);
   gotoprofileFromcomment(String email);
-  addComment(String username, String newComment, String email, int thePostId);
+  addComment(CommentModel a);
   toggleLikecomment(int index);
   gotoCommentPage(int id);
 
@@ -216,17 +216,19 @@ class PostControllerImp extends PostController {
   }
 
   
+@override
+ void addComment(CommentModel a) {
 
-    @override
-  void addComment(String username, String newComment, String email, int thePostId) {
-    const userImage = AssetImage('images/obaida.jpeg');
-    final time = DateTime.now();
-    comments.add(CommentModel(
-        username: username,
-        comment: newComment,
-        userImage: userImage,
-        time: time,
-        email: email));
+
+    
+    comments.add(a);
+    update();
+
+    // If you want to update the UI when a new comment is added, uncomment the following line
+    // controller.comments.assignAll(comments1);
+
+    // Optionally, you can add the new comment to the existing comments list
+    // controller.comments.add(newCommentModel);
   }
 
     @override
