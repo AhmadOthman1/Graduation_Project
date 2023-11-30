@@ -72,7 +72,7 @@ exports.postVerificationCode=async (req,res,next)=>{
 
 exports.postSignup=async (req,res,next)=>{
     try {
-    
+        console.log(req);
         const { firstName,lastName,userName, email, password, phone, dateOfBirth } = req.body;
         // all values not empty 
         if (!firstName ||!lastName ||!userName || !email || !password || !phone || !dateOfBirth) {

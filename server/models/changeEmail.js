@@ -1,13 +1,18 @@
 const Sequelize=require('sequelize');
 
 const sequelize=require('../util/database');
-
+const User = require('./user');
 const changeEmail=sequelize.define('changeEmail',{
+    id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+        unique: true,
+      },
     username:{
         type:Sequelize.STRING,
         allowNull:false,
-        primaryKey:true
-
     },
     email: {
         type: Sequelize.STRING,
@@ -19,5 +24,6 @@ const changeEmail=sequelize.define('changeEmail',{
         allowNull:false
     },
 });
+User.hasOne(changeEmail, { foreignKey: 'username', onDelete: 'CASCADE' });
 
 module.exports=changeEmail;

@@ -49,8 +49,11 @@ const User=sequelize.define('user',{
     cv:{
         type:Sequelize.STRING,
         allowNull:true
+    },
+    token:{
+        type:Sequelize.STRING(2000),
+        allowNull:true
     }
-    
 
 
 });

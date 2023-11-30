@@ -130,6 +130,7 @@ exports.postForgetPassword=async (req,res,next)=>{
             await sendVerificationCode(email, VerificationCode);
             //create it in the datebase
             const newforgetPasswordCode = await forgetPasswordCode.create({
+                username : existingEmail.username,
                 email: existingEmail.email,
                 code:VerificationCode,
             });

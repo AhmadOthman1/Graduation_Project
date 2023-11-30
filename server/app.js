@@ -36,13 +36,16 @@ sequelize.sync().then(result =>{
 });
 /*const express=require('express');
 const pageAdmin=require('./models/pageAdmin');
-//const user=require('./models/user');
-//const TempUser=require('./models/tempUser');
-//const forgetpasswordController=require('./models/forgetPasswordCode');
-//const changeEmail=require('./models/changeEmail');
-//const workExperience=require('./models/workExperience');
-//const EducationLevel=require('./models/educationLevel');
+const user=require('./models/user');
+const TempUser=require('./models/tempUser');
+const forgetpasswordController=require('./models/forgetPasswordCode');
+const changeEmail=require('./models/changeEmail');
+const workExperience=require('./models/workExperience');
+const EducationLevel=require('./models/educationLevel');
 const pages=require('./models/pages');
+const sentConnection =require('./models/sentConnection');
+const connections =require('./models/connections');
+const createTestData =require('./models/createTestData');
 
 //const bodyParser=require('body-parser');
 
