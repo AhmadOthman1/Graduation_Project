@@ -8,6 +8,8 @@ import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/profilepages/colleaguesprofile.dart';
 import 'package:growify/view/screen/homescreen/profilepages/profilemainpage.dart';
+import 'package:growify/view/widget/homePage/commentsMainpage.dart';
+import 'package:growify/view/widget/homePage/like.dart';
 import 'package:http/http.dart' as http;
 
 LogOutButtonControllerImp _logoutController =
@@ -21,6 +23,7 @@ class CommentModel {
   final DateTime time;
   final RxInt likes;
   final String email;
+   final RxBool isLiked;
 
   CommentModel({
     required this.username,
@@ -29,8 +32,11 @@ class CommentModel {
     required this.userImage,
     required this.time,
     required this.email,
+    bool isLiked=false,
+    
+  
     int likes = 0,
-  }) : likes = likes.obs;
+  }) : likes = likes.obs,isLiked = isLiked.obs;
 }
 
 abstract class HomePageController extends GetxController {
@@ -45,17 +51,25 @@ abstract class HomePageController extends GetxController {
 //// for comment
 getprofilefromcomment(String email);
 gotoprofileFromcomment(String email);
+//
+
 }
 
 class HomePageControllerImp extends HomePageController {
   /// for comment
   final RxList<CommentModel> comments = <CommentModel>[
+ 
+  ].obs;
+
+      final RxList<CommentModel> comments1 = <CommentModel>[
     CommentModel(
       username: 'User1',
       comment: 'This is a comment.',
       userImage: const AssetImage('images/islam.jpeg'),
       time: DateTime.now(),
-      email: 'awsobaida07@gmail.com'
+      email: 'awsobaida07@gmail.com',
+      likes:12,
+      isLiked:true
       
     ),
     CommentModel(
@@ -82,9 +96,36 @@ class HomePageControllerImp extends HomePageController {
     comments.add(CommentModel(username: username, comment: newComment, userImage: userImage, time: time,email:email));
   }
 
-  void toggleLikecomment(int index) {
+    void toggleLikecomment(int index) {
     final comment = comments[index];
-    comment.likes(comment.likes.value > 0 ? 0 : 1);
+    comment.isLiked.value = !comment.isLiked.value;
+
+    if (comment.isLiked.value) {
+      comment.likes.value++;
+      addLikeOnComment({
+      'name': 'Islam Aws',
+      'username': '@islam_aws',
+      'image': 'images/islam.jpeg',
+      'email':'awsobaida07@gmail.com'
+
+    },);
+
+    } else {
+      removeLikeFromComment('awsobaida07@gmail.com');
+      comment.likes.value--;
+
+    }
+
+    update(); // Notify GetBuilder to rebuild
+  }
+
+
+    gotoCommentPage(int id){
+
+    Get.to(CommentsMainPage(id: id,),arguments: {
+      'comments':comments1,
+    });
+
   }
 
   @override
@@ -119,6 +160,34 @@ class HomePageControllerImp extends HomePageController {
   }
     
   }
+  //likes of comments
+      RxList<Map<String, dynamic>> likesOnComment = <Map<String, dynamic>>[
+    {
+      'name': 'Islam Aws',
+      'username': '@islam_aws',
+      'image': 'images/islam.jpeg',
+      'email':'awsobaida07@gmail.com'
+
+    },
+    {
+      'name': 'Obaida Aws',
+      'username': '@obaida_aws',
+      'image': 'images/obaida.jpeg',
+      'email':'s11923787@stu.najah.edu'
+  
+    },
+    // Add more colleagues as needed
+  ].obs;
+
+   void addLikeOnComment(Map<String, dynamic> likesOnComment) {
+    likes.add(likesOnComment);
+    update(); // Notify listeners
+  }
+
+  void removeLikeFromComment(String email) {
+  likes.removeWhere((likesOnComment) => likesOnComment['email'] == email);
+  update(); // Notify listeners
+}
 
 //// for the page of likes
   RxList<Map<String, dynamic>> likes = <Map<String, dynamic>>[
@@ -143,8 +212,25 @@ class HomePageControllerImp extends HomePageController {
   }
 
   void removeLike(String email) {
-  likes.removeWhere((like) => like['username'] == email);
+  likes.removeWhere((like) => like['email'] == email);
   update(); // Notify listeners
+
+}
+
+goToLikePage(int postId){
+
+
+  Get.to(Like());
+}
+
+goToCommentPage(int postId){
+print("********");
+print(comments.length);
+print("********");
+  Get.to(CommentsMainPage(id: postId,),arguments: {
+    'comments':comments1,
+    
+  });
 }
 
 /////////////////////////////////////////////////////////

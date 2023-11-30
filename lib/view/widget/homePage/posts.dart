@@ -124,7 +124,7 @@ class Post extends StatelessWidget {
                                   onTap: () {
                                     //go to like page
                                     int postId =post['id'];
-                                    //controller.goToLikePage(postId);
+                                    controller.goToLikePage(postId);
                                   },
                                   child: Row(
                                     children: [
@@ -160,11 +160,10 @@ class Post extends StatelessWidget {
                                 InkWell(
                                   onTap: () {
 
-                                    int postId =post['id'];
-                                    print(postId);
-                                    Get.to(CommentsMainPage(id: postId, ),
+                                               int postId =post['id'];
+                                    controller.gotoCommentPage(postId);
                                     
-                                    );
+                                    
 
                                   },
                                   child: Row(
@@ -225,8 +224,9 @@ class Post extends StatelessWidget {
                                 InkWell(
                                   onTap: () {
                                     //go to comment page
-                                    int postId =post['id'];
-                                    Get.to(CommentsMainPage(id: postId,));
+                                             int postId =post['id'];
+                                    controller.gotoCommentPage(postId);
+                                  
                                   },
                                   child: const Column(
                                     children: [
