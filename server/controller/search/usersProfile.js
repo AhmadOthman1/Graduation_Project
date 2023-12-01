@@ -1,6 +1,9 @@
 const User = require("../../models/user");
 const Connections = require("../../models/connections");
 const sentConnection = require("../../models/sentConnection");
+const WorkExperience = require("../../models/workExperience");
+const EducationLevel = require("../../models/educationLevel");
+
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { Op } = require('sequelize');
@@ -9,6 +12,84 @@ const path = require('path');
 const fs = require('fs');
 const Sequelize = require('sequelize');
 
+
+
+exports.getWorkExperience = async (req, res, next) => {
+    try {
+        var ProfileUsername = req.query.ProfileUsername;
+        const userUsername = await User.findOne({
+            where: {
+                username: ProfileUsername,
+            },
+            include: WorkExperience,
+        });
+
+        if (userUsername) {
+            const workExperiences = userUsername.workExperiences.map((experience) => ({
+
+                'id': experience.id.toString(),
+                'Specialty': experience.specialty,
+                'Company': experience.company,
+                'Description': experience.description,
+                'Start Date': experience.startDate.toISOString().split("T")[0],
+                'End Date': (experience.endDate) ? experience.endDate.toISOString().split("T")[0] : 'Present', // Handle the case where endDate is null
+            }));
+
+            return res.status(200).json({
+                message: 'User found',
+                workExperiences: workExperiences,
+            });
+        } else {
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+}
+exports.getEducationLevel= async (req, res, next) => {
+    try {
+        var ProfileUsername = req.query.ProfileUsername;
+        const userUsername = await User.findOne({
+            where: {
+                username: ProfileUsername,
+            },
+            include: EducationLevel,
+        });
+
+        if (userUsername) {
+            const educationLevel = userUsername.educationLevels.map((Level) => ({
+                'id': Level.id.toString(),
+                'Specialty': Level.specialty,
+                'School': Level.School,
+                'Description': Level.description,
+                'Start Date': Level.startDate.toISOString().split("T")[0],
+                'End Date': (Level.endDate) ? Level.endDate.toISOString().split("T")[0] : 'Present', // Handle the case where endDate is null
+            }));
+            return res.status(200).json({
+                message: 'User found',
+                educationLevel: educationLevel,
+            });
+        } else {
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+}
 exports.postSendDeleteReq = async (req, res, next) => {
     try {
         const { username } = req.body;

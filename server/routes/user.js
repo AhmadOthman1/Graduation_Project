@@ -39,6 +39,8 @@ router.post('/postSendRemoveReq',authenticateToken,usersProfile.postSendRemoveRe
 router.post('/postSendRemoveConnection',authenticateToken,usersProfile.postSendRemoveConnection);
 router.post('/postSendAcceptConnectReq',authenticateToken,usersProfile.postSendAcceptConnectReq);
 router.post('/postSendDeleteReq',authenticateToken,usersProfile.postSendDeleteReq);
+router.get('/usersGetEducationLevel',authenticateToken,usersProfile.getEducationLevel);
+router.get('/usersGetworkExperience',authenticateToken,usersProfile.getWorkExperience);
 
 
 
