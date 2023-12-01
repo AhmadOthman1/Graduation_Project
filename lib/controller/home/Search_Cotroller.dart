@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/profilepages/colleaguesprofile.dart';
+import 'package:growify/view/screen/homescreen/profilepages/profilemainpage.dart';
 import 'package:http/http.dart' as http;
 
 LogOutButtonControllerImp _logoutController =
@@ -19,7 +20,6 @@ class SearchControllerImp extends GetxController {
   int pageSize = 10;
   // Define a dynamic list to store page data
   RxList<Map<String, String>> pageList = <Map<String, String>>[].obs;
-
   // for user and page chek null
   final RxString profileImageBytes = ''.obs;
   final RxString profileImageBytesName = ''.obs;
@@ -39,7 +39,6 @@ class SearchControllerImp extends GetxController {
 
   goTosearchPage(searchValue, page, searchType) async {
     var res = await searchInDataBase(searchValue, page, pageSize, searchType);
-    print(res.statusCode);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
       goTosearchPage(searchValue, page, searchType);
@@ -63,53 +62,30 @@ class SearchControllerImp extends GetxController {
                   .toList() ??
               [],
         );
-        print(resbody["users"]);
-        // Increment the page for the next request
-        print("Page:" + page.toString());
-        print(res.statusCode);
         return resbody["users"];
-      }
-      else if(searchType == "p"){
-        /*
-        final List<dynamic>? users = resbody["users"];
-        userList.addAll(
-          (users as List<dynamic>?)
-                  ?.map<Map<String, String>>(
-                    (user) => (user as Map<String, dynamic>)
-                        .map<String, String>(
-                            (key, value) => MapEntry(key, value.toString())),
-                  )
-                  .toList() ??
-              [],
-        );
-        print(resbody["users"]);
-        // Increment the page for the next request
-        print("Page:" + page.toString());
-        print(res.statusCode);
-        return resbody["users"];*/
-      }
+      } else if (searchType == "p") {}
     }
   }
 
   // when i press on the result users
 
   @override
-  Future getprfileColleaguespage(String email) async {
-    var url = "$urlStarter/user/settingsGetMainInfo?email=$email";
+  Future getUserProfilePage(String userUsername) async {
+    var url =
+        "$urlStarter/user/getUserProfileInfo?ProfileUsername=$userUsername";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
     });
-    print(responce);
     return responce;
   }
 
   @override
-  goToUserPage(String email) async {
-    var res = await getprfileColleaguespage(email);
+  goToUserPage(String userUsername) async {
+    var res = await getUserProfilePage(userUsername);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      goToUserPage(email);
+      goToUserPage(userUsername);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -118,7 +94,11 @@ class SearchControllerImp extends GetxController {
     if (res.statusCode == 409) {
       return resbody['message'];
     } else if (res.statusCode == 200) {
-      Get.to(ColleaguesProfile(userData: [resbody["user"]]));
+      if (resbody['user'] is Map<String, dynamic>) {
+        print([resbody["user"]]);
+        Get.to(ColleaguesProfile(userData: [resbody["user"]]));
+        return true;
+      }
     }
   }
 

@@ -71,11 +71,11 @@ class ProfileMainPage extends StatelessWidget {
           children: [
             _buildCoverPhoto(),
             _buildProfileInfo(),
-            _Deatalis("The Details"),
+            _Deatalis("Details"),
             _buildDivider(10),
             _buildButtonsRow(),
             _buildDivider(10),
-            _Deatalis("Your Posts"),
+            _Deatalis("Posts"),
             const Post(),
           ],
         ),
@@ -138,8 +138,7 @@ class ProfileMainPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildInfoItem('Posts', '150'),
-              _buildInfoItem('Followers', '500'),
-              _buildInfoItem('Following', '300'),
+              _buildInfoItem('Connections', '500'),
             ],
           ),
         ],

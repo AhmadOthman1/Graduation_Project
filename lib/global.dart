@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:growify/controller/home/logOutButton_controller.dart';
-var urlStarter= "http://10.119.214.3:3000";
+var urlStarter= "http://192.168.150.173:3000";
   String? firstName;
   String? lastName;
   String? userName;
