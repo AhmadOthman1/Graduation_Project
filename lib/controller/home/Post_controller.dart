@@ -57,7 +57,11 @@ abstract class PostController extends GetxController {
 }
 
 class PostControllerImp extends PostController {
+
+
+  
   final RxList<CommentModel> comments = <CommentModel>[].obs;
+  
 // the data come from database should you dtore it in the comments1
     final RxList<CommentModel> comments1 = <CommentModel>[
     CommentModel(
