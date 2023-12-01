@@ -27,9 +27,9 @@ class SearchControllerImp extends GetxController {
 
   RxBool checkTheSearch = false.obs;
 
-  searchInDataBase(searchValue, page, pageSize) async {
+  searchInDataBase(searchValue, page, pageSize, searchType) async {
     var url =
-        "$urlStarter/user/getSearchData?email=${GetStorage().read("loginemail")}&search=${searchValue}&page=${page}&pageSize=${pageSize}";
+        "$urlStarter/user/getSearchData?email=${GetStorage().read("loginemail")}&type=${searchType}&search=${searchValue}&page=${page}&pageSize=${pageSize}";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -37,11 +37,12 @@ class SearchControllerImp extends GetxController {
     return responce;
   }
 
-  goTosearchPage(searchValue, page) async {
-    var res = await searchInDataBase(searchValue, page, pageSize);
+  goTosearchPage(searchValue, page, searchType) async {
+    var res = await searchInDataBase(searchValue, page, pageSize, searchType);
+    print(res.statusCode);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      goTosearchPage(searchValue, page);
+      goTosearchPage(searchValue, page, searchType);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -50,20 +51,43 @@ class SearchControllerImp extends GetxController {
     if (res.statusCode == 409) {
       return resbody['message'];
     } else if (res.statusCode == 200) {
-      final List<dynamic>? users = resbody["users"];
-      userList.addAll(
-        (users as List<dynamic>?)
-                ?.map<Map<String, String>>(
-                  (user) => (user as Map<String, dynamic>).map<String, String>(
-                      (key, value) => MapEntry(key, value.toString())),
-                )
-                .toList() ??
-            [],
-      );
-      print(resbody["users"]);
-      // Increment the page for the next request
-      print("Page:"+page.toString());
-      print(res.statusCode);
+      if (searchType == "U") {
+        final List<dynamic>? users = resbody["users"];
+        userList.addAll(
+          (users as List<dynamic>?)
+                  ?.map<Map<String, String>>(
+                    (user) => (user as Map<String, dynamic>)
+                        .map<String, String>(
+                            (key, value) => MapEntry(key, value.toString())),
+                  )
+                  .toList() ??
+              [],
+        );
+        print(resbody["users"]);
+        // Increment the page for the next request
+        print("Page:" + page.toString());
+        print(res.statusCode);
+        return resbody["users"];
+      }
+      else if(searchType == "p"){
+        /*
+        final List<dynamic>? users = resbody["users"];
+        userList.addAll(
+          (users as List<dynamic>?)
+                  ?.map<Map<String, String>>(
+                    (user) => (user as Map<String, dynamic>)
+                        .map<String, String>(
+                            (key, value) => MapEntry(key, value.toString())),
+                  )
+                  .toList() ??
+              [],
+        );
+        print(resbody["users"]);
+        // Increment the page for the next request
+        print("Page:" + page.toString());
+        print(res.statusCode);
+        return resbody["users"];*/
+      }
     }
   }
 
@@ -102,19 +126,6 @@ class SearchControllerImp extends GetxController {
   void onInit() {
     // Fetch initial data or perform any setup
     // For now, let's add some dummy data
-    for (int i = 0; i < 20; i++) {
-      /*  userList.add({
-        'name': 'User Name $i',
-        'username': '@username$i',
-        'imageUrl': 'images/obaida.jpeg',
-      });*/
-
-      pageList.add({
-        'name': 'Page Name $i',
-        'username': '@pagename$i',
-        'imageUrl': 'images/obaida.jpeg',
-      });
-    }
 
     super.onInit();
   }

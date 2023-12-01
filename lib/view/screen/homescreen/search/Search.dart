@@ -14,7 +14,7 @@ class _SearchState extends State<Search> {
   final SearchControllerImp controller = Get.put(SearchControllerImp());
   final GlobalKey<FormState> formstate = GlobalKey();
   bool isLoading = false;
-
+  var searchType ="U";
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
   ImageProvider<Object>? profileBackgroundImage;
@@ -61,16 +61,14 @@ class _SearchState extends State<Search> {
                         onTap: () {
                           if (formstate.currentState!.validate()) {
                             setState(() {
-                              isLoading =
-                                  false;
-                              controller.Upage=1;
+                              isLoading = false;
+                              controller.Upage = 1;
                               controller.userList.clear();
                               controller.userList.clear();
                             });
-                            controller.goTosearchPage(
-                              controller.searchValue,
-                              controller.Upage,
-                            );
+                            print(searchType);
+                            controller.goTosearchPage(controller.searchValue,
+                                controller.Upage, searchType);
                           } else {
                             print("Not Valid");
                           }
@@ -111,6 +109,16 @@ class _SearchState extends State<Search> {
                     borderRadius: BorderRadius.circular(30),
                     color: const Color.fromARGB(255, 85, 191, 218),
                   ),
+                  onTap: (index) {
+                    // Handle tab click here
+                    if (index == 0) {
+                      searchType="U";
+                      print('Users Tab clicked!');
+                    } else if (index == 1) {
+                      searchType="P";
+                      print('Pages Tab clicked!');
+                    }
+                  },
                   tabs: [
                     Tab(
                       child: Container(
@@ -153,9 +161,11 @@ class _SearchState extends State<Search> {
                 children: [
                   NotificationListener<ScrollNotification>(
                     onNotification: (ScrollNotification scrollInfo) {
-                      if (!isLoading &&
-                          scrollInfo.metrics.pixels ==
-                              scrollInfo.metrics.maxScrollExtent) {
+                      var currentPos = scrollInfo.metrics.pixels;
+                      var maxPos = scrollInfo.metrics.maxScrollExtent;
+                      //print(currentPos);
+                      //print(maxPos);
+                      if (!isLoading && currentPos == maxPos) {
                         setState(() {
                           isLoading =
                               true; // Set loading to true to avoid multiple requests
@@ -164,13 +174,17 @@ class _SearchState extends State<Search> {
 
                         controller
                             .goTosearchPage(
-                                controller.searchValue, controller.Upage)
-                            .then((result) {
+                                controller.searchValue, controller.Upage, "U")
+                            .then((result) async {
                           if (result != null && result.isNotEmpty) {
+                            await Future.delayed(Duration(
+                                seconds:
+                                    1)); // to solve the problem when the user reach the bottom of the page1, it fetch page 3,4,5...etc.
                             setState(() {
                               isLoading =
                                   false; // Reset loading when the data is fetched
                             });
+                            print(isLoading);
                           }
                         });
                       }
@@ -212,36 +226,59 @@ class _SearchState extends State<Search> {
                   ),
                   NotificationListener<ScrollNotification>(
                     onNotification: (ScrollNotification scrollInfo) {
-                      if (scrollInfo.metrics.pixels ==
-                          scrollInfo.metrics.maxScrollExtent) {
-                        // User reached the bottom, load more results
+                      var currentPos = scrollInfo.metrics.pixels;
+                      var maxPos = scrollInfo.metrics.maxScrollExtent;
+                      //print(currentPos);
+                      //print(maxPos);
+                      if (!isLoading && currentPos == maxPos) {
                         setState(() {
-                          controller.Ppage++;
+                          isLoading =
+                              true; // Set loading to true to avoid multiple requests
+                          controller.Upage++;
                         });
-                        controller.goTosearchPage(
-                            controller.searchValue, controller.Ppage);
+
+                        controller
+                            .goTosearchPage(
+                                controller.searchValue, controller.Upage, "P")
+                            .then((result) async {
+                          if (result != null && result.isNotEmpty) {
+                            await Future.delayed(Duration(
+                                seconds:
+                                    1)); // to solve the problem when the user reach the bottom of the page1, it fetch page 3,4,5...etc.
+                            setState(() {
+                              isLoading =
+                                  false; // Reset loading when the data is fetched
+                            });
+                            print(isLoading);
+                          }
+                        });
                       }
                       return false;
                     },
                     child: Obx(
                       () => ListView.builder(
+                        // for user
+
                         padding: const EdgeInsets.all(15),
                         itemCount: controller.pageList.length,
                         itemBuilder: (context, index) {
-                          final name = controller.pageList[index]['name'];
-                          final username =
-                              controller.pageList[index]['username'];
-                          final imageUrl =
-                              controller.pageList[index]['imageUrl'];
-
+                          final name =
+                              controller.pageList[index]['name'];
+                          final pageId =
+                              controller.pageList[index]['pageId'];
+                          final photo = controller.pageList[index]['photo'];
+                          profileBackgroundImage =
+                              (photo != null && photo != "null" && photo != "")
+                                  ? Image.network("$urlStarter/" + photo!).image
+                                  : defultprofileImage;
                           return ListTile(
                             onTap: () {
-                              // the same thing in the above
+                              controller.goToUserPage(pageId!);
                             },
                             title: Text('$name'),
-                            subtitle: Text('$username'),
+                            subtitle: Text('$pageId'),
                             trailing: CircleAvatar(
-                              backgroundImage: AssetImage('$imageUrl'),
+                              backgroundImage: profileBackgroundImage,
                             ),
                           );
                         },

@@ -5,6 +5,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/homeScreen.dart';
+import 'package:growify/view/screen/homescreen/homepages/homemainPage.dart';
 import 'package:http/http.dart' as http;
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
@@ -63,10 +65,10 @@ class CreatePageController {
           _logoutController.goTosigninpage();
         }
     var resbody = jsonDecode(res.body);
-    if(res.statusCode == 409){
+    if(res.statusCode == 409 || res.statusCode == 500){
       return resbody['message'];
     }else if(res.statusCode == 200){
-      Get.offNamed(AppRoute.homescreen);
+      Get.off(Homepage());
     }
     
     print('Creating page with:');
