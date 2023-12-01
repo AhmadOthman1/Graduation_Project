@@ -3,7 +3,7 @@ const User = require("../models/user");
 require('dotenv').config();
 
 function generateAccessToken(user) {
-  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10s' })
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' })
 }
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization']
@@ -44,7 +44,7 @@ function getRefreshToken (req, res, next)  {
         message: 'server Error',
         body: req.body
       });
-      const userInfo = { email: user.email , password : user.password };
+      const userInfo = { email: user.email , username : user.username };
       const accessToken = generateAccessToken(userInfo);
       res.json({ accessToken: accessToken })
     }else{

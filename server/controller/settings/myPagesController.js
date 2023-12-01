@@ -142,11 +142,11 @@ exports.postCreatePage = async (req, res, next) => {
               };
             const newPage = await pages.create(pageData);
 
-            // 2. Create a PageAdmin entry to associate the user with the new page
+           
             await pageAdmin.create({
                 pageId: newPage.id,
                 username: existingEmail.username,
-                adminType: 'A', // Set the appropriate admin type
+                adminType: 'A', 
             });
             return res.status(200).json({
                 message: "created",
@@ -156,7 +156,7 @@ exports.postCreatePage = async (req, res, next) => {
     } catch (err) {
         console.log(err);
         return res.status(500).json({
-            message: 'server Error',
+            message: 'Page ID is already exisits',
             body: req.body
         });
     }

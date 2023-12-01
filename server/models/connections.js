@@ -24,9 +24,9 @@ const connections=sequelize.define('connections',{
     },
 });
 
-User.hasMany(connections, { foreignKey: 'senderUsername', onDelete: 'CASCADE' });
-connections.belongsTo(User, { foreignKey: 'senderUsername', onDelete: 'CASCADE' });
+User.hasMany(connections, {  foreignKey: 'senderUsername', onDelete: 'CASCADE' });
+connections.belongsTo(User, { as: 'senderUsername_FK',foreignKey: 'senderUsername', onDelete: 'CASCADE' });
 User.hasMany(connections, { foreignKey: 'receiverUsername', onDelete: 'CASCADE' });
-connections.belongsTo(User, { foreignKey: 'receiverUsername', onDelete: 'CASCADE' });
+connections.belongsTo(User, { as: 'receiverUsername_FK',foreignKey: 'receiverUsername', onDelete: 'CASCADE' });
 
 module.exports=connections;

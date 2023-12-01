@@ -7,6 +7,7 @@ const workExperienceController=require('../controller/settings/workExperienceCon
 const educationLevelController=require('../controller/settings/educationLevelController')
 const myPagesController=require('../controller/settings/myPagesController')
 const getSearchDataController=require('../controller/search/getSearchDataController')
+const usersProfile=require('../controller/search/usersProfile')
 const { authenticateToken } = require('../controller/authController');
 const authController = require('../controller/authController');
 
@@ -32,6 +33,12 @@ router.post('/addEducationLevel',authenticateToken,educationLevelController.post
 router.post('/editEducationLevel',authenticateToken,educationLevelController.postEditEducationLevel);
 router.post('/deleteEducationLevele',authenticateToken,educationLevelController.postDeleteEducationLevel);
 router.get('/getSearchData',authenticateToken,getSearchDataController.getSearchData);
+router.get('/getUserProfileInfo',authenticateToken,usersProfile.getUserProfileInfo);
+router.post('/postSendConnectReq',authenticateToken,usersProfile.postSendConnectReq);
+router.post('/postSendRemoveReq',authenticateToken,usersProfile.postSendRemoveReq);
+router.post('/postSendRemoveConnection',authenticateToken,usersProfile.postSendRemoveConnection);
+router.post('/postSendAcceptConnectReq',authenticateToken,usersProfile.postSendAcceptConnectReq);
+router.post('/postSendDeleteReq',authenticateToken,usersProfile.postSendDeleteReq);
 
 
 

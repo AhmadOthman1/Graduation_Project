@@ -41,7 +41,7 @@ exports.postLogin = async (req, res, next) => {
         console.log(password);
         const isMatch = await bcrypt.compare(password, existingEmail.password);
         if (isMatch) {
-            const userLoginInfo = { email: email , password : password };
+            const userLoginInfo = { email: email, username:  existingEmail.username};
             const accessToken = auth.generateAccessToken(userLoginInfo);
             const refreshToken = jwt.sign(userLoginInfo, process.env.REFRESH_TOKEN_SECRET);
             const result = await User.update({ token: refreshToken }, { where: { email } });
