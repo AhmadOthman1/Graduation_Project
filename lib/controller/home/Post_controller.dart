@@ -1,10 +1,11 @@
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
-import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/profilepages/colleaguesprofile.dart';
 import 'package:growify/view/screen/homescreen/profilepages/profilemainpage.dart';
@@ -38,29 +39,31 @@ class CommentModel {
         isLiked = isLiked.obs;
 }
 
-abstract class HomePageController extends GetxController {
-  goToSignup();
-  goToForgetPassword();
-  goToProfileColleaguesPage(String email);
 
-  goToSettingsPgae();
-  goToprofilepage();
-  getprfilepage();
+abstract class PostController extends GetxController {
   getprfileColleaguespage(String email);
+   goToProfileColleaguesPage(String email);
 
-  //// for comment
+
+     //// for comment
   getprofilefromcomment(String email);
   gotoprofileFromcomment(String email);
-  addComment(String username, String newComment, String email, int thePostId);
+  addComment(CommentModel a);
   toggleLikecomment(int index);
   gotoCommentPage(int id);
+
+
+
 }
 
-class HomePageControllerImp extends HomePageController {
+class PostControllerImp extends PostController {
+
+
+  
   final RxList<CommentModel> comments = <CommentModel>[].obs;
-
-
-  final RxList<CommentModel> comments1 = <CommentModel>[
+  
+// the data come from database should you dtore it in the comments1
+    final RxList<CommentModel> comments1 = <CommentModel>[
     CommentModel(
       username: 'User1',
       comment: 'This is a comment.',
@@ -87,8 +90,8 @@ class HomePageControllerImp extends HomePageController {
       email: 's11923787@stu.najah.edu',
     ),
   ].obs;
-
-  final RxList<Map<String, dynamic>> likesOnComment = <Map<String, dynamic>>[
+  //
+    final RxList<Map<String, dynamic>> likesOnComment = <Map<String, dynamic>>[
     {
       'name': 'Islam Aws',
       'username': '@islam_aws',
@@ -104,7 +107,12 @@ class HomePageControllerImp extends HomePageController {
     // Add more colleagues as needed
   ].obs;
 
-  final RxList<Map<String, dynamic>> likes = <Map<String, dynamic>>[
+    final RxList<Map<String, dynamic>> likes = <Map<String, dynamic>>[
+  
+    // Add more colleagues as needed
+  ].obs;
+
+      final RxList<Map<String, dynamic>> likes1 = <Map<String, dynamic>>[
     {
       'name': 'Islam Aws',
       'username': '@islam_aws',
@@ -119,8 +127,8 @@ class HomePageControllerImp extends HomePageController {
     },
     // Add more colleagues as needed
   ].obs;
-
-  final RxList<Map<String, dynamic>> posts = <Map<String, dynamic>>[
+  // add other list likes1 ...
+   final RxList<Map<String, dynamic>> posts = <Map<String, dynamic>>[
     {
       'name': 'Obaida Aws',
       'id': 1,
@@ -173,6 +181,18 @@ class HomePageControllerImp extends HomePageController {
 
     update(); // Notify GetBuilder to rebuild
   }
+    @override
+  void addLike(Map<String, dynamic> newLike) {
+    likes.add(newLike);
+    update(); // Notify listeners
+  }
+
+    @override
+  void removeLike(String email) {
+    likes.removeWhere((like) => like['email'] == email);
+    update(); // Notify listeners
+  }
+
 
   bool isLiked(int index) {
     return posts[index]['isLiked'];
@@ -199,27 +219,23 @@ class HomePageControllerImp extends HomePageController {
     }
   }
 
+  
+@override
+ void addComment(CommentModel a) {
 
 
+    
+    comments.add(a);
+    update();
 
+    // If you want to update the UI when a new comment is added, uncomment the following line
+    // controller.comments.assignAll(comments1);
 
-  //////////////////////////////
-
- 
-
-  @override
-  void addComment(String username, String newComment, String email, int thePostId) {
-    const userImage = AssetImage('images/obaida.jpeg');
-    final time = DateTime.now();
-    comments.add(CommentModel(
-        username: username,
-        comment: newComment,
-        userImage: userImage,
-        time: time,
-        email: email));
+    // Optionally, you can add the new comment to the existing comments list
+    // controller.comments.add(newCommentModel);
   }
 
-  @override
+    @override
   void toggleLikecomment(int index) {
     final comment = comments[index];
     comment.isLiked.value = !comment.isLiked.value;
@@ -240,7 +256,7 @@ class HomePageControllerImp extends HomePageController {
     update(); // Notify GetBuilder to rebuild
   }
 
-  @override
+    @override
   void gotoCommentPage(int id) {
     Get.to(CommentsMainPage(
       
@@ -260,7 +276,7 @@ class HomePageControllerImp extends HomePageController {
     return responce;
   }
 
-  @override
+    @override
   Future gotoprofileFromcomment(String email) async {
     var res = await getprofilefromcomment(email);
     if (res.statusCode == 403) {
@@ -278,7 +294,7 @@ class HomePageControllerImp extends HomePageController {
     }
   }
 
-  @override
+    @override
   void addLikeOnComment(Map<String, dynamic> likesOnComment) {
     likes.add(likesOnComment);
     update(); // Notify listeners
@@ -290,41 +306,18 @@ class HomePageControllerImp extends HomePageController {
     update(); // Notify listeners
   }
 
-  @override
-  void addLike(Map<String, dynamic> newLike) {
-    likes.add(newLike);
-    update(); // Notify listeners
-  }
+  // should add your data from database in likes1
 
-  @override
-  void removeLike(String email) {
-    likes.removeWhere((like) => like['email'] == email);
-    update(); // Notify listeners
-  }
-
-  @override
+    @override
   void goToLikePage(int postId) {
-    Get.to(Like());
+    Get.to(Like(),
+    arguments: {
+      'likes':likes1
+    }
+    );
   }
 
-  
-
-  @override
-  goToSettingsPgae() {
-    Get.toNamed(AppRoute.settings);
-  }
-
-  @override
-  goToSignup() {
-    Get.offNamed(AppRoute.signup);
-  }
-
-  @override
-  goToForgetPassword() {
-    Get.offNamed(AppRoute.forgetpassword);
-  }
-
-  @override
+    @override
   Future getprfilepage() async {
     var url = "$urlStarter/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url), headers: {
@@ -335,7 +328,7 @@ class HomePageControllerImp extends HomePageController {
     return responce;
   }
 
-  @override
+    @override
   goToprofilepage() async {
     var res = await getprfilepage();
     if (res.statusCode == 403) {
@@ -353,7 +346,7 @@ class HomePageControllerImp extends HomePageController {
     }
   }
 
-  @override
+    @override
   Future getprfileColleaguespage(String email) async {
     var url = "$urlStarter/user/settingsGetMainInfo?email=$email";
     var responce = await http.get(Uri.parse(url), headers: {
@@ -364,7 +357,7 @@ class HomePageControllerImp extends HomePageController {
     return responce;
   }
 
-  @override
+   @override
   goToProfileColleaguesPage(String email) async {
     var res = await getprfileColleaguespage(email);
     if (res.statusCode == 403) {
@@ -381,4 +374,13 @@ class HomePageControllerImp extends HomePageController {
       Get.to(ColleaguesProfile(userData: [resbody["user"]]));
     }
   }
+
+
+
+
+
+
+
+
+
 }

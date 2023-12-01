@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/homepage_controller.dart';
+import 'package:growify/controller/home/Post_controller.dart';
+
 
 class Like extends StatelessWidget {
-  Like({super.key});
-
-  final HomePageControllerImp likeController = Get.put(HomePageControllerImp());
+  final PostControllerImp likeController =
+      Get.put(PostControllerImp());
 
   @override
   Widget build(BuildContext context) {
+  
+                        var args = Get.arguments;
+    RxList<Map<String, dynamic>> likes =
+        args != null ? args['likes'] : [];
+
+        likeController.likes.assignAll(likes);
+
+
+
+
     return Scaffold(
       body: Column(
         children: [
@@ -19,7 +29,7 @@ class Like extends StatelessWidget {
               children: [
                 IconButton(
                   onPressed: () {
-                    Get.back();
+                    Navigator.of(context).pop();
                   },
                   icon: const Icon(
                     Icons.arrow_back,
@@ -41,7 +51,7 @@ class Like extends StatelessWidget {
             thickness: 2.0,
           ),
           Expanded(
-            child: GetBuilder<HomePageControllerImp>(
+            child: GetBuilder<PostControllerImp>(
               builder: (likeController) {
                 return ListView.builder(
                   itemCount: likeController.likes.length,
@@ -50,12 +60,13 @@ class Like extends StatelessWidget {
 
                     return Column(
                       children: [
-                        
                         ListTile(
                           leading: InkWell(
                             onTap: () {
-                              // Get.to(ColleaguesProfile());
-                              //likeController.gotoprofileFromlike(colleague['email']);
+                              // Navigate to colleague's profile
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //   builder: (context) => ColleaguesProfile(),
+                              // ));
                             },
                             child: CircleAvatar(
                               backgroundImage: AssetImage(colleague['image']),
