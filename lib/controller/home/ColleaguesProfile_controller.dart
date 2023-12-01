@@ -230,9 +230,9 @@ postSendAcceptConnectReq(username) async {
   final RxString coverImageBytes = ''.obs;
   final RxString coverImageBytesName = ''.obs;
   final RxString coverImageExt = ''.obs;
-  getProfileSettingsPgae() async {
+  getUserProfileInfo(username) async {
     var url =
-        "$urlStarter/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
+        "$urlStarter/user/getUserProfileInfo?ProfileUsername=${username}";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -241,11 +241,11 @@ postSendAcceptConnectReq(username) async {
     return responce;
   }
 
-  goToProfileMainInfo() async {
-    var res = await getProfileSettingsPgae();
+  goToProfileMainInfo(username) async {
+    var res = await getUserProfileInfo(username);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      goToProfileMainInfo();
+      goToProfileMainInfo(username);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -257,16 +257,16 @@ postSendAcceptConnectReq(username) async {
       if (resbody['user'] is Map<String, dynamic>) {
         // If the 'user' field is a Map, assign it to personalDetails
         personalDetails.assignAll(resbody['user']);
+        personalDetails.remove('connection');
         print(personalDetails);
-        Get.to(ProfileMainPage(userData: [resbody["user"]]));
         return true;
       }
     }
   }
 
-  getEducationLevel() async {
+  getEducationLevel(username) async {
     var url =
-        "$urlStarter/user/getEducationLevel?email=${GetStorage().read("loginemail")}";
+        "$urlStarter/user/usersGetEducationLevel?ProfileUsername=${username}";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -275,12 +275,12 @@ postSendAcceptConnectReq(username) async {
     return responce;
   }
 
-  goToEducationLevel() async {
-    var res = await getEducationLevel();
+  goToEducationLevel(username) async {
+    var res = await getEducationLevel(username);
     var resbody = jsonDecode(res.body);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      goToEducationLevel();
+      goToEducationLevel(username);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -300,9 +300,9 @@ postSendAcceptConnectReq(username) async {
     }
   }
 
-  Future getWorkExperiencePgae() async {
+  Future getWorkExperiencePgae(username) async {
     var url =
-        "$urlStarter/user/getworkExperience?email=${GetStorage().read("loginemail")}";
+        "$urlStarter/user/usersGetworkExperience?ProfileUsername=${username}";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -311,12 +311,12 @@ postSendAcceptConnectReq(username) async {
     return responce;
   }
 
-  goToWorkExperiencePgae() async {
-    var res = await getWorkExperiencePgae();
+  goToWorkExperiencePgae(username) async {
+    var res = await getWorkExperiencePgae(username);
     var resbody = jsonDecode(res.body);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      goToWorkExperiencePgae();
+      goToWorkExperiencePgae(username);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -336,10 +336,10 @@ postSendAcceptConnectReq(username) async {
     }
   }
 
-  goToAboutInfo() async {
-    var WorkExperienceInfo = await goToWorkExperiencePgae();
-    var EducationLevelInfo = await goToEducationLevel();
-    var ProfileMainInfo = await goToProfileMainInfo();
+  goToAboutInfo(username) async {
+    var WorkExperienceInfo = await goToWorkExperiencePgae(username);
+    var EducationLevelInfo = await goToEducationLevel(username);
+    var ProfileMainInfo = await goToProfileMainInfo(username);
     if (WorkExperienceInfo && EducationLevelInfo && ProfileMainInfo) {
       Get.to(
         SeeAboutInfoColleagues(),

@@ -424,7 +424,7 @@ class ColleaguesProfile extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
-            controller.goToAboutInfo();
+            controller.goToAboutInfo(userData[0]["username"]);
           },
           child: Container(
             height: 35,
