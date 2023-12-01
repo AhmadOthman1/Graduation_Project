@@ -1,14 +1,5 @@
 import 'package:get/get.dart';
 
-abstract class NewPostController extends GetxController {
-  RxString postContent = ''.obs;
-  RxString selectedPrivacy = 'Any One'.obs; // Add this line
-
-  void post();
-  void uploadImage();
-  void uploadVideo();
-  void updatePrivacy(String newValue);
-}
 
 class NewPostControllerImp extends GetxController {
   RxString postContent = ''.obs;
@@ -18,16 +9,23 @@ class NewPostControllerImp extends GetxController {
     print('Posting: ${postContent.value}, Privacy: ${selectedPrivacy.value}');
   }
 
-  void uploadImage() {
-    // Handle image upload logic
-  }
-
-  void uploadVideo() {
-    // Handle video upload logic
-  }
-
   void updatePrivacy(String newValue) {
     selectedPrivacy.value = newValue;
     update();
+  }
+
+  final RxString postImageBytes = ''.obs;
+  final RxString postImageBytesName = ''.obs;
+  final RxString postImageExt = ''.obs;
+
+  void updateProfileImage(
+    String base64String,
+    String imageName,
+    String imageExt,
+  ) {
+    postImageBytes.value = base64String;
+    postImageBytesName.value = imageName;
+    postImageExt.value = imageExt;
+    update(); // This triggers a rebuild of the widget tree
   }
 }
