@@ -25,9 +25,10 @@ class SettingsControllerImp extends SettingsController {
   @override
   Future getProfileSettingsPgae() async {
     var url = "$urlStarter/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
+    var accessToken = GetStorage().read('accessToken') ?? "";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
-      'Authorization': 'bearer ' + GetStorage().read('accessToken') ?? "",
+      'Authorization': 'bearer ' + accessToken,
     });
     print(responce);
     return responce;
