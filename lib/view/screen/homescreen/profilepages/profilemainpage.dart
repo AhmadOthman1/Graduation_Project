@@ -68,6 +68,7 @@ class ProfileMainPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
+       // physics: const ClampingScrollPhysics(),
         child: Column(
           children: [
             _buildCoverPhoto(),

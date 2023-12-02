@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:growify/controller/home/network_controller/networdkmainpage_controller.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/view/widget/homePage/networkssection.dart';
 
 class NetworksPage extends StatelessWidget {
+      final NetworkMainPageControllerImp controller =
+      Get.put(NetworkMainPageControllerImp());
+
   final List<Map<String, dynamic>> sections = [
     {
       'iconchnage': Icons.group_rounded,
@@ -68,7 +72,8 @@ class NetworksPage extends StatelessWidget {
               // Define your navigation logic here based on the section.
               switch (index - 1) {
                 case 0:
-                  Get.toNamed(AppRoute.colleaguespage);
+                 // Get.toNamed(AppRoute.colleaguespage);
+                 controller.goToShowMyColleagues();
                   break;
                 case 1:
                   Get.toNamed(AppRoute.groupspage);

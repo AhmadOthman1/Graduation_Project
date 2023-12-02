@@ -8,7 +8,7 @@ import 'package:growify/view/screen/auth/SignIn&SignUp/signup.dart';
 import 'package:growify/view/screen/auth/forgetpassword/success_resetPassword.dart';
 import 'package:growify/view/screen/auth/SignIn&SignUp/success_signup.dart';
 import 'package:growify/view/screen/auth/forgetpassword/verifycode.dart';
-import 'package:growify/view/screen/homescreen/Networkspages/colleaguespage.dart';
+import 'package:growify/view/screen/homescreen/Networkspages/showcolleagues.dart';
 import 'package:growify/view/screen/homescreen/Networkspages/groupspage.dart';
 import 'package:growify/view/screen/homescreen/Networkspages/pagesfollow.dart';
 import 'package:growify/view/screen/homescreen/Networkspages/peopleifollow.dart';
