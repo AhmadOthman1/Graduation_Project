@@ -153,6 +153,18 @@ class PostControllerImp extends PostController {
     },
   ].obs;
 
+   int Upage = 1;
+   int pageSize = 10;
+   getPostfromDataBase(){
+    
+   }
+
+
+
+
+
+
+
     int getLikes(int index) {
     return posts[index]['like'];
   }
