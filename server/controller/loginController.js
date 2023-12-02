@@ -50,7 +50,8 @@ exports.postLogin = async (req, res, next) => {
             return res.status(200).json({
                 message: 'logged',
                 accessToken: accessToken,
-                refreshToken: refreshToken
+                refreshToken: refreshToken,
+                username: existingEmail.username,
             });
 
         } else {

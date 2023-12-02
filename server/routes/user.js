@@ -13,7 +13,6 @@ const authController = require('../controller/authController');
 
 const router=express.Router();
 
-
 router.post('/signup',userController.postSignup);
 router.post('/verification',userController.postVerificationCode);
 router.post('/forgetpasswordverification',forgetpasswordController.postVerificationCode);
