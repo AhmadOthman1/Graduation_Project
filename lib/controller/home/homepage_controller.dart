@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/chat/chatmainpage.dart';
 import 'package:growify/view/screen/homescreen/profilepages/colleaguesprofile.dart';
 import 'package:growify/view/screen/homescreen/profilepages/profilemainpage.dart';
 import 'package:growify/view/widget/homePage/commentsMainpage.dart';
@@ -54,6 +55,8 @@ abstract class HomePageController extends GetxController {
   addComment(String username, String newComment, String email, int thePostId);
   toggleLikecomment(int index);
   gotoCommentPage(int id);
+  //
+  goToChat();
 }
 
 class HomePageControllerImp extends HomePageController {
@@ -380,5 +383,154 @@ class HomePageControllerImp extends HomePageController {
     } else if (res.statusCode == 200) {
       Get.to(ColleaguesProfile(userData: [resbody["user"]]));
     }
+  }
+
+  ///////////////////////////////////////////////////////////
+  //here we have two list , 
+  // the first one to get my colleagues , (row in the page)
+  //the second one Colleagues I contacted "send message to him Recently"
+  final RxList<Map<String, dynamic>> Mycolleagues = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> colleaguesPreviousmessages = <Map<String, dynamic>>[].obs;
+    @override
+  void onInit() {
+    // Initialize the RxList
+    Mycolleagues.assignAll([
+      {
+      "image": 'images/obaida.jpeg',
+      "name": "Obaida",
+      "message":"Hi Can i call you",
+     
+    },
+    {
+      "image": 'images/harri.png',
+      "name": "Ahmad",
+      "message":"Hi Can i call you",
+      
+    },
+    {
+      "image": 'images/islam.jpeg',
+      "name": "Islam",
+      "message":"Hi Can i call you",
+      
+    },
+    {
+      "image": 'images/Netflix.png',
+      "name": "Mousa",
+      "message":"Hi Can i call you",
+      
+    },
+    {
+      "image": 'images/flutterimage.png',
+      "name": "Osman",
+      "message":"Hi Can i call you",
+     
+    },
+    {
+      "image": 'images/obaida.jpeg',
+      "name": "Obada",
+      "message":"Hi Can i call you",
+      
+    },
+    {
+      "image": 'images/harri.png',
+      "name": "Abbas",
+      "message":"Hi Can i call you",
+      
+    },
+    {
+      "image": 'images/Netflix.png',
+      "name": "Mousa",
+      "message":"Hi Can i call you",
+      
+    },
+    {
+      "image": 'images/islam.jpeg',
+      "name": "Islam",
+      "message":"Hi Can i call you",
+      
+    },
+    {
+      "image": 'images/harri.png',
+      "name": "Abbas",
+      "message":"Hi Can i call you",
+      
+    },
+    ]);
+    
+        colleaguesPreviousmessages.assignAll([
+      {
+      "image": 'images/obaida.jpeg',
+      "name": "Obaida",
+      "message":"Hi Can i call you",
+     
+    },
+    {
+      "image": 'images/harri.png',
+      "name": "Ahmad",
+      "message":"Hi Can i call you",
+      
+    },
+    {
+      "image": 'images/islam.jpeg',
+      "name": "Islam",
+      "message":"Hi Can i call you",
+      
+    },
+    {
+      "image": 'images/Netflix.png',
+      "name": "Mousa",
+      "message":"Hi Can i call you",
+      
+    },
+    {
+      "image": 'images/flutterimage.png',
+      "name": "Osman",
+      "message":"Hi Can i call you",
+     
+    },
+    {
+      "image": 'images/obaida.jpeg',
+      "name": "Obada",
+      "message":"Hi Can i call you",
+      
+    },
+    {
+      "image": 'images/harri.png',
+      "name": "Abbas",
+      "message":"Hi Can i call you",
+      
+    },
+    {
+      "image": 'images/Netflix.png',
+      "name": "Mousa",
+      "message":"Hi Can i call you",
+      
+    },
+    {
+      "image": 'images/islam.jpeg',
+      "name": "Islam",
+      "message":"Hi Can i call you",
+      
+    },
+    {
+      "image": 'images/harri.png',
+      "name": "Abbas",
+      "message":"Hi Can i call you",
+      
+    },
+    ]);
+    super.onInit();
+  }
+  
+  @override
+  goToChat() {
+
+
+    Get.to(ChatMainPage(), arguments: {
+      'Mycolleagues': Mycolleagues,
+      'colleaguesPreviousmessages':colleaguesPreviousmessages,
+    });
+
+   
   }
 }

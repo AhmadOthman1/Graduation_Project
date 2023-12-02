@@ -61,7 +61,7 @@ class Homepage extends StatelessWidget {
                     ),
                     InkWell(
                       onTap: () {
-                        Get.toNamed(AppRoute.chatmainpage);
+                        controller.goToChat();
                       },
                       child: Container(
                         margin: const EdgeInsets.only(top: 5, left: 3),

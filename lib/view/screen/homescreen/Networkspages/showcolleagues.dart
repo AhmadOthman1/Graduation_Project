@@ -110,18 +110,8 @@ class _ColleaguesPage extends State<ColleaguesPage> {
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              IconButton(
-                                icon: Icon(colleague['deleteIcon']),
-                                onPressed: () {
-                                  // Add delete logic here
-                                },
-                              ),
-                              IconButton(
-                                icon: Icon(colleague['messageIcon']),
-                                onPressed: () {
-                                  // Add send message logic here
-                                },
-                              ),
+                              
+                              Icon(Icons.arrow_forward)
                             ],
                           ),
                         ),
