@@ -1,132 +1,214 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/newpost_controller.dart';
+import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:growify/global.dart';
 
 class NewPost extends StatelessWidget {
-  final NewPostControllerImp controller = Get.put(NewPostControllerImp());
+  NewPost({super.key});
 
-   NewPost({super.key});
+  String? postImageBytes;
+  String? postImageBytesName;
+  String? postImageExt;
+
+  ImageProvider<Object>? postBackgroundImage;
+
+  final NewPostControllerImp controller = Get.put(NewPostControllerImp());
+   GlobalKey<FormState>formstate=GlobalKey();
 
   @override
   Widget build(BuildContext context) {
+    // Set postBackgroundImage to null initially
+    postBackgroundImage = null;
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 50),
         child: GetBuilder<NewPostControllerImp>(
           init: controller,
           builder: (controller) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Header with image, close icon, and post button
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Get.back();
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 5, right: 15),
-                        child: const Icon(
-                          Icons.close,
-                          size: 30,
-                        ),
-                      ),
-                    ),
-                    // go to chat and messages
-                    Padding(
-                      padding: const EdgeInsets.only(left: 2, right: 15),
-                      child: InkWell(
-                        onTap: () {
-                          // go to the profile Page
-                        },
-                        child: const CircleAvatar(
-                          backgroundImage: AssetImage(
-                              'images/obaida.jpeg'), // Replace with your image path
-                          radius: 20,
-                        ),
-                      ),
-                    ),
-                    // Combo box for privacy
-                    DropdownButton<String>(
-                      value: controller.selectedPrivacy.value,
-                      items: ['Any One', 'Friends'] // Add more options as needed
-                          .map((String privacyOption) {
-                        return DropdownMenuItem<String>(
-                          value: privacyOption,
-                          child: Text(privacyOption),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        // Set the new value in the DropdownButton
-                        controller.updatePrivacy(newValue!);
-
-                        // Print what has been edited
-                        print('Privacy edited: $newValue');
-                      },
-                    ),
-                    const Spacer(),
-                    const SizedBox(width: 16),
-                    TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        "Post",
-                        style: TextStyle(color: Colors.grey, fontSize: 17),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                // Text area for post content
-                TextFormField(
-                  onChanged: (value) => controller.postContent.value = value,
-                  maxLines: 12,
-                  decoration: const InputDecoration(
-                    hintText: 'What do you want to talk about?',
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none, // Remove the border
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Additional options (e.g., upload image/video)
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
+            return GestureDetector(
+              onTap: () {
+                FocusScope.of(context).requestFocus(FocusNode());
+              },
+              child: ListView(
+                children: [
+                  Row(
                     children: [
-                      // Upload buttons
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          IconButton(
-                            onPressed: controller.uploadImage,
-                            icon: const Icon(Icons.image),
-                            tooltip: 'Upload Image',
-                            iconSize: 35,
-                            color: Colors.grey,
+                      InkWell(
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 5, right: 15),
+                          child: const Icon(
+                            Icons.close,
+                            size: 30,
                           ),
-                          IconButton(
-                            onPressed: controller.uploadVideo,
-                            icon: const Icon(Icons.videocam_sharp),
-                            tooltip: 'Upload Video',
-                            iconSize: 35,
-                            color: Colors.grey,
-                          ),
-
-                          IconButton(
-                            onPressed: controller.uploadVideo,
-                            icon: const Icon(Icons.more_vert),
-                            tooltip: 'Upload Video',
-                            iconSize: 35,
-                            color: Colors.grey,
-                          ),
-                        ],
+                        ),
                       ),
-                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 2, right: 15),
+                        child: InkWell(
+                          onTap: () {},
+                          child: const CircleAvatar(
+                            backgroundImage: AssetImage(
+                              'images/obaida.jpeg',
+                            ),
+                            radius: 20,
+                          ),
+                        ),
+                      ),
+                      DropdownButton<String>(
+                        value: controller.selectedPrivacy.value,
+                        items: [
+                          'Any One',
+                          'Connections',
+                        ] // Add more options as needed
+                            .map((String privacyOption) {
+                          return DropdownMenuItem<String>(
+                            value: privacyOption,
+                            child: Text(privacyOption),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          controller.updatePrivacy(newValue!);
+                          print('Privacy edited: $newValue');
+                        },
+                      ),
+                      const Spacer(),
+                      const SizedBox(width: 16),
+                      TextButton(
+                        onPressed: () {
+                          if(formstate.currentState!.validate()){
+                          controller.post();}else{
+
+                          }
+                        },
+                        child: const Text(
+                          "Post",
+                          style: TextStyle(color: Colors.grey, fontSize: 17),
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  Form(
+                    key: formstate,
+                    child: TextFormField(
+                      onChanged: (value) =>
+                          controller.postContent.value = value,
+                      decoration: const InputDecoration(
+                        hintText: 'What do you want to talk about?',
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Write something you want to share';
+                        }
+                        return null; 
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  GetBuilder<NewPostControllerImp>(
+                    builder: (controller) => Container(
+                      width: 350,
+                      height: 350,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        image: (controller.postImageBytes != null &&
+                                controller.postImageBytes.isNotEmpty)
+                            ? DecorationImage(
+                                fit: BoxFit.cover,
+                                image: MemoryImage(
+                                  base64Decode(controller.postImageBytes.value),
+                                ),
+                              )
+                            : null, // Set image to null initially
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 145),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Divider(
+                        color: Color.fromARGB(255, 194, 193, 193),
+                        thickness: 1.5,
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          try {
+                            final result = await FilePicker.platform.pickFiles(
+                              type: FileType.custom,
+                              allowedExtensions: ['jpg', 'jpeg', 'png'],
+                              allowMultiple: false,
+                            );
+                            if (result != null && result.files.isNotEmpty) {
+                              PlatformFile file = result.files.first;
+                              if (file.extension == "jpg" ||
+                                  file.extension == "jpeg" ||
+                                  file.extension == "png") {
+                                String base64String;
+                                if (kIsWeb) {
+                                  final fileBytes = file.bytes;
+                                  base64String =
+                                      base64Encode(fileBytes as List<int>);
+                                } else {
+                                  List<int> fileBytes =
+                                      await File(file.path!).readAsBytes();
+                                  base64String = base64Encode(fileBytes);
+                                }
+                                postImageBytes = base64String;
+                                postImageBytesName = file.name;
+                                postImageExt = file.extension;
+
+                                controller.updateProfileImage(
+                                  base64String,
+                                  file.name,
+                                  file.extension ?? '',
+                                );
+                              } else {
+                                controller.updateProfileImage('', '', '');
+                              }
+                            } else {
+                              controller.updateProfileImage('', '', '');
+                            }
+                          } catch (err) {
+                            print(err);
+                          }
+                        },
+                        child: Row(
+                          children: [
+                            Text(
+                              "Add Photo",
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),
+                            ),
+                            Spacer(),
+                            Icon(
+                              Icons.image,
+                              size: 30,
+                              color: Colors.grey,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Divider(
+                        color: Color.fromARGB(255, 194, 193, 193),
+                        thickness: 1.5,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             );
           },
         ),
