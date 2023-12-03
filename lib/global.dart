@@ -4,7 +4,12 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:growify/controller/home/logOutButton_controller.dart';
+
+
+
 var urlStarter= "http://192.168.88.15:3000";
+var urlSSEStarter= "http://192.168.88.15:4000";
+
   String? firstName;
   String? lastName;
   String? userName;
@@ -32,3 +37,4 @@ var urlStarter= "http://192.168.88.15:3000";
         }
         
   }
+  
