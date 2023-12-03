@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/myPage/Pageprofile.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
@@ -31,7 +32,7 @@ goToMyPageInfo(pageId) async {
   if (res.statusCode == 409) {
     return resbody['message'];
   } else if (res.statusCode == 200) {
-    //Get.to(ProfileSettings(userData: [resbody["user"]]));
+   // Get.to(PageProfile(userData: [resbody["user"]]));
   }
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:growify/controller/home/myPages_controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/myPage/Pageprofile.dart';
 import 'package:growify/view/screen/homescreen/settings/createPage.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/myPage_Controller/PageDetails_controller.dart' as PageDetails_controller;
@@ -61,12 +62,13 @@ class MyPages extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      Navigator.push(
+                      Get.to(PageProfile());
+                     /* Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => PageDetails_controller.goToMyPageInfo(pages[index].id),
                         ),
-                      );
+                      );*/
                     },
                     child: Card(
                       elevation: 5,

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:growify/controller/home/homepage_controller.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/core/constant/routes.dart';
+import 'package:growify/view/screen/homescreen/myPage/Pageprofile.dart';
 import 'package:growify/view/screen/homescreen/search/Search.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 
@@ -132,6 +133,7 @@ class Homepage extends StatelessWidget {
                   controller.goToCalenderPage();
                 },
               ),
+             
               ListTile(
                 title: const Text("Log Out"),
                 leading: const Icon(Icons.logout_outlined),
