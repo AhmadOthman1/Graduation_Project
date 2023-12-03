@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-class MainScreen extends StatefulWidget {
+class Calender extends StatefulWidget {
   @override
-  _MainScreenState createState() => _MainScreenState();
+  _CalenderState createState() => _CalenderState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _CalenderState extends State<Calender> {
   List<Appointment> allAppointments = <Appointment>[];
 
   @override
@@ -19,7 +19,7 @@ class _MainScreenState extends State<MainScreen> {
         startTime: DateTime.now(),
         subject: 'Meeting 1',
         remindMe: '5:35 AM',
-        color: Colors.green,
+       
       ),
     );
 
@@ -28,7 +28,7 @@ class _MainScreenState extends State<MainScreen> {
         startTime: DateTime.now().add(Duration(days: 1)),
         subject: 'Meeting 2',
         remindMe: '3:35 AM',
-        color: Colors.blue,
+        
       ),
     );
   }
@@ -37,23 +37,26 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Main Screen'),
+        title: Text('My Events'),
       ),
       body: Column(
         children: [
-          Center(
+          Container(
+            width: 350,
             child: ElevatedButton(
               onPressed: () async {
                 List<Appointment>? newAppointments = await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CalendarScreen(allAppointments, _updateAppointments)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          CalendarScreen(allAppointments, _updateAppointments)),
                 );
 
                 if (newAppointments != null && newAppointments.isNotEmpty) {
                   _updateAppointments(newAppointments);
                 }
               },
-              child: Text('Open Calendar'),
+              child: Text('Add New Event'),
             ),
           ),
           Expanded(
@@ -131,18 +134,23 @@ class _CalendarScreenState extends State<CalendarScreen> {
             view: CalendarView.month,
             dataSource: _getCalendarDataSource(),
           ),
-          ElevatedButton(
-            onPressed: () async {
-              List<Appointment>? newAppointments = await _showAddEventDialog(context);
-
-              if (newAppointments != null) {
-                setState(() {
-                  appointments.addAll(newAppointments);
-                });
-                widget.onUpdateAppointments(newAppointments);
-              }
-            },
-            child: Text('Add Event'),
+          SizedBox(height: 385,),
+          Container(
+            width: 370,
+            child: ElevatedButton(
+              onPressed: () async {
+                List<Appointment>? newAppointments =
+                    await _showAddEventDialog(context);
+            
+                if (newAppointments != null) {
+                  setState(() {
+                    appointments.addAll(newAppointments);
+                  });
+                  widget.onUpdateAppointments(newAppointments);
+                }
+              },
+              child: Text('Add Event'),
+            ),
           ),
         ],
       ),
@@ -153,95 +161,116 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return DataSource(appointments);
   }
 
-Future<List<Appointment>?> _showAddEventDialog(BuildContext context) async {
-  TextEditingController titleController = TextEditingController();
-  TimeOfDay? selectedTime;
-  DateTime selectedDate = DateTime.now();
+  Future<List<Appointment>?> _showAddEventDialog(BuildContext context) async {
+    TextEditingController titleController = TextEditingController();
+    TimeOfDay? selectedTime;
+    DateTime selectedDate = DateTime.now();
 
-  return showDialog<List<Appointment>>(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Add Event'),
-        content: Column(
-          children: [
-            TextFormField(
-              controller: titleController,
-              decoration: InputDecoration(labelText: 'Event Title'),
-            ),
-            SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () async {
-                selectedTime = await showTimePicker(
-                  context: context,
-                  initialTime: TimeOfDay.now(),
-                );
+    return showDialog<List<Appointment>>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add Event'),
+          content: Column(
+            children: [
+              TextFormField(
+                controller: titleController,
+                decoration: InputDecoration(
+                  //labelText: 'Event Title'
+                  hintText: "Enter Your Event Title",
+                  hintStyle: const TextStyle(
+                    fontSize: 14,
+                  ),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                  label: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 9),
+                      child: const Text("Event Title")),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                
+              ),
+              SizedBox(height: 30),
+              Container(
+                width: 250,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    selectedTime = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
+                  },
+                  child: Text('Select Time'),
+                ),
+              ),
+              SizedBox(height: 30),
+              Container(
+                width: 250,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: selectedDate,
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime(2101),
+                    );
+
+                    if (pickedDate != null && pickedDate != selectedDate) {
+                      selectedDate = pickedDate;
+                    }
+                  },
+                  child: Text('Select Date'),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
               },
-              child: Text('Select Time'),
+              child: Text('Cancel'),
             ),
-            SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: selectedDate,
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime(2101),
-                );
+            TextButton(
+              onPressed: () {
+                if (selectedTime != null) {
+                  DateTime combinedDateTime = DateTime(
+                    selectedDate.year,
+                    selectedDate.month,
+                    selectedDate.day,
+                    selectedTime!.hour,
+                    selectedTime!.minute,
+                  );
 
-                if (pickedDate != null && pickedDate != selectedDate) {
-                  selectedDate = pickedDate;
+                  List<Appointment> newAppointments = [
+                    Appointment(
+                      startTime: combinedDateTime,
+                      subject: titleController.text,
+                      remindMe: selectedTime!.format(context),
+                      
+                    ),
+                  ];
+
+                  print('$combinedDateTime');
+                  print(titleController.text);
+                  print('Remind Me: ${selectedTime!.format(context)}');
+                  Navigator.pop(context, newAppointments);
+                } else {
+                  // Handle case where time is not selected
+                  // You may show an error message or take appropriate action
+                  print('Time not selected');
                 }
               },
-              child: Text('Select Date'),
+              child: Text('Add Event'),
             ),
           ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              if (selectedTime != null) {
-                DateTime combinedDateTime = DateTime(
-                  selectedDate.year,
-                  selectedDate.month,
-                  selectedDate.day,
-                  selectedTime!.hour,
-                  selectedTime!.minute,
-                );
-
-                List<Appointment> newAppointments = [
-                  Appointment(
-                    startTime: combinedDateTime,
-                    subject: titleController.text,
-                    remindMe: selectedTime!.format(context),
-                    color: Colors.green,
-                  ),
-                ];
-
-                print('$combinedDateTime');
-                print(titleController.text);
-                print('Remind Me: ${selectedTime!.format(context)}');
-                Navigator.pop(context, newAppointments);
-              } else {
-                // Handle case where time is not selected
-                // You may show an error message or take appropriate action
-                print('Time not selected');
-              }
-            },
-            child: Text('Add Event'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
+        );
+      },
+    );
+  }
 }
 
 class DataSource extends CalendarDataSource {
@@ -254,12 +283,12 @@ class Appointment {
   DateTime startTime;
   String subject;
   String remindMe;
-  Color color;
+  
 
   Appointment({
     required this.startTime,
     required this.subject,
     required this.remindMe,
-    required this.color,
+    
   });
 }

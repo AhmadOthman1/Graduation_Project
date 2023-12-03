@@ -539,6 +539,6 @@ class HomePageControllerImp extends HomePageController {
   
   @override
   goToCalenderPage() {
-    Get.to(MainScreen());
+    Get.to(Calender());
   }
 }
