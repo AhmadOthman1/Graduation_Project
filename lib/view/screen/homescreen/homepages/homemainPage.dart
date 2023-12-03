@@ -126,6 +126,13 @@ class Homepage extends StatelessWidget {
                 },
               ),
               ListTile(
+                title: const Text("Calender"),
+                leading: const Icon(Icons.calendar_today_rounded),
+                onTap: () {
+                  controller.goToCalenderPage();
+                },
+              ),
+              ListTile(
                 title: const Text("Log Out"),
                 leading: const Icon(Icons.logout_outlined),
                 onTap: () {

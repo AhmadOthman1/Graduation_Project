@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/Calender/Calender.dart';
 import 'package:growify/view/screen/homescreen/chat/chatmainpage.dart';
 import 'package:growify/view/screen/homescreen/profilepages/colleaguesprofile.dart';
 import 'package:growify/view/screen/homescreen/profilepages/profilemainpage.dart';
@@ -57,6 +58,8 @@ abstract class HomePageController extends GetxController {
   gotoCommentPage(int id);
   //
   goToChat();
+  //
+  goToCalenderPage();
 }
 
 class HomePageControllerImp extends HomePageController {
@@ -532,5 +535,10 @@ class HomePageControllerImp extends HomePageController {
     });
 
    
+  }
+  
+  @override
+  goToCalenderPage() {
+    Get.to(Calender());
   }
 }
