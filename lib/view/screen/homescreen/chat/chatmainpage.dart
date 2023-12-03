@@ -158,6 +158,7 @@ class _ChatMainPageState extends State<ChatMainPage> {
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   // final cate = Categories[index];
+                  // ok
                   return InkWell(
                     onTap: () {
                       Get.to(ChatPageMessages(
