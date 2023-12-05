@@ -1,7 +1,11 @@
+//PageProfileSettingsController
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class PageProfileSettingsController extends GetxController {
+
+
+
   // for the profile image
   final RxString profileImageBytes = ''.obs;
   final RxString profileImageBytesName = ''.obs;
@@ -48,6 +52,11 @@ class PageProfileSettingsController extends GetxController {
       isTextFieldEnabled5.value = true; // Show the "Save" button
     }
   }
+
+    //for the type of page 
+     final RxBool isTextFieldEnabled12 = false.obs;
+  final RxString PageType = ''.obs;
+  final List<String> PageTypeList = ["public", "private"];
 
   // for dropDown country
   final RxBool isTextFieldEnabled11 = false.obs;

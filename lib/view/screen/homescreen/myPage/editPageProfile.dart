@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/ProfileSettings_controller.dart';
+
 import 'package:growify/controller/home/myPage_Controller/Page_profileSetting_Controller.dart';
 
 import 'package:growify/core/functions/validinput.dart';
@@ -17,6 +17,7 @@ class EditPageProfile extends StatelessWidget {
     _controller2.text = userData[0]["Speciality"];
     _controller3.text = (userData[0]["address"] == null) ? "" : userData[0]["address"];
     _controller4.text = (userData[0]["country"] == null) ? "" : userData[0]["country"];
+    _controller5.text = (userData[0]["pageType"] == null) ? "" : userData[0]["pageType"];
   
     _controller6.text = userData[0]["ContactInfo"];
     _controller7.text = (userData[0]["Description"] == null) ? "" : userData[0]["Description"];
@@ -26,7 +27,8 @@ class EditPageProfile extends StatelessWidget {
     controller.textFieldText.value = _controller1.text;
     controller.textFieldText2.value = _controller2.text;
     controller.textFieldText3.value = _controller3.text;
-    controller.textFieldText4.value = _controller4.text;
+    controller.country.value = _controller4.text;
+    controller.PageType.value = _controller5.text;
    
     controller.textFieldText6.value = _controller6.text;
     controller.textFieldText7.value = _controller7.text;
@@ -54,6 +56,7 @@ class EditPageProfile extends StatelessWidget {
   final TextEditingController _controller2 = TextEditingController();
   final TextEditingController _controller3 = TextEditingController();
   final TextEditingController _controller4 = TextEditingController();
+  final TextEditingController _controller5 = TextEditingController();
   final TextEditingController _controller6 = TextEditingController();
   final TextEditingController _controller7 = TextEditingController();
   GlobalKey<FormState> formstate = GlobalKey();
@@ -61,8 +64,8 @@ class EditPageProfile extends StatelessWidget {
   // Initial user data
   final List<Map<String, dynamic>> userData ;
 
-  ProfileSettingsControllerImp controller =
-      Get.put(ProfileSettingsControllerImp());
+  PageProfileSettingsController controller =
+      Get.put(PageProfileSettingsController());
 
 
   @override
@@ -87,6 +90,7 @@ class EditPageProfile extends StatelessWidget {
         controller.isTextFieldEnabled6.value=false;
         controller.isTextFieldEnabled7.value=false;
         controller.isTextFieldEnabled11.value=false;
+        controller.isTextFieldEnabled12.value=false;
        print("obaida");
         return true;
         
@@ -111,7 +115,7 @@ class EditPageProfile extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-                      GetBuilder<ProfileSettingsControllerImp>(
+                      GetBuilder<PageProfileSettingsController>(
                         builder: (controller) => Stack(
                           alignment: Alignment.bottomRight,
                           children: [
@@ -561,11 +565,11 @@ class EditPageProfile extends StatelessWidget {
                                     label: Container(
                                       margin: const EdgeInsets.symmetric(
                                           horizontal: 9),
-                                      child: const Text("Your Country"),
+                                      child: const Text("Your field of Page Type"),
                                     ),
                                   ),
                                   isExpanded: true,
-                                  hint: const Text('Select Country',
+                                  hint: const Text('Select Page Type',
                                       style: TextStyle(color: Colors.grey)),
                                   items: controller.countryList.map((value) {
                                     return DropdownMenuItem(
@@ -585,7 +589,7 @@ class EditPageProfile extends StatelessWidget {
                                       : null, // Disable the dropdown when not enabled
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Please select country';
+                                      return 'Please select Page Type';
                                     }
                                     return null;
                                   },
@@ -625,7 +629,7 @@ class EditPageProfile extends StatelessWidget {
                       // change cover page
                       Row(
                         children: [
-                          GetBuilder<ProfileSettingsControllerImp>(
+                          GetBuilder<PageProfileSettingsController>(
                             builder: (controller) => Stack(
                               alignment: Alignment.bottomRight,
                               children: [

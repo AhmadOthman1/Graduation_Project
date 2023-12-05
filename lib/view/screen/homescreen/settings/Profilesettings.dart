@@ -28,7 +28,7 @@ class ProfileSettings extends StatelessWidget {
     controller.textFieldText.value = _controller1.text;
     controller.textFieldText2.value = _controller2.text;
     controller.textFieldText3.value = _controller3.text;
-    controller.textFieldText4.value = _controller4.text;
+    controller.country.value = _controller4.text;
     controller.textFieldText5.value = controller.startDateController.text;
     controller.textFieldText6.value = _controller6.text;
     controller.textFieldText7.value = _controller7.text;
