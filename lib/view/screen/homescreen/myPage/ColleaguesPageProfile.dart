@@ -186,28 +186,8 @@ class ColleaguesPageProfile extends StatelessWidget {
   Widget _buildButtonsRow() {
     return Column(
       children: [
-        InkWell(
-          onTap: () {
-            Get.to(Settings());
-          },
-          child: Container(
-            height: 35,
-            padding: const EdgeInsets.only(left: 10),
-            child: const Row(
-              children: [
-                Icon(Icons.edit),
-                SizedBox(width: 10),
-                Text(
-                  "Edit Profile",
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-                Spacer(),
-                Icon(Icons.arrow_forward, size: 30),
-              ],
-            ),
-          ),
-        ),
-        _buildDivider(10),
+       
+        
         InkWell(
           onTap: () {
             controller.goToAboutInfo();
@@ -229,28 +209,7 @@ class ColleaguesPageProfile extends StatelessWidget {
             ),
           ),
         ),
-        _buildDivider(10),
-        InkWell(
-          onTap: () {
-            Get.to(NewPost());
-          },
-          child: Container(
-            height: 35,
-            padding: const EdgeInsets.only(left: 10),
-            child: const Row(
-              children: [
-                Icon(Icons.post_add_outlined),
-                SizedBox(width: 10),
-                Text(
-                  "Add New Post",
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-                Spacer(),
-                Icon(Icons.arrow_forward, size: 30),
-              ],
-            ),
-          ),
-        ),
+        
       ],
     );
   }

@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/ProfileSettings_controller.dart';
-import 'package:growify/core/functions/alertbox.dart';
+import 'package:growify/controller/home/myPage_Controller/Page_profileSetting_Controller.dart';
+
 import 'package:growify/core/functions/validinput.dart';
 import 'package:growify/global.dart';
 import 'package:file_picker/file_picker.dart';
@@ -16,7 +17,7 @@ class EditPageProfile extends StatelessWidget {
     _controller2.text = userData[0]["lastname"];
     _controller3.text = (userData[0]["address"] == null) ? "" : userData[0]["address"];
     _controller4.text = (userData[0]["country"] == null) ? "" : userData[0]["country"];
-    controller.startDateController.text = userData[0]["dateOfBirth"];
+  
     _controller6.text = userData[0]["phone"];
     _controller7.text = (userData[0]["bio"] == null) ? "" : userData[0]["bio"];
     profileImage = (userData[0]["photo"] == null) ? "" : userData[0]["photo"];
@@ -26,7 +27,7 @@ class EditPageProfile extends StatelessWidget {
     controller.textFieldText2.value = _controller2.text;
     controller.textFieldText3.value = _controller3.text;
     controller.textFieldText4.value = _controller4.text;
-    controller.textFieldText5.value = controller.startDateController.text;
+   
     controller.textFieldText6.value = _controller6.text;
     controller.textFieldText7.value = _controller7.text;
 
@@ -64,11 +65,11 @@ class EditPageProfile extends StatelessWidget {
       "lastname": "Doe",
       "address": "123 Main Street",
       "country": "United States",
-      "dateOfBirth": "1990-01-01",
+
       "phone": "123-456-7890",
       "bio": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
       "photo": null,
-      "coverImage": "path_to_cover_image.jpg",
+      "coverImage": null,
     }
   ];
 
@@ -94,7 +95,7 @@ class EditPageProfile extends StatelessWidget {
         controller.isTextFieldEnabled.value=false;
         controller.isTextFieldEnabled2.value=false;
         controller.isTextFieldEnabled3.value=false;
-        controller.isTextFieldEnabled5.value=false;
+        
         controller.isTextFieldEnabled6.value=false;
         controller.isTextFieldEnabled7.value=false;
         controller.isTextFieldEnabled11.value=false;
