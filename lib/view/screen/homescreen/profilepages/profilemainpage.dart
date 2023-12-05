@@ -14,7 +14,7 @@ class ProfileMainPage extends StatelessWidget {
     profileImage = (userData[0]["photo"] == null) ? "" : userData[0]["photo"];
     coverImage =
         (userData[0]["coverImage"] == null) ? "" : userData[0]["coverImage"];
-    Bio = (userData[0]["description"] == null) ? "" : userData[0]["description"];
+    Bio = (userData[0]["bio"] == null) ? "" : userData[0]["bio"];
   }
 
   final ProfileMainPageControllerImp controller =

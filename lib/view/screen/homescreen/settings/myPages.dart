@@ -62,7 +62,7 @@ class MyPages extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      Get.to(PageProfile());
+                      controller.goToMyPage();
                      /* Navigator.push(
                         context,
                         MaterialPageRoute(

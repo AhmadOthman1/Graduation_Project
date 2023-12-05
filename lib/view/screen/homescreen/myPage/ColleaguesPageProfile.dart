@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:growify/controller/home/myPage_Controller/PageProfile_controller.dart';
 import 'package:growify/controller/home/profileMainPage_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/NewPost/newpost.dart';
@@ -9,21 +8,15 @@ import 'dart:convert';
 
 import 'package:growify/view/widget/homePage/posts.dart';
 
-class PageProfile extends StatelessWidget {
-  PageProfile({super.key, required this.userData}) {
-
-    profileImage = (userData[0]["photo"] == null) ? "" : userData[0]["photo"];
-    coverImage =
-        (userData[0]["coverImage"] == null) ? "" : userData[0]["coverImage"];
-    Description = (userData[0]["Description"] == null) ? "" : userData[0]["Description"];
-    firstName=userData[0]['firstname'];
-  /*9  profileImage = '';
+class ColleaguesPageProfile extends StatelessWidget {
+  ColleaguesPageProfile({super.key}) {
+    profileImage = '';
     coverImage = '';
-    Description = userData[0]["Description"];*/
+    Description = userData[0]["Description"];
   }
 
-  final PageProfileController controller =
-      Get.put(PageProfileController());
+  final ProfileMainPageControllerImp controller =
+      Get.put(ProfileMainPageControllerImp());
 
   String? firstName;
 
@@ -42,7 +35,14 @@ class PageProfile extends StatelessWidget {
   late ImageProvider<Object> coverBackgroundImage;
   String? Description;
 
-  final List<Map<String, dynamic>> userData;
+  final List<Map<String, dynamic>> userData = [
+    {
+      "firstname": "Al Qassam",
+      "photo": null,
+      "coverImage": null,
+      "Description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    }
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -188,9 +188,7 @@ class PageProfile extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
-           // Get.to(Settings());
-           controller.goToEditPageProfile();
-
+            Get.to(Settings());
           },
           child: Container(
             height: 35,
@@ -212,7 +210,7 @@ class PageProfile extends StatelessWidget {
         _buildDivider(10),
         InkWell(
           onTap: () {
-           // controller.goToAboutInfo();
+            controller.goToAboutInfo();
           },
           child: Container(
             height: 35,
