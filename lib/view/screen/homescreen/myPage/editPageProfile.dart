@@ -18,6 +18,7 @@ class EditPageProfile extends StatelessWidget {
     _controller3.text = (userData[0]["address"] == null) ? "" : userData[0]["address"];
     _controller4.text = (userData[0]["country"] == null) ? "" : userData[0]["country"];
     _controller5.text = (userData[0]["pageType"] == null) ? "" : userData[0]["pageType"];
+    print(_controller4.text);
   
     _controller6.text = userData[0]["ContactInfo"];
     _controller7.text = (userData[0]["Description"] == null) ? "" : userData[0]["Description"];
@@ -571,20 +572,20 @@ class EditPageProfile extends StatelessWidget {
                                   isExpanded: true,
                                   hint: const Text('Select Page Type',
                                       style: TextStyle(color: Colors.grey)),
-                                  items: controller.countryList.map((value) {
+                                  items: controller.PageTypeList.map((value) {
                                     return DropdownMenuItem(
                                       value: value,
                                       child: Text(value),
                                     );
                                   }).toList(),
-                                  value: controller.country.value.isEmpty
+                                  value: controller.PageType.value.isEmpty
                                       ? null
-                                      : controller.country.value,
-                                  onChanged: controller.isTextFieldEnabled11.value
+                                      : controller.PageType.value,
+                                  onChanged: controller.isTextFieldEnabled12.value
                                       ? (value) {
-                                          controller.country.value =
+                                          controller.PageType.value =
                                               value.toString();
-                                          print(controller.country.value);
+                                          print(controller.PageType.value);
                                         }
                                       : null, // Disable the dropdown when not enabled
                                   validator: (value) {
@@ -599,10 +600,10 @@ class EditPageProfile extends StatelessWidget {
                             IconButton(
                               onPressed: () {
                                 // Toggle the enable state of the dropdown
-                                controller.isTextFieldEnabled11.toggle();
+                                controller.isTextFieldEnabled12.toggle();
                               },
                               icon: const Icon(Icons.edit),
-                              color: controller.isTextFieldEnabled11.value
+                              color: controller.isTextFieldEnabled12.value
                                   ? Colors.blue
                                   : Colors.grey,
                             )

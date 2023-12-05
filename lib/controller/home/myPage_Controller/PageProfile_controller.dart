@@ -38,10 +38,10 @@ class PageProfileController extends GetxController {
    final List<Map<String, dynamic>> userData = [
     {
       "name": "Obaida",
-      "Speciality": "Aws",
+      "Speciality": "developer",
       "address": "123 Main Street",
       "country": "United States",
-
+      'pageType': 'public',
       "ContactInfo": "123-456-7890",
       "Description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
       "photo": null,
