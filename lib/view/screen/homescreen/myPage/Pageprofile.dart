@@ -213,6 +213,7 @@ class PageProfile extends StatelessWidget {
         InkWell(
           onTap: () {
            // controller.goToAboutInfo();
+           controller.goToSeeAboutInfo();
           },
           child: Container(
             height: 35,

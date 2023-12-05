@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:growify/controller/home/profileMainPage_controller.dart';
+import 'package:growify/controller/home/myPage_Controller/PageColleaguesProfile_controller.dart';
+
 import 'package:growify/global.dart';
-import 'package:growify/view/screen/homescreen/NewPost/newpost.dart';
-import 'package:growify/view/screen/homescreen/settings/settings.dart';
+
 import 'package:get/get.dart';
 import 'dart:convert';
 
@@ -15,8 +15,8 @@ class ColleaguesPageProfile extends StatelessWidget {
     Description = userData[0]["Description"];
   }
 
-  final ProfileMainPageControllerImp controller =
-      Get.put(ProfileMainPageControllerImp());
+  final ColleaguesPageProfile_Controller controller =
+      Get.put(ColleaguesPageProfile_Controller());
 
   String? firstName;
 
@@ -183,7 +183,7 @@ class ColleaguesPageProfile extends StatelessWidget {
         
         InkWell(
           onTap: () {
-            controller.goToAboutInfo();
+            controller.goToSeeAboutInfoColleagues();
           },
           child: Container(
             height: 35,

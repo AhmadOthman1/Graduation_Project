@@ -7,8 +7,8 @@ import 'package:growify/controller/home/SeeAboutInfo_Controller.dart';
 import 'package:growify/global.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class MyPageSeeAboutInfo extends StatelessWidget {
-  MyPageSeeAboutInfo({super.key}) {
+class CollaguesPageSeeAboutInfo extends StatelessWidget {
+  CollaguesPageSeeAboutInfo({super.key}) {
     
   }
   final SeeAboutInfoController controller = Get.put(SeeAboutInfoController());
@@ -46,8 +46,7 @@ class MyPageSeeAboutInfo extends StatelessWidget {
         child: Column(
           children: [
             _buildPersonalDetails(controller),
-          //  _buildEducationList(controller),
-          //  _buildExperienceList(controller),
+
           ],
         ),
       ),

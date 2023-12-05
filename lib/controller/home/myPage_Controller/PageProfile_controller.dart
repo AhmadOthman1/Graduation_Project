@@ -2,6 +2,7 @@
 
 import 'package:get/get.dart';
 import 'package:growify/view/screen/homescreen/myPage/editPageProfile.dart';
+import 'package:growify/view/screen/homescreen/myPage/seeAboutInfoMyPage.dart';
 import 'package:http/http.dart' as http;
 
 class PageProfileController extends GetxController {
@@ -50,6 +51,25 @@ class PageProfileController extends GetxController {
 
   goToEditPageProfile(){
     Get.to(EditPageProfile(userData: userData,));
+  }
+
+    final RxMap personalDetails = {
+    'name': 'John Doe',
+    'description': 'A Flutter developer',
+    'address': '123 Main Street',
+    'contactInfo': 'john.doe@example.com',
+    'country': 'United States',
+    'speciality': 'Mobile App Development',
+    'pageType': 'public', // or 'private'
+  }.obs;
+
+
+  goToSeeAboutInfo(){
+
+    Get.to(MyPageSeeAboutInfo(),arguments: {
+      'PersonalDetails':personalDetails,
+    });
+
   }
 
 
