@@ -229,7 +229,7 @@ class Settings extends StatelessWidget {
                 child: InkWell(
                   onTap: () {
                   
-                  Get.to(ColleaguesPageProfile());
+                  controller.goToColleaguesPageProfile();
                   },
                   child: Container(
                     height: 35,

@@ -21,7 +21,7 @@ class PageProfileController extends GetxController {
 
 
 
-   final List<Map<String, dynamic>> userData = [
+ /*  final List<Map<String, dynamic>> userData = [
     {
       "firstname": "Al Qassam",
       "address":"Aqraba",
@@ -32,10 +32,24 @@ class PageProfileController extends GetxController {
       "country":"Palestine",
       "speciality":"progrmming"
     }
+  ];*/
+
+   final List<Map<String, dynamic>> userData = [
+    {
+      "name": "Obaida",
+      "Speciality": "Aws",
+      "address": "123 Main Street",
+      "country": "United States",
+
+      "ContactInfo": "123-456-7890",
+      "Description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "photo": null,
+      "coverImage": null,
+    }
   ];
 
   goToEditPageProfile(){
-    Get.to(EditPageProfile());
+    Get.to(EditPageProfile(userData: userData,));
   }
 
 

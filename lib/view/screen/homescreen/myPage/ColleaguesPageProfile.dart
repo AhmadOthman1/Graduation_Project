@@ -9,7 +9,7 @@ import 'dart:convert';
 import 'package:growify/view/widget/homePage/posts.dart';
 
 class ColleaguesPageProfile extends StatelessWidget {
-  ColleaguesPageProfile({super.key}) {
+  ColleaguesPageProfile({super.key, required this.userData}) {
     profileImage = '';
     coverImage = '';
     Description = userData[0]["Description"];
@@ -35,14 +35,7 @@ class ColleaguesPageProfile extends StatelessWidget {
   late ImageProvider<Object> coverBackgroundImage;
   String? Description;
 
-  final List<Map<String, dynamic>> userData = [
-    {
-      "firstname": "Al Qassam",
-      "photo": null,
-      "coverImage": null,
-      "Description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-    }
-  ];
+  final List<Map<String, dynamic>> userData;
 
   @override
   Widget build(BuildContext context) {

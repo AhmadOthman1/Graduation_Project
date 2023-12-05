@@ -12,14 +12,14 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class EditPageProfile extends StatelessWidget {
-  EditPageProfile({super.key}) {
-    _controller1.text = userData[0]["firstname"];
-    _controller2.text = userData[0]["lastname"];
+  EditPageProfile({super.key, required this.userData}) {
+    _controller1.text = userData[0]["name"];
+    _controller2.text = userData[0]["Speciality"];
     _controller3.text = (userData[0]["address"] == null) ? "" : userData[0]["address"];
     _controller4.text = (userData[0]["country"] == null) ? "" : userData[0]["country"];
   
-    _controller6.text = userData[0]["phone"];
-    _controller7.text = (userData[0]["bio"] == null) ? "" : userData[0]["bio"];
+    _controller6.text = userData[0]["ContactInfo"];
+    _controller7.text = (userData[0]["Description"] == null) ? "" : userData[0]["Description"];
     profileImage = (userData[0]["photo"] == null) ? "" : userData[0]["photo"];
     coverImage = (userData[0]["coverImage"] == null) ? "" : userData[0]["coverImage"];
     // Set initial values in the controller
@@ -59,19 +59,7 @@ class EditPageProfile extends StatelessWidget {
   GlobalKey<FormState> formstate = GlobalKey();
   
   // Initial user data
-  final List<Map<String, dynamic>> userData = [
-    {
-      "firstname": "John",
-      "lastname": "Doe",
-      "address": "123 Main Street",
-      "country": "United States",
-
-      "phone": "123-456-7890",
-      "bio": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      "photo": null,
-      "coverImage": null,
-    }
-  ];
+  final List<Map<String, dynamic>> userData ;
 
   ProfileSettingsControllerImp controller =
       Get.put(ProfileSettingsControllerImp());
@@ -229,7 +217,7 @@ class EditPageProfile extends StatelessWidget {
                                     label: Container(
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 9),
-                                        child: const Text("Firstname")),
+                                        child: const Text("Name")),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30),
                                     ),
@@ -247,6 +235,230 @@ class EditPageProfile extends StatelessWidget {
                               },
                               icon: const Icon(Icons.edit),
                               color: controller.isTextFieldEnabled.value
+                                  ? Colors.blue
+                                  : Colors.grey,
+                            )
+                          ],
+                        ),
+                      ),
+
+                       const SizedBox(height: 20),
+                      Obx(
+                        () => Row(
+                          children: [
+                            Container(
+                              width: 300,
+                              margin: const EdgeInsets.only(right: 10),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: TextFormField(
+                                  maxLines: 10,
+                                  controller: _controller7,
+                                  enabled: controller.isTextFieldEnabled7.value,
+                                  onChanged: (text) {
+                                    controller.textFieldText7.value = text;
+                                  },
+                                  validator: (Value) {
+                                    return validInput(Value!, 250, 1, "length");
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: controller.textFieldText7.value,
+                                    hintStyle: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 30),
+                                    label: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 9),
+                                        child: const Text("Description")),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                // Edit the enable of the textfiled
+                                controller.isTextFieldEnabled7.toggle();
+                                _controller7.text =
+                                    controller.textFieldText7.value;
+                                controller.update();
+                              },
+                              icon: const Icon(Icons.edit),
+                              color: controller.isTextFieldEnabled7.value
+                                  ? Colors.blue
+                                  : Colors.grey,
+                            )
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+                      Obx(
+                        () => Row(
+                          children: [
+                            Container(
+                              width: 300,
+                              margin: const EdgeInsets.only(right: 10),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: TextFormField(
+                                  maxLines: 10,
+                                  controller: _controller3,
+                                  enabled: controller.isTextFieldEnabled3.value,
+                                  onChanged: (text) {
+                                    controller.textFieldText3.value = text;
+                                  },
+                                  validator: (Value) {
+                                    return validInput(Value!, 50, 1, "length");
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: controller.textFieldText3.value,
+                                    hintStyle: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 30),
+                                    label: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 9),
+                                        child: const Text("Address")),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                // Edit the enable of the textfiled
+                                controller.isTextFieldEnabled3.toggle();
+                                _controller3.text =
+                                    controller.textFieldText3.value;
+                                controller.update();
+                              },
+                              icon: const Icon(Icons.edit),
+                              color: controller.isTextFieldEnabled3.value
+                                  ? Colors.blue
+                                  : Colors.grey,
+                            )
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+                      Obx(
+                        () => Row(
+                          children: [
+                            Container(
+                              width: 300,
+                              margin: const EdgeInsets.only(right: 10),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: TextFormField(
+                                  maxLines: 10,
+                                  controller: _controller6,
+                                  enabled: controller.isTextFieldEnabled6.value,
+                                  onChanged: (text) {
+                                    controller.textFieldText6.value = text;
+                                  },
+                                  validator: (Value) {
+                                    return validInput(Value!, 15, 10, "phone");
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: controller.textFieldText6.value,
+                                    hintStyle: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 30),
+                                    label: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 9),
+                                        child: const Text("ContactInfo")),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                // Edit the enable of the textfiled
+                                controller.isTextFieldEnabled6.toggle();
+                                _controller6.text =
+                                    controller.textFieldText6.value;
+                                controller.update();
+                              },
+                              icon: const Icon(Icons.edit),
+                              color: controller.isTextFieldEnabled6.value
+                                  ? Colors.blue
+                                  : Colors.grey,
+                            )
+                          ],
+                        ),
+                      ),
+
+                       const SizedBox(height: 20),
+                      Obx(
+                        () => Row(
+                          children: [
+                            Container(
+                              width: 300,
+                              margin: const EdgeInsets.only(right: 10),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: TextFormField(
+                                  maxLines: 10,
+                                  controller: _controller2,
+                                  enabled: controller.isTextFieldEnabled2.value,
+                                  onChanged: (text) {
+                                    controller.textFieldText2.value = text;
+                                  },
+                                  validator: (Value) {
+                                    return validInput(Value!, 50, 1, "username");
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: controller.textFieldText2.value,
+                                    hintStyle: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 30),
+                                    label: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 9),
+                                        child: const Text("Speciality")),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                // Edit the enable of the textfiled
+                                controller.isTextFieldEnabled2.toggle();
+                                _controller2.text =
+                                    controller.textFieldText2.value;
+                                controller.update();
+                              },
+                              icon: const Icon(Icons.edit),
+                              color: controller.isTextFieldEnabled2.value
                                   ? Colors.blue
                                   : Colors.grey,
                             )
@@ -323,14 +535,9 @@ class EditPageProfile extends StatelessWidget {
                           ],
                         ),
                       ),
-    
-                     
-    
-                     
-    
-                      //////////////////
-                      const SizedBox(height: 20),
-                      Obx(
+
+                       const SizedBox(height: 20),
+                       Obx(
                         () => Row(
                           children: [
                             Container(
@@ -338,17 +545,12 @@ class EditPageProfile extends StatelessWidget {
                               margin: const EdgeInsets.only(right: 10),
                               child: Align(
                                 alignment: Alignment.centerLeft,
-                                child: TextFormField(
-                                  controller: _controller7,
-                                  enabled: controller.isTextFieldEnabled7.value,
-                                  onChanged: (text) {
-                                    controller.textFieldText7.value = text;
-                                  },
-                                  validator: (Value) {
-                                    return validInput(Value!, 250, 1, "length");
-                                  },
+                                child: DropdownButtonFormField(
                                   decoration: InputDecoration(
-                                    hintText: controller.textFieldText7.value,
+                                    alignLabelWithHint: true,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
                                     hintStyle: const TextStyle(
                                       fontSize: 14,
                                     ),
@@ -357,32 +559,59 @@ class EditPageProfile extends StatelessWidget {
                                     contentPadding: const EdgeInsets.symmetric(
                                         vertical: 15, horizontal: 30),
                                     label: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 9),
-                                        child: const Text("Bio")),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 9),
+                                      child: const Text("Your Country"),
                                     ),
                                   ),
+                                  isExpanded: true,
+                                  hint: const Text('Select Country',
+                                      style: TextStyle(color: Colors.grey)),
+                                  items: controller.countryList.map((value) {
+                                    return DropdownMenuItem(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  value: controller.country.value.isEmpty
+                                      ? null
+                                      : controller.country.value,
+                                  onChanged: controller.isTextFieldEnabled11.value
+                                      ? (value) {
+                                          controller.country.value =
+                                              value.toString();
+                                          print(controller.country.value);
+                                        }
+                                      : null, // Disable the dropdown when not enabled
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please select country';
+                                    }
+                                    return null;
+                                  },
                                 ),
                               ),
                             ),
                             IconButton(
                               onPressed: () {
-                                // Edit the enable of the textfiled
-                                controller.isTextFieldEnabled7.toggle();
-                                _controller7.text =
-                                    controller.textFieldText7.value;
-                                controller.update();
+                                // Toggle the enable state of the dropdown
+                                controller.isTextFieldEnabled11.toggle();
                               },
                               icon: const Icon(Icons.edit),
-                              color: controller.isTextFieldEnabled7.value
+                              color: controller.isTextFieldEnabled11.value
                                   ? Colors.blue
                                   : Colors.grey,
                             )
                           ],
                         ),
                       ),
+    
+                     
+    
+                     
+    
+                      //////////////////
+                     
                       const SizedBox(height: 20),
     
                       Container(

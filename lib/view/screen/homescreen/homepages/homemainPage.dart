@@ -134,13 +134,7 @@ class Homepage extends StatelessWidget {
                   controller.goToCalenderPage();
                 },
               ),
-              ListTile(
-                title: const Text("ColleaguesPage"),
-                leading: const Icon(Icons.person_2_sharp),
-                onTap: () {
-                  Get.to(ColleaguesPageProfile());
-                },
-              ),
+             
              
               ListTile(
                 title: const Text("Log Out"),
