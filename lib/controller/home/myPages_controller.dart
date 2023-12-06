@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/myPage/Pageprofile.dart';
 import 'package:http/http.dart' as http;
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
@@ -54,5 +55,18 @@ class MyPagesController {
       return null;
     }
     return null;
+  }
+
+ final List<Map<String, dynamic>> userData = [
+    {
+      "firstname": "Al Qassam",
+      "photo": null,
+      "coverImage": null,
+      "Description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    }
+  ];
+  goToMyPage(){
+    Get.to(PageProfile(userData: userData,));
+
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/settings_controller.dart';
+import 'package:growify/view/screen/homescreen/myPage/ColleaguesPageProfile.dart';
 import 'package:growify/view/screen/homescreen/settings/changeemail.dart';
 import 'package:growify/view/screen/homescreen/settings/changepassword.dart';
 import 'package:growify/view/screen/homescreen/settings/myPages.dart';
@@ -218,6 +219,38 @@ class Settings extends StatelessWidget {
                   ),
                 ),
               ),
+              const Divider(
+                color: Color.fromARGB(255, 194, 193, 193),
+                thickness: 2.0,
+              ),
+
+              Container(
+                margin: const EdgeInsets.only(top: 10, bottom: 10),
+                child: InkWell(
+                  onTap: () {
+                  
+                  controller.goToColleaguesPageProfile();
+                  },
+                  child: Container(
+                    height: 35,
+                    padding: const EdgeInsets.only(left: 10),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.contact_page),
+                        SizedBox(width: 10),
+                        Text(
+                          "colleaguesPages Temporary site",
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        Spacer(),
+                        Icon(Icons.arrow_forward, size: 30),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
             ],
           ),
         ],

@@ -35,18 +35,7 @@ class SeeAboutInfo extends StatelessWidget {
     controller.setpersonalData(personalDetails);
     print(personalDetails);
 
-    // final Map<String, dynamic> arguments = Get.arguments;
-    // final RxList<Map<String, String>> personalDetails =
-    //   arguments['personalDetails'];
-    // List<Map<String, String>> educationLevel =
-//args != null ? args['educationLevel'] : [];
-    // final RxList<Map<String, String>> practicalExperiences =
-    // arguments['practicalExperiences'];
-
-    // controller.setpersonalData(personalDetails);
-
-    // controller.setPracticalExperiences(practicalExperiences);
-
+  
     return Scaffold(
       appBar: AppBar(
         title: const Text(

@@ -4,9 +4,8 @@ import 'package:growify/controller/home/chatspage_cnotroller.dart';
 
 class ChatPageMessages extends StatelessWidget {
   final data;
-   ChatPageMessages({super.key, this.data});
+  ChatPageMessages({super.key, this.data});
   final ChatController chatController = Get.put(ChatController());
-  
 
   @override
   Widget build(BuildContext context) {
@@ -38,39 +37,45 @@ class ChatPageMessages extends StatelessWidget {
       color: Colors.blue,
       child: Row(
         children: [
-          const Icon(Icons.arrow_back, color: Colors.white),
+          IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+          ),
           const SizedBox(width: 16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  SizedBox(
-                    width: 80,
-                    child: Text(
-                      data['name'],
-                      style: const TextStyle(color: Colors.white, fontSize: 20),
+                   Container(
+                      child: Text(
+                        data['name'],
+                        style: const TextStyle(color: Colors.white, fontSize: 20),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 140),
-
+                  
+                 SizedBox(width: 120,),
                   Container(
-                    child: Row(children: [
-                      IconButton(
-                      icon: const Icon(Icons.video_call),
-                      color: Colors.white,
-                      onPressed: () {
-                        // Add your video call logic here
-                      },
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.video_call),
+                          color: Colors.white,
+                          onPressed: () {
+                            // Add your video call logic here
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.more_vert),
+                          color: Colors.white,
+                          onPressed: () {
+                            // Add your audio call logic here
+                          },
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.more_vert),
-                      color: Colors.white,
-                      onPressed: () {
-                        // Add your audio call logic here
-                      },
-                    ),
-                    ],),
                   ),
                 ],
               ),
@@ -95,12 +100,6 @@ class ChatPageMessages extends StatelessWidget {
       ),
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.camera_alt),
-            onPressed: () {
-              // Add your camera capture logic here
-            },
-          ),
           IconButton(
             icon: const Icon(Icons.photo),
             onPressed: () {

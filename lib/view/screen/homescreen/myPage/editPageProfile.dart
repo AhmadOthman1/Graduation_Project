@@ -2,34 +2,35 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/ProfileSettings_controller.dart';
-import 'package:growify/core/functions/alertbox.dart';
+
+import 'package:growify/controller/home/myPage_Controller/Page_profileSetting_Controller.dart';
+
 import 'package:growify/core/functions/validinput.dart';
 import 'package:growify/global.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-class ProfileSettings extends StatelessWidget {
-  ProfileSettings({super.key, required this.userData}) {
-    _controller1.text = userData[0]["firstname"];
-    _controller2.text = userData[0]["lastname"];
-    _controller3.text =
-        (userData[0]["address"] == null) ? "" : userData[0]["address"];
-    _controller4.text =
-        (userData[0]["country"] == null) ? "" : userData[0]["country"];
-    controller.startDateController.text = userData[0]["dateOfBirth"];
-    _controller6.text = userData[0]["phone"];
-    _controller7.text = (userData[0]["bio"] == null) ? "" : userData[0]["bio"];
+class EditPageProfile extends StatelessWidget {
+  EditPageProfile({super.key, required this.userData}) {
+    _controller1.text = userData[0]["name"];
+    _controller2.text = userData[0]["Speciality"];
+    _controller3.text = (userData[0]["address"] == null) ? "" : userData[0]["address"];
+    _controller4.text = (userData[0]["country"] == null) ? "" : userData[0]["country"];
+    _controller5.text = (userData[0]["pageType"] == null) ? "" : userData[0]["pageType"];
+    print(_controller4.text);
+  
+    _controller6.text = userData[0]["ContactInfo"];
+    _controller7.text = (userData[0]["Description"] == null) ? "" : userData[0]["Description"];
     profileImage = (userData[0]["photo"] == null) ? "" : userData[0]["photo"];
-    coverImage =
-        (userData[0]["coverImage"] == null) ? "" : userData[0]["coverImage"];
+    coverImage = (userData[0]["coverImage"] == null) ? "" : userData[0]["coverImage"];
     // Set initial values in the controller
     controller.textFieldText.value = _controller1.text;
     controller.textFieldText2.value = _controller2.text;
     controller.textFieldText3.value = _controller3.text;
     controller.country.value = _controller4.text;
-    controller.textFieldText5.value = controller.startDateController.text;
+    controller.PageType.value = _controller5.text;
+   
     controller.textFieldText6.value = _controller6.text;
     controller.textFieldText7.value = _controller7.text;
 
@@ -56,32 +57,21 @@ class ProfileSettings extends StatelessWidget {
   final TextEditingController _controller2 = TextEditingController();
   final TextEditingController _controller3 = TextEditingController();
   final TextEditingController _controller4 = TextEditingController();
-  // final TextEditingController _controller5 = TextEditingController();
+  final TextEditingController _controller5 = TextEditingController();
   final TextEditingController _controller6 = TextEditingController();
   final TextEditingController _controller7 = TextEditingController();
   GlobalKey<FormState> formstate = GlobalKey();
-  final List<Map<String, dynamic>> userData;
-  String? Firstname;
-  String? Lastname;
-  String? Address;
-  String? Country;
-  String? DateOfBirth;
-  String? Phone;
-  String? Bio;
+  
+  // Initial user data
+  final List<Map<String, dynamic>> userData ;
 
-  ProfileSettingsControllerImp controller =
-      Get.put(ProfileSettingsControllerImp());
+  PageProfileSettingsController controller =
+      Get.put(PageProfileSettingsController());
 
 
   @override
   Widget build(BuildContext context) {
-    Firstname = userData[0]["name"];
-    Lastname = userData[0]["lastname"];
-    Address = userData[0]["address"];
-    Country = userData[0]["country"];
-    DateOfBirth = userData[0]["dateOfBirth"];
-    Phone = userData[0]["phone"];
-    Bio = userData[0]["bio"];
+    
 
     profileBackgroundImage = (profileImage != null && profileImage != "")
         ? Image.network("$urlStarter/" + profileImage!).image
@@ -97,10 +87,11 @@ class ProfileSettings extends StatelessWidget {
         controller.isTextFieldEnabled.value=false;
         controller.isTextFieldEnabled2.value=false;
         controller.isTextFieldEnabled3.value=false;
-        controller.isTextFieldEnabled5.value=false;
+        
         controller.isTextFieldEnabled6.value=false;
         controller.isTextFieldEnabled7.value=false;
         controller.isTextFieldEnabled11.value=false;
+        controller.isTextFieldEnabled12.value=false;
        print("obaida");
         return true;
         
@@ -108,7 +99,7 @@ class ProfileSettings extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
-            "Profile Settings",
+            "Page Profile Settings",
             style: TextStyle(color: Colors.black),
           ),
           backgroundColor: Colors.white,
@@ -125,7 +116,7 @@ class ProfileSettings extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-                      GetBuilder<ProfileSettingsControllerImp>(
+                      GetBuilder<PageProfileSettingsController>(
                         builder: (controller) => Stack(
                           alignment: Alignment.bottomRight,
                           children: [
@@ -231,7 +222,7 @@ class ProfileSettings extends StatelessWidget {
                                     label: Container(
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 9),
-                                        child: const Text("Firstname")),
+                                        child: const Text("Name")),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30),
                                     ),
@@ -255,8 +246,8 @@ class ProfileSettings extends StatelessWidget {
                           ],
                         ),
                       ),
-    
-                      const SizedBox(height: 20),
+
+                       const SizedBox(height: 20),
                       Obx(
                         () => Row(
                           children: [
@@ -266,16 +257,17 @@ class ProfileSettings extends StatelessWidget {
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: TextFormField(
-                                  controller: _controller2,
-                                  enabled: controller.isTextFieldEnabled2.value,
+                                  maxLines: 10,
+                                  controller: _controller7,
+                                  enabled: controller.isTextFieldEnabled7.value,
                                   onChanged: (text) {
-                                    controller.textFieldText2.value = text;
+                                    controller.textFieldText7.value = text;
                                   },
                                   validator: (Value) {
-                                    return validInput(Value!, 50, 1, "username");
+                                    return validInput(Value!, 250, 1, "length");
                                   },
                                   decoration: InputDecoration(
-                                    hintText: controller.textFieldText2.value,
+                                    hintText: controller.textFieldText7.value,
                                     hintStyle: const TextStyle(
                                       fontSize: 14,
                                     ),
@@ -286,7 +278,7 @@ class ProfileSettings extends StatelessWidget {
                                     label: Container(
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 9),
-                                        child: const Text("Lastname")),
+                                        child: const Text("Description")),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30),
                                     ),
@@ -297,21 +289,20 @@ class ProfileSettings extends StatelessWidget {
                             IconButton(
                               onPressed: () {
                                 // Edit the enable of the textfiled
-                                controller.isTextFieldEnabled2.toggle();
-                                _controller2.text =
-                                    controller.textFieldText2.value;
+                                controller.isTextFieldEnabled7.toggle();
+                                _controller7.text =
+                                    controller.textFieldText7.value;
                                 controller.update();
                               },
                               icon: const Icon(Icons.edit),
-                              color: controller.isTextFieldEnabled2.value
+                              color: controller.isTextFieldEnabled7.value
                                   ? Colors.blue
                                   : Colors.grey,
                             )
                           ],
                         ),
                       ),
-    
-                      //////////////////
+
                       const SizedBox(height: 20),
                       Obx(
                         () => Row(
@@ -322,6 +313,7 @@ class ProfileSettings extends StatelessWidget {
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: TextFormField(
+                                  maxLines: 10,
                                   controller: _controller3,
                                   enabled: controller.isTextFieldEnabled3.value,
                                   onChanged: (text) {
@@ -366,9 +358,120 @@ class ProfileSettings extends StatelessWidget {
                           ],
                         ),
                       ),
-                      //////////////////
+
                       const SizedBox(height: 20),
+                      Obx(
+                        () => Row(
+                          children: [
+                            Container(
+                              width: 300,
+                              margin: const EdgeInsets.only(right: 10),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: TextFormField(
+                                  maxLines: 10,
+                                  controller: _controller6,
+                                  enabled: controller.isTextFieldEnabled6.value,
+                                  onChanged: (text) {
+                                    controller.textFieldText6.value = text;
+                                  },
+                                  validator: (Value) {
+                                    return validInput(Value!, 15, 10, "phone");
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: controller.textFieldText6.value,
+                                    hintStyle: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 30),
+                                    label: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 9),
+                                        child: const Text("ContactInfo")),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                // Edit the enable of the textfiled
+                                controller.isTextFieldEnabled6.toggle();
+                                _controller6.text =
+                                    controller.textFieldText6.value;
+                                controller.update();
+                              },
+                              icon: const Icon(Icons.edit),
+                              color: controller.isTextFieldEnabled6.value
+                                  ? Colors.blue
+                                  : Colors.grey,
+                            )
+                          ],
+                        ),
+                      ),
+
+                       const SizedBox(height: 20),
+                      Obx(
+                        () => Row(
+                          children: [
+                            Container(
+                              width: 300,
+                              margin: const EdgeInsets.only(right: 10),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: TextFormField(
+                                  maxLines: 10,
+                                  controller: _controller2,
+                                  enabled: controller.isTextFieldEnabled2.value,
+                                  onChanged: (text) {
+                                    controller.textFieldText2.value = text;
+                                  },
+                                  validator: (Value) {
+                                    return validInput(Value!, 50, 1, "username");
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: controller.textFieldText2.value,
+                                    hintStyle: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 30),
+                                    label: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 9),
+                                        child: const Text("Speciality")),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                // Edit the enable of the textfiled
+                                controller.isTextFieldEnabled2.toggle();
+                                _controller2.text =
+                                    controller.textFieldText2.value;
+                                controller.update();
+                              },
+                              icon: const Icon(Icons.edit),
+                              color: controller.isTextFieldEnabled2.value
+                                  ? Colors.blue
+                                  : Colors.grey,
+                            )
+                          ],
+                        ),
+                      ),
     
+              const SizedBox(height: 20),
                        Obx(
                         () => Row(
                           children: [
@@ -437,66 +540,9 @@ class ProfileSettings extends StatelessWidget {
                           ],
                         ),
                       ),
-    
-                    
-    
-                      /*  Obx(
-                        () => Row(
-                          children: [
-                            Container(
-                              width: 300,
-                              margin: EdgeInsets.only(right: 10),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: TextFormField(
-                                  controller: _controller4,
-                                  enabled: controller.isTextFieldEnabled4.value,
-                                  onChanged: (text) {
-                                    controller.textFieldText4.value = text;
-                                  },
-                                  validator: (Value) {
-                                    return validInput(Value!, 50, 5, "length");
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: controller.textFieldText4.value,
-                                    hintStyle: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.always,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    label: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 9),
-                                        child: Text("Country")),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                // Edit the enable of the textfiled
-                                controller.isTextFieldEnabled4.toggle();
-                                _controller4.text =
-                                    controller.textFieldText4.value;
-                                controller.update();
-                              },
-                              icon: Icon(Icons.edit),
-                              color: controller.isTextFieldEnabled4.value
-                                  ? Colors.blue
-                                  : Colors.grey,
-                            )
-                          ],
-                        ),
-                      ),*/
-    
-                      //////////////////
-                      const SizedBox(height: 20),
-                      Obx(
+
+                       const SizedBox(height: 20),
+                       Obx(
                         () => Row(
                           children: [
                             Container(
@@ -504,22 +550,12 @@ class ProfileSettings extends StatelessWidget {
                               margin: const EdgeInsets.only(right: 10),
                               child: Align(
                                 alignment: Alignment.centerLeft,
-                                child: TextFormField(
-                                  // controller: _controller5,
-                                  controller: controller.startDateController,
-                                  readOnly: true,
-                                  enabled: controller.isTextFieldEnabled5.value,
-                                  onChanged: (text) {
-                                    controller.textFieldText5.value = text;
-                                  },
-                                  
-    
-                                  validator: (Value) {
-                                    return validInput(
-                                        Value!, 10, 8, "dateOfBirth");
-                                  },
+                                child: DropdownButtonFormField(
                                   decoration: InputDecoration(
-                                    hintText: controller.textFieldText5.value,
+                                    alignLabelWithHint: true,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
                                     hintStyle: const TextStyle(
                                       fontSize: 14,
                                     ),
@@ -528,31 +564,46 @@ class ProfileSettings extends StatelessWidget {
                                     contentPadding: const EdgeInsets.symmetric(
                                         vertical: 15, horizontal: 30),
                                     label: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 9),
-                                        child: const Text("DateOfBirth")),
-                                    suffixIcon: IconButton(
-                                      icon: const Icon(Icons.date_range),
-                                      onPressed: () =>
-                                          controller.pickStartDate(context),
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 9),
+                                      child: const Text("Your field of Page Type"),
                                     ),
                                   ),
+                                  isExpanded: true,
+                                  hint: const Text('Select Page Type',
+                                      style: TextStyle(color: Colors.grey)),
+                                  items: controller.PageTypeList.map((value) {
+                                    return DropdownMenuItem(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  value: controller.PageType.value.isEmpty
+                                      ? null
+                                      : controller.PageType.value,
+                                  onChanged: controller.isTextFieldEnabled12.value
+                                      ? (value) {
+                                          controller.PageType.value =
+                                              value.toString();
+                                          print(controller.PageType.value);
+                                        }
+                                      : null, // Disable the dropdown when not enabled
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please select Page Type';
+                                    }
+                                    return null;
+                                  },
                                 ),
                               ),
                             ),
                             IconButton(
                               onPressed: () {
-                                // Edit the enable of the textfiled
-                                controller.isTextFieldEnabled5.toggle();
-                                controller.startDateController.text =
-                                    controller.textFieldText5.value;
-                                controller.update();
+                                // Toggle the enable state of the dropdown
+                                controller.isTextFieldEnabled12.toggle();
                               },
                               icon: const Icon(Icons.edit),
-                              color: controller.isTextFieldEnabled5.value
+                              color: controller.isTextFieldEnabled12.value
                                   ? Colors.blue
                                   : Colors.grey,
                             )
@@ -560,117 +611,12 @@ class ProfileSettings extends StatelessWidget {
                         ),
                       ),
     
-                      //////////////////
-                      const SizedBox(height: 20),
-                      Obx(
-                        () => Row(
-                          children: [
-                            Container(
-                              width: 300,
-                              margin: const EdgeInsets.only(right: 10),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: TextFormField(
-                                  controller: _controller6,
-                                  enabled: controller.isTextFieldEnabled6.value,
-                                  onChanged: (text) {
-                                    controller.textFieldText6.value = text;
-                                  },
-                                  validator: (Value) {
-                                    return validInput(Value!, 15, 10, "phone");
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: controller.textFieldText6.value,
-                                    hintStyle: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.always,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    label: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 9),
-                                        child: const Text("Phone")),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                // Edit the enable of the textfiled
-                                controller.isTextFieldEnabled6.toggle();
-                                _controller6.text =
-                                    controller.textFieldText6.value;
-                                controller.update();
-                              },
-                              icon: const Icon(Icons.edit),
-                              color: controller.isTextFieldEnabled6.value
-                                  ? Colors.blue
-                                  : Colors.grey,
-                            )
-                          ],
-                        ),
-                      ),
+                     
+    
+                     
     
                       //////////////////
-                      const SizedBox(height: 20),
-                      Obx(
-                        () => Row(
-                          children: [
-                            Container(
-                              width: 300,
-                              margin: const EdgeInsets.only(right: 10),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: TextFormField(
-                                  controller: _controller7,
-                                  enabled: controller.isTextFieldEnabled7.value,
-                                  onChanged: (text) {
-                                    controller.textFieldText7.value = text;
-                                  },
-                                  validator: (Value) {
-                                    return validInput(Value!, 250, 1, "length");
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: controller.textFieldText7.value,
-                                    hintStyle: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.always,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    label: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 9),
-                                        child: const Text("Bio")),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                // Edit the enable of the textfiled
-                                controller.isTextFieldEnabled7.toggle();
-                                _controller7.text =
-                                    controller.textFieldText7.value;
-                                controller.update();
-                              },
-                              icon: const Icon(Icons.edit),
-                              color: controller.isTextFieldEnabled7.value
-                                  ? Colors.blue
-                                  : Colors.grey,
-                            )
-                          ],
-                        ),
-                      ),
+                     
                       const SizedBox(height: 20),
     
                       Container(
@@ -684,7 +630,7 @@ class ProfileSettings extends StatelessWidget {
                       // change cover page
                       Row(
                         children: [
-                          GetBuilder<ProfileSettingsControllerImp>(
+                          GetBuilder<PageProfileSettingsController>(
                             builder: (controller) => Stack(
                               alignment: Alignment.bottomRight,
                               children: [
@@ -775,57 +721,7 @@ class ProfileSettings extends StatelessWidget {
                         ],
                       ),
     
-                      const SizedBox(height: 20),
-    
-                      Container(
-                        child: ElevatedButton.icon(
-                          onPressed: () async {
-                            final result = await FilePicker.platform.pickFiles(
-                              type: FileType.custom,
-                              allowedExtensions: ['pdf'],
-                              allowMultiple: false,
-                            );
-    
-                            if (result != null && result.files.isNotEmpty) {
-                              PlatformFile file = result.files.first;
-                              if (file.extension == "pdf") {
-                                String base64String;
-                                if (kIsWeb) {
-                                  final fileBytes = file.bytes;
-                                  base64String =
-                                      base64Encode(fileBytes as List<int>);
-                                } else {
-                                  List<int> fileBytes =
-                                      await File(file.path!).readAsBytes();
-                                  base64String = base64Encode(fileBytes);
-                                }
-                                cvBytes = base64String;
-                                cvName = file.name;
-                                cvExt = file.extension;
-                              } else {
-                                cvBytes = null;
-                                cvName = null;
-                                cvExt = null;
-                              }
-                            } else {
-                              // User canceled the picker
-                              cvBytes = null;
-                              cvName = null;
-                              cvExt = null;
-                            }
-                          },
-                          icon: const Icon(Icons.cloud_upload),
-                          label: const Text('Upload CV'),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white, backgroundColor: const Color.fromARGB(255, 85, 191, 218),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 130, vertical: 13),
-                          ),
-                        ),
-                      ),
+                     
     
                       const SizedBox(height: 20),
     
@@ -834,30 +730,8 @@ class ProfileSettings extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20)),
                         padding: const EdgeInsets.symmetric(
                             vertical: 13, horizontal: 135),
-                        onPressed: () async {
-                          var message = await controller.SaveChanges(
-                              profileImageBytes,
-                              profileImageBytesName,
-                              profileImageExt,
-                              coverImageBytes,
-                              coverImageBytesName,
-                              coverImageExt,
-                              cvBytes,
-                              cvName,
-                              cvExt);
-                          (message != null)
-                              ? showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomAlertDialog(
-                                      title: 'Error',
-                                      icon: Icons.error,
-                                      text: message,
-                                      buttonText: 'OK',
-                                    );
-                                  },
-                                )
-                              : null;
+                        onPressed: ()  {
+                          
                         },
                         color: const Color.fromARGB(255, 85, 191, 218),
                         textColor: Colors.white,
