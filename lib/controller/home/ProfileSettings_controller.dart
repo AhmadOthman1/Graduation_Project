@@ -30,6 +30,7 @@ abstract class ProfileSettingsController extends GetxController {
       cvName,
       cvExt);
 }
+
 /**
  List<int>? profileImageBytes;
   String? profileImageBytesName;
@@ -43,6 +44,7 @@ abstract class ProfileSettingsController extends GetxController {
  */
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
+
 class ProfileSettingsControllerImp extends ProfileSettingsController {
   @override
   goToSettingsPgae() {
@@ -435,15 +437,15 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
       SaveChanges(
-      profileImageBytes,
-      profileImageBytesName,
-      profileImageExt,
-      coverImageBytes,
-      coverImageBytesName,
-      coverImageExt,
-      cvBytes,
-      cvName,
-      cvExt) ;
+          profileImageBytes,
+          profileImageBytesName,
+          profileImageExt,
+          coverImageBytes,
+          coverImageBytesName,
+          coverImageExt,
+          cvBytes,
+          cvName,
+          cvExt);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();

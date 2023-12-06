@@ -15,17 +15,19 @@ class ProfileMainPage extends StatelessWidget {
     coverImage =
         (userData[0]["coverImage"] == null) ? "" : userData[0]["coverImage"];
     Bio = (userData[0]["bio"] == null) ? "" : userData[0]["bio"];
+    username= userData[0]["username"];
   }
 
   final ProfileMainPageControllerImp controller =
       Get.put(ProfileMainPageControllerImp());
 
-
   final List<Map<String, dynamic>> userData;
   String? firstName;
   String? lastName;
+  String? username;
   ////////////////////////////////
-  final AssetImage defultprofileImage = const AssetImage("images/profileImage.jpg");
+  final AssetImage defultprofileImage =
+      const AssetImage("images/profileImage.jpg");
   String? profileImageBytes;
   String? profileImageBytesName;
   String? profileImageExt;
@@ -68,7 +70,7 @@ class ProfileMainPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
-       // physics: const ClampingScrollPhysics(),
+        // physics: const ClampingScrollPhysics(),
         child: Column(
           children: [
             _buildCoverPhoto(),
@@ -78,7 +80,7 @@ class ProfileMainPage extends StatelessWidget {
             _buildButtonsRow(),
             _buildDivider(10),
             _Deatalis("Posts"),
-            const Post(),
+            Post(username: username),
           ],
         ),
       ),
@@ -122,7 +124,6 @@ class ProfileMainPage extends StatelessWidget {
             '@${userData[0]["username"]}', // Replace with the actual username
             style: const TextStyle(fontSize: 16, color: Colors.blue),
           ),
-          
           Container(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -130,8 +131,10 @@ class ProfileMainPage extends StatelessWidget {
               children: [
                 const SizedBox(height: 8.0),
                 Text('$Bio',
-                 style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal, color: Colors.grey[700])
-                 ),
+                    style: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.grey[700])),
               ],
             ),
           ),
@@ -224,11 +227,10 @@ class ProfileMainPage extends StatelessWidget {
           ),
         ),
 ///////////////
-_buildDivider(10),
-InkWell(
+        _buildDivider(10),
+        InkWell(
           onTap: () {
-
-           Get.to( NewPost());
+            Get.to(NewPost());
           },
           child: Container(
             height: 35,
@@ -247,9 +249,8 @@ InkWell(
             ),
           ),
         ),
-///
 
-
+        ///
       ],
     );
   }
@@ -265,6 +266,4 @@ InkWell(
       ],
     );
   }
-
-  
 }

@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:growify/controller/home/newpost_controller.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/global.dart';
 
 class NewPost extends StatelessWidget {
@@ -18,7 +19,7 @@ class NewPost extends StatelessWidget {
   ImageProvider<Object>? postBackgroundImage;
 
   final NewPostControllerImp controller = Get.put(NewPostControllerImp());
-   GlobalKey<FormState>formstate=GlobalKey();
+  GlobalKey<FormState> formstate = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -83,10 +84,26 @@ class NewPost extends StatelessWidget {
                       const Spacer(),
                       const SizedBox(width: 16),
                       TextButton(
-                        onPressed: () {
-                          if(formstate.currentState!.validate()){
-                          controller.post();}else{
-
+                        onPressed: () async {
+                          if (formstate.currentState!.validate()) {
+                            var message = await controller.post(
+                              postImageBytes,
+                              postImageBytesName,
+                              postImageExt,
+                            );
+                            (message != null)
+                                ? showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return CustomAlertDialog(
+                                        title: 'Error',
+                                        icon: Icons.error,
+                                        text: message,
+                                        buttonText: 'OK',
+                                      );
+                                    },
+                                  )
+                                : null;
                           }
                         },
                         child: const Text(
@@ -108,12 +125,6 @@ class NewPost extends StatelessWidget {
                           borderSide: BorderSide.none,
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Write something you want to share';
-                        }
-                        return null; 
-                      },
                     ),
                   ),
                   const SizedBox(height: 16),

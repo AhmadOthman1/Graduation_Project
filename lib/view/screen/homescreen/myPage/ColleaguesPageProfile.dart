@@ -87,7 +87,7 @@ class ColleaguesPageProfile extends StatelessWidget {
             _buildButtonsRow(),
             _buildDivider(10),
             _Deatalis("Posts"),
-            const Post(),
+             Post(),
           ],
         ),
       ),
