@@ -81,7 +81,7 @@ class Homepage extends StatelessWidget {
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 4.0,
               ),
-              const Post(),
+               Post(),
             ],
           )),
       drawer: Drawer(
