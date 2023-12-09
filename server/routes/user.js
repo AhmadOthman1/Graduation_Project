@@ -10,14 +10,18 @@ const getSearchDataController=require('../controller/search/getSearchDataControl
 const usersProfile=require('../controller/search/usersProfile')
 const { authenticateToken } = require('../controller/authController');
 const authController = require('../controller/authController');
+const userPostsController=require('../controller/posts/userPosts')
+const getPostsController=require('../controller/posts/getPosts')
+
 
 const router=express.Router();
-
+//auth
 router.post('/signup',userController.postSignup);
 router.post('/verification',userController.postVerificationCode);
 router.post('/forgetpasswordverification',forgetpasswordController.postVerificationCode);
 router.post('/forgetpassword',forgetpasswordController.postForgetPassword);
 router.post('/changepassword',forgetpasswordController.changePassword);
+//settings
 router.get('/settingsGetMainInfo',authenticateToken, settingsController.getMainInfo);
 router.post('/settingsChangeMainInfo',authenticateToken,settingsController.changeMainInfo);
 router.post('/settingChangepasswor',authenticateToken,settingsController.changePassword);
@@ -31,7 +35,9 @@ router.get('/getEducationLevel',authenticateToken,educationLevelController.getEd
 router.post('/addEducationLevel',authenticateToken,educationLevelController.postAddEducationLevel);
 router.post('/editEducationLevel',authenticateToken,educationLevelController.postEditEducationLevel);
 router.post('/deleteEducationLevele',authenticateToken,educationLevelController.postDeleteEducationLevel);
+//search
 router.get('/getSearchData',authenticateToken,getSearchDataController.getSearchData);
+//other users profile
 router.get('/getUserProfileInfo',authenticateToken,usersProfile.getUserProfileInfo);
 router.post('/postSendConnectReq',authenticateToken,usersProfile.postSendConnectReq);
 router.post('/postSendRemoveReq',authenticateToken,usersProfile.postSendRemoveReq);
@@ -40,6 +46,13 @@ router.post('/postSendAcceptConnectReq',authenticateToken,usersProfile.postSendA
 router.post('/postSendDeleteReq',authenticateToken,usersProfile.postSendDeleteReq);
 router.get('/usersGetEducationLevel',authenticateToken,usersProfile.getEducationLevel);
 router.get('/usersGetworkExperience',authenticateToken,usersProfile.getWorkExperience);
+//user posts
+router.post('/postNewUserPost',authenticateToken,userPostsController.postNewUserPost);
+router.post('/getPosts',authenticateToken,getPostsController.getPosts);
+router.post('/getPostLikes',authenticateToken,getPostsController.getPostLikes);
+router.post('/addLike',authenticateToken,getPostsController.addLike);
+router.post('/removeLike',authenticateToken,getPostsController.removeLike);
+router.post('/getPostComments',authenticateToken,getPostsController.getPostComments);
 
 
 

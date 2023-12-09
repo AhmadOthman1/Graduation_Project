@@ -17,6 +17,15 @@ exports.getMyPageInfo = async (req, res, next) => {
             },
         });
         if (existingEmail) {
+            const authHeader = req.headers['authorization']
+            const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+            var userUsername = decoded.username;
+            if(existingEmail.username != userUsername){
+                return res.status(500).json({
+                    message: 'you cant reach this page',
+                    body: req.body
+                });
+            }
             pageAdmin
               .findAll({
                 where: { username: existingEmail.username },
@@ -49,6 +58,10 @@ exports.getMyPageInfo = async (req, res, next) => {
               })
               .catch((error) => {
                 console.error('Error:', error);
+                return res.status(500).json({
+                    message: 'server Error',
+                    body: req.body
+                });
                 
               });
           }else {

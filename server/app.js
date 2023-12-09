@@ -28,7 +28,9 @@ sequelize.sync().then(result =>{
     
 
 });
-/*const express=require('express');
+
+/*
+const express=require('express');
 
 const user=require('./models/user');
 const TempUser=require('./models/tempUser');
@@ -40,6 +42,16 @@ const pages=require('./models/pages');
 const pageAdmin=require('./models/pageAdmin');
 const sentConnection =require('./models/sentConnection');
 const connections =require('./models/connections');
+const post =require('./models/post');
+const comment =require('./models/comment');
+const like =require('./models/like');
+
+
+//const queries =require('./models/queries.js');
+
+
+
+
 const createTestData =require('./models/createTestData');
 
 //const bodyParser=require('body-parser');
