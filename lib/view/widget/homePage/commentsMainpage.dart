@@ -48,17 +48,17 @@ class CommentsMainPage extends StatelessWidget {
                         ),
                         child: ListTile(
                           onTap: () {
-                            controller.gotoprofileFromcomment(comment.email);
+                            controller.gotoprofileFromcomment(comment.createdBy);
                           },
                           contentPadding: const EdgeInsets.all(8.0),
                           leading: CircleAvatar(
-                            backgroundImage: comment.userImage,
+                            //backgroundImage: comment.photo,
                           ),
-                          title: Text(comment.username),
+                          title: Text(comment.name),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(comment.comment),
+                              Text(comment.commentContent),
                               const SizedBox(height: 4),
                               Row(
                                 children: [
@@ -76,7 +76,7 @@ class CommentsMainPage extends StatelessWidget {
                                   Text('${comment.likes} Likes'),
                                   const SizedBox(width: 16),
                                   Text(
-                                    'Posted ${timeAgoSinceDate(comment.time)}',
+                                    'Posted ${comment.Date}',
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey,
@@ -116,7 +116,7 @@ class CommentsMainPage extends StatelessWidget {
                         IconButton(
                           icon: const Icon(Icons.send),
                           onPressed: () {
-                            final username = 'Current User';
+                            /*final username = 'Current User';
                             final newComment = commentController.text;
                             final Email = 'awsobaida07@gmail.com';
 
@@ -137,7 +137,7 @@ class CommentsMainPage extends StatelessWidget {
                               print(i);
                             }
 
-                            commentController.clear();
+                            commentController.clear();*/
                             
                           },
                         ),

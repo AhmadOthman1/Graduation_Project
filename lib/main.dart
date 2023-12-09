@@ -23,12 +23,14 @@ void main() async{
 
 class MyApp extends StatelessWidget {
    MyApp({super.key});
-    String? Email=GetStorage().read("loginemail") ;
-  
+    String? accessToken=GetStorage().read("accessToken") ;
+    
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    print(accessToken);
+    print("llllllllllllllllllllllllllllllllllllll");
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -41,7 +43,7 @@ class MyApp extends StatelessWidget {
      ),
       ),
       debugShowCheckedModeBanner: false,
-      home:(Email==null || Email=="")?Login():const HomeScreen(),
+      home:( accessToken==null || accessToken=="")?Login():const HomeScreen(),
       
       routes: routes,
     );

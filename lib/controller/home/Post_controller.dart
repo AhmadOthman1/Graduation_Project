@@ -16,22 +16,27 @@ LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
 class CommentModel {
-  final int? postId;
-  final String username;
-  final String comment;
-  final AssetImage userImage;
-  final DateTime time;
+  final int id;
+  final int postId;
+  final String createdBy;
+  final String commentContent;
+  final String Date;
+  final bool isUser;
+  final String name;
+  final String? photo;
+
   final RxInt likes;
-  final String email;
   final RxBool isLiked;
 
   CommentModel({
-    required this.username,
-    this.postId,
-    required this.comment,
-    required this.userImage,
-    required this.time,
-    required this.email,
+    required this.id,
+    required this.postId,
+    required this.createdBy,
+    required this.commentContent,
+    required this.Date,
+    required this.isUser,
+    required this.name,
+    this.photo,
     bool isLiked = false,
     int likes = 0,
   })  : likes = likes.obs,
@@ -51,37 +56,10 @@ abstract class PostController extends GetxController {
 }
 
 class PostControllerImp extends PostController {
-  
   final RxList<CommentModel> comments = <CommentModel>[].obs;
 
 // the data come from database should you dtore it in the comments1
-  final RxList<CommentModel> comments1 = <CommentModel>[
-    CommentModel(
-      username: 'User1',
-      comment: 'This is a comment.',
-      userImage: const AssetImage('images/islam.jpeg'),
-      time: DateTime.now(),
-      email: 'awsobaida07@gmail.com',
-      likes: 12,
-      isLiked: true,
-    ),
-    CommentModel(
-      username: 'User2',
-      comment: 'Nice post!',
-      userImage: const AssetImage('images/Netflix.png'),
-      time: DateTime.now().subtract(const Duration(minutes: 30)),
-      likes: 5,
-      email: 'awsobaida07@gmail.com',
-    ),
-    CommentModel(
-      username: 'User3',
-      comment: 'Great content.',
-      userImage: const AssetImage('images/harri.png'),
-      time: DateTime.now().subtract(const Duration(hours: 2)),
-      likes: 10,
-      email: 's11923787@stu.najah.edu',
-    ),
-  ].obs;
+  final RxList<CommentModel> comments1 = <CommentModel>[].obs;
   //
   final RxList<Map<String, dynamic>> likesOnComment = <Map<String, dynamic>>[
     {
@@ -166,7 +144,9 @@ class PostControllerImp extends PostController {
   }
 
   getPostfromDataBase(username, page) async {
-    print("innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnpost");
+    print(username);
+    print(page);
+    print(pageSize);
     var res = await PostgetPostfromDataBase(username, page, pageSize);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
@@ -193,36 +173,88 @@ class PostControllerImp extends PostController {
     return posts[index]['comment'];
   }
 
-  void toggleLike(int index) {
+  void toggleLike(int index) async {
     final post = posts[index];
     post['isLiked'] = !post['isLiked'];
-
     if (post['isLiked']) {
-      post['like']++;
-      addLike({
-        'name': 'Islam Aws',
-        'username': '@islam_aws',
-        'image': 'images/islam.jpeg',
-        'email': 'awsobaida07@gmail.com'
-      });
+      post['likeCount']++;
+      await addLike(post['id']);
     } else {
-      removeLike('awsobaida07@gmail.com');
-      post['like']--;
+      await removeLike(post['id']);
+      post['likeCount']--;
     }
 
     update(); // Notify GetBuilder to rebuild
   }
 
-  @override
-  void addLike(Map<String, dynamic> newLike) {
-    likes.add(newLike);
-    update(); // Notify listeners
+  PostAddLike(postId) async {
+    var url = "$urlStarter/user/addLike";
+
+    var responce = await http.post(
+      Uri.parse(url),
+      body: jsonEncode({
+        'postId': postId,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+      },
+    );
+    return responce;
   }
 
   @override
-  void removeLike(String email) {
-    likes.removeWhere((like) => like['email'] == email);
-    update(); // Notify listeners
+  addLike(int postId) async {
+    var res = await PostAddLike(postId);
+    print(res.statusCode);
+    print("===================================");
+    if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      addLike(postId);
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+    var resbody = jsonDecode(res.body);
+    if (res.statusCode == 409) {
+      return resbody['message'];
+    } else if (res.statusCode == 200) {}
+  }
+
+  postRemoveLike(postId) async {
+    var url = "$urlStarter/user/removeLike";
+
+    var responce = await http.post(
+      Uri.parse(url),
+      body: jsonEncode({
+        'postId': postId,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+      },
+    );
+    return responce;
+  }
+
+  @override
+  removeLike(int postId) async {
+    var res = await postRemoveLike(postId);
+    print(res.statusCode);
+    print("===================================");
+    if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      removeLike(postId);
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+    var resbody = jsonDecode(res.body);
+    if (res.statusCode == 409) {
+      return resbody['message'];
+    } else if (res.statusCode == 200) {
+      // Notify listeners
+    }
   }
 
   bool isLiked(int index) {
@@ -280,11 +312,65 @@ class PostControllerImp extends PostController {
     update(); // Notify GetBuilder to rebuild
   }
 
+  getCommentPage(postId) async {
+    var url = "$urlStarter/user/getPostComments";
+
+    var responce = await http.post(
+      Uri.parse(url),
+      body: jsonEncode({
+        'postId': postId,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+      },
+    );
+    return responce;
+  }
+
   @override
-  void gotoCommentPage(int id) {
-    Get.to(CommentsMainPage(), arguments: {
-      'comments': comments1,
-    });
+  gotoCommentPage(int postId) async {
+    var res = await getCommentPage(postId);
+    print(res.statusCode);
+    if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      gotoCommentPage(postId);
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+    var resbody = jsonDecode(res.body);
+    if (res.statusCode == 409) {
+      return resbody['message'];
+    } else if (res.statusCode == 200) {
+      var data = jsonDecode(res.body);
+      print("llllllllllllllllllllllllllllll");
+        print(data);
+      if (data != null) {
+        List<CommentModel> newComments = (data ['data']as List).map((commentData) {
+          return CommentModel(
+            id: commentData['id'],
+            postId: commentData['postId'],
+            createdBy: commentData['createdBy'],
+            commentContent: commentData['commentContent'],
+            Date: commentData['Date'],
+            isUser: commentData['isUser'],
+            name: commentData['name'],
+            photo: commentData['photo'],
+          );
+        }).toList();
+
+        comments1.assignAll(newComments);
+        print("llllllllllllllllllllllllllllll");
+        print(comments1);
+        Get.to(CommentsMainPage(), arguments: {
+          'comments': comments1,
+        });
+      } else {
+        print("Invalid or missing 'data' property in response.");
+        // Handle the case where 'data' property is missing or invalid
+      }
+    }
   }
 
   @override
@@ -329,10 +415,42 @@ class PostControllerImp extends PostController {
   }
 
   // should add your data from database in likes1
+  getPostLikes(postId) async {
+    var url = "$urlStarter/user/getPostLikes";
+
+    var responce = await http.post(
+      Uri.parse(url),
+      body: jsonEncode({
+        'postId': postId,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+      },
+    );
+    return responce;
+  }
 
   @override
-  void goToLikePage(int postId) {
-    Get.to(Like(), arguments: {'likes': likes1});
+  goToLikePage(int postId) async {
+    var res = await getPostLikes(postId);
+    print(res.statusCode);
+    if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      goToLikePage(postId);
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+    var resbody = jsonDecode(res.body);
+    if (res.statusCode == 409) {
+      return resbody['message'];
+    } else if (res.statusCode == 200) {
+      var data = jsonDecode(res.body);
+      likes1.assignAll([Map<String, dynamic>.from(data)]);
+      print(likes1);
+      Get.to(Like(), arguments: {'likes': likes1});
+    }
   }
 
   @override
@@ -378,7 +496,7 @@ class PostControllerImp extends PostController {
 
   @override
   goToProfileColleaguesPage(String createdBy) async {
-    if(createdBy == GetStorage().read('username')){
+    if (createdBy == GetStorage().read('username')) {
       return;
     }
     var res = await getprfileColleaguespage(createdBy);
