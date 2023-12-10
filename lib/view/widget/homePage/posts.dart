@@ -29,7 +29,7 @@ class _PostState extends State<Post> {
     isLoading = false;
     controller.page = 1;
     controller.comments1.clear();
-    controller.likesOnComment.clear();
+   //controller.likesOnComment.clear();
     controller.likes1.clear();
     controller.posts.clear();
 

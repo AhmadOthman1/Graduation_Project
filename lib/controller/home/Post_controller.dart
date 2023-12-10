@@ -25,8 +25,7 @@ class CommentModel {
   final String name;
   final String? photo;
 
-  final RxInt likes;
-  final RxBool isLiked;
+
 
   CommentModel({
     required this.id,
@@ -37,10 +36,8 @@ class CommentModel {
     required this.isUser,
     required this.name,
     this.photo,
-    bool isLiked = false,
-    int likes = 0,
-  })  : likes = likes.obs,
-        isLiked = isLiked.obs;
+   
+  })  ;
 }
 
 abstract class PostController extends GetxController {
@@ -51,54 +48,45 @@ abstract class PostController extends GetxController {
   getprofilefromcomment(String email);
   gotoprofileFromcomment(String email);
   addComment(CommentModel a);
-  toggleLikecomment(int index);
+
   gotoCommentPage(int id);
 }
 
 class PostControllerImp extends PostController {
 
-// for profile
+// for photo on the comment
   final RxString profileImageBytes = ''.obs;
   final RxString profileImageBytesName = ''.obs;
   final RxString profileImageExt = ''.obs;
-
-  ///////////////////////
+///////////////////////////////////////////////////////////////
+// for photo on the like
+  final RxString profileImageBytes1 = ''.obs;
+  final RxString profileImageBytesName1 = ''.obs;
+  final RxString profileImageExt1 = ''.obs;
+///////////////////////////////////////////////////////////////
+ 
   final RxList<CommentModel> comments = <CommentModel>[].obs;
 
 // the data come from database should you dtore it in the comments1
   final RxList<CommentModel> comments1 = <CommentModel>[].obs;
   //
-  final RxList<Map<String, dynamic>> likesOnComment = <Map<String, dynamic>>[
-    {
-      'name': 'Islam Aws',
-      'username': '@islam_aws',
-      'image': 'images/islam.jpeg',
-      'email': 'awsobaida07@gmail.com',
-    },
-    {
-      'name': 'Obaida Aws',
-      'username': '@obaida_aws',
-      'image': 'images/obaida.jpeg',
-      'email': 's11923787@stu.najah.edu',
-    },
-    // Add more colleagues as needed
-  ].obs;
+  
 
   final RxList<Map<String, dynamic>> likes = <Map<String, dynamic>>[
     // Add more colleagues as needed
   ].obs;
 
   final RxList<Map<String, dynamic>> likes1 = <Map<String, dynamic>>[
-    {
+   {
       'name': 'Islam Aws',
       'username': '@islam_aws',
-      'image': 'images/islam.jpeg',
+      'image': null,
       'email': 'awsobaida07@gmail.com',
     },
     {
       'name': 'Obaida Aws',
       'username': '@obaida_aws',
-      'image': 'images/obaida.jpeg',
+      'image': null,
       'email': 's11923787@stu.najah.edu',
     },
     // Add more colleagues as needed
@@ -288,7 +276,7 @@ class PostControllerImp extends PostController {
 
   @override
   void addComment(CommentModel a) {
-    comments.add(a);
+    comments1.add(a);
     update();
 
     // If you want to update the UI when a new comment is added, uncomment the following line
@@ -298,26 +286,7 @@ class PostControllerImp extends PostController {
     // controller.comments.add(newCommentModel);
   }
 
-  @override
-  void toggleLikecomment(int index) {
-    final comment = comments[index];
-    comment.isLiked.value = !comment.isLiked.value;
 
-    if (comment.isLiked.value) {
-      comment.likes.value++;
-      addLikeOnComment({
-        'name': 'Islam Aws',
-        'username': '@islam_aws',
-        'image': 'images/islam.jpeg',
-        'email': 'awsobaida07@gmail.com',
-      });
-    } else {
-      removeLikeFromComment('awsobaida07@gmail.com');
-      comment.likes.value--;
-    }
-
-    update(); // Notify GetBuilder to rebuild
-  }
 
   getCommentPage(postId) async {
     var url = "$urlStarter/user/getPostComments";
@@ -409,18 +378,7 @@ class PostControllerImp extends PostController {
     }
   }
 
-  @override
-  void addLikeOnComment(Map<String, dynamic> likesOnComment) {
-    likes.add(likesOnComment);
-    update(); // Notify listeners
-  }
-
-  @override
-  void removeLikeFromComment(String email) {
-    likes.removeWhere((likesOnComment) => likesOnComment['email'] == email);
-    update(); // Notify listeners
-  }
-
+ 
   // should add your data from database in likes1
   getPostLikes(postId) async {
     var url = "$urlStarter/user/getPostLikes";
@@ -458,6 +416,7 @@ class PostControllerImp extends PostController {
       print(likes1);
       Get.to(Like(), arguments: {'likes': likes1});
     }
+    
   }
 
   @override

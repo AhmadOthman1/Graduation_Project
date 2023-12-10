@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 
 class ColleaguesPageProfile_Controller extends GetxController {
 
+  RxBool isFollowing = false.obs;
+
   // for profile
   final RxString profileImageBytes = ''.obs;
   final RxString profileImageBytesName = ''.obs;

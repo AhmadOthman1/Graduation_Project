@@ -1,23 +1,26 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Post_controller.dart';
-
+import 'package:growify/global.dart';
 
 class Like extends StatelessWidget {
-  final PostControllerImp likeController =
-      Get.put(PostControllerImp());
+  final PostControllerImp likeController = Get.put(PostControllerImp());
+  final AssetImage defultprofileImage1 =
+      const AssetImage("images/profileImage.jpg");
+  String? profileImageBytes1;
+  String? profileImageBytesName1;
+  String? profileImageExt1;
+  String? profileImage1;
+  ImageProvider<Object>? profileBackgroundImage1;
 
   @override
   Widget build(BuildContext context) {
-  
-                        var args = Get.arguments;
-    RxList<Map<String, dynamic>> likes =
-        args != null ? args['likes'] : [];
+    var args = Get.arguments;
+    RxList<Map<String, dynamic>> likes = args != null ? args['likes'] : [];
 
-        likeController.likes.assignAll(likes);
-
-
-
+    likeController.likes.assignAll(likes);
 
     return Scaffold(
       body: Column(
@@ -54,9 +57,15 @@ class Like extends StatelessWidget {
             child: GetBuilder<PostControllerImp>(
               builder: (likeController) {
                 return ListView.builder(
-                  itemCount: likeController.likes.length,
+                  itemCount: likeController.likes1.length,
                   itemBuilder: (context, index) {
-                    final colleague = likeController.likes[index];
+                    final colleague = likeController.likes1[index];
+                    profileImage1 =
+                        (colleague['image'] == null) ? "" : colleague['image'];
+                    profileBackgroundImage1 = (profileImage1 != null &&
+                            profileImage1 != "")
+                        ? Image.network("$urlStarter/" + profileImage1!).image
+                        : defultprofileImage1;
 
                     return Column(
                       children: [
@@ -69,7 +78,11 @@ class Like extends StatelessWidget {
                               // ));
                             },
                             child: CircleAvatar(
-                              backgroundImage: AssetImage(colleague['image']),
+                              backgroundImage: likeController
+                                      .profileImageBytes1.isNotEmpty
+                                  ? MemoryImage(base64Decode(
+                                      likeController.profileImageBytes1.value))
+                                  : profileBackgroundImage1,
                             ),
                           ),
                           title: Text(colleague['name']),

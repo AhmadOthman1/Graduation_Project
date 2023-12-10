@@ -19,6 +19,7 @@ class ColleaguesPageProfile extends StatelessWidget {
       Get.put(ColleaguesPageProfile_Controller());
 
   String? firstName;
+  
 
   ////////////////////////////////
   final AssetImage defultprofileImage = const AssetImage("images/profileImage.jpg");
@@ -145,6 +146,8 @@ class ColleaguesPageProfile extends StatelessWidget {
               _buildInfoItem('Connections', '500'),
             ],
           ),
+          const SizedBox(height: 16),
+          _buildFollowButton(),
         ],
       ),
     );
@@ -217,5 +220,23 @@ class ColleaguesPageProfile extends StatelessWidget {
         ),
       ],
     );
+  }
+
+
+    Widget _buildFollowButton() {
+    return Obx(() => ElevatedButton(
+          onPressed: () {
+            controller.isFollowing.toggle();
+          },
+          style: ElevatedButton.styleFrom(
+            primary: controller.isFollowing.value ? Colors.grey : Colors.blue,
+          ),
+          child: Text(
+            controller.isFollowing.value ? 'Following' : 'Follow',
+            style: TextStyle(
+              color: controller.isFollowing.value ? Colors.black87 : Colors.white,
+            ),
+          ),
+        ));
   }
 }

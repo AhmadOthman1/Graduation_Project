@@ -24,8 +24,7 @@ class CommentsMainPage extends StatelessWidget {
     RxList<CommentModel> comments = args != null ? args['comments'] : [];
 
     controller.comments.assignAll(comments);
-
-    //profileImage = (comment.photo == null) ? "" : controller.comments.photo;
+    
 
     print("////////////////////");
     print(comments.length);
@@ -73,12 +72,11 @@ class CommentsMainPage extends StatelessWidget {
                           },
                           contentPadding: const EdgeInsets.all(8.0),
                           leading: CircleAvatar(
-                          //  radius: 60,
-                            backgroundImage: controller
-                                    .profileImageBytes.isNotEmpty
-                                ? MemoryImage(base64Decode(
-                                    controller.profileImageBytes.value))
-                                : profileBackgroundImage, // Replace with your default photo URL
+                            backgroundImage:
+                                controller.profileImageBytes.isNotEmpty
+                                    ? MemoryImage(base64Decode(
+                                        controller.profileImageBytes.value))
+                                    : profileBackgroundImage,
                           ),
                           title: Text(comment.name),
                           subtitle: Column(
@@ -88,19 +86,6 @@ class CommentsMainPage extends StatelessWidget {
                               const SizedBox(height: 4),
                               Row(
                                 children: [
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.thumb_up,
-                                      color: comment.isLiked.value
-                                          ? Colors.blue
-                                          : null,
-                                    ),
-                                    onPressed: () {
-                                      controller.toggleLikecomment(index);
-                                    },
-                                  ),
-                                  Text('${comment.likes} Likes'),
-                                  const SizedBox(width: 16),
                                   Text(
                                     'Posted ${comment.Date}',
                                     style: TextStyle(
@@ -143,28 +128,37 @@ class CommentsMainPage extends StatelessWidget {
                         IconButton(
                           icon: const Icon(Icons.send),
                           onPressed: () {
-                            /*final username = 'Current User';
+                            final username = 'Current User';
                             final newComment = commentController.text;
                             final Email = 'awsobaida07@gmail.com';
 
                             const userImage = AssetImage('images/obaida.jpeg');
                             final time = DateTime.now();
+                            final String formattedTime = time.toString();
                             final newCommentModel = CommentModel(
+                              id:1,
+                              postId: 0,
+                              createdBy: 'obaida',
+                              commentContent: newComment,
+                              Date: formattedTime,
+                              isUser: true,
+                              name: 'obaida',
+                              photo: null,
+                            );
+
+                           // controller.addComment(newCommentModel);
+                           comments.add(newCommentModel);
+                            commentController.clear();
+                            print(username);
+
+                            /*
                               username: username,
                               comment: newComment,
                               userImage: userImage,
                               time: time,
                               email: Email,
-                            );
 
-                            controller.addComment(newCommentModel);
-                            print(username);
-
-                            for (int i = 0; i < controller.comments.length; i++) {
-                              print(i);
-                            }
-
-                            commentController.clear();*/
+                            */
                           },
                         ),
                       ],
