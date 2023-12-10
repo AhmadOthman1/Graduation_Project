@@ -224,19 +224,22 @@ class ColleaguesPageProfile extends StatelessWidget {
 
 
     Widget _buildFollowButton() {
-    return Obx(() => ElevatedButton(
-          onPressed: () {
-            controller.isFollowing.toggle();
-          },
-          style: ElevatedButton.styleFrom(
-            primary: controller.isFollowing.value ? Colors.grey : Colors.blue,
-          ),
-          child: Text(
-            controller.isFollowing.value ? 'Following' : 'Follow',
-            style: TextStyle(
-              color: controller.isFollowing.value ? Colors.black87 : Colors.white,
+    return Obx(() => Container(
+      width: 250,
+      child: ElevatedButton(
+            onPressed: () {
+              controller.isFollowing.toggle();
+            },
+            style: ElevatedButton.styleFrom(
+              primary: controller.isFollowing.value ? Colors.grey : Colors.blue,
+            ),
+            child: Text(
+              controller.isFollowing.value ? 'Following' : 'Follow',
+              style: TextStyle(
+                color: controller.isFollowing.value ? Colors.black87 : Colors.white,
+              ),
             ),
           ),
-        ));
+    ));
   }
 }
