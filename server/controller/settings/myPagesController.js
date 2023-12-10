@@ -8,6 +8,8 @@ const nodemailer = require('nodemailer')
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
+
 exports.getMyPageInfo = async (req, res, next) => {
     try {
         var email = req.query.email;

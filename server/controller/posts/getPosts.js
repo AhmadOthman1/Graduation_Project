@@ -384,4 +384,5 @@ exports.getPosts = async (req, res, next) => {
             body: req.body
         });
     }
+    return res.status(404);
 }

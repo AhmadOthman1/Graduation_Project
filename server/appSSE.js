@@ -5,16 +5,18 @@ const { createReadStream } = require('fs');
 const { extname } = require('path');
 const userRoutes = require('./routes/userNotifications');
 var cors = require('cors');
-
+const { populateClientsMap } = require('./controller/notifications');
 const app = express();
 const server = http.createServer(app);
 app.use(cors());
 
 app.use(express.static('images'));
 app.use(express.static('cvs')); 
-app.use('/userNotifications', userRoutes);
 
+app.use('/userNotifications', userRoutes);
+populateClientsMap();
 
 server.listen(4000, () => {
+  
   console.log('Server listening on port 4000');
 });

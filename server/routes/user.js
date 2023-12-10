@@ -1,6 +1,7 @@
 const express=require('express');
 const userController=require('../controller/userController')
 const loginController=require('../controller/loginController')
+const logOutController=require('../controller/logOutController')
 const forgetpasswordController=require('../controller/forgetpasswordController')
 const settingsController=require('../controller/settings/settingsController')
 const workExperienceController=require('../controller/settings/workExperienceController')
@@ -65,7 +66,7 @@ router.post('/postCreatePage',authenticateToken,myPagesController.postCreatePage
 
 router.post('/token', authController.getRefreshToken);
 router.post('/Login',loginController.postLogin);
-router.get('/posts',userController.getPosts);
+router.post('/LogOut',authenticateToken,logOutController.postLogOut);
 
 //router.post('/post',userController.createPost)
 module.exports=router;

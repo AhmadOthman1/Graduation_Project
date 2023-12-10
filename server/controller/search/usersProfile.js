@@ -3,6 +3,7 @@ const Connections = require("../../models/connections");
 const sentConnection = require("../../models/sentConnection");
 const WorkExperience = require("../../models/workExperience");
 const EducationLevel = require("../../models/educationLevel");
+const {notifyUser} = require("../notifications");
 
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -361,6 +362,16 @@ exports.postSendConnectReq = async (req, res, next) => {
             receiverUsername: username,
             date: new Date(),
         });
+        const notification = {
+            username: 'username',  // Type of notification
+            notificationType: 'connection',  // Content of the notification
+            notificationContent: "You have a new connection request",  // Timestamp of when the notification was sent
+            notificationPointer: userUsername,
+          };
+          var isnotify= false
+        isnotify = await notifyUser(username, notification);
+          console.log(isnotify);
+          console.log(";;;;;;;;;;;;;;;;;;;;;;;;;;;;");
         return res.status(200).json({
             message: 'request sent',
             body: req.body

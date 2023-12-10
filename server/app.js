@@ -45,6 +45,8 @@ const connections =require('./models/connections');
 const post =require('./models/post');
 const comment =require('./models/comment');
 const like =require('./models/like');
+const notifications =require('./models/notifications');
+const activeUsers =require('./models/activeUsers');
 
 
 //const queries =require('./models/queries.js');
