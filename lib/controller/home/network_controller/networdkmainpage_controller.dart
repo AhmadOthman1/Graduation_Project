@@ -13,13 +13,13 @@ class NetworkMainPageControllerImp extends GetxController {
       {
         'name': 'Islam Aws',
         'jobTitle': 'UI Designer',
-        'image': 'images/islam.jpeg',
+        'image': null,
 
       },
       {
         'name': 'Obaida Aws',
         'jobTitle': 'Software Engineer',
-        'image': 'images/obaida.jpeg',
+        'image': null,
   
       },
       // Add more colleagues as needed

@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/network_controller/networdkmainpage_controller.dart';
 import 'package:growify/controller/home/network_controller/showcolleagues_controller.dart';
+import 'package:growify/global.dart';
 
 class ColleaguesPage extends StatefulWidget {
   const ColleaguesPage({Key? key}) : super(key: key);
@@ -14,17 +17,26 @@ class _ColleaguesPage extends State<ColleaguesPage> {
   final ShowColleaguesControllerImp controller =
       Get.put(ShowColleaguesControllerImp());
 
- // late RxList<Map<String, dynamic>> localColleagues;
+  // late RxList<Map<String, dynamic>> localColleagues;
 
   @override
   void initState() {
-    
-    controller.localColleagues = RxList<Map<String, dynamic>>.from(Get.arguments['colleagues']);
-    
+    controller.localColleagues =
+        RxList<Map<String, dynamic>>.from(Get.arguments['colleagues']);
+
     controller.localColleagues.sort((a, b) => a['name'].compareTo(b['name']));
     super.initState();
   }
- bool isLoading = false;
+
+  bool isLoading = false;
+
+  final AssetImage defultprofileImage =
+      const AssetImage("images/profileImage.jpg");
+  String? profileImageBytes;
+  String? profileImageBytesName;
+  String? profileImageExt;
+  String? profileImage;
+  ImageProvider<Object>? profileBackgroundImage;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,40 +72,44 @@ class _ColleaguesPage extends State<ColleaguesPage> {
           ),
           Expanded(
             child: NotificationListener<ScrollNotification>(
-               onNotification: (ScrollNotification scrollInfo) {
-                      var currentPos = scrollInfo.metrics.pixels;
-                      var maxPos = scrollInfo.metrics.maxScrollExtent;
+              onNotification: (ScrollNotification scrollInfo) {
+                var currentPos = scrollInfo.metrics.pixels;
+                var maxPos = scrollInfo.metrics.maxScrollExtent;
 
-                      if (!isLoading && currentPos == maxPos) {
-                        setState(() {
-                          isLoading =
-                              true; // Set loading to true to avoid multiple requests
-                          controller.Upage++;
-                        });
+                if (!isLoading && currentPos == maxPos) {
+                  setState(() {
+                    isLoading =
+                        true; // Set loading to true to avoid multiple requests
+                    controller.Upage++;
+                  });
 
-                        controller
-                            .getColleaguesfromDataBase()
-                            .then((result) async {
-                          if (result != null && result.isNotEmpty) {
-                            await Future.delayed(Duration(
-                                seconds:
-                                    1)); // to solve the problem when the user reach the bottom of the page1, it fetch page 3,4,5...etc.
-                            setState(() {
-                              isLoading =
-                                  false; // Reset loading when the data is fetched
-                            });
-                            print(isLoading);
-                          }
-                        });
-                      }
-                      return false;
-                    },
+                  controller.getColleaguesfromDataBase().then((result) async {
+                    if (result != null && result.isNotEmpty) {
+                      await Future.delayed(Duration(
+                          seconds:
+                              1)); // to solve the problem when the user reach the bottom of the page1, it fetch page 3,4,5...etc.
+                      setState(() {
+                        isLoading =
+                            false; // Reset loading when the data is fetched
+                      });
+                      print(isLoading);
+                    }
+                  });
+                }
+                return false;
+              },
               child: Obx(
                 () => ListView.builder(
                   itemCount: controller.localColleagues.length,
                   itemBuilder: (context, index) {
                     final colleague = controller.localColleagues[index];
-            
+                    profileImage =
+                        (colleague['image'] == null) ? "" : colleague['image'];
+                    profileBackgroundImage = (profileImage != null &&
+                            profileImage != "")
+                        ? Image.network("$urlStarter/" + profileImage!).image
+                        : defultprofileImage;
+
                     return Column(
                       children: [
                         ListTile(
@@ -102,17 +118,18 @@ class _ColleaguesPage extends State<ColleaguesPage> {
                               //   Get.to(ColleaguesProfile());
                             },
                             child: CircleAvatar(
-                              backgroundImage: AssetImage(colleague['image']),
+                              backgroundImage:
+                                  controller.profileImageBytes.isNotEmpty
+                                      ? MemoryImage(base64Decode(
+                                          controller.profileImageBytes.value))
+                                      : profileBackgroundImage,
                             ),
                           ),
                           title: Text(colleague['name']),
                           subtitle: Text(colleague['jobTitle']),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: [
-                              
-                              Icon(Icons.arrow_forward)
-                            ],
+                            children: [Icon(Icons.arrow_forward)],
                           ),
                         ),
                         const Divider(
