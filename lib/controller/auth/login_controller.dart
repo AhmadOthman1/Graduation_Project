@@ -65,7 +65,8 @@ class LoginControllerImp extends LoginController {
         GetStorage().write("accessToken", resbody['accessToken']);
         GetStorage().write("refreshToken", resbody['refreshToken']);
         GetStorage().write("loginemail", email);
-        //await connectToSSE(resbody['username']);
+        GetStorage().write("username", resbody['username']);
+        await connectToSSE(resbody['username']);
 
         Get.offNamed(AppRoute.homescreen);
       }
@@ -115,82 +116,49 @@ class LoginControllerImp extends LoginController {
       print('Data: ' + event.data!);
     });
   }*/
-  connectToSSE(String username) async {
-    Platform platform = getPlatform(); // calling as top-level declaration
+  Future<void> connectToSSE(String username) async {
+    Platform platform = getPlatform(); 
     var accessToken = GetStorage().read("accessToken") ?? "";
-    var url = urlSSEStarter + '/userNotifications/events';
-  print(platform.name);
-  if(platform.name== 'web'){
-    
-    Map<String, dynamic> headers = {
-      'Authorization': 'bearer ' + accessToken,
-      "Accept": "text/event-stream",
-      "Cache-Control": "no-cache",
-    };
-    final responseStream = connect(url, 'GET', headers);
-    responseStream.listen(
-      (data) {
-        print('Received data: $data');
-        // Handle the received data
-      },
-      onDone: () {
-        print('Request completed');
-      },
-      onError: (error) {
-        print('Error: $error');
-        // Handle the error
-      },
-    );
-  }else{
-      EventSource eventSource = await EventSource.connect(
-      url,
-      headers: {
+    var url = urlSSEStarter + '/userNotifications/notifications';
+    print(platform.name);
+    if (platform.name == 'web') {
+      Map<String, dynamic> headers = {
         'Authorization': 'bearer ' + accessToken,
         "Accept": "text/event-stream",
         "Cache-Control": "no-cache",
-      },
-    );
-    eventSource.listen((Event event) {
-      print("New event:");
-      print("  event: ${event.event}");
-      print("  data: ${event.data}");
-    });
-    }
-    /*var accessToken = GetStorage().read("accessToken") ?? "";
-    var url = urlSSEStarter + '/userNotifications/events';
-    
-    if(kIsWeb){
-      final client = io.HttpClient();
+        "username": username,
+      };
+      final responseStream = connect(url, 'GET', headers);
+      responseStream.listen(
+        (data) {
+          print('Received data: $data');
+          // Handle the received data
+        },
+        onDone: () {
+          print('Request completed');
+        },
+        onError: (error) {
+          print('Error: $error');
+          // Handle the error
+        },
+      );
+    } else {
       EventSource eventSource = await EventSource.connect(
-      url,
-      headers: {
-        'Authorization': 'bearer ' + accessToken,
-        "Accept": "text/event-stream",
-        "Cache-Control": "no-cache",
-      },
-      client: client
-    );
-    eventSource.listen((Event event) {
-      print("New event:");
-      print("  event: ${event.event}");
-      print("  data: ${event.data}");
-    });
+        url,
+        headers: {
+          'Authorization': 'bearer ' + accessToken,
+          "Accept": "text/event-stream",
+          "Cache-Control": "no-cache",
+          "username": username,
+        },
+      );
+      eventSource.listen((Event event) {
+        print("New event:");
+        print("  event: ${event.event}");
+        print("  data: ${event.data}");
+      });
     }
-    else{
-      EventSource eventSource = await EventSource.connect(
-      url,
-      headers: {
-        'Authorization': 'bearer ' + accessToken,
-        "Accept": "text/event-stream",
-        "Cache-Control": "no-cache",
-      },
-    );
-    eventSource.listen((Event event) {
-      print("New event:");
-      print("  event: ${event.event}");
-      print("  data: ${event.data}");
-    });*/
-    }
+  }
     /*
     Map<String, dynamic> headers = {
       'Authorization': 'bearer ' + accessToken,
