@@ -1,11 +1,22 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Post_controller.dart';
+import 'package:growify/global.dart';
 import 'package:growify/view/widget/homePage/comments.dart';
 
 class CommentsMainPage extends StatelessWidget {
   final PostControllerImp controller = Get.put(PostControllerImp());
   final TextEditingController commentController = TextEditingController();
+
+  final AssetImage defultprofileImage =
+      const AssetImage("images/profileImage.jpg");
+  String? profileImageBytes;
+  String? profileImageBytesName;
+  String? profileImageExt;
+  String? profileImage;
+  ImageProvider<Object>? profileBackgroundImage;
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +24,8 @@ class CommentsMainPage extends StatelessWidget {
     RxList<CommentModel> comments = args != null ? args['comments'] : [];
 
     controller.comments.assignAll(comments);
+
+    //profileImage = (comment.photo == null) ? "" : controller.comments.photo;
 
     print("////////////////////");
     print(comments.length);
@@ -30,7 +43,6 @@ class CommentsMainPage extends StatelessWidget {
       body: GetBuilder<PostControllerImp>(
         builder: (controller) {
           return Container(
-            
             height: MediaQuery.of(context).size.height * 0.75,
             margin: EdgeInsets.symmetric(horizontal: 5),
             child: Column(
@@ -40,6 +52,14 @@ class CommentsMainPage extends StatelessWidget {
                     itemCount: controller.comments.length,
                     itemBuilder: (context, index) {
                       final comment = controller.comments[index];
+                      profileImage =
+                          (comment.photo == null) ? "" : comment.photo;
+                      //
+                      profileBackgroundImage = (profileImage != null &&
+                              profileImage != "")
+                          ? Image.network("$urlStarter/" + profileImage!).image
+                          : defultprofileImage;
+
                       return Container(
                         margin: const EdgeInsets.symmetric(vertical: 8.0),
                         decoration: BoxDecoration(
@@ -48,11 +68,17 @@ class CommentsMainPage extends StatelessWidget {
                         ),
                         child: ListTile(
                           onTap: () {
-                            controller.gotoprofileFromcomment(comment.createdBy);
+                            controller
+                                .gotoprofileFromcomment(comment.createdBy);
                           },
                           contentPadding: const EdgeInsets.all(8.0),
                           leading: CircleAvatar(
-                            //backgroundImage: comment.photo,
+                          //  radius: 60,
+                            backgroundImage: controller
+                                    .profileImageBytes.isNotEmpty
+                                ? MemoryImage(base64Decode(
+                                    controller.profileImageBytes.value))
+                                : profileBackgroundImage, // Replace with your default photo URL
                           ),
                           title: Text(comment.name),
                           subtitle: Column(
@@ -105,7 +131,8 @@ class CommentsMainPage extends StatelessWidget {
                               hintStyle: const TextStyle(
                                 fontSize: 14,
                               ),
-                              floatingLabelBehavior: FloatingLabelBehavior.always,
+                              floatingLabelBehavior:
+                                  FloatingLabelBehavior.always,
                               contentPadding: const EdgeInsets.symmetric(
                                 vertical: 15,
                                 horizontal: 30,
@@ -138,7 +165,6 @@ class CommentsMainPage extends StatelessWidget {
                             }
 
                             commentController.clear();*/
-                            
                           },
                         ),
                       ],

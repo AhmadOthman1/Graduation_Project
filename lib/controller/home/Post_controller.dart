@@ -56,6 +56,13 @@ abstract class PostController extends GetxController {
 }
 
 class PostControllerImp extends PostController {
+
+// for profile
+  final RxString profileImageBytes = ''.obs;
+  final RxString profileImageBytesName = ''.obs;
+  final RxString profileImageExt = ''.obs;
+
+  ///////////////////////
   final RxList<CommentModel> comments = <CommentModel>[].obs;
 
 // the data come from database should you dtore it in the comments1
