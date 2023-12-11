@@ -54,6 +54,7 @@ router.post('/getPostLikes',authenticateToken,getPostsController.getPostLikes);
 router.post('/addLike',authenticateToken,getPostsController.addLike);
 router.post('/removeLike',authenticateToken,getPostsController.removeLike);
 router.post('/getPostComments',authenticateToken,getPostsController.getPostComments);
+router.post('/addComment',authenticateToken,getPostsController.addComment);
 
 
 

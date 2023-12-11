@@ -33,7 +33,99 @@ async function findIfUserInConnections(userUsername, findProfileUsername) {
     return userInConnections;
 }
 
+exports.addComment = async (req, res, next) => {
+    try {
+        const { postId , commentContent } = req.body;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        if(!postId || !commentContent){
+            return res.status(409).json({
+                message: 'valuse cant be empty',
+                body: req.body
+            });
+        }
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        // اذا كان الشخص بده يعلق ع بوست بنفحص اذا الشخص موجود اذا مش موجود بكون صفحة بدها تعلق ع بوست
+        if (existingUsername) {
+            const userPostComments = await post.findOne({
+                where: { id: postId },
+                include: [
+                    {
+                        model: comment,
+                        order: [['createdAt', 'DESC']],
+                    },
 
+                ],
+            });
+            if (!userPostComments) {
+                return res.status(404).json({ error: 'Post not found' });
+            }
+            // لازم نفحص اذا اليوزر نيم للبوست موجود بعدها بنطبق كل الي تحت واذا لا بكون بده يعلق ع بوست صفحة
+            if (userPostComments.username == userUsername) {
+                // Extract comments from the userPostcommentsobject
+                await comment.create({
+                    postId: postId,
+                    username: userUsername,
+                    commentContent: commentContent,
+                    Date: new Date(),
+                });
+
+                return res.status(200).json({
+                    message: 'comment created',
+                    body: req.body
+                });
+            }
+            else {
+                if (userPostComments.username != userUsername) {
+                    if (userPostComments.selectedPrivacy == "Any One") {
+                        await comment.create({
+                            postId: postId,
+                            username: userUsername,
+                            commentContent: commentContent,
+                            Date: new Date(),
+                        });
+                        return res.status(200).json({
+                            message: 'comment created',
+                            body: req.body
+                        });
+                    } else {
+                        var userInConnections = await findIfUserInConnections(userUsername, userPostComments.username);
+                        if (userInConnections[0]) { // check if user is connected to other user
+                            await comment.create({
+                                postId: postId,
+                                username: userUsername,
+                                commentContent: commentContent,
+                                Date: new Date(),
+
+                            });
+                            return res.status(200).json({
+                                message: 'comment created',
+                                body: req.body
+                            });
+                        }
+                    }
+                }
+            }
+        } else {
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+
+}
 
 exports.getPostComments = async (req, res, next) => {
     try {
@@ -65,19 +157,21 @@ exports.getPostComments = async (req, res, next) => {
 
                 const comments = await Promise.all(userPostComments.comments.map(async (comment) => {
                     const createdBy = comment.username || comment.pageId;
-                    const isUser = !!comment.username;
-                    const isPage = !!comment.pageId;
+                    const isUser = comment.username;
+                    const isPage = comment.pageId;
                     let name;
                     let photo;
-                
+                    
                     if (isUser) {
                         const user = await User.findOne({
                             where: {
                                 username: createdBy
                             },
                         });
+                        
                         name = user.firstname + " " + user.lastname;
                         photo = user.photo;
+                        console.log(name);
                     } else if (isPage) {
                         const page = await Page.findOne({
                             where: {
@@ -94,7 +188,7 @@ exports.getPostComments = async (req, res, next) => {
                         createdBy: createdBy,
                         commentContent: comment.commentContent,
                         Date: comment.Date,
-                        isUser: isUser,
+                        isUser: isUser? true: false,
                         name: name,
                         photo: photo,
                     };
@@ -140,7 +234,10 @@ exports.removeLike = async (req, res, next) => {
                 return res.status(404).json({ error: 'like not found' });
             }
             await userPostLikes.destroy();
-            return res.status(200);
+            return res.status(200).json({
+                message: 'like removed',
+                body: req.body
+            });
         } else {
             return res.status(500).json({
                 message: 'server Error',
@@ -189,7 +286,10 @@ exports.addLike = async (req, res, next) => {
                     username: userUsername,
                 });
 
-                return res.status(200);
+                return res.status(200).json({
+                    message: 'like added',
+                    body: req.body
+                });
             }
             else {
                 if (userPostLikes.username != userUsername) {
@@ -198,7 +298,10 @@ exports.addLike = async (req, res, next) => {
                             postId: postId,
                             username: userUsername,
                         });
-                        return res.status(200);
+                        return res.status(200).json({
+                            message: 'like added',
+                            body: req.body
+                        });
                     } else {
                         var userInConnections = await findIfUserInConnections(userUsername, userPostLikes.username);
                         if (userInConnections[0]) { // check if user is connected to other user
@@ -206,7 +309,10 @@ exports.addLike = async (req, res, next) => {
                                 postId: postId,
                                 username: userUsername,
                             });
-                            return res.status(200);
+                            return res.status(200).json({
+                                message: 'like added',
+                                body: req.body
+                            });
                         }
                     }
                 }
@@ -384,5 +490,8 @@ exports.getPosts = async (req, res, next) => {
             body: req.body
         });
     }
-    return res.status(404);
+    return res.status(404).json({
+        message: 'server Error',
+        body: req.body
+    });;
 }

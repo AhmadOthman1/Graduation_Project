@@ -24,7 +24,11 @@ exports.postLogOut = async (req, res, next) => {
           var activeUser = await activeUsers.findOne({
             username: userUsername,
           });
-          await activeUser.destroy();
+          if(activeUser){
+            await activeUser.destroy();
+
+          }
+          
           return res.status(200).json({
             message: 'logged out',
             body: req.body
