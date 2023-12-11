@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/Post_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/widget/homePage/comments.dart';
@@ -22,9 +23,9 @@ class CommentsMainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var args = Get.arguments;
     RxList<CommentModel> comments = args != null ? args['comments'] : [];
+    int postId = args['postId'];
 
     controller.comments.assignAll(comments);
-    
 
     print("////////////////////");
     print(comments.length);
@@ -43,7 +44,7 @@ class CommentsMainPage extends StatelessWidget {
         builder: (controller) {
           return Container(
             height: MediaQuery.of(context).size.height * 0.75,
-            margin: EdgeInsets.symmetric(horizontal: 5),
+            //margin: EdgeInsets.symmetric(horizontal: 5),
             child: Column(
               children: [
                 Flexible(
@@ -61,10 +62,6 @@ class CommentsMainPage extends StatelessWidget {
 
                       return Container(
                         margin: const EdgeInsets.symmetric(vertical: 8.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey, width: 1.0),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
                         child: ListTile(
                           onTap: () {
                             controller
@@ -78,23 +75,17 @@ class CommentsMainPage extends StatelessWidget {
                                         controller.profileImageBytes.value))
                                     : profileBackgroundImage,
                           ),
-                          title: Text(comment.name),
+                          title: Text(
+                            "${comment.name}  ● ${comment.Date}"  ,
+                            style: TextStyle(
+                              color:  Color.fromARGB(255, 38, 118, 140),
+                            ),
+                          ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(comment.commentContent),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Posted ${comment.Date}',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              
                             ],
                           ),
                         ),
@@ -128,37 +119,21 @@ class CommentsMainPage extends StatelessWidget {
                         IconButton(
                           icon: const Icon(Icons.send),
                           onPressed: () {
-                            final username = 'Current User';
                             final newComment = commentController.text;
-                            final Email = 'awsobaida07@gmail.com';
 
-                            const userImage = AssetImage('images/obaida.jpeg');
                             final time = DateTime.now();
                             final String formattedTime = time.toString();
                             final newCommentModel = CommentModel(
-                              id:1,
-                              postId: 0,
-                              createdBy: 'obaida',
+                              postId: postId,
+                              createdBy: GetStorage().read("username"),
                               commentContent: newComment,
                               Date: formattedTime,
                               isUser: true,
-                              name: 'obaida',
-                              photo: null,
                             );
 
-                           // controller.addComment(newCommentModel);
-                           comments.add(newCommentModel);
+                            controller.addComment(newCommentModel);
+                            //comments.add(newCommentModel);
                             commentController.clear();
-                            print(username);
-
-                            /*
-                              username: username,
-                              comment: newComment,
-                              userImage: userImage,
-                              time: time,
-                              email: Email,
-
-                            */
                           },
                         ),
                       ],

@@ -16,28 +16,25 @@ LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
 class CommentModel {
-  final int id;
+  final int? id;
   final int postId;
   final String createdBy;
   final String commentContent;
-  final String Date;
+  final String? Date;
   final bool isUser;
-  final String name;
+  final String? name;
   final String? photo;
 
-
-
   CommentModel({
-    required this.id,
+    this.id,
     required this.postId,
     required this.createdBy,
     required this.commentContent,
-    required this.Date,
+    this.Date,
     required this.isUser,
-    required this.name,
+    this.name,
     this.photo,
-   
-  })  ;
+  });
 }
 
 abstract class PostController extends GetxController {
@@ -53,7 +50,6 @@ abstract class PostController extends GetxController {
 }
 
 class PostControllerImp extends PostController {
-
 // for photo on the comment
   final RxString profileImageBytes = ''.obs;
   final RxString profileImageBytesName = ''.obs;
@@ -64,31 +60,18 @@ class PostControllerImp extends PostController {
   final RxString profileImageBytesName1 = ''.obs;
   final RxString profileImageExt1 = ''.obs;
 ///////////////////////////////////////////////////////////////
- 
+
   final RxList<CommentModel> comments = <CommentModel>[].obs;
 
 // the data come from database should you dtore it in the comments1
   final RxList<CommentModel> comments1 = <CommentModel>[].obs;
   //
-  
 
   final RxList<Map<String, dynamic>> likes = <Map<String, dynamic>>[
     // Add more colleagues as needed
   ].obs;
 
   final RxList<Map<String, dynamic>> likes1 = <Map<String, dynamic>>[
-   {
-      'name': 'Islam Aws',
-      'username': '@islam_aws',
-      'image': null,
-      'email': 'awsobaida07@gmail.com',
-    },
-    {
-      'name': 'Obaida Aws',
-      'username': '@obaida_aws',
-      'image': null,
-      'email': 's11923787@stu.najah.edu',
-    },
     // Add more colleagues as needed
   ].obs;
   // add other list likes1 ...
@@ -274,19 +257,53 @@ class PostControllerImp extends PostController {
     }
   }
 
-  @override
-  void addComment(CommentModel a) {
-    comments1.add(a);
-    update();
+  PostAddComment(int postId, String commentContent) async {
+    var url = "$urlStarter/user/addComment";
+    print("===================================");
+    print(commentContent);
 
+    var responce = await http.post(
+      Uri.parse(url),
+      body: jsonEncode({
+        'postId': postId,
+        'commentContent' : commentContent,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+      },
+    );
+    return responce;
+  }
+
+  @override
+  addComment(CommentModel comment) async {
+    if(comment.postId == null || comment.commentContent== null || comment.commentContent== ""){
+      return;
+    }
+    var res = await PostAddComment(comment.postId, comment.commentContent);
+    print(";;;;;;;;;;;;;;;;;;;;;;;;;;;;");
+    print(res.statusCode);
+    if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      addComment(comment);
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+    var resbody = jsonDecode(res.body);
+    if (res.statusCode == 409) {
+      return resbody['message'];
+    } else if (res.statusCode == 200) {
+      await gotoCommentPage(comment.postId, hasRouteFlag: true);
+    }
+    
     // If you want to update the UI when a new comment is added, uncomment the following line
-    // controller.comments.assignAll(comments1);
+    //controller.comments.assignAll(comments1);
 
     // Optionally, you can add the new comment to the existing comments list
     // controller.comments.add(newCommentModel);
   }
-
-
 
   getCommentPage(postId) async {
     var url = "$urlStarter/user/getPostComments";
@@ -305,7 +322,8 @@ class PostControllerImp extends PostController {
   }
 
   @override
-  gotoCommentPage(int postId) async {
+  gotoCommentPage(int postId, {bool hasRouteFlag = false}) async {
+    
     var res = await getCommentPage(postId);
     print(res.statusCode);
     if (res.statusCode == 403) {
@@ -321,9 +339,10 @@ class PostControllerImp extends PostController {
     } else if (res.statusCode == 200) {
       var data = jsonDecode(res.body);
       print("llllllllllllllllllllllllllllll");
-        print(data);
+      print(data);
       if (data != null) {
-        List<CommentModel> newComments = (data ['data']as List).map((commentData) {
+        List<CommentModel> newComments =
+            (data['data'] as List).map((commentData) {
           return CommentModel(
             id: commentData['id'],
             postId: commentData['postId'],
@@ -335,13 +354,19 @@ class PostControllerImp extends PostController {
             photo: commentData['photo'],
           );
         }).toList();
-
+        comments1.clear();
         comments1.assignAll(newComments);
         print("llllllllllllllllllllllllllllll");
         print(comments1);
-        Get.to(CommentsMainPage(), arguments: {
+        if(!hasRouteFlag){
+          print(hasRouteFlag);
+          Get.to(CommentsMainPage(), arguments: {
           'comments': comments1,
+          'postId' : comments1[0].postId,
         });
+        }else{
+          // update the comments
+        }
       } else {
         print("Invalid or missing 'data' property in response.");
         // Handle the case where 'data' property is missing or invalid
@@ -378,7 +403,6 @@ class PostControllerImp extends PostController {
     }
   }
 
- 
   // should add your data from database in likes1
   getPostLikes(postId) async {
     var url = "$urlStarter/user/getPostLikes";
@@ -412,11 +436,10 @@ class PostControllerImp extends PostController {
       return resbody['message'];
     } else if (res.statusCode == 200) {
       var data = jsonDecode(res.body);
-      likes1.assignAll([Map<String, dynamic>.from(data)]);
-      print(likes1);
-      Get.to(Like(), arguments: {'likes': likes1});
+      likes.assignAll([Map<String, dynamic>.from(data)]);
+      print(likes);
+      Get.to(Like(), arguments: {'likes': likes});
     }
-    
   }
 
   @override

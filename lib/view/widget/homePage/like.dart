@@ -20,7 +20,7 @@ class Like extends StatelessWidget {
     var args = Get.arguments;
     RxList<Map<String, dynamic>> likes = args != null ? args['likes'] : [];
 
-    likeController.likes.assignAll(likes);
+    //likeController.likes.assignAll(likes);
 
     return Scaffold(
       body: Column(
