@@ -52,6 +52,9 @@ exports.postLogin = async (req, res, next) => {
                 accessToken: accessToken,
                 refreshToken: refreshToken,
                 username: existingEmail.username,
+                firstname: existingEmail.firstname,
+                lastname: existingEmail.lastname,
+                photo: existingEmail.photo,
             });
 
         } else {
