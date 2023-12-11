@@ -2,12 +2,13 @@
 const User = require("../../models/user");
 const Page = require("../../models/pages");
 const path = require('path');
-const fs = require('fs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const post = require('../../models/post');
 const comment = require('../../models/comment');
 const like = require('../../models/like');
+const moment = require('moment');
+
 async function findIfUserInConnections(userUsername, findProfileUsername) {
     const userConnections = await Connections.findAll({
         where: {
@@ -187,7 +188,7 @@ exports.getPostComments = async (req, res, next) => {
                         postId: comment.postId,
                         createdBy: createdBy,
                         commentContent: comment.commentContent,
-                        Date: comment.Date,
+                        Date: moment(comment.Date).format('YYYY-MM-DD HH:mm:ss'),
                         isUser: isUser? true: false,
                         name: name,
                         photo: photo,
@@ -465,7 +466,7 @@ exports.getPosts = async (req, res, next) => {
                         postContent: post.postContent,
                         selectedPrivacy: post.selectedPrivacy,
                         photo: post.photo,
-                        postDate: post.postDate,
+                        postDate: moment(post.postDate).format('YYYY-MM-DD HH:mm:ss'),
                         commentCount: post.comments.length,
                         likeCount: post.likes.length,
                         isLiked: isLiked,

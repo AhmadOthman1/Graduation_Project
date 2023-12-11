@@ -3,7 +3,7 @@ const Connections = require("../../models/connections");
 const sentConnection = require("../../models/sentConnection");
 const WorkExperience = require("../../models/workExperience");
 const EducationLevel = require("../../models/educationLevel");
-const {notifyUser} = require("../notifications");
+const {notifyUser , deleteNotificaion} = require("../notifications");
 
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -300,6 +300,15 @@ exports.postSendRemoveReq = async (req, res, next) => {
         console.log(userInReceiverConnections);
         if (userInReceiverConnections[0]) {// check if this user sent a connection req to other user 
             sentConnection.destroy({ where: { id: userInReceiverConnections[0].id } });
+            const notification = {
+                username: username,  // Type of notification
+                notificationType: 'connection',  // Content of the notification
+                notificationContent: "sent you a connection request",  // Timestamp of when the notification was sent
+                notificationPointer: userUsername,
+              };
+              var isnotify= false
+            isnotify = await deleteNotificaion(username, notification);
+              console.log(isnotify);
             return res.status(200).json({
                 message: 'request removed',
                 body: req.body
@@ -363,15 +372,14 @@ exports.postSendConnectReq = async (req, res, next) => {
             date: new Date(),
         });
         const notification = {
-            username: 'username',  // Type of notification
+            username: username,  // Type of notification
             notificationType: 'connection',  // Content of the notification
-            notificationContent: "You have a new connection request",  // Timestamp of when the notification was sent
+            notificationContent: "sent you a connection request",  // Timestamp of when the notification was sent
             notificationPointer: userUsername,
           };
           var isnotify= false
         isnotify = await notifyUser(username, notification);
           console.log(isnotify);
-          console.log(";;;;;;;;;;;;;;;;;;;;;;;;;;;;");
         return res.status(200).json({
             message: 'request sent',
             body: req.body

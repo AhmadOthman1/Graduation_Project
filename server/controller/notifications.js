@@ -41,7 +41,8 @@ exports.getNotifications = async (req, res) => {
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
   res.flushHeaders();
-
+  console.log(username);
+  console.log(";;;;;;;;;;;;;;;;;;;;;;;;;;;;");
   const existingUser = await User.findOne({
     where: {
       username: username
@@ -49,14 +50,16 @@ exports.getNotifications = async (req, res) => {
   });
   if (existingUser) {
     var user = await activeUsers.findOne({
+      where: {
       username: username,
+      },
     });
-    if (user) {
-      await user.destroy();
+    if (!user) {
+      await activeUsers.create({
+        username: username,
+      });
     }
-    await activeUsers.create({
-      username: username,
-    });
+    
     if (!clientsMap.get(username)) {
       clientsMap.set(username, []);
     }
@@ -139,7 +142,10 @@ exports.getNotifications = async (req, res) => {
       var user = await activeUsers.findOne({
         username: username,
       });
-      user.destroy();
+      if(user){
+        user.destroy();
+      }
+      
       //clearInterval(intervalId);
     });
 
@@ -200,7 +206,7 @@ exports.getNotifications = async (req, res) => {
 */
 // craete notification
 exports.notifyUser = async (username, notification) => {
-  var user = await activeUsers.findOne({
+  var user = await User.findOne({
     username: username,
   });
   if (user) {
@@ -210,8 +216,25 @@ exports.notifyUser = async (username, notification) => {
       notificationContent: notification.notificationContent,
       notificationPointer: notification.notificationPointer,
     });
-    console.log("innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
-    console.log(notification);
+    return true;
+  }
+}
+exports.deleteNotificaion = async (username, notification) => {
+  var user = await User.findOne({
+    username: username,
+  });
+  if (user) {
+    var deletenotifications= await notifications.findOne({
+      where: {
+        username: username,
+        notificationType: notification.notificationType,
+        notificationContent: notification.notificationContent,
+        notificationPointer: notification.notificationPointer,
+      }
+    });
+    if(deletenotifications){
+      await deletenotifications.destroy();
+    }
     return true;
   }
 }

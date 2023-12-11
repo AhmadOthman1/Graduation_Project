@@ -25,7 +25,11 @@ exports.postLogOut = async (req, res, next) => {
             username: userUsername,
           });
           if(activeUser){
-            await activeUser.destroy();
+            await activeUser.destroy({
+              where: {
+                username: userUsername,
+              },
+            });
 
           }
           

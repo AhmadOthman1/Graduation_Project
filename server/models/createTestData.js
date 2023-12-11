@@ -6,6 +6,8 @@ const connections= require('./connections');
 const post= require('./post');
 const like= require('./like');
 const comment= require('./comment');
+const notifications = require("../models/notifications");
+
 const bcrypt = require('bcrypt');
 var iLimit = 80;
  User.create({
@@ -63,6 +65,12 @@ for(let i =0 ; i<iLimit/4 ; i++){
         receiverUsername: "AhmadOthman",
         date: new Date(),
     });
+    notifications.create({
+        username: "AhmadOthman",
+        notificationType: 'connection',
+        notificationContent:"sent you a connection request",
+        notificationPointer: "ahmad" + i,
+      });
 }
 for(let i =iLimit/4; i<iLimit/2 ; i++){
     sentConnection.create({

@@ -16,6 +16,9 @@ const notifications = sequelize.define('notifications', {
     notificationType: {
         type: Sequelize.STRING(2000),
         allowNull: false,
+        /*
+        connection => receive connection, connection get accepted
+        */
     },
     notificationContent: {
         type: Sequelize.STRING(2000),
