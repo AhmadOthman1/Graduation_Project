@@ -7,7 +7,10 @@ import 'package:growify/routes.dart';
 import 'package:growify/view/screen/auth/SignIn&SignUp/login.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/homeScreen.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:growify/services/notification_service.dart';
 void main() async{
+  await NotificationService.initializeNotification();
 
   firstName="";
   lastName="";

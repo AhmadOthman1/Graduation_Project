@@ -1,73 +1,103 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:growify/controller/home/Search_Cotroller.dart';
+import 'package:growify/controller/home/notification/notification_controller.dart';
+import 'package:growify/global.dart';
 
-class NotificationsPage extends StatelessWidget {
-   NotificationsPage({super.key});
+class NotificationsPage extends StatefulWidget {
+  const NotificationsPage({Key? key}) : super(key: key);
 
-  final List<Map<String, dynamic>> notifications = [
-    {
-      'title': 'New poll in MYSQL about how many computer engineer like his position ',
-      'time': 'Before ${2} minutes',
-      'image': 'images/islam.jpeg',
-      'messageIcon': Icons.more_vert,
-    },
-    {
-      'title': 'Obaida Aws Post published about the recent events in the Gaza Strip, and about Israeli terrorism.',
-      'time': 'Before ${1} hour',
-      'image': 'images/obaida.jpeg',
-      'messageIcon': Icons.more_vert,
-    },
-    // Add more colleagues as needed
-  ];
+  @override
+  _NotificationsPageState createState() => _NotificationsPageState();
+}
+
+final ScrollController scrollController = ScrollController();
+
+class _NotificationsPageState extends State<NotificationsPage> {
+  late NotificationsController _controller;
+  final ScrollController _scrollController = ScrollController();
+  final AssetImage defultprofileImage =
+      const AssetImage("images/profileImage.jpg");
+  final SearchControllerImp searchController = Get.put(SearchControllerImp());
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = NotificationsController();
+    _loadData();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  Future<void> _loadData() async {
+    print('Loading data...');
+    try {
+      await _controller.loadNotifications(_controller.page);
+      setState(() {
+        _controller.page++;
+        _controller.notifications;
+      });
+      print('Data loaded: ${_controller.notifications.length} notifications');
+    } catch (error) {
+      print('Error loading data: $error');
+    }
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      // reached the bottom, load more notifications
+      _loadData();
+    }
+  }
+  
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Notifications'),
+      ),
       body: Column(
         children: [
-          Container(
-            margin: const EdgeInsets.only(top: 50, bottom: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                IconButton(onPressed: (){}, icon: const Icon(Icons.arrow_back,size: 30,)),
-                // put the icons action
-                Container(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: const Text(
-                      "Notices",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    )),
-               
-                
-              ],
-            ),
-          ),
           const Divider(
             color: Color.fromARGB(255, 194, 193, 193),
             thickness: 2.0,
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: notifications.length,
+              controller: _scrollController,
+              itemCount: _controller.notifications.length,
               itemBuilder: (context, index) {
-                final notices = notifications[index];
-
+                final notice = _controller.notifications[index];
                 return Column(
                   children: [
                     ListTile(
                       leading: CircleAvatar(
-                        backgroundImage: AssetImage(notices['image']),
+                        backgroundImage: (notice['photo'] != null &&
+                                notice['photo'] != "")
+                            ? Image.network("$urlStarter/" + notice['photo']!)
+                                .image
+                            : defultprofileImage,
                       ),
-                      title: Text(notices['title']),
-                      subtitle: Text(notices['time']),
+                      title: Text(
+                          "${notice['notificationPointer']} ${notice['notificationContent']}"),
+                      subtitle: Text(notice['date']),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: Icon(notices['messageIcon']),
+                            icon: Icon(Icons.open_in_new),
                             onPressed: () {
-                              // Add send message logic here
+                              if (notice['notificationType'] == "connection") {
+                                searchController.goToUserPage(
+                                    notice['notificationPointer']!);
+                              }
                             },
                           ),
                         ],
@@ -82,6 +112,7 @@ class NotificationsPage extends StatelessWidget {
               },
             ),
           ),
+          if (_controller.isLoading) const CircularProgressIndicator(),
         ],
       ),
     );
