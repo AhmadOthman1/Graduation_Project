@@ -20,14 +20,20 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   late HomePageControllerImp controller;
-  final LogOutButtonControllerImp logoutController = Get.put(LogOutButtonControllerImp());
-  
-  String name = GetStorage().read("firstname")??"" + " "+ GetStorage().read("lastname")??"";
+  final LogOutButtonControllerImp logoutController =
+      Get.put(LogOutButtonControllerImp());
+
+  String? name;
   ImageProvider<Object> avatarImage = AssetImage("images/profileImage.jpg");
 
   @override
   void initState() {
     super.initState();
+    if (GetStorage().read("firstname") != null &&
+        GetStorage().read("lastname") != null) {
+      name =
+          GetStorage().read("firstname") + " " + GetStorage().read("lastname");
+    }
     controller = Get.put(HomePageControllerImp());
     updateAvatarImage();
   }
@@ -109,7 +115,7 @@ class _HomepageState extends State<Homepage> {
               color: Color.fromARGB(255, 194, 193, 193),
               thickness: 4.0,
             ),
-          //  Post(),
+            //  Post(),
           ],
         ),
       ),
@@ -137,7 +143,7 @@ class _HomepageState extends State<Homepage> {
                   backgroundImage: avatarImage,
                 ),
                 accountName: Text(
-                  name,
+                  name??"",
                   style: TextStyle(color: Colors.black),
                 ),
                 accountEmail: Text(
