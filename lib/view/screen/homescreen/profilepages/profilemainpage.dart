@@ -13,10 +13,6 @@ import 'package:growify/view/widget/homePage/posts.dart';
 class ProfileMainPage extends StatefulWidget {
   late ProfileMainPageControllerImp controller;
  
-
- 
-
- 
   final List<Map<String, dynamic>> userData;
 
   ProfileMainPage({Key? key, required this.userData}) : super(key: key);
@@ -42,7 +38,7 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
     }
   }
   
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -53,20 +49,26 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
-      body: SingleChildScrollView(
+      body: NestedScrollView(
         controller: _scrollController,
-        child: Column(
-          children: [
-            _buildCoverPhoto(),
-            _buildProfileInfo(),
-            _Deatalis("Details"),
-            _buildDivider(10),
-            _buildButtonsRow(),
-            _buildDivider(10),
-            _Deatalis("Posts"),
-            Post(username: widget.userData[0]["username"]),
-          ],
-        ),
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return [
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  _buildCoverPhoto(),
+                  _buildProfileInfo(),
+                  _Deatalis("Details"),
+                  _buildDivider(10),
+                  _buildButtonsRow(),
+                  _buildDivider(10),
+                  _Deatalis("Posts"),
+                ],
+              ),
+            ),
+          ];
+        },
+        body: Post(username: widget.userData[0]["username"]),
       ),
     );
   }
