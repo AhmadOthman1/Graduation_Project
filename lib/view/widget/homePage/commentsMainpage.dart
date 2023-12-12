@@ -7,8 +7,13 @@ import 'package:growify/controller/home/Post_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/widget/homePage/comments.dart';
 
-class CommentsMainPage extends StatelessWidget {
-  final PostControllerImp controller = Get.put(PostControllerImp());
+class CommentsMainPage extends StatefulWidget {
+  @override
+  _CommentsMainPageState createState() => _CommentsMainPageState();
+}
+
+class _CommentsMainPageState extends State<CommentsMainPage> {
+  PostControllerImp controller = Get.put(PostControllerImp());
   final TextEditingController commentController = TextEditingController();
 
   final AssetImage defultprofileImage =
@@ -23,6 +28,8 @@ class CommentsMainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var args = Get.arguments;
     RxList<CommentModel> comments = args != null ? args['comments'] : [];
+    print("*******=======");
+    print(comments);
     int postId = args['postId'];
 
     controller.comments.assignAll(comments);
@@ -49,12 +56,12 @@ class CommentsMainPage extends StatelessWidget {
               children: [
                 Flexible(
                   child: ListView.builder(
-                    itemCount: controller.comments.length,
+                    itemCount: comments.length,
                     itemBuilder: (context, index) {
-                      final comment = controller.comments[index];
+                      final comment = comments[index];
                       profileImage =
                           (comment.photo == null) ? "" : comment.photo;
-                      //
+                     
                       profileBackgroundImage = (profileImage != null &&
                               profileImage != "")
                           ? Image.network("$urlStarter/" + profileImage!).image
@@ -76,16 +83,15 @@ class CommentsMainPage extends StatelessWidget {
                                     : profileBackgroundImage,
                           ),
                           title: Text(
-                            "${comment.name}  ● ${comment.Date}"  ,
+                            "${comment.name}  ● ${comment.Date}",
                             style: TextStyle(
-                              color:  Color.fromARGB(255, 38, 118, 140),
+                              color: Color.fromARGB(255, 38, 118, 140),
                             ),
                           ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(comment.commentContent),
-                              
                             ],
                           ),
                         ),
@@ -129,10 +135,16 @@ class CommentsMainPage extends StatelessWidget {
                               commentContent: newComment,
                               Date: formattedTime,
                               isUser: true,
+                              name: GetStorage().read("firstname")+GetStorage().read("lastname"),
+                              photo: GetStorage().read("photo"),
                             );
 
                             controller.addComment(newCommentModel);
-                            //comments.add(newCommentModel);
+
+                            //  Get.find<PostControllerImp>().addComment(newCommentModel);
+                            //controller.update();
+
+                              comments.add(newCommentModel);
                             commentController.clear();
                           },
                         ),

@@ -5,7 +5,12 @@ import 'package:get/get.dart';
 import 'package:growify/controller/home/Post_controller.dart';
 import 'package:growify/global.dart';
 
-class Like extends StatelessWidget {
+class Like extends StatefulWidget {
+  @override
+  _LikeState createState() => _LikeState();
+}
+
+class _LikeState extends State<Like> {
   final PostControllerImp likeController = Get.put(PostControllerImp());
   final AssetImage defultprofileImage1 =
       const AssetImage("images/profileImage.jpg");
@@ -17,10 +22,21 @@ class Like extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+/*var args;
+RxList<Map<String, dynamic>> likes;
+    @override
+    void initState() {
+
+
+      super.initState();
+      args = Get.arguments;
+      likes = args != null ? args['likes'] : [];
+      
+    }*/
     var args = Get.arguments;
     RxList<Map<String, dynamic>> likes = args != null ? args['likes'] : [];
 
-    //likeController.likes.assignAll(likes);
+    print(likes);
 
     return Scaffold(
       body: Column(
@@ -56,12 +72,14 @@ class Like extends StatelessWidget {
           Expanded(
             child: GetBuilder<PostControllerImp>(
               builder: (likeController) {
+                //print(likes.length);
                 return ListView.builder(
-                  itemCount: likeController.likes1.length,
+                  itemCount: likes[0]['data'].length,
                   itemBuilder: (context, index) {
-                    final colleague = likeController.likes1[index];
+                  //  print(likes.length);
+                    final colleague = likes[0]['data'][index];
                     profileImage1 =
-                        (colleague['image'] == null) ? "" : colleague['image'];
+                        (colleague['photo'] == null) ? "" : colleague['photo'];
                     profileBackgroundImage1 = (profileImage1 != null &&
                             profileImage1 != "")
                         ? Image.network("$urlStarter/" + profileImage1!).image
@@ -86,7 +104,7 @@ class Like extends StatelessWidget {
                             ),
                           ),
                           title: Text(colleague['name']),
-                          subtitle: Text(colleague['username']),
+                          subtitle: Text(colleague['name']),
                         ),
                         const Divider(
                           color: Color.fromARGB(255, 194, 193, 193),

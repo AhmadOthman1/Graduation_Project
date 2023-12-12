@@ -76,28 +76,7 @@ class PostControllerImp extends PostController {
   ].obs;
   // add other list likes1 ...
   final RxList<Map<String, dynamic>> posts = <Map<String, dynamic>>[
-    /*{
-      'name': 'Obaida Aws',
-      'id': 1,
-      'time': '1 hour ago',
-      'content': 'Computer engineer in my fifth year at Al Najah University.',
-      'image': 'images/obaida.jpeg',
-      'like': 165,
-      'comment': 87,
-      'isLiked': false,
-      'email': 's11923787@stu.najah.edu',
-    },
-    {
-      'name': 'Islam Aws',
-      'id': 2,
-      'time': '2 hours ago',
-      'content': 'This is my brother, and he is 8 months old.',
-      'image': 'images/islam.jpeg',
-      'like': 123,
-      'comment': 46,
-      'isLiked': false,
-      'email': 'awsobaida07@gmail.com',
-    },*/
+    
   ].obs;
 
   int page = 1;
@@ -281,6 +260,7 @@ class PostControllerImp extends PostController {
     if(comment.postId == null || comment.commentContent== null || comment.commentContent== ""){
       return;
     }
+    comments.add(comment);
     var res = await PostAddComment(comment.postId, comment.commentContent);
     print(";;;;;;;;;;;;;;;;;;;;;;;;;;;;");
     print(res.statusCode);
@@ -295,8 +275,11 @@ class PostControllerImp extends PostController {
     if (res.statusCode == 409) {
       return resbody['message'];
     } else if (res.statusCode == 200) {
+      
       await gotoCommentPage(comment.postId, hasRouteFlag: true);
     }
+
+    
     
     // If you want to update the UI when a new comment is added, uncomment the following line
     //controller.comments.assignAll(comments1);
@@ -356,6 +339,7 @@ class PostControllerImp extends PostController {
         }).toList();
         comments1.clear();
         comments1.assignAll(newComments);
+        
         print("llllllllllllllllllllllllllllll");
         print(comments1);
         if(!hasRouteFlag){
@@ -437,7 +421,7 @@ class PostControllerImp extends PostController {
     } else if (res.statusCode == 200) {
       var data = jsonDecode(res.body);
       likes.assignAll([Map<String, dynamic>.from(data)]);
-      print(likes);
+     // print(likes);
       Get.to(Like(), arguments: {'likes': likes});
     }
   }

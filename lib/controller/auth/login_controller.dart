@@ -66,6 +66,9 @@ class LoginControllerImp extends LoginController {
         GetStorage().write("refreshToken", resbody['refreshToken']);
         GetStorage().write("loginemail", email);
         GetStorage().write("username", resbody['username']);
+        GetStorage().write("firstname", resbody['firstname']);
+        GetStorage().write("lastname", resbody['lastname']);
+        GetStorage().write("photo", resbody['photo']);
         await connectToSSE(resbody['username']);
 
         Get.offNamed(AppRoute.homescreen);
