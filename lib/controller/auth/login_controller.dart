@@ -1,18 +1,17 @@
 import 'dart:convert';
 import 'package:featurehub_sse_client/featurehub_sse_client.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_client_sse/constants/sse_request_type_enum.dart';
-import 'package:flutter_client_sse/flutter_client_sse.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
+import 'package:growify/services/notification_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
-import 'package:universal_io/io.dart' as io;
 import 'package:growify/Platform.dart'; // our enum
 import 'package:growify/multiplatform.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+
 abstract class LoginController extends GetxController {
   login(email, password);
   goToSignup();
@@ -117,7 +116,7 @@ class LoginControllerImp extends LoginController {
     });
   }*/
   Future<void> connectToSSE(String username) async {
-    Platform platform = getPlatform(); 
+    Platform platform = getPlatform();
     var accessToken = GetStorage().read("accessToken") ?? "";
     var url = urlSSEStarter + '/userNotifications/notifications';
     print(platform.name);
@@ -152,14 +151,45 @@ class LoginControllerImp extends LoginController {
           "username": username,
         },
       );
-      eventSource.listen((Event event) {
-        print("New event:");
-        print("  event: ${event.event}");
-        print("  data: ${event.data}");
+      eventSource.listen((Event event) async {
+        var data = event.data;
+        if (data != null && data != [] && data != "") {
+          Map<String, dynamic> jsonData = json.decode(data);
+          //to solve duplicated notification problem
+          var lastNotificationId = GetStorage().read("lastNotificationId");
+          if (lastNotificationId == null ||
+              jsonData['id'] != lastNotificationId) {
+            GetStorage().write("lastNotificationId", jsonData['id']);
+            // Access individual properties
+            String username = jsonData['username'];
+            String notificationType = jsonData['notificationType'];
+            String notificationContent = jsonData['notificationContent'];
+            String notificationPointer = jsonData['notificationPointer'];
+            String createdAt = jsonData['createdat'];
+            await NotificationService.showNotification(
+                title: "Growify",
+                body: "${notificationPointer} has ${notificationContent}",
+                summary: "${createdAt}",
+                payload: {
+                  "navigate": "true",
+                },
+                actionButtons: [
+                  NotificationActionButton(
+                    key: 'check',
+                    label: 'Check it out',
+                    actionType: ActionType.SilentAction,
+                    color: Colors.green,
+                  )
+                ]);
+          }
+
+          print("New event:");
+          print("  data: ${event.data}");
+        }
       });
     }
   }
-    /*
+  /*
     Map<String, dynamic> headers = {
       'Authorization': 'bearer ' + accessToken,
       "Accept": "text/event-stream",

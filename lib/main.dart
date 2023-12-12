@@ -27,7 +27,7 @@ void main() async{
 class MyApp extends StatelessWidget {
    MyApp({super.key});
     String? accessToken=GetStorage().read("accessToken") ;
-    
+    static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   // This widget is the root of your application.
   @override
@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
     print(accessToken);
     print("llllllllllllllllllllllllllllllllllllll");
     return GetMaterialApp(
+      navigatorKey: navigatorKey,
       title: 'Flutter Demo',
       theme: ThemeData(
      textTheme: const TextTheme(
