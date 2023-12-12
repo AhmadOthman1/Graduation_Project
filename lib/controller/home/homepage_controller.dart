@@ -64,6 +64,13 @@ abstract class HomePageController extends GetxController {
 }
 
 class HomePageControllerImp extends HomePageController {
+//////////////
+
+    final RxString profileImageBytes = ''.obs;
+  final RxString profileImageBytesName = ''.obs;
+  final RxString profileImageExt = ''.obs;
+  ///////////////////
+
   final RxList<CommentModel> comments = <CommentModel>[].obs;
 
 
@@ -356,6 +363,7 @@ class HomePageControllerImp extends HomePageController {
     if (res.statusCode == 409) {
       return resbody['message'];
     } else if (res.statusCode == 200) {
+      GetStorage().write("photo", resbody["user"]["photo"]);
       Get.to(ProfileMainPage(userData: [resbody["user"]]));
     }
   }

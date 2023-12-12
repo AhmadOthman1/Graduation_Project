@@ -51,6 +51,7 @@ dependencies:
   universal_io: ^2.2.2
   syncfusion_flutter_calendar: ^23.2.6
   awesome_notifications: ^0.8.2
+ 
 
 dev_dependencies:
   flutter_test:

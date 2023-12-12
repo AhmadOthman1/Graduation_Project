@@ -1,65 +1,34 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'package:growify/controller/home/profileMainPage_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/NewPost/newpost.dart';
 import 'package:growify/view/screen/homescreen/settings/settings.dart';
-import 'package:get/get.dart';
-import 'dart:convert';
-
 import 'package:growify/view/widget/homePage/posts.dart';
 
-class ProfileMainPage extends StatelessWidget {
-  ProfileMainPage({super.key, required this.userData}) {
-    profileImage = (userData[0]["photo"] == null) ? "" : userData[0]["photo"];
-    coverImage =
-        (userData[0]["coverImage"] == null) ? "" : userData[0]["coverImage"];
-    Bio = (userData[0]["bio"] == null) ? "" : userData[0]["bio"];
-    username= userData[0]["username"];
-  }
-
-  final ProfileMainPageControllerImp controller =
-      Get.put(ProfileMainPageControllerImp());
-
+class ProfileMainPage extends StatefulWidget {
   final List<Map<String, dynamic>> userData;
-  String? firstName;
-  String? lastName;
-  String? username;
-  ////////////////////////////////
-  final AssetImage defultprofileImage =
-      const AssetImage("images/profileImage.jpg");
-  String? profileImageBytes;
-  String? profileImageBytesName;
-  String? profileImageExt;
-  String? profileImage;
-  ImageProvider<Object>? profileBackgroundImage;
-  String? coverImage;
-  String? coverImageBytes;
-  String? coverImageBytesName;
-  String? coverImageExt;
-  final AssetImage defultcoverImage = const AssetImage("images/coverImage.jpg");
-  late ImageProvider<Object> coverBackgroundImage;
-  String? Bio;
+
+  ProfileMainPage({Key? key, required this.userData}) : super(key: key);
+
+  @override
+  _ProfileMainPageState createState() => _ProfileMainPageState();
+}
+
+class _ProfileMainPageState extends State<ProfileMainPage> {
+  late ProfileMainPageControllerImp controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(ProfileMainPageControllerImp());
+  }
 
   @override
   Widget build(BuildContext context) {
-    //final List<Map<String, dynamic>> userData;
-
-    // Extract 'user' from arguments
-
-    profileBackgroundImage = (profileImage != null && profileImage != "")
-        ? Image.network("$urlStarter/" + profileImage!).image
-        : defultprofileImage;
-
-    coverBackgroundImage = (coverImage != null && coverImage != "")
-        ? Image.network("$urlStarter/" + coverImage!).image
-        : defultcoverImage;
-
-    firstName; //=userData[0]["firstname"];
-    lastName;
-    final ss = firstName;
-
-    //String userName
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -70,7 +39,6 @@ class ProfileMainPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
-        // physics: const ClampingScrollPhysics(),
         child: Column(
           children: [
             _buildCoverPhoto(),
@@ -80,7 +48,7 @@ class ProfileMainPage extends StatelessWidget {
             _buildButtonsRow(),
             _buildDivider(10),
             _Deatalis("Posts"),
-            Post(username: username),
+            Post(username: widget.userData[0]["username"]),
           ],
         ),
       ),
@@ -88,16 +56,17 @@ class ProfileMainPage extends StatelessWidget {
   }
 
   Widget _buildCoverPhoto() {
+    String coverImage = widget.userData[0]["coverImage"] ?? "";
+    ImageProvider<Object> coverBackgroundImage =
+        (coverImage.isNotEmpty) ? Image.network("$urlStarter/$coverImage").image : const AssetImage("images/coverImage.jpg");
+
     return Container(
       height: 200,
       decoration: BoxDecoration(
         image: DecorationImage(
           image: controller.coverImageBytes.isNotEmpty
-              ? MemoryImage(base64Decode(controller.coverImageBytes.value))
+              ? MemoryImage(base64Decode(controller.coverImageBytes.value!))
               : coverBackgroundImage,
-
-          //NetworkImage('${urlStarter}/${userData[0]["coverImage"]}'),
-          //AssetImage('images/cover.jpg'), // Replace with your image
           fit: BoxFit.cover,
         ),
       ),
@@ -105,6 +74,10 @@ class ProfileMainPage extends StatelessWidget {
   }
 
   Widget _buildProfileInfo() {
+    String profileImage = widget.userData[0]["photo"] ?? "";
+    ImageProvider<Object> profileBackgroundImage =
+        (profileImage.isNotEmpty) ? Image.network("$urlStarter/$profileImage").image : const AssetImage("images/profileImage.jpg");
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -112,16 +85,16 @@ class ProfileMainPage extends StatelessWidget {
           CircleAvatar(
             radius: 60,
             backgroundImage: controller.profileImageBytes.isNotEmpty
-                ? MemoryImage(base64Decode(controller.profileImageBytes.value))
-                : profileBackgroundImage, // Replace with your default photo URL
+                ? MemoryImage(base64Decode(controller.profileImageBytes.value!))
+                : profileBackgroundImage,
           ),
           const SizedBox(height: 16),
           Text(
-            '${userData[0]["firstname"]} ${userData[0]["lastname"]}',
+            '${widget.userData[0]["firstname"]} ${widget.userData[0]["lastname"]}',
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           Text(
-            '@${userData[0]["username"]}', // Replace with the actual username
+            '@${widget.userData[0]["username"]}',
             style: const TextStyle(fontSize: 16, color: Colors.blue),
           ),
           Container(
@@ -130,11 +103,14 @@ class ProfileMainPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 8.0),
-                Text('$Bio',
-                    style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.grey[700])),
+                Text(
+                  widget.userData[0]["bio"] ?? "",
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.grey[700],
+                  ),
+                ),
               ],
             ),
           ),
@@ -204,9 +180,6 @@ class ProfileMainPage extends StatelessWidget {
         _buildDivider(10),
         InkWell(
           onTap: () {
-            ///// go to about info
-            // Get.to(SeeAboutInfo());
-            //  controller.goToAboutInfo();
             controller.goToAboutInfo();
           },
           child: Container(
@@ -226,7 +199,6 @@ class ProfileMainPage extends StatelessWidget {
             ),
           ),
         ),
-///////////////
         _buildDivider(10),
         InkWell(
           onTap: () {
@@ -249,16 +221,14 @@ class ProfileMainPage extends StatelessWidget {
             ),
           ),
         ),
-
-        ///
       ],
     );
   }
 
-  Widget _buildDivider(double HeigthBetween) {
+  Widget _buildDivider(double heightBetween) {
     return Column(
       children: [
-        SizedBox(height: HeigthBetween),
+        SizedBox(height: heightBetween),
         const Divider(
           color: Color.fromARGB(255, 194, 193, 193),
           thickness: 1.5,
@@ -267,3 +237,4 @@ class ProfileMainPage extends StatelessWidget {
     );
   }
 }
+

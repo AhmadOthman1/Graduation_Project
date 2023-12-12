@@ -110,7 +110,7 @@ class ColleaguesProfile extends StatelessWidget {
             _buildButtonsRow(),
             _buildDivider(10),
             _Deatalis("Posts"),
-             Post(),
+           //  Post(),
           ],
         ),
       ),

@@ -456,6 +456,7 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
     if (res.statusCode == 409 || res.statusCode == 500) {
       return res.statusCode + ":" + resbody['message'];
     } else if (res.statusCode == 200) {
+      
       Get.offNamed(AppRoute.homescreen);
       isTextFieldEnabled.value = false;
       isTextFieldEnabled2.value = false;
