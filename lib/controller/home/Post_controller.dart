@@ -38,6 +38,7 @@ class CommentModel {
 }
 
 abstract class PostController extends GetxController {
+  bool isLoading = false;
   getprfileColleaguespage(String email);
   goToProfileColleaguesPage(String email);
 
@@ -101,6 +102,10 @@ class PostControllerImp extends PostController {
   }
 
   getPostfromDataBase(username, page) async {
+    if (isLoading) {
+      return;
+    }
+    isLoading = true;
     print(username);
     print(page);
     print(pageSize);
@@ -119,7 +124,9 @@ class PostControllerImp extends PostController {
       var data = jsonDecode(res.body);
       posts.assignAll(List<Map<String, dynamic>>.from(data['posts']));
       print(posts);
+      isLoading = false;
     }
+    return;
   }
 
   int getLikes(int index) {

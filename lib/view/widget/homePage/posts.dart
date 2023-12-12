@@ -12,17 +12,50 @@ class Post extends StatefulWidget {
 }
 
 class _PostState extends State<Post> {
-  final PostControllerImp controller = PostControllerImp();
-  bool isLoading = false;
+  late PostControllerImp controller;
+
   ImageProvider<Object>? profileBackgroundImage;
   late ImageProvider<Object> postBackgroundImage;
   String? profileImage;
   String? postImage;
-  final AssetImage defultprofileImage = const AssetImage("images/profileImage.jpg");
+  final AssetImage defultprofileImage =
+      const AssetImage("images/profileImage.jpg");
   final AssetImage trImage = const AssetImage("images/transparent.png");
 
   ScrollController _scrollController = ScrollController();
+  @override
+  void initState() {
+    super.initState();
+    controller = PostControllerImp();
+    loadData();
+    _scrollController.addListener(_scrollListener);
+  }
 
+  Future<void> loadData() async {
+    print('Loading data...');
+    try {
+      await controller.getPostfromDataBase(widget.username, controller.page);
+      setState(() {
+        controller.page++;
+        controller.posts;
+      });
+      print('Data loaded: ${controller.posts.length} notifications');
+    } catch (error) {
+      print('Error loading data: $error');
+    }
+  }
+
+  void _scrollListener() {
+    print(controller.page);
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      // reached the bottom, load more notifications
+      loadData();
+    }
+  }
+
+  /*
   @override
   void initState() {
     super.initState();
@@ -36,9 +69,9 @@ class _PostState extends State<Post> {
         print(isLoading);
       }
     });
-  }
+  }*/
 
-  void _scrollListener() {
+  /*void _scrollListener() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       if (!isLoading) {
         setState(() {
@@ -56,7 +89,7 @@ class _PostState extends State<Post> {
         });
       }
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -65,14 +98,18 @@ class _PostState extends State<Post> {
         () => ListView.builder(
           controller: _scrollController,
           itemCount: controller.posts.length,
-          physics: const ClampingScrollPhysics(),
           shrinkWrap: true,
           itemBuilder: (context, index) {
             final post = controller.posts[index];
             profileImage = (post["userPhoto"] == null) ? "" : post["userPhoto"];
-            profileBackgroundImage = (profileImage != null && profileImage != "") ? Image.network("$urlStarter/" + profileImage!).image : defultprofileImage;
+            profileBackgroundImage =
+                (profileImage != null && profileImage != "")
+                    ? Image.network("$urlStarter/" + profileImage!).image
+                    : defultprofileImage;
             postImage = (post["photo"] == null) ? "" : post["photo"];
-            postBackgroundImage = (postImage != null && postImage != "") ? Image.network("$urlStarter/" + postImage!).image : trImage;
+            postBackgroundImage = (postImage != null && postImage != "")
+                ? Image.network("$urlStarter/" + postImage!).image
+                : trImage;
             return Container(
               key: ValueKey(index),
               margin: const EdgeInsets.all(16.0),
@@ -101,7 +138,8 @@ class _PostState extends State<Post> {
                               children: [
                                 InkWell(
                                   onTap: () {
-                                    controller.goToProfileColleaguesPage(post['createdBy']);
+                                    controller.goToProfileColleaguesPage(
+                                        post['createdBy']);
                                   },
                                   child: CircleAvatar(
                                     backgroundImage: profileBackgroundImage,
@@ -139,7 +177,8 @@ class _PostState extends State<Post> {
                                 controller.onMoreOptionSelected(option);
                               },
                               itemBuilder: (BuildContext context) {
-                                return controller.moreOptions.map((String option) {
+                                return controller.moreOptions
+                                    .map((String option) {
                                   return PopupMenuItem<String>(
                                     value: option,
                                     child: Text(option),
@@ -183,7 +222,8 @@ class _PostState extends State<Post> {
                                       color: Colors.blue,
                                     ),
                                     Container(
-                                      margin: const EdgeInsets.only(left: 10, right: 5),
+                                      margin: const EdgeInsets.only(
+                                          left: 10, right: 5),
                                       child: Text(
                                         '${post["likeCount"]}',
                                         style: const TextStyle(
@@ -214,7 +254,8 @@ class _PostState extends State<Post> {
                                 child: Row(
                                   children: [
                                     Container(
-                                      margin: const EdgeInsets.only(left: 10, right: 5),
+                                      margin: const EdgeInsets.only(
+                                          left: 10, right: 5),
                                       child: Text(
                                         '${post["commentCount"]}',
                                         style: const TextStyle(
@@ -257,7 +298,9 @@ class _PostState extends State<Post> {
                                     children: [
                                       Icon(
                                         Icons.thumb_up,
-                                        color: controller.isLiked(index) ? Colors.blue : Colors.grey,
+                                        color: controller.isLiked(index)
+                                            ? Colors.blue
+                                            : Colors.grey,
                                       ),
                                       const Text("Like")
                                     ],

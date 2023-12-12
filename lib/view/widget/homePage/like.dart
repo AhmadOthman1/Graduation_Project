@@ -104,7 +104,6 @@ RxList<Map<String, dynamic>> likes;
                             ),
                           ),
                           title: Text(colleague['name']),
-                          subtitle: Text(colleague['name']),
                         ),
                         const Divider(
                           color: Color.fromARGB(255, 194, 193, 193),

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:growify/controller/home/Post_controller.dart';
 
 import 'package:growify/controller/home/profileMainPage_controller.dart';
 import 'package:growify/global.dart';
@@ -10,6 +11,12 @@ import 'package:growify/view/screen/homescreen/settings/settings.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 
 class ProfileMainPage extends StatefulWidget {
+  late ProfileMainPageControllerImp controller;
+ 
+
+ 
+
+ 
   final List<Map<String, dynamic>> userData;
 
   ProfileMainPage({Key? key, required this.userData}) : super(key: key);
@@ -19,14 +26,22 @@ class ProfileMainPage extends StatefulWidget {
 }
 
 class _ProfileMainPageState extends State<ProfileMainPage> {
+  late Post postcontroller= Post();
   late ProfileMainPageControllerImp controller;
-
+ final ScrollController _scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
     controller = Get.put(ProfileMainPageControllerImp());
+    _scrollController.addListener(_scrollListener);
   }
-
+ void _scrollListener() {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      //re load the data 
+      print("Reached the end of the page");
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +54,7 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Column(
           children: [
             _buildCoverPhoto(),
