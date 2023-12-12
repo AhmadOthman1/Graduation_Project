@@ -21,8 +21,8 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   late HomePageControllerImp controller;
   final LogOutButtonControllerImp logoutController = Get.put(LogOutButtonControllerImp());
-
-  String name = GetStorage().read("firstname") + GetStorage().read("lastname");
+  
+  String name = GetStorage().read("firstname")??"" + " "+ GetStorage().read("lastname")??"";
   ImageProvider<Object> avatarImage = AssetImage("images/profileImage.jpg");
 
   @override
