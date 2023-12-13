@@ -1,102 +1,94 @@
 import 'package:flutter/material.dart';
 import 'package:growify/controller/home/myPage_Controller/PageProfile_controller.dart';
-import 'package:growify/controller/home/profileMainPage_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/NewPost/newpost.dart';
+import 'package:growify/view/screen/homescreen/myPage/editPageProfile.dart';
 import 'package:growify/view/screen/homescreen/settings/settings.dart';
+import 'package:growify/view/widget/homePage/posts.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 
-import 'package:growify/view/widget/homePage/posts.dart';
+class PageProfile extends StatefulWidget {
+  final List<Map<String, dynamic>> userData;
 
-class PageProfile extends StatelessWidget {
-  PageProfile({super.key, required this.userData}) {
+  PageProfile({Key? key, required this.userData}) : super(key: key);
 
-    profileImage = (userData[0]["photo"] == null) ? "" : userData[0]["photo"];
-    coverImage =
-        (userData[0]["coverImage"] == null) ? "" : userData[0]["coverImage"];
-    Description = (userData[0]["Description"] == null) ? "" : userData[0]["Description"];
-    firstName=userData[0]['firstname'];
-  /*9  profileImage = '';
-    coverImage = '';
-    Description = userData[0]["Description"];*/
+  @override
+  _PageProfileState createState() => _PageProfileState();
+}
+
+class _PageProfileState extends State<PageProfile> {
+  final PageProfileController controller = Get.put(PageProfileController());
+
+  late String? profileImage;
+  late String? coverImage;
+  late String? Description;
+  late String? firstName;
+
+  final AssetImage defaultProfileImage = const AssetImage("images/profileImage.jpg");
+  late ImageProvider<Object>? profileBackgroundImage;
+
+  final AssetImage defaultCoverImage = const AssetImage("images/coverImage.jpg");
+  late ImageProvider<Object> coverBackgroundImage;
+
+  @override
+  void initState() {
+    super.initState();
+    initializeUserData();
   }
 
-  final PageProfileController controller =
-      Get.put(PageProfileController());
+  void initializeUserData() {
+    profileImage = widget.userData[0]["photo"] ?? "";
+    coverImage = widget.userData[0]["coverImage"] ?? "";
+    Description = widget.userData[0]["Description"] ?? "";
+    firstName = widget.userData[0]['firstname'];
+    loadImages();
+  }
 
-  String? firstName;
+  void loadImages() {
+    profileBackgroundImage = loadImage(profileImage, defaultProfileImage);
+    coverBackgroundImage = loadImage(coverImage, defaultCoverImage);
+  }
 
-  ////////////////////////////////
-  final AssetImage defultprofileImage = const AssetImage("images/profileImage.jpg");
-  String? profileImageBytes;
-  String? profileImageBytesName;
-  String? profileImageExt;
-  String? profileImage;
-  ImageProvider<Object>? profileBackgroundImage;
-  String? coverImage;
-  String? coverImageBytes;
-  String? coverImageBytesName;
-  String? coverImageExt;
-  final AssetImage defultcoverImage = const AssetImage("images/coverImage.jpg");
-  late ImageProvider<Object> coverBackgroundImage;
-  String? Description;
-
-  final List<Map<String, dynamic>> userData;
+  ImageProvider<Object> loadImage(String? imageUrl, AssetImage defaultImage) {
+    return (imageUrl != null && imageUrl.isNotEmpty)
+        ? Image.network("$urlStarter/$imageUrl").image
+        : defaultImage;
+  }
 
   @override
   Widget build(BuildContext context) {
-    profileBackgroundImage = (profileImage != null && profileImage != "")
-        ? Image.network("$urlStarter/" + profileImage!).image
-        : defultprofileImage;
-
-    coverBackgroundImage = (coverImage != null && coverImage != "")
-        ? Image.network("$urlStarter/" + coverImage!).image
-        : defultcoverImage;
-
-    firstName; //=userData[0]["firstname"];
-  
-    final ss = firstName;
-
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(
-                top: 50,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Get.back();
-                    },
-                    icon: const Icon(Icons.arrow_back, size: 30),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Text(
-                      '${userData[0]["firstname"]} ',
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  const SizedBox(width: 180),
-                ],
-              ),
-            ),
-            _buildCoverPhoto(),
-            _buildProfileInfo(),
-            _Deatalis("Details"),
-            _buildDivider(10),
-            _buildButtonsRow(),
-            _buildDivider(10),
-            _Deatalis("Posts"),
-            // Post(),
-          ],
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: const Text(
+          "My Profile",
+          style: TextStyle(color: Colors.black),
         ),
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return [
+         SliverToBoxAdapter(
+          child: Column(
+              children: [
+                _buildCoverPhoto(),
+                _buildProfileInfo(),
+                _Details("Details"),
+                _buildDivider(10),
+                _buildButtonsRow(),
+                _buildDivider(10),
+                _Details("Posts"),
+              //  Expanded(
+                 // child: Post(username: widget.userData[0]["username"]), // Use Expanded for the Post widget
+               // ),
+              ],
+            ),
+        ),
+        ];
+        },
+        body: Post(),
       ),
     );
   }
@@ -106,9 +98,7 @@ class PageProfile extends StatelessWidget {
       height: 200,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: controller.coverImageBytes.isNotEmpty
-              ? MemoryImage(base64Decode(controller.coverImageBytes.value))
-              : coverBackgroundImage,
+          image: coverBackgroundImage ?? defaultCoverImage,
           fit: BoxFit.cover,
         ),
       ),
@@ -122,13 +112,11 @@ class PageProfile extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 60,
-            backgroundImage: controller.profileImageBytes.isNotEmpty
-                ? MemoryImage(base64Decode(controller.profileImageBytes.value))
-                : profileBackgroundImage,
+            backgroundImage: profileBackgroundImage ?? defaultProfileImage,
           ),
           const SizedBox(height: 16),
           Text(
-            '${userData[0]["firstname"]} ',
+            '$firstName ',
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           Container(
@@ -172,7 +160,7 @@ class PageProfile extends StatelessWidget {
     );
   }
 
-  Widget _Deatalis(String text) {
+  Widget _Details(String text) {
     return Container(
       margin: const EdgeInsets.only(left: 5),
       alignment: Alignment.bottomLeft,
@@ -188,9 +176,7 @@ class PageProfile extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
-           // Get.to(Settings());
-           controller.goToEditPageProfile();
-
+             controller.goToEditPageProfile();
           },
           child: Container(
             height: 35,
@@ -212,8 +198,7 @@ class PageProfile extends StatelessWidget {
         _buildDivider(10),
         InkWell(
           onTap: () {
-           // controller.goToAboutInfo();
-           controller.goToSeeAboutInfo();
+            controller.goToSeeAboutInfo();
           },
           child: Container(
             height: 35,
@@ -258,10 +243,10 @@ class PageProfile extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider(double HeigthBetween) {
+  Widget _buildDivider(double heightBetween) {
     return Column(
       children: [
-        SizedBox(height: HeigthBetween),
+        SizedBox(height: heightBetween),
         const Divider(
           color: Color.fromARGB(255, 194, 193, 193),
           thickness: 1.5,
