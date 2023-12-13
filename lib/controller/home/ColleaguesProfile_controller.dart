@@ -12,6 +12,7 @@ LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
 class ColleaguesProfileControllerImp extends GetxController {
+  bool isDeleteButtonVisible = false;
   RxString result = ''.obs;
   void toggleResult() {
     /*if (result.value == 'Following') {

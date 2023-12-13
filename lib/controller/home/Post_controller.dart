@@ -84,13 +84,16 @@ class PostControllerImp extends PostController {
   int pageSize = 10;
 
   PostgetPostfromDataBase(username, page, pageSize) async {
+    print("111111");
+    print(page);
+     print("111111");
     var url = "$urlStarter/user/getPosts";
 
     var responce = await http.post(
       Uri.parse(url),
       body: jsonEncode({
         'username': username,
-        'page': page,
+        'pages': page,
         'pageSize': pageSize,
       }),
       headers: {
@@ -122,8 +125,10 @@ class PostControllerImp extends PostController {
       return resbody['message'];
     } else if (res.statusCode == 200) {
       var data = jsonDecode(res.body);
-      posts.assignAll(List<Map<String, dynamic>>.from(data['posts']));
-      print(posts);
+      posts.addAll(List<Map<String, dynamic>>.from(data['posts']));
+      print("555555555555555555");
+      print(data['posts']);
+      print("555555555555555555");
       isLoading = false;
     }
     return;

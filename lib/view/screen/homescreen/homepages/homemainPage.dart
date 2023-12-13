@@ -68,6 +68,7 @@ class _HomepageState extends State<Homepage> {
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: ListView(
+          shrinkWrap: true,
           children: [
             Container(
               height: 50,
