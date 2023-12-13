@@ -14,14 +14,22 @@ class ProfileMainPage extends StatefulWidget {
   late ProfileMainPageControllerImp controller;
  
   final List<Map<String, dynamic>> userData;
+   late int userPostCount;
+  late int userConnectionsCount;
 
-  ProfileMainPage({Key? key, required this.userData}) : super(key: key);
+  ProfileMainPage({
+    Key? key,
+    required this.userData,
+    required this.userPostCount,
+    required this.userConnectionsCount,
+  }) : super(key: key);
 
   @override
   _ProfileMainPageState createState() => _ProfileMainPageState();
 }
 
 class _ProfileMainPageState extends State<ProfileMainPage> {
+  
   late Post postcontroller= Post();
   late ProfileMainPageControllerImp controller;
  final ScrollController _scrollController = ScrollController();
@@ -136,8 +144,8 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildInfoItem('Posts', '150'),
-              _buildInfoItem('Connections', '500'),
+              _buildInfoItem('Posts', widget.userPostCount.toString()),
+              _buildInfoItem('Connections', widget.userConnectionsCount.toString()),
             ],
           ),
         ],

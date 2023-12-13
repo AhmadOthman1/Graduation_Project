@@ -40,7 +40,8 @@ class CommentModel {
   })  : likes = likes.obs,
         isLiked = isLiked.obs;
 }
-
+  late  int userPostCount;
+  late int userConnectionsCount;
 abstract class HomePageController extends GetxController {
   goToSignup();
   goToForgetPassword();
@@ -337,6 +338,35 @@ class HomePageControllerImp extends HomePageController {
   goToForgetPassword() {
     Get.offNamed(AppRoute.forgetpassword);
   }
+  getDashboard() async {
+    var url = "$urlStarter/user/getUserProfileDashboard";
+    var responce = await http.post(Uri.parse(url),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+
+        });
+  print(responce);
+    return responce;
+  }
+loadDashboard() async {
+ var res = await getDashboard();
+ if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      loadDashboard();
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+    var resbody = jsonDecode(res.body);
+    if(res.statusCode == 409){
+      return resbody['message'];
+    }else if(res.statusCode == 200){
+      userPostCount = resbody['userPostCount'];
+      userConnectionsCount =resbody['userConnectionsCount'] ;
+      print(resbody);
+    } 
+  }
 
   @override
   Future getprfilepage() async {
@@ -351,6 +381,7 @@ class HomePageControllerImp extends HomePageController {
 
   @override
   goToprofilepage() async {
+    await loadDashboard();
     var res = await getprfilepage();
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
@@ -364,7 +395,7 @@ class HomePageControllerImp extends HomePageController {
       return resbody['message'];
     } else if (res.statusCode == 200) {
       GetStorage().write("photo", resbody["user"]["photo"]);
-      Get.to(ProfileMainPage(userData: [resbody["user"]]));
+      Get.to(ProfileMainPage(userData: [resbody["user"]], userPostCount: userPostCount, userConnectionsCount: userConnectionsCount));
     }
   }
 

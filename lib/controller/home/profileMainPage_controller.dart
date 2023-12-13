@@ -28,6 +28,9 @@ class ProfileMainPageControllerImp extends GetxController {
   final RxString coverImageBytes = ''.obs;
   final RxString coverImageBytesName = ''.obs;
   final RxString coverImageExt = ''.obs;
+
+
+
  getProfileSettingsPgae() async {
     var url = "$urlStarter/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url),

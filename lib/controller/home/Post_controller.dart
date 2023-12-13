@@ -437,7 +437,7 @@ class PostControllerImp extends PostController {
       Get.to(Like(), arguments: {'likes': likes});
     }
   }
-
+/*
   @override
   Future getprfilepage() async {
     var url =
@@ -466,7 +466,7 @@ class PostControllerImp extends PostController {
     } else if (res.statusCode == 200) {
       Get.to(ProfileMainPage(userData: [resbody["user"]]));
     }
-  }
+  }*/
 
   @override
   Future getprfileColleaguespage(String email) async {
