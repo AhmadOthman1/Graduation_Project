@@ -23,7 +23,7 @@ router.post('/verification',userController.postVerificationCode);
 router.post('/forgetpasswordverification',forgetpasswordController.postVerificationCode);
 router.post('/forgetpassword',forgetpasswordController.postForgetPassword);
 router.post('/changepassword',forgetpasswordController.changePassword);
-//settings
+//user
 router.get('/settingsGetMainInfo',authenticateToken, settingsController.getMainInfo);
 router.post('/settingsChangeMainInfo',authenticateToken,settingsController.changeMainInfo);
 router.post('/settingChangepasswor',authenticateToken,settingsController.changePassword);
@@ -37,6 +37,7 @@ router.get('/getEducationLevel',authenticateToken,educationLevelController.getEd
 router.post('/addEducationLevel',authenticateToken,educationLevelController.postAddEducationLevel);
 router.post('/editEducationLevel',authenticateToken,educationLevelController.postEditEducationLevel);
 router.post('/deleteEducationLevele',authenticateToken,educationLevelController.postDeleteEducationLevel);
+router.post('/getUserProfileDashboard',authenticateToken,settingsController.getUserProfileDashboard);
 //search
 router.get('/getSearchData',authenticateToken,getSearchDataController.getSearchData);
 //other users profile

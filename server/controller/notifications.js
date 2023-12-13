@@ -3,6 +3,7 @@ const activeUsers = require("../models/activeUsers");
 const notifications = require("../models/notifications");
 const Sequelize = require('sequelize');
 var clientsMap = new Map();
+const moment = require('moment');
 
 //refresh clint mab every time server run
 exports.populateClientsMap = async () => {
@@ -85,13 +86,15 @@ exports.getNotifications = async (req, res) => {
 
         // New notifications sent to the users
         newNotifications.forEach(async (notification) => {
-          const { username, notificationType, notificationContent, notificationPointer, createdAt } = notification;
+          const {id, username, notificationType, notificationContent, notificationPointer, createdAt } = notification;
+          var createdat = moment(createdAt).format('YYYY-MM-DD HH:mm:ss')
           const notificationData = {
+            id,
             username,
             notificationType,
             notificationContent,
             notificationPointer,
-            createdAt,
+            createdat,
           };
           const userClients = clientsMap.get(username) || [];
           userClients.forEach(async (client) => {

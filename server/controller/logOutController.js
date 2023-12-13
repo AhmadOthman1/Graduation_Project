@@ -22,7 +22,9 @@ exports.postLogOut = async (req, res, next) => {
             }
           })        
           var activeUser = await activeUsers.findOne({
+            where: {
             username: userUsername,
+            }
           });
           if(activeUser){
             await activeUser.destroy({
