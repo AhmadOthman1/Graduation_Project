@@ -8,21 +8,24 @@ import 'dart:convert';
 
 import 'package:growify/view/widget/homePage/posts.dart';
 
-class ColleaguesPageProfile extends StatelessWidget {
-  ColleaguesPageProfile({super.key, required this.userData}) {
-    profileImage = '';
-    coverImage = '';
-    Description = userData[0]["Description"];
-  }
+class ColleaguesPageProfile extends StatefulWidget {
+  ColleaguesPageProfile({super.key, required this.userData});
 
+  final List<Map<String, dynamic>> userData;
+
+  @override
+  _ColleaguesPageProfileState createState() => _ColleaguesPageProfileState();
+}
+
+class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
   final ColleaguesPageProfile_Controller controller =
       Get.put(ColleaguesPageProfile_Controller());
 
   String? firstName;
-  
 
   ////////////////////////////////
-  final AssetImage defultprofileImage = const AssetImage("images/profileImage.jpg");
+  final AssetImage defultprofileImage =
+      const AssetImage("images/profileImage.jpg");
   String? profileImageBytes;
   String? profileImageBytesName;
   String? profileImageExt;
@@ -32,14 +35,14 @@ class ColleaguesPageProfile extends StatelessWidget {
   String? coverImageBytes;
   String? coverImageBytesName;
   String? coverImageExt;
-  final AssetImage defultcoverImage = const AssetImage("images/coverImage.jpg");
+  final AssetImage defultcoverImage =
+      const AssetImage("images/coverImage.jpg");
   late ImageProvider<Object> coverBackgroundImage;
   String? Description;
 
-  final List<Map<String, dynamic>> userData;
-
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     profileBackgroundImage = (profileImage != null && profileImage != "")
         ? Image.network("$urlStarter/" + profileImage!).image
         : defultprofileImage;
@@ -49,12 +52,17 @@ class ColleaguesPageProfile extends StatelessWidget {
         : defultcoverImage;
 
     firstName; //=userData[0]["firstname"];
-  
     final ss = firstName;
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return [
+            SliverToBoxAdapter(child: 
+            Column(
           children: [
             Container(
               margin: const EdgeInsets.only(
@@ -72,7 +80,7 @@ class ColleaguesPageProfile extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.only(left: 10),
                     child: Text(
-                      '${userData[0]["firstname"]} ',
+                      '${widget.userData[0]["firstname"]} ',
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold),
                     ),
@@ -90,7 +98,11 @@ class ColleaguesPageProfile extends StatelessWidget {
             _Deatalis("Posts"),
             // Post(),
           ],
-        ),
+        ),)
+          ];
+        },
+        body: Post(),
+        
       ),
     );
   }
@@ -122,7 +134,7 @@ class ColleaguesPageProfile extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            '${userData[0]["firstname"]} ',
+            '${widget.userData[0]["firstname"]} ',
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           Container(
@@ -132,8 +144,11 @@ class ColleaguesPageProfile extends StatelessWidget {
               children: [
                 const SizedBox(height: 8.0),
                 Text(
-                  '$Description',
-                  style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal, color: Colors.grey[700]),
+                  '${widget.userData[0]["Description"]}',
+                  style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.grey[700]),
                 ),
               ],
             ),
@@ -182,8 +197,6 @@ class ColleaguesPageProfile extends StatelessWidget {
   Widget _buildButtonsRow() {
     return Column(
       children: [
-       
-        
         InkWell(
           onTap: () {
             controller.goToSeeAboutInfoColleagues();
@@ -205,7 +218,6 @@ class ColleaguesPageProfile extends StatelessWidget {
             ),
           ),
         ),
-        
       ],
     );
   }
@@ -222,24 +234,26 @@ class ColleaguesPageProfile extends StatelessWidget {
     );
   }
 
-
-    Widget _buildFollowButton() {
+  Widget _buildFollowButton() {
     return Obx(() => Container(
-      width: 250,
-      child: ElevatedButton(
+          width: 250,
+          child: ElevatedButton(
             onPressed: () {
               controller.isFollowing.toggle();
             },
             style: ElevatedButton.styleFrom(
-              primary: controller.isFollowing.value ? Colors.grey : Colors.blue,
+              primary:
+                  controller.isFollowing.value ? Colors.grey : Colors.blue,
             ),
             child: Text(
               controller.isFollowing.value ? 'Following' : 'Follow',
               style: TextStyle(
-                color: controller.isFollowing.value ? Colors.black87 : Colors.white,
+                color: controller.isFollowing.value
+                    ? Colors.black87
+                    : Colors.white,
               ),
             ),
           ),
-    ));
+        ));
   }
 }

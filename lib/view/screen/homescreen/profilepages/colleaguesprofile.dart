@@ -70,19 +70,24 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
                 background: _buildCoverPhoto(),
               ),
             ),
-          ];
-        },
-        body: Column(
-          children: [
-            _buildProfileInfo(context),
-            _Deatalis("Details"),
-            _buildDivider(10),
-            _buildButtonsRow(),
-            _buildDivider(10),
-            _Deatalis("Posts"),
-            // Post(),
-          ],
+          
+        SliverToBoxAdapter(
+          child: Column(
+            children: [
+              _buildProfileInfo(context),
+              _Deatalis("Details"),
+              _buildDivider(10),
+              _buildButtonsRow(),
+              _buildDivider(10),
+              _Deatalis("Posts"),
+              
+            ],
+          ),
         ),
+        
+        ];
+        },
+        body: Post(),
       ),
     );
   }
