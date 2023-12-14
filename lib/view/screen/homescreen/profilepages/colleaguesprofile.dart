@@ -10,7 +10,6 @@ import 'package:growify/view/widget/homePage/posts.dart';
 class ColleaguesProfile extends StatefulWidget {
   final List<Map<String, dynamic>> userData;
   
-
   ColleaguesProfile({super.key, required this.userData});
 
   @override

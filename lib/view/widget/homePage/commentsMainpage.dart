@@ -70,17 +70,23 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                       return Container(
                         margin: const EdgeInsets.symmetric(vertical: 8.0),
                         child: ListTile(
-                          onTap: () {
-                            controller
-                                .gotoprofileFromcomment(comment.createdBy);
-                          },
+                         /* onTap: () {
+                          //  controller
+                              //  .gotoprofileFromcomment(comment.createdBy);
+                          },*/
                           contentPadding: const EdgeInsets.all(8.0),
-                          leading: CircleAvatar(
-                            backgroundImage:
-                                controller.profileImageBytes.isNotEmpty
-                                    ? MemoryImage(base64Decode(
-                                        controller.profileImageBytes.value))
-                                    : profileBackgroundImage,
+                          leading: InkWell(
+                            onTap: (){
+                              controller
+                                .gotoprofileFromcomment(comment.createdBy);
+                            },
+                            child: CircleAvatar(
+                              backgroundImage:
+                                  controller.profileImageBytes.isNotEmpty
+                                      ? MemoryImage(base64Decode(
+                                          controller.profileImageBytes.value))
+                                      : profileBackgroundImage,
+                            ),
                           ),
                           title: Text(
                             "${comment.name}  ● ${comment.Date}",

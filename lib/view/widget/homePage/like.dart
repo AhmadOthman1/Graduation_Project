@@ -84,16 +84,24 @@ RxList<Map<String, dynamic>> likes;
                             profileImage1 != "")
                         ? Image.network("$urlStarter/" + profileImage1!).image
                         : defultprofileImage1;
+                       
+                       final createdBy=colleague['createdBy'];
+                       print("//////////////////////////////////////");
+                       print(createdBy);
+                       print("//////////////////////////////////////");
 
                     return Column(
                       children: [
                         ListTile(
                           leading: InkWell(
                             onTap: () {
+                               final userUsername = createdBy;
+                              likeController.goToUserPage(userUsername!);
                               // Navigate to colleague's profile
                               // Navigator.of(context).push(MaterialPageRoute(
                               //   builder: (context) => ColleaguesProfile(),
                               // ));
+
                             },
                             child: CircleAvatar(
                               backgroundImage: likeController
