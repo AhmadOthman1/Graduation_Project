@@ -55,7 +55,7 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
           "My Profile",
           style: TextStyle(color: Colors.black),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Color.fromARGB(255, 5, 3, 3)),
       ),
       body: NestedScrollView(
         controller: _scrollController,
@@ -263,4 +263,3 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
     );
   }
 }
-

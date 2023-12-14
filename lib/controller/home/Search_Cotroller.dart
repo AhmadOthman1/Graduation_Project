@@ -159,8 +159,12 @@ loadDashboard() async {
       return resbody['message'];
     } else if (res.statusCode == 200) {
       if (resbody['user'] is Map<String, dynamic>) {
+        print("ppppp");
         print([resbody["user"]]);
-        Get.to(ColleaguesProfile(userData: [resbody["user"]]));
+      //  Get.to(ColleaguesProfile(userData: [resbody["user"]]));
+
+        Get.to(() => ColleaguesProfile(userData: [resbody["user"]]));
+
         return true;
       }
     }

@@ -250,7 +250,6 @@ class Settings extends StatelessWidget {
                   ),
                 ),
               ),
-
             ],
           ),
         ],
