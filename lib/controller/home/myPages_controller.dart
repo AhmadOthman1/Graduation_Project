@@ -62,7 +62,9 @@ class MyPagesController {
       "firstname": "Al Qassam",
       "photo": null,
       "coverImage": null,
-      "Description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+      "Description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "username":"AhmadOthman"
+      
     }
   ];
   goToMyPage(){

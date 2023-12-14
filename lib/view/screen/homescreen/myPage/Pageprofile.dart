@@ -88,7 +88,7 @@ class _PageProfileState extends State<PageProfile> {
         ),
         ];
         },
-        body: Post(),
+        body: Post(username: widget.userData[0]["username"]),
       ),
     );
   }
