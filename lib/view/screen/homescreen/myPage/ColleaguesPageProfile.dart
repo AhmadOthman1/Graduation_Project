@@ -101,7 +101,7 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
         ),)
           ];
         },
-        body: Post(),
+        body: Post(username: 'AhmadOthman'),
         
       ),
     );
