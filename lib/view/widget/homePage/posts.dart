@@ -63,8 +63,7 @@ class _PostState extends State<Post> {
     return Center(
       child: Obx(
         () => ListView.separated(
-          controller: _scrollController,
-        
+          controller: _scrollController,        
           itemCount: controller.posts.length + 1, // +1 for the loading indicator
           separatorBuilder: (context, index) => const Divider(),
           itemBuilder: (context, index) {

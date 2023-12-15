@@ -65,60 +65,76 @@ class _HomepageState extends State<Homepage> {
     });
 
     return Scaffold(
-      body: Container(
+      body: NestedScrollView(
+        
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return [
+            SliverToBoxAdapter(
+              child:
+      Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            Container(
-              height: 50,
-              margin: const EdgeInsets.symmetric(horizontal: 5),
-              child: Row(
-                children: [
-                  avatarBuilder,
-                  Expanded(
-                    child: TextFormField(
-                      onTap: () {
-                        Get.to(Search());
-                      },
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(10),
+        child: Container(
+          margin: EdgeInsets.only(top: 30),
+          child: Column(
+            
+            children: [
+              Container(
+                height: 50,
+                margin: const EdgeInsets.symmetric(horizontal: 5),
+                child: Row(
+                  children: [
+                    avatarBuilder,
+                    Expanded(
+                      child: TextFormField(
+                        onTap: () {
+                          Get.to(Search());
+                        },
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          fillColor: Colors.grey[200],
+                          filled: true,
+                          prefixIcon: const Icon(Icons.search),
+                          hintText: "Search",
                         ),
-                        fillColor: Colors.grey[200],
-                        filled: true,
-                        prefixIcon: const Icon(Icons.search),
-                        hintText: "Search",
                       ),
                     ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      controller.goToChat();
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 5, left: 3),
-                      child: const Icon(
-                        Icons.message_rounded,
-                        size: 45,
+                    InkWell(
+                      onTap: () {
+                        controller.goToChat();
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 5, left: 3),
+                        child: const Icon(
+                          Icons.message_rounded,
+                          size: 45,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            const Divider(
-              color: Color.fromARGB(255, 194, 193, 193),
-              thickness: 4.0,
-            ),
-            //  Post(),
-          ],
+              const SizedBox(
+                height: 10,
+              ),
+              const Divider(
+                color: Color.fromARGB(255, 194, 193, 193),
+                thickness: 4.0,
+              ),
+              //  Post(),
+            ],
+          ),
         ),
+      ),
+
+       ),
+          ];
+        },
+        body: Post(username: 'AhmadOthman'),
+        
       ),
       drawer: Drawer(
         backgroundColor: Colors.white,
