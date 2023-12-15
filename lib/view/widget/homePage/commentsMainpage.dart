@@ -78,7 +78,7 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                           leading: InkWell(
                             onTap: (){
                               controller
-                                .gotoprofileFromcomment(comment.createdBy);
+                                .goToUserPage(comment.createdBy);
                             },
                             child: CircleAvatar(
                               backgroundImage:

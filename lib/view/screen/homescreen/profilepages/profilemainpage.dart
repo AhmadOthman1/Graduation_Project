@@ -73,10 +73,12 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
                   _Deatalis("Posts"),
                 ],
               ),
+              
             ),
           ];
         },
         body: Post(username: widget.userData[0]["username"]),
+        
       ),
     );
   }
