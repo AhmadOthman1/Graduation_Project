@@ -61,35 +61,19 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
+
+             SliverAppBar(
+              backgroundColor: Colors.white,
+              expandedHeight: 200,
+              floating: false,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                background: _buildCoverPhoto(),
+              ),
+            ),
             SliverToBoxAdapter(child: 
             Column(
           children: [
-            Container(
-              margin: const EdgeInsets.only(
-                top: 50,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Get.back();
-                    },
-                    icon: const Icon(Icons.arrow_back, size: 30),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Text(
-                      '${widget.userData[0]["firstname"]} ',
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  const SizedBox(width: 180),
-                ],
-              ),
-            ),
-            _buildCoverPhoto(),
             _buildProfileInfo(),
             _Deatalis("Details"),
             _buildDivider(10),

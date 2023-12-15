@@ -59,21 +59,24 @@ class _PageProfileState extends State<PageProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text(
-          "My Profile",
-          style: TextStyle(color: Colors.black),
-        ),
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
+      
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
+
+             SliverAppBar(
+              backgroundColor: Colors.white,
+              expandedHeight: 200,
+              floating: false,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                background: _buildCoverPhoto(),
+              ),
+            ),
+
          SliverToBoxAdapter(
           child: Column(
               children: [
-                _buildCoverPhoto(),
                 _buildProfileInfo(),
                 _Details("Details"),
                 _buildDivider(10),

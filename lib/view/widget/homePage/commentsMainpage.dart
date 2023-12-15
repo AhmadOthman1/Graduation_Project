@@ -51,7 +51,6 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
         builder: (controller) {
           return Container(
             height: MediaQuery.of(context).size.height * 0.75,
-            //margin: EdgeInsets.symmetric(horizontal: 5),
             child: Column(
               children: [
                 Flexible(

@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Post_controller.dart';
-
 import 'package:growify/controller/home/profileMainPage_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/NewPost/newpost.dart';
@@ -11,11 +9,9 @@ import 'package:growify/view/screen/homescreen/settings/settings.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 
 class ProfileMainPage extends StatefulWidget {
-  late ProfileMainPageControllerImp controller;
- 
   final List<Map<String, dynamic>> userData;
-   late int userPostCount;
-  late int userConnectionsCount;
+  final int userPostCount;
+  final int userConnectionsCount;
 
   ProfileMainPage({
     Key? key,
@@ -29,64 +25,74 @@ class ProfileMainPage extends StatefulWidget {
 }
 
 class _ProfileMainPageState extends State<ProfileMainPage> {
-  
-  late Post postcontroller= Post();
+  late Post postController = Post();
   late ProfileMainPageControllerImp controller;
- final ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
     controller = Get.put(ProfileMainPageControllerImp());
     _scrollController.addListener(_scrollListener);
   }
- void _scrollListener() {
+
+  void _scrollListener() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      //re load the data 
       print("Reached the end of the page");
     }
   }
-  
-   @override
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+    /*  appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text(
           "My Profile",
           style: TextStyle(color: Colors.black),
         ),
         iconTheme: const IconThemeData(color: Color.fromARGB(255, 5, 3, 3)),
-      ),
+      ),*/
       body: NestedScrollView(
         controller: _scrollController,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
+
+            SliverAppBar(
+              backgroundColor: Colors.white,
+              expandedHeight: 200,
+              floating: false,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                background: _buildCoverPhoto(),
+              ),
+            ),
+            
             SliverToBoxAdapter(
               child: Column(
-                children: [
-                  _buildCoverPhoto(),
+                children: [              
                   _buildProfileInfo(),
-                  _Deatalis("Details"),
+                  _buildDetails("Details"),
                   _buildDivider(10),
                   _buildButtonsRow(),
                   _buildDivider(10),
-                  _Deatalis("Posts"),
+                  _buildDetails("Posts"),
                 ],
               ),
-              
             ),
+           
           ];
         },
         body: Post(username: widget.userData[0]["username"]),
-        
       ),
     );
   }
 
   Widget _buildCoverPhoto() {
     String coverImage = widget.userData[0]["coverImage"] ?? "";
-    ImageProvider<Object> coverBackgroundImage =
-        (coverImage.isNotEmpty) ? Image.network("$urlStarter/$coverImage").image : const AssetImage("images/coverImage.jpg");
+    ImageProvider<Object> coverBackgroundImage = (coverImage.isNotEmpty)
+        ? Image.network("$urlStarter/$coverImage").image
+        : const AssetImage("images/coverImage.jpg");
 
     return Container(
       height: 200,
@@ -103,8 +109,9 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
 
   Widget _buildProfileInfo() {
     String profileImage = widget.userData[0]["photo"] ?? "";
-    ImageProvider<Object> profileBackgroundImage =
-        (profileImage.isNotEmpty) ? Image.network("$urlStarter/$profileImage").image : const AssetImage("images/profileImage.jpg");
+    ImageProvider<Object> profileBackgroundImage = (profileImage.isNotEmpty)
+        ? Image.network("$urlStarter/$profileImage").image
+        : const AssetImage("images/profileImage.jpg");
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -170,7 +177,7 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
     );
   }
 
-  Widget _Deatalis(String text) {
+  Widget _buildDetails(String text) {
     return Container(
       margin: const EdgeInsets.only(left: 5),
       alignment: Alignment.bottomLeft,
@@ -265,3 +272,5 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
     );
   }
 }
+
+
