@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:growify/controller/home/network_controller/ShowRequestsReceived_controller.dart';
 import 'package:growify/controller/home/network_controller/networdkmainpage_controller.dart';
-import 'package:growify/controller/home/network_controller/showcolleagues_controller.dart';
 import 'package:growify/global.dart';
 
-class ShowColleagues extends StatefulWidget {
-  const ShowColleagues({Key? key}) : super(key: key);
+class ShowRequestsReceived extends StatefulWidget {
+  const ShowRequestsReceived({Key? key}) : super(key: key);
 
   @override
-  _ShowColleaguesState createState() => _ShowColleaguesState();
+  _ShowRequestsReceivedState createState() => _ShowRequestsReceivedState();
 }
 
 final ScrollController scrollController = ScrollController();
 
-class _ShowColleaguesState extends State<ShowColleagues> {
-  final NetworkMainPageControllerImp Networkcontroller = Get.put(NetworkMainPageControllerImp());
-  late ShowColleaguesController _controller;
+class _ShowRequestsReceivedState extends State<ShowRequestsReceived> {
+  final NetworkMainPageControllerImp Networkcontroller =
+      Get.put(NetworkMainPageControllerImp());
+  late ShowRequestsReceivedController _controller;
   final ScrollController _scrollController = ScrollController();
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
-  
 
   @override
   void initState() {
     super.initState();
-    _controller = ShowColleaguesController();
+    _controller = ShowRequestsReceivedController();
     _loadData();
     _scrollController.addListener(_scrollListener);
   }
@@ -35,9 +35,10 @@ class _ShowColleaguesState extends State<ShowColleagues> {
       await _controller.loadNotifications(_controller.page);
       setState(() {
         _controller.page++;
-        _controller.colleagues;
+        _controller.requestsReceived;
       });
-      print('Data loaded: ${_controller.colleagues.length} colleagues');
+      print(
+          'Data loaded: ${_controller.requestsReceived.length} requestsReceived');
     } catch (error) {
       print('Error loading data: $error');
     }
@@ -50,7 +51,7 @@ class _ShowColleaguesState extends State<ShowColleagues> {
       _loadData();
     }
   }
-  
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -61,7 +62,7 @@ class _ShowColleaguesState extends State<ShowColleagues> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Colleagues'),
+        title: const Text('Requests Received'),
       ),
       body: Column(
         children: [
@@ -72,25 +73,24 @@ class _ShowColleaguesState extends State<ShowColleagues> {
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
-              itemCount: _controller.colleagues.length,
+              itemCount: _controller.requestsReceived.length,
               itemBuilder: (context, index) {
-                final colleague = _controller.colleagues[index];
-                final firstname=colleague['firstname'];
-                final lastname =colleague['lastname'];
-                final username =colleague['username'];
-                
+                final received = _controller.requestsReceived[index];
+                final firstname = received['firstname'];
+                final lastname = received['lastname'];
+                final username = received['username'];
+
                 return Column(
                   children: [
                     ListTile(
-                      onTap: (){
+                      onTap: () {
                         final userUsername = username;
                               Networkcontroller.goToUserPage(userUsername!);
-                        
                       },
                       trailing: CircleAvatar(
-                        backgroundImage: (colleague['photo'] != null &&
-                                colleague['photo'] != "")
-                            ? Image.network("$urlStarter/" + colleague['photo']!)
+                        backgroundImage: (received['photo'] != null &&
+                                received['photo'] != "")
+                            ? Image.network("$urlStarter/" + received['photo']!)
                                 .image
                             : defultprofileImage,
                       ),

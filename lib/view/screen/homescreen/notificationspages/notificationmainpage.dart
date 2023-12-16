@@ -75,9 +75,14 @@ class _NotificationsPageState extends State<NotificationsPage> {
               itemCount: _controller.notifications.length,
               itemBuilder: (context, index) {
                 final notice = _controller.notifications[index];
+                
                 return Column(
                   children: [
                     ListTile(
+                      onTap: (){
+                        _controller.showPost();
+                        
+                      },
                       leading: CircleAvatar(
                         backgroundImage: (notice['photo'] != null &&
                                 notice['photo'] != "")

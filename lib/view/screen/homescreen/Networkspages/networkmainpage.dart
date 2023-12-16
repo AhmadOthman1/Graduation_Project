@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/network_controller/networdkmainpage_controller.dart';
 import 'package:growify/core/constant/routes.dart';
+import 'package:growify/view/screen/homescreen/Networkspages/ShowRequestsReceived.dart';
+import 'package:growify/view/screen/homescreen/Networkspages/ShowRequestsSent.dart';
+import 'package:growify/view/screen/homescreen/Networkspages/showcolleagues.dart';
 import 'package:growify/view/widget/homePage/networkssection.dart';
 
 class NetworksPage extends StatelessWidget {
@@ -15,21 +18,16 @@ class NetworksPage extends StatelessWidget {
       'iconfixed': Icons.arrow_forward,
       
     },
+ 
     {
-      'iconchnage': Icons.groups_2,
-      'name': 'Groups',
-      'iconfixed': Icons.arrow_forward,
-      
-    },
-    {
-      'iconchnage': Icons.badge_rounded,
-      'name': 'Pages',
+      'iconchnage': Icons.people_outline,
+      'name': 'Requests Received',
       'iconfixed': Icons.arrow_forward,
       
     },
     {
       'iconchnage': Icons.people_outline,
-      'name': 'People I follow',
+      'name': 'Requests Sent',
       'iconfixed': Icons.arrow_forward,
       
     },
@@ -72,17 +70,14 @@ class NetworksPage extends StatelessWidget {
               // Define your navigation logic here based on the section.
               switch (index - 1) {
                 case 0:
-                 // Get.toNamed(AppRoute.colleaguespage);
-                 controller.goToShowMyColleagues();
+                 Get.to(ShowColleagues());
+                 
                   break;
                 case 1:
-                  Get.toNamed(AppRoute.groupspage);
+                  Get.to(ShowRequestsReceived());
                   break;
                 case 2:
-                  Get.toNamed(AppRoute.pages);
-                  break;
-                case 3:
-                  Get.toNamed(AppRoute.peopleifollow);
+                  Get.to(ShowRequestsSent());
                   break;
               }
             },

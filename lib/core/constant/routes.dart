@@ -13,7 +13,6 @@ class AppRoute{
   static const String homescreen="/homescreen";
   static const String notificationspage="/notificationspage";
   static const String colleaguespage="/colleaguespage";
-  static const String groupspage="/groupspage";
   static const String pages="/pages";
   static const String peopleifollow="/peopleifollow";
   static const String chatmainpage="/chatmainpage"; 

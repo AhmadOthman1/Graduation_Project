@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:growify/controller/home/network_controller/ShowRequestsSent_controller.dart';
 import 'package:growify/controller/home/network_controller/networdkmainpage_controller.dart';
-import 'package:growify/controller/home/network_controller/showcolleagues_controller.dart';
 import 'package:growify/global.dart';
 
-class ShowColleagues extends StatefulWidget {
-  const ShowColleagues({Key? key}) : super(key: key);
+class ShowRequestsSent extends StatefulWidget {
+  const ShowRequestsSent({Key? key}) : super(key: key);
 
   @override
-  _ShowColleaguesState createState() => _ShowColleaguesState();
+  _ShowRequestsSentState createState() => _ShowRequestsSentState();
 }
-
+ 
 final ScrollController scrollController = ScrollController();
 
-class _ShowColleaguesState extends State<ShowColleagues> {
+class _ShowRequestsSentState extends State<ShowRequestsSent> {
   final NetworkMainPageControllerImp Networkcontroller = Get.put(NetworkMainPageControllerImp());
-  late ShowColleaguesController _controller;
+  late ShowRequestsSentController _controller;
   final ScrollController _scrollController = ScrollController();
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
@@ -24,7 +24,7 @@ class _ShowColleaguesState extends State<ShowColleagues> {
   @override
   void initState() {
     super.initState();
-    _controller = ShowColleaguesController();
+    _controller = ShowRequestsSentController();
     _loadData();
     _scrollController.addListener(_scrollListener);
   }
@@ -35,9 +35,9 @@ class _ShowColleaguesState extends State<ShowColleagues> {
       await _controller.loadNotifications(_controller.page);
       setState(() {
         _controller.page++;
-        _controller.colleagues;
+        _controller.requestsSent;
       });
-      print('Data loaded: ${_controller.colleagues.length} colleagues');
+      print('Data loaded: ${_controller.requestsSent.length} notifications');
     } catch (error) {
       print('Error loading data: $error');
     }
@@ -61,7 +61,7 @@ class _ShowColleaguesState extends State<ShowColleagues> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Colleagues'),
+        title: const Text('Requests Sent'),
       ),
       body: Column(
         children: [
@@ -72,25 +72,25 @@ class _ShowColleaguesState extends State<ShowColleagues> {
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
-              itemCount: _controller.colleagues.length,
+              itemCount: _controller.requestsSent.length,
               itemBuilder: (context, index) {
-                final colleague = _controller.colleagues[index];
-                final firstname=colleague['firstname'];
-                final lastname =colleague['lastname'];
-                final username =colleague['username'];
+                final sent = _controller.requestsSent[index];
+                final firstname = sent['firstname'];
+                final lastname = sent['lastname'];
+                final username = sent['username'];
+                
                 
                 return Column(
                   children: [
                     ListTile(
                       onTap: (){
-                        final userUsername = username;
-                              Networkcontroller.goToUserPage(userUsername!);
+                        _controller.showPost();
                         
                       },
                       trailing: CircleAvatar(
-                        backgroundImage: (colleague['photo'] != null &&
-                                colleague['photo'] != "")
-                            ? Image.network("$urlStarter/" + colleague['photo']!)
+                        backgroundImage: (sent['photo'] != null &&
+                                sent['photo'] != "")
+                            ? Image.network("$urlStarter/" + sent['photo']!)
                                 .image
                             : defultprofileImage,
                       ),
