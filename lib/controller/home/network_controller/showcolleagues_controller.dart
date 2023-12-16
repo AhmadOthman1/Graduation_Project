@@ -16,7 +16,7 @@ class ShowColleaguesControllerImp extends GetxController {
   int Upage = 1;
    int pageSize = 10;
    getColleaguesfromDataBase(){
-    
+      
    }
 
    

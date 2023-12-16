@@ -61,6 +61,24 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
     coverBackgroundImage = (coverImage != null && coverImage != "")
         ? Image.network("$urlStarter/" + coverImage!).image
         : defultcoverImage;
+switch (widget.userData[0]["connection"]) {
+      case 'C':
+        controller.result.value = "Connected";
+        controller.isDeleteButtonVisible = false;
+        break;
+      case 'R':
+        controller.result.value = "Requested";
+        controller.isDeleteButtonVisible = false;
+        break;
+      case 'S':
+        controller.result.value = "Accept";
+        controller.isDeleteButtonVisible = true;
+        break;
+      case 'N':
+        controller.result.value = "Connect";
+        controller.isDeleteButtonVisible = false;
+        break;
+    }
 
     return Scaffold(
        
@@ -139,7 +157,7 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 8.0),
-                Text('$Bio',
+                Text(Bio != null ? '$Bio' : "",
                     style: TextStyle(
                         fontSize: 14.0,
                         fontWeight: FontWeight.normal,

@@ -40,8 +40,10 @@ class CommentModel {
   })  : likes = likes.obs,
         isLiked = isLiked.obs;
 }
-  late  int userPostCount;
-  late int userConnectionsCount;
+
+late int userPostCount;
+late int userConnectionsCount;
+
 abstract class HomePageController extends GetxController {
   goToSignup();
   goToForgetPassword();
@@ -67,13 +69,12 @@ abstract class HomePageController extends GetxController {
 class HomePageControllerImp extends HomePageController {
 //////////////
 
-    final RxString profileImageBytes = ''.obs;
+  final RxString profileImageBytes = ''.obs;
   final RxString profileImageBytesName = ''.obs;
   final RxString profileImageExt = ''.obs;
   ///////////////////
 
   final RxList<CommentModel> comments = <CommentModel>[].obs;
-
 
   final RxList<CommentModel> comments1 = <CommentModel>[
     CommentModel(
@@ -160,16 +161,15 @@ class HomePageControllerImp extends HomePageController {
     },
   ].obs;
 
-    int getLikes(int index) {
+  int getLikes(int index) {
     return posts[index]['like'];
   }
-  
-   int getComments(int index) {
+
+  int getComments(int index) {
     return posts[index]['comment'];
   }
 
-
-    void toggleLike(int index) {
+  void toggleLike(int index) {
     final post = posts[index];
     post['isLiked'] = !post['isLiked'];
 
@@ -179,7 +179,7 @@ class HomePageControllerImp extends HomePageController {
         'name': 'Islam Aws',
         'username': '@islam_aws',
         'image': 'images/islam.jpeg',
-        'email':'awsobaida07@gmail.com'
+        'email': 'awsobaida07@gmail.com'
       });
     } else {
       removeLike('awsobaida07@gmail.com');
@@ -193,9 +193,6 @@ class HomePageControllerImp extends HomePageController {
     return posts[index]['isLiked'];
   }
 
-
-
-  
   RxList<String> moreOptions = <String>[
     'Save Post',
     'Hide Post',
@@ -214,16 +211,11 @@ class HomePageControllerImp extends HomePageController {
     }
   }
 
-
-
-
-
   //////////////////////////////
 
- 
-
   @override
-  void addComment(String username, String newComment, String email, int thePostId) {
+  void addComment(
+      String username, String newComment, String email, int thePostId) {
     const userImage = AssetImage('images/obaida.jpeg');
     final time = DateTime.now();
     comments.add(CommentModel(
@@ -257,9 +249,7 @@ class HomePageControllerImp extends HomePageController {
 
   @override
   void gotoCommentPage(int id) {
-    Get.to(CommentsMainPage(
-      
-    ), arguments: {
+    Get.to(CommentsMainPage(), arguments: {
       'comments': comments1,
     });
   }
@@ -271,7 +261,7 @@ class HomePageControllerImp extends HomePageController {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
     });
-    print(responce);
+    //print(responce);
     return responce;
   }
 
@@ -322,8 +312,6 @@ class HomePageControllerImp extends HomePageController {
     Get.to(Like());
   }
 
-  
-
   @override
   goToSettingsPgae() {
     Get.toNamed(AppRoute.settings);
@@ -338,20 +326,20 @@ class HomePageControllerImp extends HomePageController {
   goToForgetPassword() {
     Get.offNamed(AppRoute.forgetpassword);
   }
+
   getDashboard() async {
     var url = "$urlStarter/user/getUserProfileDashboard";
-    var responce = await http.post(Uri.parse(url),
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
-
-        });
-  print(responce);
+    var responce = await http.post(Uri.parse(url), headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+    //print(responce);
     return responce;
   }
-loadDashboard() async {
- var res = await getDashboard();
- if (res.statusCode == 403) {
+
+  loadDashboard() async {
+    var res = await getDashboard();
+    if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
       loadDashboard();
       return;
@@ -359,23 +347,24 @@ loadDashboard() async {
       _logoutController.goTosigninpage();
     }
     var resbody = jsonDecode(res.body);
-    if(res.statusCode == 409){
+    if (res.statusCode == 409) {
       return resbody['message'];
-    }else if(res.statusCode == 200){
+    } else if (res.statusCode == 200) {
       userPostCount = resbody['userPostCount'];
-      userConnectionsCount =resbody['userConnectionsCount'] ;
-      print(resbody);
-    } 
+      userConnectionsCount = resbody['userConnectionsCount'];
+      //print(resbody);
+    }
   }
 
   @override
   Future getprfilepage() async {
-    var url = "$urlStarter/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
+    var url =
+        "$urlStarter/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
     });
-    print(responce);
+    //print(responce);
     return responce;
   }
 
@@ -395,7 +384,10 @@ loadDashboard() async {
       return resbody['message'];
     } else if (res.statusCode == 200) {
       GetStorage().write("photo", resbody["user"]["photo"]);
-      Get.to(ProfileMainPage(userData: [resbody["user"]], userPostCount: userPostCount, userConnectionsCount: userConnectionsCount));
+      Get.to(ProfileMainPage(
+          userData: [resbody["user"]],
+          userPostCount: userPostCount,
+          userConnectionsCount: userConnectionsCount));
     }
   }
 
@@ -406,7 +398,7 @@ loadDashboard() async {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
     });
-    print(responce);
+    //print(responce);
     return responce;
   }
 
@@ -429,158 +421,90 @@ loadDashboard() async {
   }
 
   ///////////////////////////////////////////////////////////
-  //here we have two list , 
+  //here we have two list ,
   // the first one to get my colleagues , (row in the page)
   //the second one Colleagues I contacted "send message to him Recently"
-  final RxList<Map<String, dynamic>> Mycolleagues = <Map<String, dynamic>>[].obs;
-  final RxList<Map<String, dynamic>> colleaguesPreviousmessages = <Map<String, dynamic>>[].obs;
-    @override
+  final RxList<Map<String, dynamic>> Mycolleagues =
+      <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> colleaguesPreviousmessages =
+      <Map<String, dynamic>>[].obs;
+  @override
   void onInit() {
     // Initialize the RxList
-    Mycolleagues.assignAll([
-      {
-      "image": 'images/obaida.jpeg',
-      "name": "Obaida",
-      "message":"Hi Can i call you",
-     
-    },
-    {
-      "image": 'images/harri.png',
-      "name": "Ahmad",
-      "message":"Hi Can i call you",
-      
-    },
-    {
-      "image": 'images/islam.jpeg',
-      "name": "Islam",
-      "message":"Hi Can i call you",
-      
-    },
-    {
-      "image": 'images/Netflix.png',
-      "name": "Mousa",
-      "message":"Hi Can i call you",
-      
-    },
-    {
-      "image": 'images/flutterimage.png',
-      "name": "Osman",
-      "message":"Hi Can i call you",
-     
-    },
-    {
-      "image": 'images/obaida.jpeg',
-      "name": "Obada",
-      "message":"Hi Can i call you",
-      
-    },
-    {
-      "image": 'images/harri.png',
-      "name": "Abbas",
-      "message":"Hi Can i call you",
-      
-    },
-    {
-      "image": 'images/Netflix.png',
-      "name": "Mousa",
-      "message":"Hi Can i call you",
-      
-    },
-    {
-      "image": 'images/islam.jpeg',
-      "name": "Islam",
-      "message":"Hi Can i call you",
-      
-    },
-    {
-      "image": 'images/harri.png',
-      "name": "Abbas",
-      "message":"Hi Can i call you",
-      
-    },
-    ]);
-    
-        colleaguesPreviousmessages.assignAll([
-      {
-      "image": 'images/obaida.jpeg',
-      "name": "Obaida",
-      "message":"Hi Can i call you",
-     
-    },
-    {
-      "image": 'images/harri.png',
-      "name": "Ahmad",
-      "message":"Hi Can i call you",
-      
-    },
-    {
-      "image": 'images/islam.jpeg',
-      "name": "Islam",
-      "message":"Hi Can i call you",
-      
-    },
-    {
-      "image": 'images/Netflix.png',
-      "name": "Mousa",
-      "message":"Hi Can i call you",
-      
-    },
-    {
-      "image": 'images/flutterimage.png',
-      "name": "Osman",
-      "message":"Hi Can i call you",
-     
-    },
-    {
-      "image": 'images/obaida.jpeg',
-      "name": "Obada",
-      "message":"Hi Can i call you",
-      
-    },
-    {
-      "image": 'images/harri.png',
-      "name": "Abbas",
-      "message":"Hi Can i call you",
-      
-    },
-    {
-      "image": 'images/Netflix.png',
-      "name": "Mousa",
-      "message":"Hi Can i call you",
-      
-    },
-    {
-      "image": 'images/islam.jpeg',
-      "name": "Islam",
-      "message":"Hi Can i call you",
-      
-    },
-    {
-      "image": 'images/harri.png',
-      "name": "Abbas",
-      "message":"Hi Can i call you",
-      
-    },
-    ]);
+
     super.onInit();
   }
-  
+
+  getChats() async {
+    var url = "$urlStarter/user/getChats";
+    var responce = await http.get(Uri.parse(url), headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+    return responce;
+  }
+
   @override
-  goToChat() {
+  goToChat() async {
+    var res = await getChats();
+    if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      goToChat();
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+    var resbody = jsonDecode(res.body);
+    if (res.statusCode == 409) {
+      return resbody['message'];
+    } else if (res.statusCode == 200) {
+      Mycolleagues.assignAll(List<Map<String, dynamic>>.from(resbody['activeConnectionsInfo']));
+      List<Map<String, dynamic>>.from(resbody['uniqueConversations'])
+          .forEach((conversation) {
+        var name;
+        var username;
+        var photo;
+        var type;
+        if (conversation['senderUsername_FK'] != null &&conversation['senderUsername_FK']['username'] !=GetStorage().read('username')) {
+          name = conversation['senderUsername_FK']['firstName'] +" " +conversation['senderUsername_FK']['lastName'];
+          username=conversation['senderUsername_FK']['username'];
+          photo= conversation['senderUsername_FK']['photo'];
+          type="U"; 
+        }else if(conversation['receiverUsername_FK'] != null &&conversation['receiverUsername_FK']['username'] !=GetStorage().read('username')){
+          name = conversation['receiverUsername_FK']['firstName'] +" " +conversation['senderUsername_FK']['lastName'];
+          username=conversation['receiverUsername_FK']['username'];
+          photo= conversation['receiverUsername_FK']['photo'];
+          type="U";
+        }else if(conversation['senderPageId_FK'] != null){
+          name = conversation['senderPageId_FK']['name'] ;
+          username=conversation['senderPageId_FK']['id'];
+          photo= conversation['senderPageId_FK']['photo'];
+          type="P";
+        }else if(conversation['receiverPageId_FK'] != null){
+          name = conversation['receiverPageId_FK']['name'] ;
+          username=conversation['receiverPageId_FK']['id'];
+          photo= conversation['receiverPageId_FK']['photo'];
+          type="P";
+        }
+        final Map<String, dynamic> extractedInfo = {
+          'name': name, 
+          'username':username,
+          'photo':photo,
+          'type':type,
+        };
 
-
-    Get.to(ChatMainPage(), arguments: {
+        colleaguesPreviousmessages.add(extractedInfo);
+      });
+      //print(colleaguesPreviousmessages);
+      Get.to(ChatMainPage(), arguments: {
       'Mycolleagues': Mycolleagues,
       'colleaguesPreviousmessages':colleaguesPreviousmessages,
     });
-
-   
+    }
   }
-  
+
   @override
   goToCalenderPage() {
     Get.to(Calender());
   }
-
- 
 }
