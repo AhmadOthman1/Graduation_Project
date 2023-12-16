@@ -47,6 +47,7 @@ const comment =require('./models/comment');
 const like =require('./models/like');
 const notifications =require('./models/notifications');
 const activeUsers =require('./models/activeUsers');
+const messages =require('./models/messages');
 
 
 //const queries =require('./models/queries.js');

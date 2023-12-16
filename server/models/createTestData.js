@@ -1,16 +1,17 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../util/database');
 const User = require('./user');
-const sentConnection= require('./sentConnection');
-const connections= require('./connections');
-const post= require('./post');
-const like= require('./like');
-const comment= require('./comment');
+const sentConnection = require('./sentConnection');
+const connections = require('./connections');
+const post = require('./post');
+const like = require('./like');
+const comment = require('./comment');
 const notifications = require("../models/notifications");
+const messages = require("../models/messages");
 
 const bcrypt = require('bcrypt');
 var iLimit = 80;
- User.create({
+User.create({
     firstname: "Ahmad",
     lastname: "Othman",
     username: "AhmadOthman",
@@ -20,7 +21,7 @@ var iLimit = 80;
     phone: "0569929734",
     dateOfBirth: "2001-05-18",
 });
- User.create({
+User.create({
     firstname: "Ahmad",
     lastname: "Majed",
     username: "AhmadMajed",
@@ -39,7 +40,7 @@ User.create({
     phone: "0569929734",
     dateOfBirth: "2001-05-18",
 });
- User.create({
+User.create({
     firstname: "omar",
     lastname: "mohammad",
     username: "omarmohammad",
@@ -48,18 +49,18 @@ User.create({
     phone: "0569929734",
     dateOfBirth: "2001-05-18",
 });
-for(let i =0 ; i<iLimit ; i++){
+for (let i = 0; i < iLimit; i++) {
     User.create({
         firstname: "Ahmad",
         lastname: "Othman",
         username: "ahmad" + i,
-        email: "ahmad"+i+"@gmail.com",
+        email: "ahmad" + i + "@gmail.com",
         password: "$2b$10$onKV7UBFIShgI466b6bd2O4qAtMFFtoObF.QQrJcO7l4lNoBmFMxq",
         phone: "0569929734",
         dateOfBirth: "2001-05-18",
     });
 }
-for(let i =0 ; i<iLimit/4 ; i++){
+for (let i = 0; i < iLimit / 4; i++) {
     sentConnection.create({
         senderUsername: "ahmad" + i,
         receiverUsername: "AhmadOthman",
@@ -68,57 +69,99 @@ for(let i =0 ; i<iLimit/4 ; i++){
     notifications.create({
         username: "AhmadOthman",
         notificationType: 'connection',
-        notificationContent:"sent you a connection request",
+        notificationContent: "sent you a connection request",
         notificationPointer: "ahmad" + i,
-      });
+    });
 }
-for(let i =iLimit/4; i<iLimit/2 ; i++){
+for (let i = iLimit / 4; i < iLimit / 2; i++) {
     sentConnection.create({
         senderUsername: "AhmadOthman",
         receiverUsername: "ahmad" + i,
         date: new Date(),
     });
 }
-for(let i =iLimit/2; i<iLimit*(3/4) ; i++){
+for (let i = iLimit / 2; i < iLimit * (3 / 4); i++) {
     connections.create({
         senderUsername: "AhmadOthman",
         receiverUsername: "ahmad" + i,
         date: new Date(),
     });
 }
-for(let i =0; i<iLimit ; i++){
+for (let i = iLimit / 2; i < iLimit * (3 / 4); i++) {
+    const currentDate = new Date();
+    currentDate.setSeconds(i);
+    messages.create({
+        senderUsername: "AhmadOthman",
+        receiverUsername: "ahmad" + i,
+        text: "message from AhmadOthman",
+        createdAt: currentDate,
+    });
+    const currentDate2 = new Date();
+    currentDate2.setSeconds(i-2);
+    messages.create({
+        senderUsername: "ahmad" + i,
+        receiverUsername: "AhmadOthman",
+        text: "message from ahmad" + i,
+        createdAt: currentDate2,
+    });
+}
+for (let i =0 ; i < 57; i++) {
+    const currentDate = new Date();
+    currentDate.setSeconds(i);
+    messages.create({
+        senderUsername: "AhmadOthman",
+        receiverUsername: "ahmad59",
+        text: "message from AhmadOthman",
+        createdAt: currentDate,
+    });
+    messages.create({
+        senderUsername: "AhmadOthman",
+        receiverUsername: "ahmad59",
+        text: "message from AhmadOthman: "+i,
+        createdAt: currentDate,
+    });
+    const currentDate2 = new Date();
+    currentDate2.setSeconds(i+2);
+    messages.create({
+        senderUsername: "ahmad59",
+        receiverUsername: "AhmadOthman",
+        text: "message from ahmad59: " + i,
+        createdAt: currentDate2,
+    });
+}
+for (let i = 0; i < iLimit; i++) {
     post.create({
-        postContent: "post " + i, 
-        selectedPrivacy: "Any One", 
+        postContent: "post " + i,
+        selectedPrivacy: "Any One",
         postDate: new Date(),
         username: "AhmadOthman",
         date: new Date(),
     });
 }
-for(let i =iLimit/2; i<iLimit*(3/4) ; i++){
-    for(let j =1; j<iLimit ; j++)
-    like.create({
-        postId: j,
-        username: "ahmad"+ i,
-    });
+for (let i = iLimit / 2; i < iLimit * (3 / 4); i++) {
+    for (let j = 1; j < iLimit; j++)
+        like.create({
+            postId: j,
+            username: "ahmad" + i,
+        });
 }
-for(let i =iLimit/2; i<iLimit*(3/4) ; i++){
-    for(let j =1; j<iLimit ; j++)
-    comment.create({
-        postId: j,
-        username: "ahmad"+ i,
-        commentContent: "ahmad"+ i, 
-        Date: new Date()
-    });
+for (let i = iLimit / 2; i < iLimit * (3 / 4); i++) {
+    for (let j = 1; j < iLimit; j++)
+        comment.create({
+            postId: j,
+            username: "ahmad" + i,
+            commentContent: "ahmad" + i,
+            Date: new Date()
+        });
 }
-for(let i =0; i<iLimit ; i++){
-    for(let j =0; j<10 ; j++)
-    post.create({
-        postContent: "my post : ahmad" + i + "post " + i, 
-        selectedPrivacy: "Any One", 
-        postDate: new Date(),
-        username: "ahmad" + i,
-        date: new Date(),
-    });
+for (let i = 0; i < iLimit; i++) {
+    for (let j = 0; j < 10; j++)
+        post.create({
+            postContent: "my post : ahmad" + i + "post " + i,
+            selectedPrivacy: "Any One",
+            postDate: new Date(),
+            username: "ahmad" + i,
+            date: new Date(),
+        });
 }
 

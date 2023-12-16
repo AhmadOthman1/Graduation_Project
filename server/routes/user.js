@@ -14,6 +14,8 @@ const authController = require('../controller/authController');
 const userPostsController=require('../controller/posts/userPosts')
 const getPostsController=require('../controller/posts/getPosts')
 const userNotificationsController=require('../controller/notifications/userNotificationsController')
+const chatsMainPage=require('../controller/chats/chatsMainPage')
+const userMessages=require('../controller/chats/userMessages')
 
 
 const router=express.Router();
@@ -58,8 +60,10 @@ router.post('/removeLike',authenticateToken,getPostsController.removeLike);
 router.post('/getPostComments',authenticateToken,getPostsController.getPostComments);
 router.post('/addComment',authenticateToken,getPostsController.addComment);
 //user notifications
-
 router.get('/getUserNotifications',authenticateToken,userNotificationsController.getUserNotifications);
+//chats
+router.get('/getChats',authenticateToken,chatsMainPage.getChats);
+router.get('/getUserMessages',authenticateToken,userMessages.getUserMessages);
 
 
 
