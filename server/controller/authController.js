@@ -22,6 +22,17 @@ function authenticateToken(req, res, next) {
     next()
   })
 }
+function socketAuthenticateToken(msg) {
+  const authHeader = msg
+  const token = authHeader 
+  if (token == null) return 401
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) return 403
+    
+  })
+  return 200
+}
 function getRefreshToken (req, res, next)  {
   const authHeader = req.headers['authorization']
   const refreshToken = authHeader && authHeader.split(' ')[1]
@@ -56,4 +67,4 @@ function getRefreshToken (req, res, next)  {
 
   })
 }
-module.exports = { generateAccessToken, authenticateToken ,getRefreshToken };
+module.exports = { generateAccessToken,socketAuthenticateToken, authenticateToken ,getRefreshToken };
