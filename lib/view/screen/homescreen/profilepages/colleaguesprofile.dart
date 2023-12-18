@@ -108,7 +108,7 @@ switch (widget.userData[0]["connection"]) {
         ),)
           ];
         },
-         body: Post(username: 'AhmadOthman'),
+         body: Post(/*username: 'AhmadOthman'*/),
       ),
     );
   }

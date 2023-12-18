@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:growify/global.dart';
 import 'package:intl/intl.dart';
-
+import 'package:flutter/foundation.dart';
 class ChatMessage extends StatelessWidget {
   final String text;
   final bool isUser;
@@ -19,13 +19,28 @@ class ChatMessage extends StatelessWidget {
     this.createdAt = '',
     this.image,
   });
+  
   String get formattedCreatedAt {
     // Format the createdAt date according to your needs
     DateTime dateTime = DateTime.parse(createdAt);
     String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
     return formattedDate;
   }
+@override
+  String toStringShort() {
+    return 'ChatMessage';
+  }
 
+  @override
+  String toDebugString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'ChatMessage{'
+        'text: $text, '
+        'isUser: $isUser, '
+        'userName: $userName, '
+        'userPhoto: $userPhoto, '
+        'createdAt: $createdAt, '
+        'image: $image}';
+  }
   @override
   Widget build(BuildContext context) {
     return Container(

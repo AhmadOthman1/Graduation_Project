@@ -7,7 +7,7 @@ import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/widget/homePage/chatmessage.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:intl/intl.dart';
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
@@ -18,18 +18,37 @@ class ChatController extends GetxController {
   int pageSize = 15;
   int page = 1;
   void sendMessage(String text) {
+    DateTime now = DateTime.now();
     if (text.isNotEmpty) {
       messages.insert(
         0,
         ChatMessage(
           text: text,
           isUser: true,
+          createdAt: now.toString(),
         ),
       );
-      textController.clear();
+      
     }
   }
+addMessage( text,  username, userPhoto,  createdAt, image) async {
+  
+  for (var message in messages) {
+    print(message.toDebugString());
+  }
+    ChatMessage chatMessage = ChatMessage(
+          text: text?? '',
+          isUser: false,
+          userName: username,
+          userPhoto: (userPhoto==null) ? '': userPhoto,
+          createdAt: createdAt,
+          image: image,
+        );
 
+        // Add the ChatMessage object to the list
+        messages.insert(0, chatMessage);
+        
+  }
   getUserMessages(int page, String username, String type) async {
     var url =
         "$urlStarter/user/getUserMessages?page=${page}&pageSize=${pageSize}&type=${type}";

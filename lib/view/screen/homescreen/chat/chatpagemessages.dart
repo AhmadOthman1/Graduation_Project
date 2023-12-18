@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/chatspage_cnotroller.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:growify/controller/home/chats_controller/chatspage_cnotroller.dart';
+import 'package:growify/controller/home/logOutButton_controller.dart';
+import 'package:growify/global.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class ChatPageMessages extends StatefulWidget {
   final data;
@@ -8,30 +12,79 @@ class ChatPageMessages extends StatefulWidget {
 
   @override
   _ChatPageMessagesState createState() => _ChatPageMessagesState();
-
 }
-  final ScrollController scrollController = ScrollController();
+
+final ScrollController scrollController = ScrollController();
 
 class _ChatPageMessagesState extends State<ChatPageMessages> {
   late ChatController chatController;
-    final ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
-
-
+  late IO.Socket socket;
+  var accessToken = GetStorage().read("accessToken");
+  LogOutButtonControllerImp _logoutController =
+      Get.put(LogOutButtonControllerImp());
   @override
   void initState() {
     super.initState();
     chatController = ChatController();
     _loadData();
+    socketConnect();
     _scrollController.addListener(_scrollListener);
+    print("======================");
+    print(widget.data);
+  }
+
+  void socketConnect() {
+    try {
+      socket = IO.io(urlSSEStarter, <String, dynamic>{
+        "transports": ["websocket"],
+        "autoConnect": false,
+      });
+      socket.connect();
+      socket.emit("/login", accessToken); //authenticate the user
+      socket.onConnect((data) => {
+            // read authentication status
+            socket.on("status", (status) async {
+              print(";;;;;;;;;;;;;;;;;;;;;;;");
+              print(status);
+              if (status == 403) {
+                await getRefreshToken(GetStorage().read('refreshToken'));
+                socketConnect();
+                return;
+              } else if (status == 401) {
+                _logoutController.goTosigninpage();
+              } else if (status == 200) {
+                //authenticated
+              }
+            }),
+            socket.on("/chat", (msg) {
+              print(msg["message"]);
+              print(widget.data["username"]);
+              print(widget.data["photo"]);
+              print(msg["date"]);
+
+              chatController.addMessage(
+                  msg["message"],
+                  widget.data["username"],
+                  widget.data["photo"],
+                  msg["date"],
+                  null);
+            })
+          });
+
+      print(socket.connected);
+    } catch (err) {
+      print(err);
+    }
   }
 
   Future<void> _loadData() async {
     print('Loading data...');
     try {
-      
-      await chatController.loadUserMessages(chatController.page, widget.data['username'], widget.data['type']);
+      await chatController.loadUserMessages(
+          chatController.page, widget.data['username'], widget.data['type']);
       setState(() {
         chatController.page++;
         chatController.messages;
@@ -51,7 +104,7 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
       _loadData();
     }
   }
-  
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -105,7 +158,8 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
                     Container(
                       child: Text(
                         widget.data['name'],
-                        style: const TextStyle(color: Colors.white, fontSize: 20),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 20),
                       ),
                     ),
                     // Use Expanded for the icons on the right
@@ -150,7 +204,7 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
           IconButton(
             icon: const Icon(Icons.photo),
             onPressed: () {
-              // Add your image upload logic here
+              
             },
           ),
           Expanded(
@@ -166,6 +220,12 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
             icon: const Icon(Icons.send),
             onPressed: () {
               chatController.sendMessage(chatController.textController.text);
+              socket.emit("/chat", {
+                "message": chatController.textController.text,
+                "token": accessToken,
+                "username": widget.data["username"]
+              });
+              chatController.textController.clear();
             },
           ),
         ],
