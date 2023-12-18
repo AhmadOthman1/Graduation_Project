@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:growify/controller/home/calendar_controller/calendar_controller.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Calender extends StatefulWidget {
@@ -13,10 +15,13 @@ class _CalendarPageState extends State<Calender> {
   late DateTime firstDay;
   late DateTime lastDay;
   late DateTime focusedDay;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  CalendarController controller =
+      Get.put(CalendarController());
 
   @override
   void initState() {
-      super.initState();
+    super.initState();
     // here get data from database
     /*List<Appointment> newAppointments2 = [
                     Appointment(
@@ -26,7 +31,7 @@ class _CalendarPageState extends State<Calender> {
                     )];
     then use this function _addAppointment(newAppointments2)
     */
-  
+
     allAppointments = [
       Appointment(
         startTime: DateTime(2023, 12, 14),
@@ -40,10 +45,8 @@ class _CalendarPageState extends State<Calender> {
       ),
     ];
 
-    
     appointments = _getAppointmentsForDate(selectedDate);
 
-    
     firstDay = DateTime.now().subtract(Duration(days: 365));
     lastDay = DateTime.now().add(Duration(days: 365));
     focusedDay = DateTime.now();
@@ -171,40 +174,47 @@ class _CalendarPageState extends State<Calender> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Add Event'),
-          content: Column(
-            children: [
-              TextFormField(
-                controller: titleController,
-                decoration: InputDecoration(
-                  hintText: "Enter Your Event Title",
-                  hintStyle: const TextStyle(
-                    fontSize: 14,
+          content: Form(
+            key: formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: titleController,
+                  decoration: InputDecoration(
+                    hintText: "Enter Your Event Title",
+                    hintStyle: const TextStyle(
+                      fontSize: 14,
+                    ),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                    labelText: "Event Title",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
                   ),
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                  label: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 9),
-                      child: const Text("Event Title")),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-              ),
-              SizedBox(height: 30),
-              Container(
-                width: 250,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    selectedTime = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                    );
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter an event title';
+                    }
+                    return null;
                   },
-                  child: Text('Select Time'),
                 ),
-              ),
-            ],
+                SizedBox(height: 30),
+                Container(
+                  width: 250,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      selectedTime = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                      );
+                    },
+                    child: Text('Select Time'),
+                  ),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -215,29 +225,31 @@ class _CalendarPageState extends State<Calender> {
             ),
             TextButton(
               onPressed: () {
-                if (selectedTime != null) {
-                  DateTime combinedDateTime = DateTime(
-                    selectedDate.year,
-                    selectedDate.month,
-                    selectedDate.day,
-                    selectedTime!.hour,
-                    selectedTime!.minute,
-                  );
+                if (formKey.currentState!.validate()) {
+                  if (selectedTime != null) {
+                    DateTime combinedDateTime = DateTime(
+                      selectedDate.year,
+                      selectedDate.month,
+                      selectedDate.day,
+                      selectedTime!.hour,
+                      selectedTime!.minute,
+                    );
 
-                  List<Appointment> newAppointments = [
-                    Appointment(
-                      startTime: combinedDateTime,
-                      subject: titleController.text,
-                      remindMe: selectedTime!.format(context),
-                    ),
-                  ];
+                    List<Appointment> newAppointments = [
+                      Appointment(
+                        startTime: combinedDateTime,
+                        subject: titleController.text,
+                        remindMe: selectedTime!.format(context),
+                      ),
+                    ];
 
-                  print('$combinedDateTime');
-                  print(titleController.text);
-                  print('Remind Me: ${selectedTime!.format(context)}');
-                  Navigator.pop(context, newAppointments);
-                } else {
-                  print('Time not selected');
+                    print('$combinedDateTime');
+                    print(titleController.text);
+                    print('Remind Me: ${selectedTime!.format(context)}');
+                    Navigator.pop(context, newAppointments);
+                  } else {
+                    print('Time not selected');
+                  }
                 }
               },
               child: Text('Add Event'),

@@ -9,6 +9,7 @@ import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/myPage/ColleaguesPageProfile.dart';
 import 'package:growify/view/screen/homescreen/myPage/Pageprofile.dart';
 import 'package:growify/view/screen/homescreen/search/Search.dart';
+import 'package:growify/view/screen/homescreen/trello/trellomainpage.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 
 class Homepage extends StatefulWidget {
@@ -180,6 +181,13 @@ class _HomepageState extends State<Homepage> {
                 leading: const Icon(Icons.calendar_today_rounded),
                 onTap: () {
                   controller.goToCalenderPage();
+                },
+              ),
+               ListTile(
+                title: const Text("Trello"),
+                leading: const Icon(Icons.task),
+                onTap: () {
+                 Get.to(TrelloHomePage());
                 },
               ),
               ListTile(
