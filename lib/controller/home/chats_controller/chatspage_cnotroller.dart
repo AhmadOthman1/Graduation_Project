@@ -17,24 +17,28 @@ class ChatController extends GetxController {
   bool isLoading = false;
   int pageSize = 15;
   int page = 1;
-  void sendMessage(String text) {
+
+  void sendMessage( text, messageImageBytes,messageVideoBytes) {
+    print(";;;;;;;;;;;;;;;;;;;;;");
+    print(messageVideoBytes);
     DateTime now = DateTime.now();
-    if (text.isNotEmpty) {
       messages.insert(
         0,
         ChatMessage(
           text: text,
           isUser: true,
+          image: messageImageBytes,
+          video: messageVideoBytes,
           createdAt: now.toString(),
         ),
       );
       
-    }
+      update();
+    
   }
-addMessage( text,  username, userPhoto,  createdAt, image) async {
+addMessage( text,  username, userPhoto,  createdAt, image,video) async {
   
   for (var message in messages) {
-    print(message.toDebugString());
   }
     ChatMessage chatMessage = ChatMessage(
           text: text?? '',
@@ -43,6 +47,7 @@ addMessage( text,  username, userPhoto,  createdAt, image) async {
           userPhoto: (userPhoto==null) ? '': userPhoto,
           createdAt: createdAt,
           image: image,
+          video: video,
         );
 
         // Add the ChatMessage object to the list
@@ -112,6 +117,7 @@ addMessage( text,  username, userPhoto,  createdAt, image) async {
           userPhoto: (userPhoto==null) ? '': userPhoto,
           createdAt: messageData['createdAt'],
           image: messageData['image'],
+          video:messageData['video'],
         );
 
         // Add the ChatMessage object to the list
