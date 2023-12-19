@@ -6,9 +6,11 @@ const sequelize=require('./util/database');
 var cors = require('cors');
 const app = express();
 
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json({ limit: '100mb' }));
 app.use(cors()); 
 app.use(bodyParser.json());
+app.use(express.static('messageImages'));
+app.use(express.static('messageVideos'));
 
 app.use(express.static('images'));
 app.use(express.static('cvs'));

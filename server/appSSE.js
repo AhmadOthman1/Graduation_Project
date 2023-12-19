@@ -4,7 +4,7 @@ const userRoutes = require('./routes/userNotifications');
 const { socketAuthenticateToken } = require('./controller/authController');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const {messagesControl} = require("./controller/chats/userChat");
+const { messagesControl, messageSaveImage, messageSaveVideo } = require("./controller/chats/userChat");
 var cors = require('cors');
 const { populateClientsMap } = require('./controller/notifications');
 const userChat = require('./controller/chats/userChat')
@@ -14,9 +14,13 @@ var io = require('socket.io')(server, {
   cors: {
     origin: '*',
   },
+  maxHttpBufferSize: 1e8,
 });
 app.use(cors());
 
+app.use(express.static('messageVideos'));
+
+app.use(express.static('messageImages'));
 app.use(express.static('images'));
 app.use(express.static('cvs'));
 
@@ -25,12 +29,13 @@ populateClientsMap();
 
 
 const socketUsernameMap = {};
-io.on("connection", (socket) => {
+io.on("connection", (socket) => {// first time socket connection
   console.log("connected");
   console.log(socket.id);
-  socket.on("/login", (msg) => {
+  socket.on("/login", (msg) => {//socketAuthenticate logain and save the user socket and map it to his username
 
-    var status = socketAuthenticateToken(msg);
+    var status = socketAuthenticateToken(msg);// check token
+    console.log(status)
     if (status == 200) {
       const authHeader = msg
       const decoded = jwt.verify(authHeader, process.env.ACCESS_TOKEN_SECRET);
@@ -45,20 +50,60 @@ io.on("connection", (socket) => {
       socket.emit("status", status);
     }
   });
-  socket.on("/chat", async (msg) => {
+  socket.on("/chat", async (msg) => {//when a new message arrive 
     console.log(msg);
     const authHeader = msg.token;
-    const decoded = jwt.verify(authHeader, process.env.ACCESS_TOKEN_SECRET);
-    var userUsername = decoded.username;
+    var status = socketAuthenticateToken(msg.token);// check token
+    if (status == 200) {//authenticated
+      console.log(msg.message);
+      console.log(msg.messageVideoBytes);//messageVideoBytes
+      if (msg.message != null || msg.messageImageBytes != null || msg.messageVideoBytes != null) {
+        const decoded = jwt.verify(authHeader, process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        var messageImageName;
+        var messageVideoName;
+        const username = msg.username;
+        const targetSocket = socketUsernameMap[username];//find receiver
+        //if theres image save it
+        if (msg.messageImageBytes != null && msg.messageImageBytesName != null && msg.messageImageExt != null)
+          messageImageName = await messageSaveImage(userUsername, username, msg.messageImageBytes, msg.messageImageBytesName, msg.messageImageExt)
 
-    const username = msg.username;
-    const targetSocket = socketUsernameMap[username];
-    if (targetSocket) {
-      targetSocket.emit("/chat", { message: msg.message, date:new Date() });
-    } else {
-      console.error('Socket not found for username:', username);
+        if (msg.messageVideoBytes != null && msg.messageVideoBytesName != null && msg.messageVideoExt != null) {
+          messageVideoName = await messageSaveVideo(userUsername, username, msg.messageVideoBytes, msg.messageVideoBytesName, msg.messageVideoExt)
+          var userSocket = socketUsernameMap[userUsername];
+          if (userSocket)
+            userSocket.emit("/chatMyVideo", { message: msg.message, image: messageImageName,video: messageVideoName });
+        }
+        //if target user is in message page send it via his socket
+        if (targetSocket) {
+          targetSocket.emit("/chat", { message: msg.message, image: messageImageName, video: messageVideoName, date: new Date() });
+        } else {// just for showing result when user not in message page
+          console.log('Socket not found for username:', username);
+        }
+        //save the message in db after sending it via socket
+        await messagesControl(userUsername, username, msg.message, messageImageName, messageVideoName)
+      }
+    } else if (status == 403) {//not authenticated to send messages using this token
+      socket.emit("/chatStatus", {
+        "status": status,
+        "message": msg.message,
+        "username": msg.username,
+        "messageImageBytes": msg.messageImageBytes,
+        "messageImageBytesName": msg.messageImageBytesName,
+        "messageImageExt": msg.messageImageExt,
+      });
+    } else if (status == 409) {//not authenticated to send messages using this token
+      socket.emit("/chatStatus", {
+        "status": status,
+        "message": msg.message,
+        "username": msg.username,
+        "username": msg.username,
+        "messageImageBytes": msg.messageImageBytes,
+        "messageImageBytesName": msg.messageImageBytesName,
+        "messageImageExt": msg.messageImageExt,
+      });
     }
-    await messagesControl(userUsername,username,msg.message )
+
   });
   socket.on("disconnect", () => {
     const username = Object.keys(socketUsernameMap).find(

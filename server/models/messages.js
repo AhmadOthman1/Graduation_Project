@@ -35,6 +35,10 @@ const messages=sequelize.define('messages',{
         type:Sequelize.STRING(2000),
         allowNull:true,
     },
+    video:{
+        type:Sequelize.STRING(2000),
+        allowNull:true,
+    },
 
 });
 

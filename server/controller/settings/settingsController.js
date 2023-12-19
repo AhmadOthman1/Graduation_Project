@@ -324,7 +324,7 @@ exports.changeMainInfo = async (req, res, next) => {
 
                 const photoBuffer = Buffer.from(profileImageBytes, 'base64');
                 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                const newphotoname = existingEmail.username + +"-" + uniqueSuffix + "." + profileImageExt; // You can adjust the file extension based on the actual image type
+                const newphotoname = existingEmail.username +"-" + uniqueSuffix + "." + profileImageExt; // You can adjust the file extension based on the actual image type
                 const uploadPath = path.join('images', newphotoname);
 
                 // Save the image to the server
