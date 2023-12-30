@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:growify/global.dart';
 
 class CallScreen extends StatefulWidget {
   final String callerId, calleeId;
   final dynamic offer;
   final socket;
+  final VoidCallback onCallEnded;
   const CallScreen({
     super.key,
     this.offer,
     required this.callerId,
     required this.calleeId,
     required this.socket,
+    required this.onCallEnded,
   });
 
   @override
@@ -49,23 +52,25 @@ class _CallScreenState extends State<CallScreen> {
     _setupPeerConnection();
     super.initState();
   }
-
+/*
   @override
   void setState(fn) {
     if (mounted) {
       super.setState(fn);
     }
   }
-
+*/
   _setupPeerConnection() async {
     // create peer connection
     _rtcPeerConnection = await createPeerConnection({
       'iceServers': [
-      { 'urls': 'stun:freeturn.net:5349' },
-      { 'urls': 'turns:freeturn.tel:5349', 'username': 'free', 'credential': 'free' } ,
-    ]
-
-
+        {'urls': 'stun:freeturn.net:5349'},
+        {
+          'urls': 'turns:freeturn.tel:5349',
+          'username': 'free',
+          'credential': 'free'
+        },
+      ]
     }, {
       'optional': [
         {'DtlsSrtpKeyAgreement': true},
@@ -105,8 +110,18 @@ class _CallScreenState extends State<CallScreen> {
 
     // set source for local video renderer
     _localRTCVideoRenderer.srcObject = _localStream;
-    setState(() {});
 
+    widget.socket!.on("callEnded", (data) async {
+      incomingSDPOffer = null;
+      if (mounted) {
+      setState(() {
+        incomingSDPOffer = null;
+      });
+      }
+      dispose();
+      Navigator.pop(context);
+    });
+    setState(() {});
     // for Incoming call
     if (widget.offer != null) {
       // listen for Remote IceCandidate
@@ -132,14 +147,15 @@ class _CallScreenState extends State<CallScreen> {
       );
 
       // create SDP answer
-      RTCSessionDescription answer = await _rtcPeerConnection!.createAnswer(_constraints);
+      RTCSessionDescription answer =
+          await _rtcPeerConnection!.createAnswer(_constraints);
 
       // set SDP answer as localDescription for peerConnection
       _rtcPeerConnection!.setLocalDescription(answer);
 
       // send SDP answer to remote peer over signalling
       widget.socket!.emit("answerCall", {
-        "token": GetStorage().read("accessToken"),
+        "calleeId": GetStorage().read("username"),
         "callerId": widget.callerId,
         "sdpAnswer": answer.toMap(),
       });
@@ -169,7 +185,7 @@ class _CallScreenState extends State<CallScreen> {
           print(candidate);
           print("/////////////////////////////////////////");
           widget.socket!.emit("IceCandidate", {
-            "token": GetStorage().read("accessToken"),
+            "callerId": GetStorage().read("username"),
             "calleeId": widget.calleeId,
             "iceCandidate": {
               "id": candidate.sdpMid,
@@ -181,14 +197,15 @@ class _CallScreenState extends State<CallScreen> {
       });
 
       // create SDP Offer
-      RTCSessionDescription offer = await _rtcPeerConnection!.createOffer(_constraints);
+      RTCSessionDescription offer =
+          await _rtcPeerConnection!.createOffer(_constraints);
 
       // set SDP offer as localDescription for peerConnection
       await _rtcPeerConnection!.setLocalDescription(offer);
 
       // make a call to remote peer over signalling
       widget.socket!.emit('makeCall', {
-        "token": GetStorage().read("accessToken"),
+        "callerId": GetStorage().read("username"),
         "calleeId": widget.calleeId,
         "sdpOffer": offer.toMap(),
       });
@@ -196,8 +213,16 @@ class _CallScreenState extends State<CallScreen> {
   }
 
   _leaveCall() {
-    dispose();
+    if (mounted) {
+    widget.socket!.emit("leaveCall", {
+      "user1": widget.calleeId,
+      "user2": widget.callerId,
+    });
+    incomingSDPOffer = null;
+    setState(() {});
+    widget.onCallEnded();
     Navigator.pop(context);
+    }
   }
 
   _toggleMic() {
@@ -237,7 +262,7 @@ class _CallScreenState extends State<CallScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -296,10 +321,22 @@ class _CallScreenState extends State<CallScreen> {
 
   @override
   void dispose() {
+  if (_localRTCVideoRenderer != null) {
     _localRTCVideoRenderer.dispose();
-    _remoteRTCVideoRenderer.dispose();
-    _localStream?.dispose();
-    _rtcPeerConnection?.dispose();
-    super.dispose();
   }
+  if (_remoteRTCVideoRenderer != null) {
+    _remoteRTCVideoRenderer.dispose();
+  }
+  if (_localStream != null) {
+    _localStream?.dispose();
+  }
+  if (_rtcPeerConnection != null) {
+    _rtcPeerConnection?.dispose();
+  }
+    widget.socket!.off("callEnded");  
+  widget.socket!.off("IceCandidate");  
+  widget.socket!.off("callAnswered"); 
+   widget.onCallEnded();
+  super.dispose();
+}
 }

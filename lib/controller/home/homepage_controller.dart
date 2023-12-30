@@ -458,47 +458,58 @@ class HomePageControllerImp extends HomePageController {
     if (res.statusCode == 409) {
       return resbody['message'];
     } else if (res.statusCode == 200) {
-      Mycolleagues.assignAll(List<Map<String, dynamic>>.from(resbody['activeConnectionsInfo']));
-      for (var conversation in List<Map<String, dynamic>>.from(resbody['uniqueConversations'])) {
+      Mycolleagues.clear();
+      Mycolleagues.assignAll(
+          List<Map<String, dynamic>>.from(resbody['activeConnectionsInfo']));
+      for (var conversation
+          in List<Map<String, dynamic>>.from(resbody['uniqueConversations'])) {
         var name;
         var username;
         var photo;
-        String type="U";
-        if (conversation['senderUsername_FK'] != null &&conversation['senderUsername_FK']['username'] !=GetStorage().read('username')) {
-          name = conversation['senderUsername_FK']['firstName'] +" " +conversation['senderUsername_FK']['lastName'];
-          username=conversation['senderUsername_FK']['username'];
-          photo= conversation['senderUsername_FK']['photo'];
-          type="U"; 
-        }else if(conversation['receiverUsername_FK'] != null &&conversation['receiverUsername_FK']['username'] !=GetStorage().read('username')){
-          name = conversation['receiverUsername_FK']['firstName'] +" " +conversation['senderUsername_FK']['lastName'];
-          username=conversation['receiverUsername_FK']['username'];
-          photo= conversation['receiverUsername_FK']['photo'];
-          type="U";
-        }else if(conversation['senderPageId_FK'] != null){
-          name = conversation['senderPageId_FK']['name'] ;
-          username=conversation['senderPageId_FK']['id'];
-          photo= conversation['senderPageId_FK']['photo'];
-          type="P";
-        }else if(conversation['receiverPageId_FK'] != null){
-          name = conversation['receiverPageId_FK']['name'] ;
-          username=conversation['receiverPageId_FK']['id'];
-          photo= conversation['receiverPageId_FK']['photo'];
-          type="P";
+        String type = "U";
+        if (conversation['senderUsername_FK'] != null &&
+            conversation['senderUsername_FK']['username'] !=
+                GetStorage().read('username')) {
+          name = conversation['senderUsername_FK']['firstName'] +
+              " " +
+              conversation['senderUsername_FK']['lastName'];
+          username = conversation['senderUsername_FK']['username'];
+          photo = conversation['senderUsername_FK']['photo'];
+          type = "U";
+        } else if (conversation['receiverUsername_FK'] != null &&
+            conversation['receiverUsername_FK']['username'] !=
+                GetStorage().read('username')) {
+          name = conversation['receiverUsername_FK']['firstName'] +
+              " " +
+              conversation['senderUsername_FK']['lastName'];
+          username = conversation['receiverUsername_FK']['username'];
+          photo = conversation['receiverUsername_FK']['photo'];
+          type = "U";
+        } else if (conversation['senderPageId_FK'] != null) {
+          name = conversation['senderPageId_FK']['name'];
+          username = conversation['senderPageId_FK']['id'];
+          photo = conversation['senderPageId_FK']['photo'];
+          type = "P";
+        } else if (conversation['receiverPageId_FK'] != null) {
+          name = conversation['receiverPageId_FK']['name'];
+          username = conversation['receiverPageId_FK']['id'];
+          photo = conversation['receiverPageId_FK']['photo'];
+          type = "P";
         }
         final Map<String, dynamic> extractedInfo = {
-          'name': name, 
-          'username':username,
-          'photo':photo,
-          'type':type,
+          'name': name,
+          'username': username,
+          'photo': photo,
+          'type': type,
         };
-
+        colleaguesPreviousmessages.clear();
         colleaguesPreviousmessages.add(extractedInfo);
       }
       //print(colleaguesPreviousmessages);
       Get.to(const ChatMainPage(), arguments: {
-      'Mycolleagues': Mycolleagues,
-      'colleaguesPreviousmessages':colleaguesPreviousmessages,
-    });
+        'Mycolleagues': Mycolleagues,
+        'colleaguesPreviousmessages': colleaguesPreviousmessages,
+      });
     }
   }
 

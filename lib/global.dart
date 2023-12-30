@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:growify/controller/home/logOutButton_controller.dart';
 var urlStarter= "http://10.119.214.56:3000";
 var urlSSEStarter= "http://10.119.214.56:4000";
+dynamic incomingSDPOffer;
 //flutter run -d emulator-5556
   String? firstName;
   String? lastName;

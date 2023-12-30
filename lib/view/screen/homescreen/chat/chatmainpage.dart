@@ -15,8 +15,8 @@ class _ChatMainPageState extends State<ChatMainPage> {
   final ChatMainPageController controller = Get.put(ChatMainPageController());
   @override
   void initState() {
-    controller.localColleagues =
-        RxList<Map<String, dynamic>>.from(Get.arguments['Mycolleagues']);
+    controller.localColleagues.clear();
+    controller.localColleagues.assignAll(Get.arguments['Mycolleagues']);
 
     controller.localColleagues
         .sort((a, b) => a['firstname'].compareTo(b['firstname']));

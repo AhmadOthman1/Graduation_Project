@@ -8,7 +8,6 @@ import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/resources/jitsi_meet.dart';
 import 'package:growify/view/screen/homescreen/chat/CallScreen.dart';
-import 'package:growify/view/screen/homescreen/chat/PeerCallScreen.dart';
 import 'package:growify/view/widget/homePage/chatmessage.dart';
 import 'package:peerdart/peerdart.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -40,14 +39,14 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
   String? messageVideoBytes;
   String? messageVideoBytesName;
   String? messageVideoExt;
- dynamic incomingSDPOffer;
+
   final LogOutButtonControllerImp _logoutController =
       Get.put(LogOutButtonControllerImp());
 
   @override
   void initState() {
     super.initState();
-    //incomingSDPOffer = null;
+    incomingSDPOffer = null;
     chatController = ChatController();
     _loadData();
     socketConnect();
@@ -119,9 +118,11 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
             }),
             socket.on("newCall", (data) {
               print(data);
-              setState(() {
-                incomingSDPOffer = data;
-              });
+              if (mounted) {
+                setState(() {
+                  incomingSDPOffer = data;
+                });
+              }
             }),
           });
 
@@ -175,9 +176,14 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
           calleeId: calleeId,
           offer: offer,
           socket: socket,
+          onCallEnded: () {
+        // rebuild the parent screen
+        setState(() {});
+      },
         ),
       ),
     );
+    
   }
 
 /*
@@ -237,10 +243,9 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
                           icon: const Icon(Icons.call),
                           color: Colors.greenAccent,
                           onPressed: () {
-                            
                             _joinCall(
                               callerId: incomingSDPOffer["callerId"]!,
-                              calleeId: GetStorage().read("accessToken"),
+                              calleeId: GetStorage().read("username"),
                               offer: incomingSDPOffer["sdpOffer"],
                             );
                           },
@@ -314,9 +319,9 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
                             color: Colors.white,
                             onPressed: () {
                               //createPeerConn(GetStorage().read('username'), widget.data["username"]);
-                              
+
                               //createNewMeeting();
-                              
+
                               _joinCall(
                                 callerId: GetStorage().read("username"),
                                 calleeId: widget.data["username"],

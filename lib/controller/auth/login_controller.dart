@@ -68,7 +68,7 @@ class LoginControllerImp extends LoginController {
         GetStorage().write("firstname", resbody['firstname']);
         GetStorage().write("lastname", resbody['lastname']);
         GetStorage().write("photo", resbody['photo']);
-        await connectToSSE(resbody['username']);
+        //await connectToSSE(resbody['username']);
 
         Get.offNamed(AppRoute.homescreen);
       }
@@ -118,6 +118,7 @@ class LoginControllerImp extends LoginController {
       print('Data: ' + event.data!);
     });
   }*/
+  /*
   Future<void> connectToSSE(String username) async {
     Platform platform = getPlatform();
     var accessToken = GetStorage().read("accessToken") ?? "";
@@ -191,7 +192,7 @@ class LoginControllerImp extends LoginController {
         }
       });
     }
-  }
+  }*/
   /*
     Map<String, dynamic> headers = {
       'Authorization': 'bearer ' + accessToken,

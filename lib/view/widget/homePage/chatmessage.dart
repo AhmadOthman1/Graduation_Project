@@ -52,8 +52,8 @@ bool _isVideoInitialized = false;
 
   Future<void> initializeVideoPlayer() async {
     try {
-      _Vcontroller = VideoPlayerController.network(
-        "$urlStarter/${widget.video}",
+      _Vcontroller = VideoPlayerController.networkUrl(
+        Uri.parse("$urlStarter/${widget.video}"),
       );
 
       await _Vcontroller!.initialize();
