@@ -22,8 +22,7 @@ class CallScreen extends StatefulWidget {
 }
 
 class _CallScreenState extends State<CallScreen> {
-  // socket instance
-
+  bool isCallAccepted = false;
   // videoRenderer for localPeer
   final _localRTCVideoRenderer = RTCVideoRenderer();
 
@@ -52,6 +51,7 @@ class _CallScreenState extends State<CallScreen> {
     _setupPeerConnection();
     super.initState();
   }
+
 /*
   @override
   void setState(fn) {
@@ -114,17 +114,20 @@ class _CallScreenState extends State<CallScreen> {
     widget.socket!.on("callEnded", (data) async {
       incomingSDPOffer = null;
       if (mounted) {
-      setState(() {
-        incomingSDPOffer = null;
-      });
+        setState(() {});
       }
-      dispose();
+      widget.onCallEnded();
       Navigator.pop(context);
     });
     setState(() {});
     // for Incoming call
     if (widget.offer != null) {
       // listen for Remote IceCandidate
+      if (mounted) {
+        setState(() {
+          isCallAccepted = true;
+        });
+      }
       widget.socket!.on("IceCandidate", (data) {
         print("/////////////////////////////////////////");
         print(data["iceCandidate"]["candidate"]);
@@ -169,6 +172,12 @@ class _CallScreenState extends State<CallScreen> {
       // when call is accepted by remote peer
       widget.socket!.on("callAnswered", (data) async {
         // set SDP answer as remoteDescription for peerConnection
+        if (mounted) {
+          setState(() {
+            isCallAccepted = true;
+          });
+        }
+
         print("/////////////////////////////////////////");
         print(data);
         print("/////////////////////////////////////////");
@@ -214,14 +223,17 @@ class _CallScreenState extends State<CallScreen> {
 
   _leaveCall() {
     if (mounted) {
-    widget.socket!.emit("leaveCall", {
-      "user1": widget.calleeId,
-      "user2": widget.callerId,
-    });
-    incomingSDPOffer = null;
-    setState(() {});
-    widget.onCallEnded();
-    Navigator.pop(context);
+      widget.socket!.emit("leaveCall", {
+        "user1": widget.calleeId,
+        "user2": widget.callerId,
+      });
+      widget.socket!.off("callEnded");
+      widget.socket!.off("IceCandidate");
+      widget.socket!.off("callAnswered");
+      incomingSDPOffer = null;
+      setState(() {});
+      widget.onCallEnded();
+      Navigator.pop(context);
     }
   }
 
@@ -268,10 +280,21 @@ class _CallScreenState extends State<CallScreen> {
           children: [
             Expanded(
               child: Stack(children: [
-                RTCVideoView(
-                  _remoteRTCVideoRenderer,
-                  objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-                ),
+                isCallAccepted
+                    ? RTCVideoView(
+                        _remoteRTCVideoRenderer,
+                        objectFit:
+                            RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                      )
+                    : Center(
+                        child: Text(
+                          'Calling ${widget.calleeId}...',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                 Positioned(
                   right: 20,
                   bottom: 20,
@@ -321,22 +344,26 @@ class _CallScreenState extends State<CallScreen> {
 
   @override
   void dispose() {
-  if (_localRTCVideoRenderer != null) {
-    _localRTCVideoRenderer.dispose();
+    if (_localRTCVideoRenderer != null) {
+      _localRTCVideoRenderer.dispose();
+    }
+    if (_remoteRTCVideoRenderer != null) {
+      _remoteRTCVideoRenderer.dispose();
+    }
+    if (_localStream != null) {
+      _localStream?.dispose();
+    }
+    if (_rtcPeerConnection != null) {
+      _rtcPeerConnection?.dispose();
+    }
+    widget.socket!.off("callEnded");
+    widget.socket!.off("IceCandidate");
+    widget.socket!.off("callAnswered");
+    if (mounted) {
+      setState(() {
+        widget.onCallEnded();
+      });
+    }
+    super.dispose();
   }
-  if (_remoteRTCVideoRenderer != null) {
-    _remoteRTCVideoRenderer.dispose();
-  }
-  if (_localStream != null) {
-    _localStream?.dispose();
-  }
-  if (_rtcPeerConnection != null) {
-    _rtcPeerConnection?.dispose();
-  }
-    widget.socket!.off("callEnded");  
-  widget.socket!.off("IceCandidate");  
-  widget.socket!.off("callAnswered"); 
-   widget.onCallEnded();
-  super.dispose();
-}
 }

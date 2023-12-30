@@ -15,6 +15,7 @@ import 'package:file_picker/file_picker.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class ChatPageMessages extends StatefulWidget {
   final data;
@@ -32,7 +33,8 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
   late IO.Socket socket;
-  final Peer peer = Peer();
+  final receivedCallAudio = AssetsAudioPlayer();
+  var receivedCallAudioCounter = 0;
   String? messageImageBytes;
   String? messageImageBytesName;
   String? messageImageExt;
@@ -46,11 +48,31 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
   @override
   void initState() {
     super.initState();
+    receivedCallAudioCounter = 0;
     incomingSDPOffer = null;
     chatController = ChatController();
     _loadData();
     socketConnect();
     _scrollController.addListener(_scrollListener);
+    receivedCallAudio.currentPosition.listen((position) {
+      // Check if the position is at the end of the audio duration
+      print(position);
+      print(receivedCallAudio.current.value!.audio.duration);
+
+      if (position.inMilliseconds >=
+          receivedCallAudio.current.value!.audio.duration.inMilliseconds -
+              1000) {
+        receivedCallAudioCounter++;
+        if (mounted) setState(() {});
+        playCallingSound();
+        if (receivedCallAudioCounter >= 5) {
+          decline();
+          stopCallingSound();
+          incomingSDPOffer = null;
+          if (mounted) setState(() {});
+        }
+      }
+    });
   }
 
   void socketConnect() {
@@ -101,9 +123,11 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
               }
             }),
             socket.on("/chat", (msg) {
-              setState(() {
-                chatController.messages;
-              });
+              if (mounted) {
+                setState(() {
+                  chatController.messages;
+                });
+              }
               chatController.addMessage(
                   msg["message"],
                   widget.data["username"],
@@ -117,11 +141,19 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
                   msg["message"], msg["image"], msg["video"]);
             }),
             socket.on("newCall", (data) {
+              playCallingSound();
               print(data);
+              incomingSDPOffer = data;
               if (mounted) {
                 setState(() {
                   incomingSDPOffer = data;
                 });
+              }
+            }),
+            socket!.on("callEnded", (data) async {
+              incomingSDPOffer = null;
+              if (mounted) {
+                setState(() {});
               }
             }),
           });
@@ -130,6 +162,24 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
     } catch (err) {
       print(err);
     }
+  }
+
+  void playCallingSound() {
+    if (kIsWeb) {
+      receivedCallAudio.open(
+        Audio.network("audio/receivedCall.mp3"),
+      );
+    } else {
+      receivedCallAudio.open(
+      Audio("audio/receivedCall.mp3"),
+    );
+    }
+
+    receivedCallAudio.play();
+  }
+
+  void stopCallingSound() {
+    receivedCallAudio.stop();
   }
 
   Future<void> _loadData() async {
@@ -160,6 +210,8 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
   @override
   void dispose() {
     _scrollController.dispose();
+    receivedCallAudio.dispose();
+
     super.dispose();
   }
 
@@ -177,13 +229,20 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
           offer: offer,
           socket: socket,
           onCallEnded: () {
-        // rebuild the parent screen
-        setState(() {});
-      },
+            // rebuild the parent screen
+            setState(() {});
+          },
         ),
       ),
     );
-    
+  }
+
+  decline() {
+    socket!.emit("leaveCall", {
+      "user1": incomingSDPOffer["callerId"]!,
+      "user2": GetStorage().read("username"),
+    });
+    receivedCallAudio.dispose();
   }
 
 /*
@@ -236,6 +295,8 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
                           icon: const Icon(Icons.call_end),
                           color: Colors.redAccent,
                           onPressed: () {
+                            stopCallingSound();
+                            decline();
                             setState(() => incomingSDPOffer = null);
                           },
                         ),
@@ -243,6 +304,7 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
                           icon: const Icon(Icons.call),
                           color: Colors.greenAccent,
                           onPressed: () {
+                            stopCallingSound();
                             _joinCall(
                               callerId: incomingSDPOffer["callerId"]!,
                               calleeId: GetStorage().read("username"),
@@ -293,7 +355,7 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
         children: [
           IconButton(
             onPressed: () {
-              Get.back();
+              Navigator.pop(context);
             },
             icon: const Icon(Icons.arrow_back, color: Colors.white),
           ),

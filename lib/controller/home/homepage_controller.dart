@@ -461,6 +461,7 @@ class HomePageControllerImp extends HomePageController {
       Mycolleagues.clear();
       Mycolleagues.assignAll(
           List<Map<String, dynamic>>.from(resbody['activeConnectionsInfo']));
+      colleaguesPreviousmessages.clear();
       for (var conversation
           in List<Map<String, dynamic>>.from(resbody['uniqueConversations'])) {
         var name;
@@ -502,7 +503,7 @@ class HomePageControllerImp extends HomePageController {
           'photo': photo,
           'type': type,
         };
-        colleaguesPreviousmessages.clear();
+        
         colleaguesPreviousmessages.add(extractedInfo);
       }
       //print(colleaguesPreviousmessages);
