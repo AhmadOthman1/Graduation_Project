@@ -3,9 +3,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
-import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
-import 'package:growify/view/screen/homescreen/homeScreen.dart';
 import 'package:growify/view/screen/homescreen/homepages/homemainPage.dart';
 import 'package:http/http.dart' as http;
 LogOutButtonControllerImp _logoutController =
@@ -68,7 +66,7 @@ class CreatePageController {
     if(res.statusCode == 409 || res.statusCode == 500){
       return resbody['message'];
     }else if(res.statusCode == 200){
-      Get.off(Homepage());
+      Get.off(const Homepage());
     }
     
     print('Creating page with:');

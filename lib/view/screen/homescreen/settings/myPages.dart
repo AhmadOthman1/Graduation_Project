@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:growify/controller/home/myPages_controller.dart';
 import 'package:growify/global.dart';
-import 'package:growify/view/screen/homescreen/myPage/Pageprofile.dart';
 import 'package:growify/view/screen/homescreen/settings/createPage.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/myPage_Controller/PageDetails_controller.dart' as PageDetails_controller;
 
 class MyPages extends StatelessWidget {
   final MyPagesController controller = MyPagesController();
@@ -91,7 +89,7 @@ class MyPages extends StatelessWidget {
                                 backgroundImage: pages[index].photo != null &&
                                         pages[index].photo != ""
                                     ? NetworkImage(
-                                        "$urlStarter/" + pages[index].photo!)
+                                        "$urlStarter/${pages[index].photo!}")
                                     : const AssetImage("images/profileImage.jpg")
                                         as ImageProvider<Object>,
                               ),

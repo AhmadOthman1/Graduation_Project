@@ -9,7 +9,7 @@ import 'dart:convert';
 import 'package:growify/view/widget/homePage/posts.dart';
 
 class ColleaguesPageProfile extends StatefulWidget {
-  ColleaguesPageProfile({super.key, required this.userData});
+  const ColleaguesPageProfile({super.key, required this.userData});
 
   final List<Map<String, dynamic>> userData;
 
@@ -44,11 +44,11 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
   void initState() {
     super.initState();
     profileBackgroundImage = (profileImage != null && profileImage != "")
-        ? Image.network("$urlStarter/" + profileImage!).image
+        ? Image.network("$urlStarter/${profileImage!}").image
         : defultprofileImage;
 
     coverBackgroundImage = (coverImage != null && coverImage != "")
-        ? Image.network("$urlStarter/" + coverImage!).image
+        ? Image.network("$urlStarter/${coverImage!}").image
         : defultcoverImage;
 
     firstName; //=userData[0]["firstname"];
@@ -219,15 +219,14 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
   }
 
   Widget _buildFollowButton() {
-    return Obx(() => Container(
+    return Obx(() => SizedBox(
           width: 250,
           child: ElevatedButton(
             onPressed: () {
               controller.isFollowing.toggle();
             },
             style: ElevatedButton.styleFrom(
-              primary:
-                  controller.isFollowing.value ? Colors.grey : Colors.blue,
+              backgroundColor: controller.isFollowing.value ? Colors.grey : Colors.blue,
             ),
             child: Text(
               controller.isFollowing.value ? 'Following' : 'Follow',

@@ -249,7 +249,7 @@ class HomePageControllerImp extends HomePageController {
 
   @override
   void gotoCommentPage(int id) {
-    Get.to(CommentsMainPage(), arguments: {
+    Get.to(const CommentsMainPage(), arguments: {
       'comments': comments1,
     });
   }
@@ -309,7 +309,7 @@ class HomePageControllerImp extends HomePageController {
 
   @override
   void goToLikePage(int postId) {
-    Get.to(Like());
+    Get.to(const Like());
   }
 
   @override
@@ -459,12 +459,11 @@ class HomePageControllerImp extends HomePageController {
       return resbody['message'];
     } else if (res.statusCode == 200) {
       Mycolleagues.assignAll(List<Map<String, dynamic>>.from(resbody['activeConnectionsInfo']));
-      List<Map<String, dynamic>>.from(resbody['uniqueConversations'])
-          .forEach((conversation) {
+      for (var conversation in List<Map<String, dynamic>>.from(resbody['uniqueConversations'])) {
         var name;
         var username;
         var photo;
-        var type;
+        String type="U";
         if (conversation['senderUsername_FK'] != null &&conversation['senderUsername_FK']['username'] !=GetStorage().read('username')) {
           name = conversation['senderUsername_FK']['firstName'] +" " +conversation['senderUsername_FK']['lastName'];
           username=conversation['senderUsername_FK']['username'];
@@ -494,9 +493,9 @@ class HomePageControllerImp extends HomePageController {
         };
 
         colleaguesPreviousmessages.add(extractedInfo);
-      });
+      }
       //print(colleaguesPreviousmessages);
-      Get.to(ChatMainPage(), arguments: {
+      Get.to(const ChatMainPage(), arguments: {
       'Mycolleagues': Mycolleagues,
       'colleaguesPreviousmessages':colleaguesPreviousmessages,
     });
@@ -505,6 +504,6 @@ class HomePageControllerImp extends HomePageController {
 
   @override
   goToCalenderPage() {
-    Get.to(Calender());
+    Get.to(const Calender());
   }
 }

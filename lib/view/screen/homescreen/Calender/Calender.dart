@@ -4,6 +4,8 @@ import 'package:growify/controller/home/calendar_controller/calendar_controller.
 import 'package:table_calendar/table_calendar.dart';
 
 class Calender extends StatefulWidget {
+  const Calender({super.key});
+
   @override
   _CalendarPageState createState() => _CalendarPageState();
 }
@@ -47,8 +49,8 @@ class _CalendarPageState extends State<Calender> {
 
     appointments = _getAppointmentsForDate(selectedDate);
 
-    firstDay = DateTime.now().subtract(Duration(days: 365));
-    lastDay = DateTime.now().add(Duration(days: 365));
+    firstDay = DateTime.now().subtract(const Duration(days: 365));
+    lastDay = DateTime.now().add(const Duration(days: 365));
     focusedDay = DateTime.now();
   }
 
@@ -56,13 +58,13 @@ class _CalendarPageState extends State<Calender> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Events'),
+        title: const Text('My Events'),
       ),
       body: Column(
         children: [
           _buildCalendar(),
           Container(
-            margin: EdgeInsets.only(top: 20), // Adjusted margin
+            margin: const EdgeInsets.only(top: 20), // Adjusted margin
             width: 370,
             child: ElevatedButton(
               onPressed: () async {
@@ -73,7 +75,7 @@ class _CalendarPageState extends State<Calender> {
                   _addAppointment(newAppointments);
                 }
               },
-              child: Text('Add Event'),
+              child: const Text('Add Event'),
             ),
           ),
           _buildAppointmentList(),
@@ -89,7 +91,7 @@ class _CalendarPageState extends State<Calender> {
       focusedDay: focusedDay,
       calendarFormat: CalendarFormat.month,
       selectedDayPredicate: (day) {
-        return isSameDay(selectedDate, day!);
+        return isSameDay(selectedDate, day);
       },
       eventLoader: _getEventsForDay,
       onDaySelected: (selectedDay, focusedDay) {
@@ -129,8 +131,8 @@ class _CalendarPageState extends State<Calender> {
         itemCount: appointments.length,
         itemBuilder: (context, index) {
           return Container(
-            margin: EdgeInsets.all(8.0),
-            padding: EdgeInsets.all(16.0),
+            margin: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(8.0),
@@ -140,13 +142,13 @@ class _CalendarPageState extends State<Calender> {
               children: [
                 Text(
                   'Title: ${appointments[index].subject}',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 8.0),
+                const SizedBox(height: 8.0),
                 Text(
                   'Date: ${appointments[index].startTime} ',
                 ),
-                SizedBox(height: 8.0),
+                const SizedBox(height: 8.0),
                 Text(
                   'Remind Me: ${appointments[index].remindMe}',
                 ),
@@ -173,7 +175,7 @@ class _CalendarPageState extends State<Calender> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Add Event'),
+          title: const Text('Add Event'),
           content: Form(
             key: formKey,
             child: Column(
@@ -200,8 +202,8 @@ class _CalendarPageState extends State<Calender> {
                     return null;
                   },
                 ),
-                SizedBox(height: 30),
-                Container(
+                const SizedBox(height: 30),
+                SizedBox(
                   width: 250,
                   child: ElevatedButton(
                     onPressed: () async {
@@ -210,7 +212,7 @@ class _CalendarPageState extends State<Calender> {
                         initialTime: TimeOfDay.now(),
                       );
                     },
-                    child: Text('Select Time'),
+                    child: const Text('Select Time'),
                   ),
                 ),
               ],
@@ -221,7 +223,7 @@ class _CalendarPageState extends State<Calender> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
@@ -252,7 +254,7 @@ class _CalendarPageState extends State<Calender> {
                   }
                 }
               },
-              child: Text('Add Event'),
+              child: const Text('Add Event'),
             ),
           ],
         );

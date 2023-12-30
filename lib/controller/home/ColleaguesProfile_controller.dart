@@ -231,7 +231,7 @@ postSendAcceptConnectReq(username) async {
   final RxString coverImageExt = ''.obs;
   getUserProfileInfo(username) async {
     var url =
-        "$urlStarter/user/getUserProfileInfo?ProfileUsername=${username}";
+        "$urlStarter/user/getUserProfileInfo?ProfileUsername=$username";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -265,7 +265,7 @@ postSendAcceptConnectReq(username) async {
 
   getEducationLevel(username) async {
     var url =
-        "$urlStarter/user/usersGetEducationLevel?ProfileUsername=${username}";
+        "$urlStarter/user/usersGetEducationLevel?ProfileUsername=$username";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -301,7 +301,7 @@ postSendAcceptConnectReq(username) async {
 
   Future getWorkExperiencePgae(username) async {
     var url =
-        "$urlStarter/user/usersGetworkExperience?ProfileUsername=${username}";
+        "$urlStarter/user/usersGetworkExperience?ProfileUsername=$username";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),

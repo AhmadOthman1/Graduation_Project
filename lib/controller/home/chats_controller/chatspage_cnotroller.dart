@@ -7,7 +7,6 @@ import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/widget/homePage/chatmessage.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
@@ -56,7 +55,7 @@ addMessage( text,  username, userPhoto,  createdAt, image,video) async {
   }
   getUserMessages(int page, String username, String type) async {
     var url =
-        "$urlStarter/user/getUserMessages?page=${page}&pageSize=${pageSize}&type=${type}";
+        "$urlStarter/user/getUserMessages?page=$page&pageSize=$pageSize&type=$type";
     var response = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),

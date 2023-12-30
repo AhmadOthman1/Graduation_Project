@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:growify/global.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/foundation.dart';
 import 'package:video_player/video_player.dart';
 
 class ChatMessage extends StatefulWidget {
@@ -107,8 +105,8 @@ bool _isVideoInitialized = false;
                           : _Vcontroller!.play();
                     },
                     icon: _Vcontroller!.value.isPlaying
-                        ? Icon(Icons.pause)
-                        : Icon(Icons.play_arrow),
+                        ? const Icon(Icons.pause)
+                        : const Icon(Icons.play_arrow),
                   ),
                 ],
               ),
@@ -158,7 +156,7 @@ bool _isVideoInitialized = false;
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
                   Text(

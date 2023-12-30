@@ -8,9 +8,6 @@ import 'package:growify/view/screen/auth/SignIn&SignUp/signup.dart';
 import 'package:growify/view/screen/auth/forgetpassword/success_resetPassword.dart';
 import 'package:growify/view/screen/auth/SignIn&SignUp/success_signup.dart';
 import 'package:growify/view/screen/auth/forgetpassword/verifycode.dart';
-import 'package:growify/view/screen/homescreen/Networkspages/showcolleagues.dart';
-import 'package:growify/view/screen/homescreen/Networkspages/ShowRequestsReceived.dart';
-import 'package:growify/view/screen/homescreen/Networkspages/ShowRequestsSent.dart';
 import 'package:growify/view/screen/homescreen/chat/chatmainpage.dart';
 import 'package:growify/view/screen/homescreen/homeScreen.dart';
 import 'package:growify/view/screen/homescreen/notificationspages/notificationmainpage.dart';
@@ -28,8 +25,8 @@ Map<String, Widget Function(BuildContext)>routes={
   AppRoute.SuccessResetPassword : (context)=> const SuccessResetPassword(),
   AppRoute.verifycodeaftersignup : (context)=> const VerifyCodeAfterSignUp(),
   AppRoute.homescreen : (context)=>  const HomeScreen(),
-  AppRoute.notificationspage : (context)=>  NotificationsPage(),   
-  AppRoute.chatmainpage : (context)=>  ChatMainPage(),
+  AppRoute.notificationspage : (context)=>  const NotificationsPage(),   
+  AppRoute.chatmainpage : (context)=>  const ChatMainPage(),
   AppRoute.settings: (context)=>  Settings(),
    // AppRoute.profilesetting: (context)=>  ProfileSettings(),
    

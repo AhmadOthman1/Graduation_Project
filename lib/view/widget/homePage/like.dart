@@ -6,6 +6,8 @@ import 'package:growify/controller/home/Post_controller.dart';
 import 'package:growify/global.dart';
 
 class Like extends StatefulWidget {
+  const Like({super.key});
+
   @override
   _LikeState createState() => _LikeState();
 }
@@ -82,7 +84,7 @@ RxList<Map<String, dynamic>> likes;
                         (colleague['photo'] == null) ? "" : colleague['photo'];
                     profileBackgroundImage1 = (profileImage1 != null &&
                             profileImage1 != "")
-                        ? Image.network("$urlStarter/" + profileImage1!).image
+                        ? Image.network("$urlStarter/${profileImage1!}").image
                         : defultprofileImage1;
                        
                        final createdBy=colleague['createdBy'];

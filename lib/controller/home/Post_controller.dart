@@ -1,8 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
@@ -270,7 +268,7 @@ class PostControllerImp extends PostController {
 
   @override
   addComment(CommentModel comment) async {
-    if(comment.postId == null || comment.commentContent== null || comment.commentContent== ""){
+    if(comment.commentContent== ""){
       return;
     }
     comments.add(comment);
@@ -357,7 +355,7 @@ class PostControllerImp extends PostController {
         print(comments1);
         if(!hasRouteFlag){
           print(hasRouteFlag);
-          Get.to(CommentsMainPage(), arguments: {
+          Get.to(const CommentsMainPage(), arguments: {
           'comments': comments1,
           'postId' : comments1[0].postId,
         });
@@ -436,7 +434,7 @@ class PostControllerImp extends PostController {
       likes.assignAll([Map<String, dynamic>.from(data)]);
       print("444444444444");
       print(likes);
-      Get.to(Like(), arguments: {'likes': likes});
+      Get.to(const Like(), arguments: {'likes': likes});
     }
   }
 /*

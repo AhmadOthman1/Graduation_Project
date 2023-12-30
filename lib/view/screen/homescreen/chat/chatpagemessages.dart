@@ -1,22 +1,25 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/chats_controller/chatspage_cnotroller.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/resources/jitsi_meet.dart';
+import 'package:growify/view/screen/homescreen/chat/CallScreen.dart';
+import 'package:growify/view/screen/homescreen/chat/PeerCallScreen.dart';
 import 'package:growify/view/widget/homePage/chatmessage.dart';
-import 'package:growify/view/widget/homePage/chatmessage.dart';
+import 'package:peerdart/peerdart.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:file_picker/file_picker.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io';
 
-import 'package:video_player/video_player.dart';
-
 class ChatPageMessages extends StatefulWidget {
   final data;
-  ChatPageMessages({super.key, this.data});
+  const ChatPageMessages({super.key, this.data});
 
   @override
   _ChatPageMessagesState createState() => _ChatPageMessagesState();
@@ -30,25 +33,25 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
   late IO.Socket socket;
+  final Peer peer = Peer();
   String? messageImageBytes;
   String? messageImageBytesName;
   String? messageImageExt;
   String? messageVideoBytes;
   String? messageVideoBytesName;
   String? messageVideoExt;
-  LogOutButtonControllerImp _logoutController =
+ dynamic incomingSDPOffer;
+  final LogOutButtonControllerImp _logoutController =
       Get.put(LogOutButtonControllerImp());
 
   @override
   void initState() {
     super.initState();
+    //incomingSDPOffer = null;
     chatController = ChatController();
     _loadData();
     socketConnect();
     _scrollController.addListener(_scrollListener);
-
-    print("======================");
-    print(widget.data);
   }
 
   void socketConnect() {
@@ -63,8 +66,6 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
       socket.onConnect((data) => {
             // read authentication status
             socket.on("status", (status) async {
-              print(";;;;;;;;;;;;;;;;;;;;;;;");
-              print(status);
               if (status == 403) {
                 //accessToken expired
                 await getRefreshToken(GetStorage().read('refreshToken'));
@@ -80,7 +81,6 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
             }),
             socket.on("/chatStatus", (msg) async {
               //chat message token expired handle
-              print(msg["status"]);
               if (msg["status"] == 403) {
                 await getRefreshToken(GetStorage().read('refreshToken'));
                 //reSend the message
@@ -114,11 +114,14 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
                   msg["video"]);
             }),
             socket.on("/chatMyVideo", (msg) {
-              print(msg["message"]);
-              print(msg["image"]);
-              print(msg["video"]);
               chatController.sendMessage(
                   msg["message"], msg["image"], msg["video"]);
+            }),
+            socket.on("newCall", (data) {
+              print(data);
+              setState(() {
+                incomingSDPOffer = data;
+              });
             }),
           });
 
@@ -137,7 +140,7 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
         chatController.page++;
         chatController.messages;
       });
-      print('Data loaded: ${chatController.messages.length} notifications');
+      print('Data loaded:');
     } catch (error) {
       print('Error loading data: $error');
     }
@@ -159,14 +162,95 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
     super.dispose();
   }
 
+  _joinCall({
+    required String callerId,
+    required String calleeId,
+    dynamic offer,
+  }) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CallScreen(
+          callerId: callerId,
+          calleeId: calleeId,
+          offer: offer,
+          socket: socket,
+        ),
+      ),
+    );
+  }
+
+/*
+ final JitsiMeetMethods _jitsiMeetMethods = JitsiMeetMethods();
+
+  createNewMeeting() async {
+    var random = Random();
+    var username = GetStorage().read('username');
+    DateTime now = DateTime.now();
+    String roomName = username+ "-" + now.toString() + "+" +(random.nextInt(10000000) + 10000000).toString();
+    print("aaaaaaaaaaaaaaaaa");
+    _jitsiMeetMethods.createMeeting(
+        roomName: roomName, isAudioMuted: true, isVideoMuted: true, username: username , email: GetStorage().read('loginemail') , subject: "Personal Meeting");
+  }*/
+  /*createPeerConn(
+     callerId,
+     calleeId,
+  ) async{
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PeerCallScreen(
+          callerId: callerId,
+          calleeId: calleeId,
+          socket: socket,
+        ),
+      ),
+    );
+
+  }*/
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
           _buildAppBar(),
+          if (incomingSDPOffer != null)
+            Stack(
+              children: [
+                Positioned(
+                  child: ListTile(
+                    title: Text(
+                      "Incoming Call from ${incomingSDPOffer["callerId"]}",
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.call_end),
+                          color: Colors.redAccent,
+                          onPressed: () {
+                            setState(() => incomingSDPOffer = null);
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.call),
+                          color: Colors.greenAccent,
+                          onPressed: () {
+                            
+                            _joinCall(
+                              callerId: incomingSDPOffer["callerId"]!,
+                              calleeId: GetStorage().read("accessToken"),
+                              offer: incomingSDPOffer["sdpOffer"],
+                            );
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           Expanded(
             child: Obx(() {
               return ListView.builder(
@@ -206,7 +290,7 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
             onPressed: () {
               Get.back();
             },
-            icon: Icon(Icons.arrow_back, color: Colors.white),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
           ),
           Expanded(
             child: Column(
@@ -226,10 +310,17 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.video_call),
+                            icon: const Icon(Icons.call),
                             color: Colors.white,
                             onPressed: () {
-                              // Add your video call logic here
+                              //createPeerConn(GetStorage().read('username'), widget.data["username"]);
+                              
+                              //createNewMeeting();
+                              
+                              _joinCall(
+                                callerId: GetStorage().read("username"),
+                                calleeId: widget.data["username"],
+                              );
                             },
                           ),
                         ],
@@ -438,7 +529,7 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
                   messageVideoExt = null;
                 });
                 chatController.textController.clear();
-              } else {
+              } else if (messageVideoBytes != null) {
                 var accessToken = GetStorage().read("accessToken");
                 //emit message to server
                 socket.emit("/chat", {

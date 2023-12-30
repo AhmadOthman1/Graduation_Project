@@ -18,7 +18,7 @@ class HomeScreenControllerImp extends HomeScreeenController{
   List<Widget>listPage=[
 
      const Homepage(),
-     NotificationsPage(),
+     const NotificationsPage(),
    JobsPage(),
 
     NetworksPage()

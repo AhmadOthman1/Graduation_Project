@@ -30,7 +30,7 @@ class SearchControllerImp extends GetxController {
   late int userConnectionsCount;
   searchInDataBase(searchValue, page, pageSize, searchType) async {
     var url =
-        "$urlStarter/user/getSearchData?email=${GetStorage().read("loginemail")}&type=${searchType}&search=${searchValue}&page=${page}&pageSize=${pageSize}";
+        "$urlStarter/user/getSearchData?email=${GetStorage().read("loginemail")}&type=$searchType&search=$searchValue&page=$page&pageSize=$pageSize";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -54,7 +54,7 @@ class SearchControllerImp extends GetxController {
       if (searchType == "U") {
         final List<dynamic>? users = resbody["users"];
         userList.addAll(
-          (users as List<dynamic>?)
+          (users)
                   ?.map<Map<String, String>>(
                     (user) => (user as Map<String, dynamic>)
                         .map<String, String>(

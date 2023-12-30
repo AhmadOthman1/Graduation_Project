@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/settings_controller.dart';
-import 'package:growify/view/screen/homescreen/myPage/ColleaguesPageProfile.dart';
 import 'package:growify/view/screen/homescreen/settings/changeemail.dart';
 import 'package:growify/view/screen/homescreen/settings/changepassword.dart';
 import 'package:growify/view/screen/homescreen/settings/myPages.dart';

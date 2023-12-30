@@ -8,7 +8,6 @@ import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/view/widget/auth/textBodyAuth.dart';
 
 import 'package:growify/view/widget/auth/textTitleAuth.dart';
-import 'package:growify/global.dart';
 
 class VerifyCodeEmailChange extends StatelessWidget {
   final String newEmail;
@@ -17,7 +16,7 @@ class VerifyCodeEmailChange extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    print(newEmail + "aaaaaaaaaa");
+    print("${newEmail}aaaaaaaaaa");
     VerifyCodeEmailChangeControllerImp controller =
         Get.put(VerifyCodeEmailChangeControllerImp());
     return Scaffold(

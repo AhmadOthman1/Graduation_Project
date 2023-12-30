@@ -5,9 +5,10 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/Post_controller.dart';
 import 'package:growify/global.dart';
-import 'package:growify/view/widget/homePage/comments.dart';
 
 class CommentsMainPage extends StatefulWidget {
+  const CommentsMainPage({super.key});
+
   @override
   _CommentsMainPageState createState() => _CommentsMainPageState();
 }
@@ -49,7 +50,7 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
       ),
       body: GetBuilder<PostControllerImp>(
         builder: (controller) {
-          return Container(
+          return SizedBox(
             height: MediaQuery.of(context).size.height * 0.75,
             child: Column(
               children: [
@@ -63,7 +64,7 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                      
                       profileBackgroundImage = (profileImage != null &&
                               profileImage != "")
-                          ? Image.network("$urlStarter/" + profileImage!).image
+                          ? Image.network("$urlStarter/${profileImage!}").image
                           : defultprofileImage;
 
                       return Container(
@@ -89,7 +90,7 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                           ),
                           title: Text(
                             "${comment.name}  ● ${comment.Date}",
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color.fromARGB(255, 38, 118, 140),
                             ),
                           ),
@@ -115,12 +116,12 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                             controller: commentController,
                             decoration: const InputDecoration(
                               hintText: 'Write a comment...',
-                              hintStyle: const TextStyle(
+                              hintStyle: TextStyle(
                                 fontSize: 14,
                               ),
                               floatingLabelBehavior:
                                   FloatingLabelBehavior.always,
-                              contentPadding: const EdgeInsets.symmetric(
+                              contentPadding: EdgeInsets.symmetric(
                                 vertical: 15,
                                 horizontal: 30,
                               ),

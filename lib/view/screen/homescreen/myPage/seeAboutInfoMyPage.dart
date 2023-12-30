@@ -8,9 +8,7 @@ import 'package:growify/global.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyPageSeeAboutInfo extends StatelessWidget {
-  MyPageSeeAboutInfo({super.key}) {
-    
-  }
+  MyPageSeeAboutInfo({super.key});
   final SeeAboutInfoController controller = Get.put(SeeAboutInfoController());
   final AssetImage defultprofileImage = const AssetImage("images/profileImage.jpg");
   String? profileImage;

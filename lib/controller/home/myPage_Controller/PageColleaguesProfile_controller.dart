@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:growify/view/screen/homescreen/myPage/seeAboutinfoPageColleagues.dart';
-import 'package:http/http.dart' as http;
 
 class ColleaguesPageProfile_Controller extends GetxController {
 

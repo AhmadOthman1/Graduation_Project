@@ -1,12 +1,10 @@
 
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
-import 'package:growify/view/screen/homescreen/Networkspages/showcolleagues.dart';
 import 'package:growify/view/screen/homescreen/profilepages/colleaguesprofile.dart';
 import 'package:growify/view/screen/homescreen/profilepages/profilemainpage.dart';
 import 'package:http/http.dart' as http;

@@ -3,7 +3,6 @@
 import 'package:get/get.dart';
 import 'package:growify/view/screen/homescreen/myPage/editPageProfile.dart';
 import 'package:growify/view/screen/homescreen/myPage/seeAboutInfoMyPage.dart';
-import 'package:http/http.dart' as http;
 
 class PageProfileController extends GetxController {
 

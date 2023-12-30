@@ -6,6 +6,8 @@ import 'description.dart';
 import 'task.dart';
 
 class TrelloHomePage extends StatefulWidget {
+  const TrelloHomePage({super.key});
+
   @override
   _TrelloHomePageState createState() => _TrelloHomePageState();
 }
@@ -16,8 +18,8 @@ class _TrelloHomePageState extends State<TrelloHomePage> {
     Task(
       'Default Task 1',
       'This is the description for Default Task 1.',
-      TimeOfDay(hour: 8, minute: 0),
-      TimeOfDay(hour: 9, minute: 30),
+      const TimeOfDay(hour: 8, minute: 0),
+      const TimeOfDay(hour: 9, minute: 30),
       DateTime(2023, 12, 18),
       DateTime(2023, 12, 18, 12, 0),
       'ToDo',
@@ -25,8 +27,8 @@ class _TrelloHomePageState extends State<TrelloHomePage> {
     Task(
       'Default Task 2',
       'This is the description for Default Task 2.',
-      TimeOfDay(hour: 10, minute: 0),
-      TimeOfDay(hour: 12, minute: 0),
+      const TimeOfDay(hour: 10, minute: 0),
+      const TimeOfDay(hour: 12, minute: 0),
       DateTime(2023, 12, 19),
       DateTime(2023, 12, 19, 15, 0),
       'Doing',
@@ -34,8 +36,8 @@ class _TrelloHomePageState extends State<TrelloHomePage> {
     Task(
       'Default Task 3',
       'This is the description for Default Task 3.',
-      TimeOfDay(hour: 14, minute: 0),
-      TimeOfDay(hour: 15, minute: 30),
+      const TimeOfDay(hour: 14, minute: 0),
+      const TimeOfDay(hour: 15, minute: 30),
       DateTime(2023, 12, 20),
       DateTime(2023, 12, 20, 18, 0),
       'Done',
@@ -57,8 +59,8 @@ class _TrelloHomePageState extends State<TrelloHomePage> {
       TrelloController controller = Get.put(TrelloController());
 
       return AlertDialog(
-        title: Text('Add Task'),
-        contentPadding: EdgeInsets.all(16.0),
+        title: const Text('Add Task'),
+        contentPadding: const EdgeInsets.all(16.0),
         content: SingleChildScrollView(
           child: Form(
             key: formKey,
@@ -88,7 +90,7 @@ class _TrelloHomePageState extends State<TrelloHomePage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
                 TextFormField(
                   maxLines: 6,
                   controller: descriptionController,
@@ -114,13 +116,13 @@ class _TrelloHomePageState extends State<TrelloHomePage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Container(
-                      margin: EdgeInsets.only(right: 8),
-                      child: Text('Start:'),
+                      margin: const EdgeInsets.only(right: 8),
+                      child: const Text('Start:'),
                     ),
                     ElevatedButton(
                       onPressed: () async {
@@ -136,9 +138,9 @@ class _TrelloHomePageState extends State<TrelloHomePage> {
                           });
                         }
                       },
-                      child: Text('Select Date'),
+                      child: const Text('Select Date'),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     ElevatedButton(
@@ -153,17 +155,17 @@ class _TrelloHomePageState extends State<TrelloHomePage> {
                           });
                         }
                       },
-                      child: Text('Select Time'),
+                      child: const Text('Select Time'),
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Container(
-                      margin: EdgeInsets.only(right: 8),
-                      child: Text('End:'),
+                      margin: const EdgeInsets.only(right: 8),
+                      child: const Text('End:'),
                     ),
                     ElevatedButton(
                       onPressed: () async {
@@ -179,9 +181,9 @@ class _TrelloHomePageState extends State<TrelloHomePage> {
                           });
                         }
                       },
-                      child: Text('Select Date'),
+                      child: const Text('Select Date'),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     ElevatedButton(
@@ -196,7 +198,7 @@ class _TrelloHomePageState extends State<TrelloHomePage> {
                           });
                         }
                       },
-                      child: Text('Select Time'),
+                      child: const Text('Select Time'),
                     ),
                   ],
                 ),
@@ -215,14 +217,14 @@ class _TrelloHomePageState extends State<TrelloHomePage> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text('Error'),
-                          content: Text('End date cannot be earlier than the start date'),
+                          title: const Text('Error'),
+                          content: const Text('End date cannot be earlier than the start date'),
                           actions: [
                             TextButton(
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              child: Text('OK'),
+                              child: const Text('OK'),
                             ),
                           ],
                         );
@@ -239,14 +241,14 @@ class _TrelloHomePageState extends State<TrelloHomePage> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text('Error'),
-                            content: Text('End time cannot be earlier than the start time'),
+                            title: const Text('Error'),
+                            content: const Text('End time cannot be earlier than the start time'),
                             actions: [
                               TextButton(
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: Text('OK'),
+                                child: const Text('OK'),
                               ),
                             ],
                           );
@@ -262,8 +264,8 @@ class _TrelloHomePageState extends State<TrelloHomePage> {
                   Task(
                     taskNameController.text,
                     descriptionController.text,
-                    startTime ?? TimeOfDay(hour: 0, minute: 0),
-                    endTime ?? TimeOfDay(hour: 0, minute: 0),
+                    startTime ?? const TimeOfDay(hour: 0, minute: 0),
+                    endTime ?? const TimeOfDay(hour: 0, minute: 0),
                     startDate ?? DateTime.now(),
                     endDate ?? DateTime.now(),
                     'ToDo', // Set initial status as ToDo
@@ -271,7 +273,7 @@ class _TrelloHomePageState extends State<TrelloHomePage> {
                 );
               }
             },
-            child: Text('Add'),
+            child: const Text('Add'),
           ),
         ],
       );
@@ -304,8 +306,8 @@ class _TrelloHomePageState extends State<TrelloHomePage> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('My Trello'),
-          bottom: TabBar(
+          title: const Text('My Trello'),
+          bottom: const TabBar(
             tabs: [
               Tab(text: 'ToDo'),
               Tab(text: 'Doing'),
@@ -330,7 +332,7 @@ class _TrelloHomePageState extends State<TrelloHomePage> {
 
     return Scaffold(
       body: filteredTasks.isEmpty
-          ? Center(child: Text('No tasks yet.'))
+          ? const Center(child: Text('No tasks yet.'))
           : ListView.builder(
               itemCount: filteredTasks.length,
               itemBuilder: (BuildContext context, int index) {
@@ -372,7 +374,7 @@ class _TrelloHomePageState extends State<TrelloHomePage> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addTask,
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

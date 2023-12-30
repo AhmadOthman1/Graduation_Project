@@ -4,7 +4,7 @@ import 'package:growify/view/widget/homePage/posts.dart';
 class ShowPost extends StatefulWidget {
  
 
-  ShowPost({ Key? key, this.postId}) : super(key: key);
+  const ShowPost({ Key? key, this.postId}) : super(key: key);
   final postId;
 
   @override
@@ -16,7 +16,7 @@ class _ShowPostState extends State<ShowPost> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Show Post'),
+        title: const Text('Show Post'),
       ),
       body: NestedScrollView(
         

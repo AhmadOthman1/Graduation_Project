@@ -97,7 +97,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.open_in_new),
+                            icon: const Icon(Icons.open_in_new),
                             onPressed: () {
                               if (notice['notificationType'] == "connection") {
                                 searchController.goToUserPage(

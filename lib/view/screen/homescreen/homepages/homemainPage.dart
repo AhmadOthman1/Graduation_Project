@@ -1,13 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/homepage_controller.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
-import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
-import 'package:growify/view/screen/homescreen/myPage/ColleaguesPageProfile.dart';
-import 'package:growify/view/screen/homescreen/myPage/Pageprofile.dart';
 import 'package:growify/view/screen/homescreen/search/Search.dart';
 import 'package:growify/view/screen/homescreen/trello/trellomainpage.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
@@ -25,7 +21,7 @@ class _HomepageState extends State<Homepage> {
       Get.put(LogOutButtonControllerImp());
 
   String? name;
-  ImageProvider<Object> avatarImage = AssetImage("images/profileImage.jpg");
+  ImageProvider<Object> avatarImage = const AssetImage("images/profileImage.jpg");
 
   @override
   void initState() {
@@ -44,7 +40,7 @@ class _HomepageState extends State<Homepage> {
     setState(() {
       avatarImage = (profileImage.isNotEmpty)
           ? Image.network("$urlStarter/$profileImage").image
-          : AssetImage("images/profileImage.jpg");
+          : const AssetImage("images/profileImage.jpg");
     });
   }
 
@@ -75,7 +71,7 @@ class _HomepageState extends State<Homepage> {
       Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Container(
-          margin: EdgeInsets.only(top: 30),
+          margin: const EdgeInsets.only(top: 30),
           child: Column(
             
             children: [
@@ -88,7 +84,7 @@ class _HomepageState extends State<Homepage> {
                     Expanded(
                       child: TextFormField(
                         onTap: () {
-                          Get.to(Search());
+                          Get.to(const Search());
                         },
                         readOnly: true,
                         decoration: InputDecoration(
@@ -148,7 +144,7 @@ class _HomepageState extends State<Homepage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               UserAccountsDrawerHeader(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white,
                   border: Border(
                     bottom: BorderSide(
@@ -162,9 +158,9 @@ class _HomepageState extends State<Homepage> {
                 ),
                 accountName: Text(
                   name??"",
-                  style: TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.black),
                 ),
-                accountEmail: Text(
+                accountEmail: const Text(
                   "View profile",
                   style: TextStyle(color: Colors.grey),
                 ),
@@ -187,7 +183,7 @@ class _HomepageState extends State<Homepage> {
                 title: const Text("Trello"),
                 leading: const Icon(Icons.task),
                 onTap: () {
-                 Get.to(TrelloHomePage());
+                 Get.to(const TrelloHomePage());
                 },
               ),
               ListTile(

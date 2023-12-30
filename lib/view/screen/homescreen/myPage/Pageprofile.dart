@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:growify/controller/home/myPage_Controller/PageProfile_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/NewPost/newpost.dart';
-import 'package:growify/view/screen/homescreen/myPage/editPageProfile.dart';
-import 'package:growify/view/screen/homescreen/settings/settings.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 import 'package:get/get.dart';
-import 'dart:convert';
 
 class PageProfile extends StatefulWidget {
   final List<Map<String, dynamic>> userData;
 
-  PageProfile({Key? key, required this.userData}) : super(key: key);
+  const PageProfile({Key? key, required this.userData}) : super(key: key);
 
   @override
   _PageProfileState createState() => _PageProfileState();

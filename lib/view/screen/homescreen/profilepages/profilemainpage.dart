@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/Post_controller.dart';
 import 'package:growify/controller/home/profileMainPage_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/NewPost/newpost.dart';
@@ -13,7 +12,7 @@ class ProfileMainPage extends StatefulWidget {
   final int userPostCount;
   final int userConnectionsCount;
 
-  ProfileMainPage({
+  const ProfileMainPage({
     Key? key,
     required this.userData,
     required this.userPostCount,
@@ -99,7 +98,7 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
       decoration: BoxDecoration(
         image: DecorationImage(
           image: controller.coverImageBytes.isNotEmpty
-              ? MemoryImage(base64Decode(controller.coverImageBytes.value!))
+              ? MemoryImage(base64Decode(controller.coverImageBytes.value))
               : coverBackgroundImage,
           fit: BoxFit.cover,
         ),
@@ -120,7 +119,7 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
           CircleAvatar(
             radius: 60,
             backgroundImage: controller.profileImageBytes.isNotEmpty
-                ? MemoryImage(base64Decode(controller.profileImageBytes.value!))
+                ? MemoryImage(base64Decode(controller.profileImageBytes.value))
                 : profileBackgroundImage,
           ),
           const SizedBox(height: 16),

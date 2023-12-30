@@ -22,7 +22,7 @@ class _PostState extends State<Post> {
       const AssetImage("images/profileImage.jpg");
   final AssetImage trImage = const AssetImage("images/transparent.png");
 
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   bool isLoading = false;
 
   @override
@@ -72,11 +72,11 @@ class _PostState extends State<Post> {
               profileImage = (post["userPhoto"] == null) ? "" : post["userPhoto"];
               profileBackgroundImage =
                   (profileImage != null && profileImage != "")
-                      ? Image.network("$urlStarter/" + profileImage!).image
+                      ? Image.network("$urlStarter/${profileImage!}").image
                       : defultprofileImage;
               postImage = (post["photo"] == null) ? "" : post["photo"];
               postBackgroundImage = (postImage != null && postImage != "")
-                  ? Image.network("$urlStarter/" + postImage!).image
+                  ? Image.network("$urlStarter/${postImage!}").image
                   : trImage;
 
               return Container(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/network_controller/networdkmainpage_controller.dart';
-import 'package:growify/core/constant/routes.dart';
 import 'package:growify/view/screen/homescreen/Networkspages/ShowRequestsReceived.dart';
 import 'package:growify/view/screen/homescreen/Networkspages/ShowRequestsSent.dart';
 import 'package:growify/view/screen/homescreen/Networkspages/showcolleagues.dart';
@@ -70,14 +69,14 @@ class NetworksPage extends StatelessWidget {
               // Define your navigation logic here based on the section.
               switch (index - 1) {
                 case 0:
-                 Get.to(ShowColleagues());
+                 Get.to(const ShowColleagues());
                  
                   break;
                 case 1:
-                  Get.to(ShowRequestsReceived());
+                  Get.to(const ShowRequestsReceived());
                   break;
                 case 2:
-                  Get.to(ShowRequestsSent());
+                  Get.to(const ShowRequestsSent());
                   break;
               }
             },

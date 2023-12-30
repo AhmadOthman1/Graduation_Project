@@ -74,11 +74,11 @@ class EditPageProfile extends StatelessWidget {
     
 
     profileBackgroundImage = (profileImage != null && profileImage != "")
-        ? Image.network("$urlStarter/" + profileImage!).image
+        ? Image.network("$urlStarter/${profileImage!}").image
         : defultprofileImage;
 
     coverBackgroundImage = (coverImage != null && coverImage != "")
-        ? Image.network("$urlStarter/" + coverImage!).image
+        ? Image.network("$urlStarter/${coverImage!}").image
         : defultcoverImage;
     return WillPopScope(
       onWillPop: () async {

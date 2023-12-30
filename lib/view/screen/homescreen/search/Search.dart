@@ -177,7 +177,7 @@ class _SearchState extends State<Search> {
                                 controller.searchValue, controller.Upage, "U")
                             .then((result) async {
                           if (result != null && result.isNotEmpty) {
-                            await Future.delayed(Duration(
+                            await Future.delayed(const Duration(
                                 seconds:
                                     1)); // to solve the problem when the user reach the bottom of the page1, it fetch page 3,4,5...etc.
                             setState(() {
@@ -206,7 +206,7 @@ class _SearchState extends State<Search> {
                           final photo = controller.userList[index]['photo'];
                           profileBackgroundImage =
                               (photo != null && photo != "null" && photo != "")
-                                  ? Image.network("$urlStarter/" + photo!).image
+                                  ? Image.network("$urlStarter/$photo").image
                                   : defultprofileImage;
                           return ListTile(
                             onTap: () {
@@ -242,7 +242,7 @@ class _SearchState extends State<Search> {
                                 controller.searchValue, controller.Upage, "P")
                             .then((result) async {
                           if (result != null && result.isNotEmpty) {
-                            await Future.delayed(Duration(
+                            await Future.delayed(const Duration(
                                 seconds:
                                     1)); // to solve the problem when the user reach the bottom of the page1, it fetch page 3,4,5...etc.
                             setState(() {
@@ -269,7 +269,7 @@ class _SearchState extends State<Search> {
                           final photo = controller.pageList[index]['photo'];
                           profileBackgroundImage =
                               (photo != null && photo != "null" && photo != "")
-                                  ? Image.network("$urlStarter/" + photo!).image
+                                  ? Image.network("$urlStarter/$photo").image
                                   : defultprofileImage;
                           return ListTile(
                             onTap: () {

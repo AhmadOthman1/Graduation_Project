@@ -21,7 +21,7 @@ class ShowRequestsReceivedController {
   getUserNotifications(int page) async {
     
     var url =
-        "$urlStarter/user/getUserNotifications?page=${page}&pageSize=${pageSize}";
+        "$urlStarter/user/getUserNotifications?page=$page&pageSize=$pageSize";
     var response = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -82,7 +82,7 @@ class ShowRequestsReceivedController {
   showPost(){
 
     
-    Get.to(() => ShowPost());
+    Get.to(() => const ShowPost());
 
   }
 

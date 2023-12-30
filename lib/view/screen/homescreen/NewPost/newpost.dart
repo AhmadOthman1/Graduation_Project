@@ -7,7 +7,6 @@ import 'package:growify/controller/home/newpost_controller.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:growify/core/functions/alertbox.dart';
-import 'package:growify/global.dart';
 
 class NewPost extends StatelessWidget {
   NewPost({super.key});
@@ -134,8 +133,7 @@ class NewPost extends StatelessWidget {
                       height: 350,
                       decoration: BoxDecoration(
                         shape: BoxShape.rectangle,
-                        image: (controller.postImageBytes != null &&
-                                controller.postImageBytes.isNotEmpty)
+                        image: (controller.postImageBytes.isNotEmpty)
                             ? DecorationImage(
                                 fit: BoxFit.cover,
                                 image: MemoryImage(
@@ -150,7 +148,7 @@ class NewPost extends StatelessWidget {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Divider(
+                      const Divider(
                         color: Color.fromARGB(255, 194, 193, 193),
                         thickness: 1.5,
                       ),
@@ -196,7 +194,7 @@ class NewPost extends StatelessWidget {
                             print(err);
                           }
                         },
-                        child: Row(
+                        child: const Row(
                           children: [
                             Text(
                               "Add Photo",
@@ -212,7 +210,7 @@ class NewPost extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Divider(
+                      const Divider(
                         color: Color.fromARGB(255, 194, 193, 193),
                         thickness: 1.5,
                       ),

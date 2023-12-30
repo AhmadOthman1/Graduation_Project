@@ -55,11 +55,11 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
   @override
   Widget build(BuildContext context) {
     profileBackgroundImage = (profileImage != null && profileImage != "")
-        ? Image.network("$urlStarter/" + profileImage!).image
+        ? Image.network("$urlStarter/${profileImage!}").image
         : defultprofileImage;
 
     coverBackgroundImage = (coverImage != null && coverImage != "")
-        ? Image.network("$urlStarter/" + coverImage!).image
+        ? Image.network("$urlStarter/${coverImage!}").image
         : defultcoverImage;
 switch (widget.userData[0]["connection"]) {
       case 'C':
@@ -123,7 +123,7 @@ switch (widget.userData[0]["connection"]) {
       decoration: BoxDecoration(
         image: DecorationImage(
           image: controller.coverImageBytes.isNotEmpty
-              ? MemoryImage(base64Decode(controller.coverImageBytes.value!))
+              ? MemoryImage(base64Decode(controller.coverImageBytes.value))
               : coverBackgroundImage,
           fit: BoxFit.cover,
         ),
@@ -190,8 +190,8 @@ switch (widget.userData[0]["connection"]) {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: Text('Remove the connection'),
-                              content: Text(
+                              title: const Text('Remove the connection'),
+                              content: const Text(
                                   'Are you sure you want to remove this user from your connection?'),
                               actions: <Widget>[
                                 TextButton(
@@ -214,13 +214,13 @@ switch (widget.userData[0]["connection"]) {
                                           )
                                         : null;
                                   },
-                                  child: Text('Yes'),
+                                  child: const Text('Yes'),
                                 ),
                                 TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
-                                  child: Text('No'),
+                                  child: const Text('No'),
                                 ),
                               ],
                             );
@@ -232,8 +232,8 @@ switch (widget.userData[0]["connection"]) {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: Text('Remove the request'),
-                              content: Text(
+                              title: const Text('Remove the request'),
+                              content: const Text(
                                   'Are you sure you want to remove the request?'),
                               actions: <Widget>[
                                 TextButton(
@@ -255,13 +255,13 @@ switch (widget.userData[0]["connection"]) {
                                           )
                                         : null;
                                   },
-                                  child: Text('Yes'),
+                                  child: const Text('Yes'),
                                 ),
                                 TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
-                                  child: Text('No'),
+                                  child: const Text('No'),
                                 ),
                               ],
                             );
@@ -326,8 +326,8 @@ switch (widget.userData[0]["connection"]) {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text('Remove the request'),
-                                content: Text(
+                                title: const Text('Remove the request'),
+                                content: const Text(
                                     'Are you sure you want to remove the request?'),
                                 actions: <Widget>[
                                   TextButton(
@@ -350,13 +350,13 @@ switch (widget.userData[0]["connection"]) {
                                             )
                                           : null;
                                     },
-                                    child: Text('Yes'),
+                                    child: const Text('Yes'),
                                   ),
                                   TextButton(
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
-                                    child: Text('No'),
+                                    child: const Text('No'),
                                   ),
                                 ],
                               );
@@ -367,7 +367,7 @@ switch (widget.userData[0]["connection"]) {
                       },
                       color: Colors.grey,
                       textColor: Colors.white,
-                      child: Text("Delete"),
+                      child: const Text("Delete"),
                     ),
                   ),
                 ),

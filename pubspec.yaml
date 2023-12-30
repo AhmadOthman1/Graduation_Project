@@ -53,6 +53,9 @@ dependencies:
   awesome_notifications: ^0.8.2
   table_calendar: ^3.0.9
   video_player: ^2.8.1
+  #jitsi_meet_flutter_sdk: ^0.1.9
+  peerdart: ^0.5.4
+  
  
 
 dev_dependencies:

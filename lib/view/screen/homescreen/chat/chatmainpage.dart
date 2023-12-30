@@ -113,7 +113,7 @@ class _ChatMainPageState extends State<ChatMainPage> {
                                             : const AssetImage(
                                                 "images/profileImage.jpg"),
                                       ),
-                                      Positioned(
+                                      const Positioned(
                                         bottom: 2,
                                         right: 2,
                                         child: CircleAvatar(

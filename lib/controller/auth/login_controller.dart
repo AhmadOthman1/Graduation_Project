@@ -121,7 +121,7 @@ class LoginControllerImp extends LoginController {
   Future<void> connectToSSE(String username) async {
     Platform platform = getPlatform();
     var accessToken = GetStorage().read("accessToken") ?? "";
-    var url = urlSSEStarter + '/userNotifications/notifications';
+    var url = '$urlSSEStarter/userNotifications/notifications';
     print(platform.name);
     if (platform.name == 'web') {
       Map<String, dynamic> headers = {
@@ -171,8 +171,8 @@ class LoginControllerImp extends LoginController {
             String createdAt = jsonData['createdat'];
             await NotificationService.showNotification(
                 title: "Growify",
-                body: "${notificationPointer} has ${notificationContent}",
-                summary: "${createdAt}",
+                body: "$notificationPointer has $notificationContent",
+                summary: createdAt,
                 payload: {
                   "navigate": "true",
                 },
