@@ -72,7 +72,7 @@ io.on("connection", (socket) => {// first time socket connection
           messageVideoName = await messageSaveVideo(userUsername, username, msg.messageVideoBytes, msg.messageVideoBytesName, msg.messageVideoExt)
           var userSocket = socketUsernameMap[userUsername];
           if (userSocket)
-            userSocket.emit("/chatMyVideo", { message: msg.message, image: messageImageName,video: messageVideoName });
+            userSocket.emit("/chatMyVideo", { message: msg.message, image: messageImageName, video: messageVideoName });
         }
         //if target user is in message page send it via his socket
         if (targetSocket) {
@@ -104,6 +104,64 @@ io.on("connection", (socket) => {// first time socket connection
       });
     }
 
+  });
+  socket.on("makeCall", (data) => {
+    let calleeId = data.calleeId;
+    let sdpOffer = data.sdpOffer;
+      var userUsername = data.callerId;
+      const targetSocket = socketUsernameMap[calleeId];
+      if (targetSocket) {
+        targetSocket.emit("newCall", {
+          callerId: userUsername,
+          sdpOffer: sdpOffer,
+        });
+    }
+  });
+
+  socket.on("answerCall", (data) => {
+    let callerId = data.callerId;
+    let sdpAnswer = data.sdpAnswer;
+      var userUsername = data.calleeId;
+
+      const targetSocket = socketUsernameMap[callerId];
+      if (targetSocket) {
+        targetSocket.emit("callAnswered", {
+          callee: userUsername,
+          sdpAnswer: sdpAnswer,
+        });
+      }
+    
+  });
+
+  socket.on("IceCandidate", (data) => {
+    let calleeId = data.calleeId;
+    let iceCandidate = data.iceCandidate;
+      var userUsername = data.callerId;
+
+      const targetSocket = socketUsernameMap[calleeId];
+      if (targetSocket) {
+
+        targetSocket.emit("IceCandidate", {
+          sender: userUsername,
+          iceCandidate: iceCandidate,
+        });
+      }
+    
+  });
+  socket.on("leaveCall", (data) => {
+    let user1 = data.user1;
+      var user2 = data.user2;
+
+      const targetSocket = socketUsernameMap[user1];
+      if (targetSocket) {
+        targetSocket.emit("callEnded", {
+        });
+      }
+      const userSocket = socketUsernameMap[user2];
+      if (userSocket) {
+        userSocket.emit("callEnded", {
+        });
+      }
   });
   socket.on("disconnect", () => {
     const username = Object.keys(socketUsernameMap).find(
