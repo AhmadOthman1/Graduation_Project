@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/ColleaguesProfile_controller.dart';
+import 'package:growify/controller/home/chats_controller/chatmainpage_controller.dart';
 import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/chat/chatpagemessages.dart';
 import 'dart:convert';
 
 import 'package:growify/view/widget/homePage/posts.dart';
@@ -20,8 +22,7 @@ class ColleaguesProfile extends StatefulWidget {
 
 class _ColleaguesProfileState extends State<ColleaguesProfile> {
    late ColleaguesProfileControllerImp controller;
- // final ColleaguesProfileControllerImp controller =
-  //    Get.put(ColleaguesProfileControllerImp());
+ 
 
   @override
   void initState() {
@@ -36,17 +37,15 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
   String? profileImageBytes;
   String? profileImageBytesName;
   String? profileImageExt;
-  String? profileImage;
+ 
 
-  ImageProvider<Object>? profileBackgroundImage;
-
-  String? coverImage;
+  
   String? coverImageBytes;
   String? coverImageBytesName;
   String? coverImageExt;
 
   final AssetImage defultcoverImage = const AssetImage("images/coverImage.jpg");
-  late ImageProvider<Object> coverBackgroundImage;
+  
 
   String? Bio;
 
@@ -54,13 +53,9 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
 
   @override
   Widget build(BuildContext context) {
-    profileBackgroundImage = (profileImage != null && profileImage != "")
-        ? Image.network("$urlStarter/${profileImage!}").image
-        : defultprofileImage;
+   
 
-    coverBackgroundImage = (coverImage != null && coverImage != "")
-        ? Image.network("$urlStarter/${coverImage!}").image
-        : defultcoverImage;
+  
 switch (widget.userData[0]["connection"]) {
       case 'C':
         controller.result.value = "Connected";
@@ -100,6 +95,8 @@ switch (widget.userData[0]["connection"]) {
             _buildProfileInfo(context),
               _Deatalis("Details"),
               _buildDivider(10),
+              _buildMessage(),
+              _buildDivider(10),
               _buildButtonsRow(),
               _buildDivider(10),
               _Deatalis("Posts"),
@@ -132,6 +129,10 @@ switch (widget.userData[0]["connection"]) {
   }
 
    Widget _buildProfileInfo(context) {
+     String profileImage = widget.userData[0]["photo"] ?? "";
+    ImageProvider<Object> profileBackgroundImage = (profileImage.isNotEmpty)
+        ? Image.network("$urlStarter/$profileImage").image
+        : const AssetImage("images/profileImage.jpg");
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -433,6 +434,36 @@ switch (widget.userData[0]["connection"]) {
                 SizedBox(width: 10),
                 Text(
                   "See About info",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                Spacer(),
+                Icon(Icons.arrow_forward, size: 30),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+   Widget _buildMessage() {
+    return Column(
+      children: [
+        InkWell(
+          onTap: () {
+            controller.goToChatMessage();
+       
+
+          },
+          child: Container(
+            height: 35,
+            padding: const EdgeInsets.only(left: 10),
+            child: const Row(
+              children: [
+                Icon(Icons.more_horiz),
+                SizedBox(width: 10),
+                Text(
+                  "Messaging",
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),

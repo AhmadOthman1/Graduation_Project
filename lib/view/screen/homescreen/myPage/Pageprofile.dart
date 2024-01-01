@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:growify/controller/home/myPage_Controller/PageProfile_controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/JobsPages/addnewjob.dart';
+import 'package:growify/view/screen/homescreen/JobsPages/showAllMyPageJobs.dart';
 import 'package:growify/view/screen/homescreen/NewPost/newpost.dart';
+import 'package:growify/view/screen/homescreen/myPage/Admins/ShowAllAdmins.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 import 'package:get/get.dart';
 
@@ -174,6 +177,29 @@ class _PageProfileState extends State<PageProfile> {
   Widget _buildButtonsRow() {
     return Column(
       children: [
+         InkWell(
+          onTap: () {
+             Get.to(ShowAdmins());
+          },
+          child: Container(
+            height: 35,
+            padding: const EdgeInsets.only(left: 10),
+            child: const Row(
+              children: [
+                Icon(Icons.person),
+                SizedBox(width: 10),
+                Text(
+                  "Show Admins",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                Spacer(),
+                Icon(Icons.arrow_forward, size: 30),
+              ],
+            ),
+          ),
+        ),
+
+        _buildDivider(10),
         InkWell(
           onTap: () {
              controller.goToEditPageProfile();
@@ -218,6 +244,31 @@ class _PageProfileState extends State<PageProfile> {
           ),
         ),
         _buildDivider(10),
+
+        InkWell(
+          onTap: () {
+            //controller.goToSeeAboutInfo();
+            Get.to(MyJobPage());
+          },
+          child: Container(
+            height: 35,
+            padding: const EdgeInsets.only(left: 10),
+            child: const Row(
+              children: [
+                Icon(Icons.more_horiz),
+                SizedBox(width: 10),
+                Text(
+                  "View All Jobs",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                Spacer(),
+                Icon(Icons.arrow_forward, size: 30),
+              ],
+            ),
+          ),
+        ),
+
+        _buildDivider(10),
         InkWell(
           onTap: () {
             Get.to(NewPost());
@@ -231,6 +282,28 @@ class _PageProfileState extends State<PageProfile> {
                 SizedBox(width: 10),
                 Text(
                   "Add New Post",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                Spacer(),
+                Icon(Icons.arrow_forward, size: 30),
+              ],
+            ),
+          ),
+        ),
+        _buildDivider(10),
+        InkWell(
+          onTap: () {
+            Get.to(NewJobPost());
+          },
+          child: Container(
+            height: 35,
+            padding: const EdgeInsets.only(left: 10),
+            child: const Row(
+              children: [
+                Icon(Icons.work_outline_outlined),
+                SizedBox(width: 10),
+                Text(
+                  "Add a job opportunity",
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),

@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/JobsPage_Controller/JobMainPage_controller.dart';
+import 'package:growify/controller/home/JobsPage_Controller/ShowAllMyJobs_controller.dart';
+import 'package:growify/controller/home/JobsPage_Controller/companyJob_controller.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/JobsPages/showthejob.dart';
 
-class JobsPage extends StatefulWidget {
-  const JobsPage({Key? key}) : super(key: key);
+class CompanyJobPage extends StatefulWidget {
+  const CompanyJobPage({Key? key}) : super(key: key);
 
   @override
-  _JobsPageState createState() => _JobsPageState();
+  _CompanyJobPageState createState() => _CompanyJobPageState();
 }
 
 final ScrollController scrollController = ScrollController();
 
-class _JobsPageState extends State<JobsPage> {
-  late JobsController _controller;
+class _CompanyJobPageState extends State<CompanyJobPage> {
+  late CompanyJobController _controller;
   final ScrollController _scrollController = ScrollController();
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
@@ -24,7 +25,7 @@ class _JobsPageState extends State<JobsPage> {
   @override
   void initState() {
     super.initState();
-    _controller = JobsController();
+    _controller = CompanyJobController();
     _loadData();
     _scrollController.addListener(_scrollListener);
   }
@@ -51,7 +52,7 @@ class _JobsPageState extends State<JobsPage> {
       _loadData();
     }
   }
-  
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -76,25 +77,26 @@ class _JobsPageState extends State<JobsPage> {
               itemCount: _controller.jobs.length,
               itemBuilder: (context, index) {
                 final job = _controller.jobs[index];
-                
-                return Column(
-                  children: [
-                    ListTile(
-                      onTap: (){
-                      //  _controller.showPost();
-                        
-                      },
-                      leading: CircleAvatar(
-                        backgroundImage: (job['photo'] != null &&
-                                job['photo'] != "")
-                            ? Image.network("$urlStarter/" + job['photo']!)
-                                .image
-                            : defultprofileImage,
-                      ),
-                      title: Text(
-                          "${job['notificationPointer']} ${job['notificationContent']}"),
-                      subtitle: Text(job['date']),
-                      trailing: Row(
+
+                return Card(
+                  margin: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: CircleAvatar(
+                          backgroundImage: (job['photo'] != null &&
+                                  job['photo'] != "")
+                              ? Image.network("$urlStarter/" + job['photo']!)
+                                  .image
+                              : defultprofileImage,
+                        ),
+                        title: Text(
+                          "${job['notificationContent']}",
+                          
+                        ),
+                        trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
@@ -105,12 +107,20 @@ class _JobsPageState extends State<JobsPage> {
                           ),
                         ],
                       ),
-                    ),
-                    const Divider(
-                      color: Color.fromARGB(255, 194, 193, 193),
-                      thickness: 2.0,
-                    ),
-                  ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Deadline: ${job['date']}'),
+                            const SizedBox(height: 8),
+                            Text(job['notificationContent']),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
@@ -121,3 +131,14 @@ class _JobsPageState extends State<JobsPage> {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+

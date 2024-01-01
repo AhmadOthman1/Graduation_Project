@@ -11,8 +11,8 @@ import 'package:http/http.dart' as http;
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
-class ShowColleaguesController {
-  final List<Map<String, dynamic>> colleagues = [];
+class ShowAdminsController {
+  final List<Map<String, dynamic>> admins = [];
   final ScrollController scrollController = ScrollController();
   bool isLoading = false;
   int pageSize = 10;
@@ -68,7 +68,7 @@ class ShowColleaguesController {
           };
         }).toList();
 
-        colleagues.addAll(newNotifications);
+        admins.addAll(newNotifications);
         
       }
 
@@ -79,6 +79,12 @@ class ShowColleaguesController {
     return;
   }
 
+  showPost(){
+
+    
+    Get.to(() => const ShowPost());
+
+  }
 
   
 }

@@ -1,30 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/JobsPage_Controller/JobMainPage_controller.dart';
-import 'package:growify/controller/home/Search_Cotroller.dart';
+import 'package:growify/controller/home/Admin_controller/ShowAdmin_controller.dart';
+import 'package:growify/controller/home/network_controller/networdkmainpage_controller.dart';
 import 'package:growify/global.dart';
-import 'package:growify/view/screen/homescreen/JobsPages/showthejob.dart';
+import 'package:growify/view/screen/homescreen/myPage/Admins/SelectAdmin.dart';
 
-class JobsPage extends StatefulWidget {
-  const JobsPage({Key? key}) : super(key: key);
+class ShowAdmins extends StatefulWidget {
+  const ShowAdmins({Key? key}) : super(key: key);
 
   @override
-  _JobsPageState createState() => _JobsPageState();
+  _ShowAdminsState createState() => _ShowAdminsState();
 }
 
 final ScrollController scrollController = ScrollController();
 
-class _JobsPageState extends State<JobsPage> {
-  late JobsController _controller;
+class _ShowAdminsState extends State<ShowAdmins> {
+  final NetworkMainPageControllerImp Networkcontroller = Get.put(NetworkMainPageControllerImp());
+  late ShowAdminsController _controller;
   final ScrollController _scrollController = ScrollController();
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
-  final SearchControllerImp searchController = Get.put(SearchControllerImp());
+  
 
   @override
   void initState() {
     super.initState();
-    _controller = JobsController();
+    _controller = ShowAdminsController();
     _loadData();
     _scrollController.addListener(_scrollListener);
   }
@@ -35,9 +36,9 @@ class _JobsPageState extends State<JobsPage> {
       await _controller.loadNotifications(_controller.page);
       setState(() {
         _controller.page++;
-        _controller.jobs;
+        _controller.admins;
       });
-      print('Data loaded: ${_controller.jobs.length} jobs');
+      print('Data loaded: ${_controller.admins.length} admins');
     } catch (error) {
       print('Error loading data: $error');
     }
@@ -47,7 +48,6 @@ class _JobsPageState extends State<JobsPage> {
     if (_scrollController.offset >=
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
-      // reached the bottom, load more notifications
       _loadData();
     }
   }
@@ -62,8 +62,19 @@ class _JobsPageState extends State<JobsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notifications'),
-      ),
+  
+  actions: [
+    TextButton(
+      
+      onPressed: () {
+       Get.to(AddAdmin());
+      },
+      child: Text("Add Admin",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
+    ),
+   
+  ],
+),
+
       body: Column(
         children: [
           const Divider(
@@ -73,38 +84,31 @@ class _JobsPageState extends State<JobsPage> {
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
-              itemCount: _controller.jobs.length,
+              itemCount: _controller.admins.length,
               itemBuilder: (context, index) {
-                final job = _controller.jobs[index];
+                final admin = _controller.admins[index];
+                final firstname=admin['firstname'];
+                final lastname =admin['lastname'];
+                final username =admin['username'];
                 
                 return Column(
                   children: [
                     ListTile(
                       onTap: (){
-                      //  _controller.showPost();
+                        final userUsername = username;
+                              Networkcontroller.goToUserPage(userUsername!);
                         
                       },
-                      leading: CircleAvatar(
-                        backgroundImage: (job['photo'] != null &&
-                                job['photo'] != "")
-                            ? Image.network("$urlStarter/" + job['photo']!)
+                      trailing: CircleAvatar(
+                        backgroundImage: (admin['photo'] != null &&
+                                admin['photo'] != "")
+                            ? Image.network("$urlStarter/" + admin['photo']!)
                                 .image
                             : defultprofileImage,
                       ),
-                      title: Text(
-                          "${job['notificationPointer']} ${job['notificationContent']}"),
-                      subtitle: Text(job['date']),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.open_in_new),
-                            onPressed: () {
-                              Get.to(ShowTheJob());
-                            },
-                          ),
-                        ],
-                      ),
+                      title: Text('$firstname $lastname'),
+                      subtitle: Text('$username'),
+                      
                     ),
                     const Divider(
                       color: Color.fromARGB(255, 194, 193, 193),

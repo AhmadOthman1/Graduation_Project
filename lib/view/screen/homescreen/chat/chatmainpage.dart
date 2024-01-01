@@ -84,19 +84,9 @@ class _ChatMainPageState extends State<ChatMainPage> {
                     itemBuilder: (context, index) {
                       return InkWell(
                         onTap: () {
-                          print(controller.localColleagues);
-                          print(controller.colleaguesPreviousmessages);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => ChatPageMessages(
-                                data: controller.localColleagues[index],
-                              ),
-                            ),
-                          );
-                          /*Get.to(ChatPageMessages(
+                          Get.to(ChatPageMessages(
                             data: controller.localColleagues[index],
-                          ));*/
+                          ));
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -169,7 +159,11 @@ class _ChatMainPageState extends State<ChatMainPage> {
                   onTap: () {
                     Get.to(ChatPageMessages(
                       data: controller.colleaguesPreviousmessages[index],
+                      
                     ));
+                    print("gggggggggggggggggggg55");
+                    print(controller.colleaguesPreviousmessages[index]);
+                    print("gggggggggggggggggggg55");
                   },
                   child: ListTile(
                     leading: CircleAvatar(
@@ -184,8 +178,8 @@ class _ChatMainPageState extends State<ChatMainPage> {
                     ),
                     title: Text(
                         controller.colleaguesPreviousmessages[index]['name']),
-                    subtitle: Text(
-                        "@${controller.colleaguesPreviousmessages[index]['username']}"),
+                    subtitle: Text("@${controller.colleaguesPreviousmessages[index]
+                        ['username']}"),
                     trailing: PopupMenuButton<String>(
                       icon: const Icon(Icons.more_vert),
                       onSelected: (String option) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:growify/controller/home/ColleaguesProfile_controller.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
 import 'package:growify/global.dart';
 
@@ -12,9 +13,11 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   final SearchControllerImp controller = Get.put(SearchControllerImp());
+  final ColleaguesProfileControllerImp _controller2 =
+      Get.put(ColleaguesProfileControllerImp());
   final GlobalKey<FormState> formstate = GlobalKey();
   bool isLoading = false;
-  var searchType ="U";
+  var searchType = "U";
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
   ImageProvider<Object>? profileBackgroundImage;
@@ -112,10 +115,10 @@ class _SearchState extends State<Search> {
                   onTap: (index) {
                     // Handle tab click here
                     if (index == 0) {
-                      searchType="U";
+                      searchType = "U";
                       print('Users Tab clicked!');
                     } else if (index == 1) {
-                      searchType="P";
+                      searchType = "P";
                       print('Pages Tab clicked!');
                     }
                   },
@@ -211,6 +214,25 @@ class _SearchState extends State<Search> {
                           return ListTile(
                             onTap: () {
                               final userUsername = username;
+                              final userFirstname = firstname;
+                              final userLastname = lastname;
+                              final userPhoto = photo;
+
+                              Map<String, dynamic> userMap = {
+                                'name':
+                                    '$userFirstname $userLastname', 
+                                    'username': userUsername,
+                                'photo': userPhoto,
+                                'type': 'U'
+                              };
+
+                              _controller2.colleaguesmessages.assign(userMap);
+                              print(
+                                  "lllllllllllllllllllllllllllllllllllllllll");
+                              print(_controller2.colleaguesmessages);
+                              print(
+                                  "lllllllllllllllllllllllllllllllllllllllll");
+
                               controller.goToUserPage(userUsername!);
                               //  controller.goToprofile(email)
                             },
@@ -262,10 +284,8 @@ class _SearchState extends State<Search> {
                         padding: const EdgeInsets.all(15),
                         itemCount: controller.pageList.length,
                         itemBuilder: (context, index) {
-                          final name =
-                              controller.pageList[index]['name'];
-                          final pageId =
-                              controller.pageList[index]['pageId'];
+                          final name = controller.pageList[index]['name'];
+                          final pageId = controller.pageList[index]['pageId'];
                           final photo = controller.pageList[index]['photo'];
                           profileBackgroundImage =
                               (photo != null && photo != "null" && photo != "")

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/chat/chatpagemessages.dart';
 import 'package:growify/view/screen/homescreen/profilepages/seeaboutInfoColleagues.dart';
 import 'package:http/http.dart' as http;
 
@@ -10,6 +11,17 @@ LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
 class ColleaguesProfileControllerImp extends GetxController {
+late RxList<Map<String, dynamic>> colleaguesmessages= <Map<String, dynamic>>[].obs;
+
+
+
+
+
+
+
+
+
+
   bool isDeleteButtonVisible = false;
   RxString result = ''.obs;
   void toggleResult() {
@@ -349,5 +361,14 @@ postSendAcceptConnectReq(username) async {
         },
       );
     }
+  }
+
+  goToChatMessage()async {
+    print("Hamassssssssss");
+print(colleaguesmessages);
+print("Hamassssssssss");
+       Get.to(ChatPageMessages(
+                      data: colleaguesmessages[0]
+                    ));
   }
 }

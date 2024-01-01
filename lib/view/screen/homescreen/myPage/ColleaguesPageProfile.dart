@@ -4,6 +4,7 @@ import 'package:growify/controller/home/myPage_Controller/PageColleaguesProfile_
 import 'package:growify/global.dart';
 
 import 'package:get/get.dart';
+import 'package:growify/view/screen/homescreen/JobsPages/ShowCompanyJobs.dart';
 import 'dart:convert';
 
 import 'package:growify/view/widget/homePage/posts.dart';
@@ -194,6 +195,31 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
                 SizedBox(width: 10),
                 Text(
                   "See About info",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                Spacer(),
+                Icon(Icons.arrow_forward, size: 30),
+              ],
+            ),
+          ),
+        ),
+
+         _buildDivider(10),
+
+        InkWell(
+          onTap: () {
+            //controller.goToSeeAboutInfo();
+            Get.to(CompanyJobPage());
+          },
+          child: Container(
+            height: 35,
+            padding: const EdgeInsets.only(left: 10),
+            child: const Row(
+              children: [
+                Icon(Icons.more_horiz),
+                SizedBox(width: 10),
+                Text(
+                  "View All Jobs",
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),
