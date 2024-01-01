@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const userRoutes = require('./routes/userNotifications');
 const { socketAuthenticateToken } = require('./controller/authController');
+const { notifyUser, deleteNotificaion } = require("./controller/notifications");
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { messagesControl, messageSaveImage, messageSaveVideo } = require("./controller/chats/userChat");
@@ -28,7 +29,8 @@ app.use('/userNotifications', userRoutes);
 populateClientsMap();
 
 
-const socketUsernameMap = {};
+const socketUsernameMap = {};//map the usernames to their sockets
+const callsUsernameMap = {};
 io.on("connection", (socket) => {// first time socket connection
   console.log("connected");
   console.log(socket.id);
@@ -42,7 +44,16 @@ io.on("connection", (socket) => {// first time socket connection
       var userUsername = decoded.username;
       console.log(userUsername);
       socketUsernameMap[userUsername] = socket;
-
+      if (callsUsernameMap[userUsername] && callsUsernameMap[userUsername] != null) {
+        const targetSocket = socketUsernameMap[userUsername];
+        if (targetSocket) {//if other user's socket is open
+          targetSocket.emit("newCall", {
+            callerId: callsUsernameMap[userUsername].userUsername,
+            sdpOffer: callsUsernameMap[userUsername].sdpOffer,
+          });
+          console.log("caaaaaaaaaaaaaaaaaaaaaaaaaaaaal");
+        }
+      }
       socket.emit("status", status);
     } else if (status == 403) {
       socket.emit("status", status);
@@ -50,6 +61,7 @@ io.on("connection", (socket) => {// first time socket connection
       socket.emit("status", status);
     }
   });
+
   socket.on("/chat", async (msg) => {//when a new message arrive 
     console.log(msg);
     const authHeader = msg.token;
@@ -76,9 +88,18 @@ io.on("connection", (socket) => {// first time socket connection
         }
         //if target user is in message page send it via his socket
         if (targetSocket) {
+          console.log(msg.message);
           targetSocket.emit("/chat", { message: msg.message, image: messageImageName, video: messageVideoName, date: new Date() });
-        } else {// just for showing result when user not in message page
-          console.log('Socket not found for username:', username);
+        } else {
+          const notification = {
+            username: username,
+            notificationType: 'message', // Type of notifications
+            notificationContent: "sent you a message",
+            notificationPointer: userUsername,
+          };
+          var isnotify = false
+          isnotify = await notifyUser(calleeId, notification);
+          console.log(isnotify);
         }
         //save the message in db after sending it via socket
         await messagesControl(userUsername, username, msg.message, messageImageName, messageVideoName)
@@ -105,63 +126,82 @@ io.on("connection", (socket) => {// first time socket connection
     }
 
   });
-  socket.on("makeCall", (data) => {
+  //create new call offer from sender
+  socket.on("makeCall", async (data) => {
     let calleeId = data.calleeId;
     let sdpOffer = data.sdpOffer;
-      var userUsername = data.callerId;
-      const targetSocket = socketUsernameMap[calleeId];
-      if (targetSocket) {
-        targetSocket.emit("newCall", {
-          callerId: userUsername,
-          sdpOffer: sdpOffer,
-        });
+    var userUsername = data.callerId;
+    const targetSocket = socketUsernameMap[calleeId];
+    if (targetSocket) {//if other user's socket is open
+      targetSocket.emit("newCall", {
+        callerId: userUsername,
+        sdpOffer: sdpOffer,
+      });
+    } else {//send a notification
+      callsUsernameMap[calleeId] = { userUsername, sdpOffer };
+      console.log(callsUsernameMap[calleeId])
+      console.log(calleeId)
+      console.log("---------------------------------")
+      const notification = {
+        username: calleeId,
+        notificationType: 'call', // Type of notifications
+        notificationContent: "is calling you...",
+        notificationPointer: userUsername,
+      };
+      var isnotify = false
+      isnotify = await notifyUser(calleeId, notification);
+      console.log(isnotify);
     }
   });
-
+  //answer the call from the receiver
   socket.on("answerCall", (data) => {
     let callerId = data.callerId;
     let sdpAnswer = data.sdpAnswer;
-      var userUsername = data.calleeId;
+    var userUsername = data.calleeId;
+    if (callsUsernameMap[data.calleeId]) callsUsernameMap[data.calleeId] = null;
+    const targetSocket = socketUsernameMap[callerId];
+    if (targetSocket) {
+      targetSocket.emit("callAnswered", {
+        callee: userUsername,
+        sdpAnswer: sdpAnswer,
+      });
+    }
 
-      const targetSocket = socketUsernameMap[callerId];
-      if (targetSocket) {
-        targetSocket.emit("callAnswered", {
-          callee: userUsername,
-          sdpAnswer: sdpAnswer,
-        });
-      }
-    
   });
-
+  //get Ice Candidate from user and send it to other user 
   socket.on("IceCandidate", (data) => {
     let calleeId = data.calleeId;
     let iceCandidate = data.iceCandidate;
-      var userUsername = data.callerId;
+    var userUsername = data.callerId;
 
-      const targetSocket = socketUsernameMap[calleeId];
-      if (targetSocket) {
+    const targetSocket = socketUsernameMap[calleeId];
+    if (targetSocket) {
 
-        targetSocket.emit("IceCandidate", {
-          sender: userUsername,
-          iceCandidate: iceCandidate,
-        });
-      }
-    
+      targetSocket.emit("IceCandidate", {
+        sender: userUsername,
+        iceCandidate: iceCandidate,
+      });
+    }
+
   });
+  //when any user end the call/call request 
   socket.on("leaveCall", (data) => {
     let user1 = data.user1;
-      var user2 = data.user2;
+    var user2 = data.user2;
+    //out from both users
+    if (callsUsernameMap[user1]) callsUsernameMap[user1] = null;
 
-      const targetSocket = socketUsernameMap[user1];
-      if (targetSocket) {
-        targetSocket.emit("callEnded", {
-        });
-      }
-      const userSocket = socketUsernameMap[user2];
-      if (userSocket) {
-        userSocket.emit("callEnded", {
-        });
-      }
+    if (callsUsernameMap[user2]) callsUsernameMap[user2] = null;
+    const targetSocket = socketUsernameMap[user1];
+    if (targetSocket) {
+      targetSocket.emit("callEnded", {
+      });
+    }
+    const userSocket = socketUsernameMap[user2];
+    if (userSocket) {
+      userSocket.emit("callEnded", {
+      });
+    }
   });
   socket.on("disconnect", () => {
     const username = Object.keys(socketUsernameMap).find(

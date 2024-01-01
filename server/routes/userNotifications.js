@@ -10,5 +10,5 @@ const { authenticateToken } = require('../controller/authController');
 
 
 router.get('/notifications',authenticateToken, notifications.getNotifications);
-router.get('/events', notifications.getevents);
+router.get('/notificationsAuth',authenticateToken, notifications.getevents);
 module.exports=router;

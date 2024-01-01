@@ -372,9 +372,9 @@ exports.postSendConnectReq = async (req, res, next) => {
             date: new Date(),
         });
         const notification = {
-            username: username,  // Type of notification
-            notificationType: 'connection',  // Content of the notification
-            notificationContent: "sent you a connection request",  // Timestamp of when the notification was sent
+            username: username,  
+            notificationType: 'connection', // Type of notification
+            notificationContent: "sent you a connection request",  
             notificationPointer: userUsername,
           };
           var isnotify= false

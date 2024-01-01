@@ -23,17 +23,22 @@ function authenticateToken(req, res, next) {
   })
 }
 function socketAuthenticateToken(msg) {
-  const authHeader = msg
-  const token = authHeader 
-  if (token == null) return 401
+  try {
+    const authHeader = msg
+    const token = authHeader
+    if (token == null) return 401
 
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return 403
-    
-  })
-  return 200
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+      if (err) return 403
+
+    })
+    return 200
+  } catch (err) {
+    return 403
+  }
+
 }
-function getRefreshToken (req, res, next)  {
+function getRefreshToken(req, res, next) {
   const authHeader = req.headers['authorization']
   const refreshToken = authHeader && authHeader.split(' ')[1]
   if (refreshToken == null) return res.status(401).json({
@@ -51,14 +56,14 @@ function getRefreshToken (req, res, next)  {
       },
     });
     if (existingEmail) {
-      if (existingEmail.token!= refreshToken) return res.status(403).json({
+      if (existingEmail.token != refreshToken) return res.status(403).json({
         message: 'server Error',
         body: req.body
       });
-      const userInfo = { email: user.email , username : user.username };
+      const userInfo = { email: user.email, username: user.username };
       const accessToken = generateAccessToken(userInfo);
       res.json({ accessToken: accessToken })
-    }else{
+    } else {
       return res.status(403).json({
         message: 'server Error',
         body: req.body
@@ -67,4 +72,4 @@ function getRefreshToken (req, res, next)  {
 
   })
 }
-module.exports = { generateAccessToken,socketAuthenticateToken, authenticateToken ,getRefreshToken };
+module.exports = { generateAccessToken, socketAuthenticateToken, authenticateToken, getRefreshToken };

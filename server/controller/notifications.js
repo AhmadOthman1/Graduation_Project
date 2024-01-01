@@ -21,18 +21,8 @@ exports.populateClientsMap = async () => {
 
 //test
 exports.getevents = async (req, res) => {
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-  res.flushHeaders();
-
-  const intervalId = setInterval(() => {
-    const eventData = { message: 'Server time: ' + new Date() };
-    res.write(`data: ${JSON.stringify(eventData)}\n\n`);
-  }, 1000);
-
-  req.on('close', () => {
-    clearInterval(intervalId);
+  return res.status(200).json({
+    message: 'auth',
   });
 }
 //open sse connection and handel notifications
