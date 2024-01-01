@@ -1,5 +1,8 @@
+import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/view/screen/homescreen/homepages/homemainPage.dart';
 import 'package:growify/view/screen/homescreen/Networkspages/networkmainpage.dart';
 import 'package:growify/view/screen/homescreen/JobsPages/jobsmainpage.dart';
@@ -13,34 +16,29 @@ import 'dart:async';
 import 'package:growify/Platform.dart'; // our enum
 import 'package:growify/multiplatform.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:http/http.dart' as http;
 
-abstract class HomeScreeenController extends GetxController{
-
-changePage(int currentpage);
-
+abstract class HomeScreeenController extends GetxController {
+  changePage(int currentpage);
 }
 
-class HomeScreenControllerImp extends HomeScreeenController{
+class HomeScreenControllerImp extends HomeScreeenController {
+  int currentpage = 0;
+LogOutButtonControllerImp _logoutController =
+    Get.put(LogOutButtonControllerImp());
 
-  int currentpage=0;
-
-  List<Widget>listPage=[
-
-     const Homepage(),
-     const NotificationsPage(),
-   JobsPage(),
-
+  List<Widget> listPage = [
+    const Homepage(),
+    const NotificationsPage(),
+    JobsPage(),
     NetworksPage()
-
   ];
 
-  List titlebottomappbar=[
+  List titlebottomappbar = [
     "Home",
     "Notices",
     "Jobs",
     "Networks",
-    
-    
   ];
 
   List<IconData> icons = [
@@ -48,21 +46,32 @@ class HomeScreenControllerImp extends HomeScreeenController{
     Icons.notifications,
     Icons.work,
     Icons.diversity_3,
-    
-    
   ];
   @override
   changePage(int indexofpage) {
-
-
-    currentpage=indexofpage;
+    currentpage = indexofpage;
     update();
-  
   }
+  var receivedCallAudio;
+
   Future<void> connectToSSE(String username) async {
     Platform platform = getPlatform();
     var accessToken = GetStorage().read("accessToken") ?? "";
     var url = '$urlSSEStarter/userNotifications/notifications';
+    var authUrl = '$urlSSEStarter/userNotifications/notificationsAuth';
+    var responce = await http.get(Uri.parse(authUrl), headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+    if (responce.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      connectToSSE(username);
+      return;
+    } else if (responce.statusCode == 401) {
+      _logoutController.goTosigninpage();
+      return;
+    }else if (responce.statusCode == 200){
+
     print(platform.name);
     if (platform.name == 'web') {
       Map<String, dynamic> headers = {
@@ -96,6 +105,7 @@ class HomeScreenControllerImp extends HomeScreeenController{
         },
       );
       eventSource.listen((Event event) async {
+        
         var data = event.data;
         if (data != null && data != [] && data != "") {
           Map<String, dynamic> jsonData = json.decode(data);
@@ -110,13 +120,23 @@ class HomeScreenControllerImp extends HomeScreeenController{
             String notificationContent = jsonData['notificationContent'];
             String notificationPointer = jsonData['notificationPointer'];
             String createdAt = jsonData['createdat'];
+            var playSound = true;
+            Duration timeoutAfter = Duration(seconds: 5);
+            if(notificationType == "call"){
+              playSound=false;
+              timeoutAfter= Duration(seconds: 25) ;
+            }
+            await NotificationService.initializeNotification(playSound);
             await NotificationService.showNotification(
                 title: "Growify",
-                body: "$notificationPointer has $notificationContent",
+                body: "$notificationPointer $notificationContent",
                 summary: createdAt,
                 payload: {
                   "navigate": "true",
+                  "call": notificationType == "call" ? "true" : "false",
                 },
+                chronometer: Duration.zero, 
+                timeoutAfter: timeoutAfter,
                 actionButtons: [
                   NotificationActionButton(
                     key: 'check',
@@ -125,6 +145,8 @@ class HomeScreenControllerImp extends HomeScreeenController{
                     color: Colors.green,
                   )
                 ]);
+                playCallingSound();
+
           }
 
           print("New event:");
@@ -133,5 +155,19 @@ class HomeScreenControllerImp extends HomeScreeenController{
       });
     }
   }
+  }
+  void playCallingSound() {
+    receivedCallAudio = AssetsAudioPlayer();
+    if (kIsWeb) {
+      receivedCallAudio.open(Audio.network("audio/receivedCall25.mp3"));
+    } else {
+      receivedCallAudio.open(Audio("audio/receivedCall25.mp3"));
+    }
+    receivedCallAudio.play();
+  }
 
+  stopCallingSound() {
+    receivedCallAudio.pause();
+    //receivedCallAudio = AssetsAudioPlayer();
+  }
 }

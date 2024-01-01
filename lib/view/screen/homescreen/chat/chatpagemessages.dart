@@ -16,24 +16,25 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io';
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:http/http.dart' as http;
 
 class ChatPageMessages extends StatefulWidget {
   final data;
   const ChatPageMessages({super.key, this.data});
 
   @override
-  _ChatPageMessagesState createState() => _ChatPageMessagesState();
+  ChatPageMessagesState createState() => ChatPageMessagesState();
 }
 
 final ScrollController scrollController = ScrollController();
 
-class _ChatPageMessagesState extends State<ChatPageMessages> {
+class ChatPageMessagesState extends State<ChatPageMessages> {
   late ChatController chatController;
   final ScrollController _scrollController = ScrollController();
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
   late IO.Socket socket;
-  final receivedCallAudio = AssetsAudioPlayer();
+  var receivedCallAudio;
   var receivedCallAudioCounter = 0;
   String? messageImageBytes;
   String? messageImageBytesName;
@@ -41,42 +42,74 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
   String? messageVideoBytes;
   String? messageVideoBytesName;
   String? messageVideoExt;
+  ImageProvider<Object> profileBackgroundImage =
+      AssetImage("images/profileImage.jpg");
 
   final LogOutButtonControllerImp _logoutController =
       Get.put(LogOutButtonControllerImp());
+  _initCallingListener() async {
+    var authUrl = '$urlSSEStarter/userNotifications/notificationsAuth';
+    var responce = await http.get(Uri.parse(authUrl), headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+
+    if (receivedCallAudio != null) {
+      receivedCallAudio.currentPosition.listen((position) {
+        if (receivedCallAudio != null &&
+            position != null &&
+            receivedCallAudio.current != null &&
+            receivedCallAudio.current.hasValue &&
+            receivedCallAudio.current.value != null) {
+          print(position);
+          print(receivedCallAudio.current.value?.audio.duration);
+          print(receivedCallAudioCounter);
+
+          if (position.inMilliseconds >= 4700) {
+            receivedCallAudioCounter++;
+            print(mounted);
+            if (mounted) setState(() {});
+
+            //position.inMilliseconds = 0;
+            if (receivedCallAudioCounter >= 5) {
+              decline();
+              incomingSDPOffer = null;
+              if (mounted) setState(() {});
+            }
+          }
+        }
+      });
+    }
+  }
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    receivedCallAudio = AssetsAudioPlayer();
     receivedCallAudioCounter = 0;
     incomingSDPOffer = null;
     chatController = ChatController();
+    _socketConnect();
+    _initCallingListener();
     _loadData();
-    socketConnect();
-    _scrollController.addListener(_scrollListener);
-    receivedCallAudio.currentPosition.listen((position) {
-      // Check if the position is at the end of the audio duration
-      print(position);
-      print(receivedCallAudio.current.value!.audio.duration);
 
-      if (position.inMilliseconds >=
-          receivedCallAudio.current.value!.audio.duration.inMilliseconds -
-              1000) {
-        receivedCallAudioCounter++;
-        if (mounted) setState(() {});
-        playCallingSound();
-        if (receivedCallAudioCounter >= 5) {
-          decline();
-          stopCallingSound();
-          incomingSDPOffer = null;
-          if (mounted) setState(() {});
-        }
-      }
-    });
+    _scrollController.addListener(_scrollListener);
   }
 
-  void socketConnect() {
+  _socketConnect() async {
     try {
+      var authUrl = '$urlSSEStarter/userNotifications/notificationsAuth';
+      var responce = await http.get(Uri.parse(authUrl), headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+      });
       socket = IO.io(urlSSEStarter, <String, dynamic>{
         "transports": ["websocket"],
         "autoConnect": false,
@@ -91,7 +124,7 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
                 //accessToken expired
                 await getRefreshToken(GetStorage().read('refreshToken'));
                 accessToken = GetStorage().read("accessToken");
-                socketConnect();
+                _socketConnect();
                 return;
               } else if (status == 401) {
                 //not valid refreshToken
@@ -141,20 +174,18 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
                   msg["message"], msg["image"], msg["video"]);
             }),
             socket.on("newCall", (data) {
-              playCallingSound();
               print(data);
               incomingSDPOffer = data;
+              playCallingSound();
+              print(mounted);
               if (mounted) {
-                setState(() {
-                  incomingSDPOffer = data;
-                });
+                setState(() {});
               }
             }),
             socket!.on("callEnded", (data) async {
               incomingSDPOffer = null;
-              if (mounted) {
-                setState(() {});
-              }
+              stopCallingSound();
+              if (mounted) setState(() {});
             }),
           });
 
@@ -165,32 +196,36 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
   }
 
   void playCallingSound() {
+    receivedCallAudio = AssetsAudioPlayer();
     if (kIsWeb) {
-      receivedCallAudio.open(
-        Audio.network("audio/receivedCall.mp3"),
-      );
+      receivedCallAudio.open(Audio.network("audio/receivedCall.mp3"),
+          loopMode: LoopMode.single);
     } else {
-      receivedCallAudio.open(
-      Audio("audio/receivedCall.mp3"),
-    );
+      receivedCallAudio.open(Audio("audio/receivedCall.mp3"),
+          loopMode: LoopMode.single);
     }
-
+    _initCallingListener();
     receivedCallAudio.play();
   }
 
-  void stopCallingSound() {
-    receivedCallAudio.stop();
+  stopCallingSound() {
+    receivedCallAudio.pause();
+    receivedCallAudioCounter = 0;
+    //receivedCallAudio = AssetsAudioPlayer();
   }
 
-  Future<void> _loadData() async {
+  _loadData() async {
     print('Loading data...');
     try {
       await chatController.loadUserMessages(
           chatController.page, widget.data['username'], widget.data['type']);
-      setState(() {
-        chatController.page++;
-        chatController.messages;
-      });
+      print(mounted);
+      print("bbbbbbbbbbbbbbbbbbbbbbbb");
+      if (mounted)
+        setState(() {
+          chatController.page++;
+          chatController.messages;
+        });
       print('Data loaded:');
     } catch (error) {
       print('Error loading data: $error');
@@ -209,9 +244,22 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
 
   @override
   void dispose() {
+    chatController.dispose();
     _scrollController.dispose();
-    receivedCallAudio.dispose();
+    socket.clearListeners();
+    socket.dispose();
+    if (receivedCallAudio != null) {
+      receivedCallAudio.stop();
+      receivedCallAudio.dispose();
+    }
 
+    receivedCallAudio = null;
+    print("aaaa");
+    if (incomingSDPOffer != null)
+      socket!.emit("leaveCall", {
+        "user1": incomingSDPOffer["callerId"]!,
+        "user2": GetStorage().read("username"),
+      });
     super.dispose();
   }
 
@@ -230,7 +278,10 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
           socket: socket,
           onCallEnded: () {
             // rebuild the parent screen
-            setState(() {});
+            final chatPageState = widget.key;
+            if (chatPageState != null && mounted) {
+              setState(() {});
+            }
           },
         ),
       ),
@@ -242,7 +293,7 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
       "user1": incomingSDPOffer["callerId"]!,
       "user2": GetStorage().read("username"),
     });
-    receivedCallAudio.dispose();
+    stopCallingSound();
   }
 
 /*
@@ -279,69 +330,107 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          _buildAppBar(),
+          if (incomingSDPOffer == null) _buildAppBar(),
           if (incomingSDPOffer != null)
-            Stack(
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Positioned(
-                  child: ListTile(
-                    title: Text(
-                      "Incoming Call from ${incomingSDPOffer["callerId"]}",
+                SizedBox(
+                  height: 300,
+                ),
+                // Circular photo in the middle
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.blue,
+                  ),
+                  child: Center(
+                    child: CircleAvatar(
+                      radius: 60,
+                      backgroundImage: widget.data["photo"] != null
+                          ? Image.network("$urlStarter/${widget.data["photo"]}")
+                              .image
+                          : profileBackgroundImage,
                     ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.call_end),
-                          color: Colors.redAccent,
-                          onPressed: () {
-                            stopCallingSound();
-                            decline();
-                            setState(() => incomingSDPOffer = null);
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.call),
-                          color: Colors.greenAccent,
-                          onPressed: () {
-                            stopCallingSound();
-                            _joinCall(
-                              callerId: incomingSDPOffer["callerId"]!,
-                              calleeId: GetStorage().read("username"),
-                              offer: incomingSDPOffer["sdpOffer"],
-                            );
-                          },
-                        )
-                      ],
+                  ),
+                ),
+
+                // Text below the circular photo
+                Container(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: Center(
+                      child: Text(
+                        "Incoming Call from ${incomingSDPOffer["callerId"]}",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
                     ),
+                  ),
+                ),
+                SizedBox(
+                  height: 300,
+                ),
+                // Row of buttons at the bottom
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IconButton(
+                        iconSize: 50,
+                        icon: const Icon(Icons.call_end),
+                        color: Colors.redAccent,
+                        onPressed: () {
+                          decline();
+                          if (mounted) setState(() => incomingSDPOffer = null);
+                        },
+                      ),
+                      IconButton(
+                        iconSize: 50,
+                        icon: const Icon(Icons.call),
+                        color: Colors.greenAccent,
+                        onPressed: () {
+                          stopCallingSound();
+                          _joinCall(
+                            callerId: incomingSDPOffer["callerId"]!,
+                            calleeId: GetStorage().read("username"),
+                            offer: incomingSDPOffer["sdpOffer"],
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-          Expanded(
-            child: Obx(() {
-              return ListView.builder(
-                reverse: true, // Display messages in reverse order
-                controller: _scrollController,
-                itemCount: chatController.messages.length,
-                itemBuilder: (context, index) {
-                  //return chatController.messages[index];
-                  return ChatMessage(
-                    text: chatController.messages[index].text,
-                    isUser: chatController.messages[index].isUser,
-                    userName: chatController.messages[index].userName,
-                    userPhoto: chatController.messages[index].userPhoto,
-                    createdAt: chatController.messages[index].createdAt,
-                    image: chatController.messages[index].image,
-                    video: chatController.messages[index].video,
-                    existingVideoController:
-                        chatController.messages[index].existingVideoController,
-                  );
-                },
-              );
-            }),
-          ),
-          _buildMessageComposer(),
+          if (incomingSDPOffer == null)
+            Expanded(
+              child: Obx(() {
+                return ListView.builder(
+                  reverse: true, // Display messages in reverse order
+                  controller: _scrollController,
+                  itemCount: chatController.messages.length,
+                  itemBuilder: (context, index) {
+                    //return chatController.messages[index];
+                    return ChatMessage(
+                      text: chatController.messages[index].text,
+                      isUser: chatController.messages[index].isUser,
+                      userName: chatController.messages[index].userName,
+                      userPhoto: chatController.messages[index].userPhoto,
+                      createdAt: chatController.messages[index].createdAt,
+                      image: chatController.messages[index].image,
+                      video: chatController.messages[index].video,
+                      existingVideoController: chatController
+                          .messages[index].existingVideoController,
+                    );
+                  },
+                );
+              }),
+            ),
+          if (incomingSDPOffer == null) _buildMessageComposer(),
         ],
       ),
     );
@@ -355,6 +444,12 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
         children: [
           IconButton(
             onPressed: () {
+              if (receivedCallAudio != null) {
+                receivedCallAudio.stop();
+                receivedCallAudio.dispose();
+              }
+
+              receivedCallAudio = null;
               Navigator.pop(context);
             },
             icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -585,16 +680,18 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
                   "messageVideoBytesName": messageVideoBytesName,
                   "messageVideoExt": messageVideoExt,
                 });
-                setState(() {
-                  chatController.messages;
-                  messageImageBytes = null;
-                  messageImageBytesName = null;
-                  messageImageExt = null;
+                if (mounted) {
+                  setState(() {
+                    chatController.messages;
+                    messageImageBytes = null;
+                    messageImageBytesName = null;
+                    messageImageExt = null;
 
-                  messageVideoBytes = null;
-                  messageVideoBytesName = null;
-                  messageVideoExt = null;
-                });
+                    messageVideoBytes = null;
+                    messageVideoBytesName = null;
+                    messageVideoExt = null;
+                  });
+                }
                 chatController.textController.clear();
               } else if (messageVideoBytes != null) {
                 var accessToken = GetStorage().read("accessToken");
@@ -610,16 +707,17 @@ class _ChatPageMessagesState extends State<ChatPageMessages> {
                   "messageVideoBytesName": messageVideoBytesName,
                   "messageVideoExt": messageVideoExt,
                 });
+                if (mounted) {
+                  setState(() {
+                    messageImageBytes = null;
+                    messageImageBytesName = null;
+                    messageImageExt = null;
 
-                setState(() {
-                  messageImageBytes = null;
-                  messageImageBytesName = null;
-                  messageImageExt = null;
-
-                  messageVideoBytes = null;
-                  messageVideoBytesName = null;
-                  messageVideoExt = null;
-                });
+                    messageVideoBytes = null;
+                    messageVideoBytesName = null;
+                    messageVideoExt = null;
+                  });
+                }
                 chatController.textController.clear();
               }
             },

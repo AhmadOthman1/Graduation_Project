@@ -101,7 +101,7 @@ class _HomepageState extends State<Homepage> {
                     ),
                     InkWell(
                       onTap: () {
-                        controller.goToChat();
+                        controller.goToChatPage();
                       },
                       child: Container(
                         margin: const EdgeInsets.only(top: 5, left: 3),

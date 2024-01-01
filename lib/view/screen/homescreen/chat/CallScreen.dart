@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:get_storage/get_storage.dart';
@@ -7,7 +9,7 @@ class CallScreen extends StatefulWidget {
   final String callerId, calleeId;
   final dynamic offer;
   final socket;
-  final VoidCallback onCallEnded;
+  final Function onCallEnded;
   const CallScreen({
     super.key,
     this.offer,
@@ -40,12 +42,14 @@ class _CallScreenState extends State<CallScreen> {
 
   // media status
   bool isAudioOn = true, isVideoOn = true, isFrontCameraSelected = true;
-
+  // call ends with no response
+  late Timer callTimeout;
   @override
   void initState() {
     // initializing renderers
     _localRTCVideoRenderer.initialize();
     _remoteRTCVideoRenderer.initialize();
+    startCallTimeout();
 
     // setup Peer Connection
     _setupPeerConnection();
@@ -59,7 +63,22 @@ class _CallScreenState extends State<CallScreen> {
       super.setState(fn);
     }
   }
-*/
+*/ 
+void startCallTimeout() {
+    // Set a timer for 25 seconds
+    callTimeout = Timer(Duration(seconds: 25), () {
+      if(!isCallAccepted){
+        _leaveCall();
+      }
+      
+    });
+  }
+  void cancelCallTimeout() {
+    // Cancel the call timeout if it's still active
+    if (callTimeout.isActive) {
+      callTimeout.cancel();
+    }
+  }
   _setupPeerConnection() async {
     // create peer connection
     _rtcPeerConnection = await createPeerConnection({
@@ -114,9 +133,9 @@ class _CallScreenState extends State<CallScreen> {
     widget.socket!.on("callEnded", (data) async {
       incomingSDPOffer = null;
       if (mounted) {
-        setState(() {});
+        setState(() {widget.onCallEnded();});
       }
-      widget.onCallEnded();
+      
       Navigator.pop(context);
     });
     setState(() {});
@@ -231,8 +250,13 @@ class _CallScreenState extends State<CallScreen> {
       widget.socket!.off("IceCandidate");
       widget.socket!.off("callAnswered");
       incomingSDPOffer = null;
-      setState(() {});
-      widget.onCallEnded();
+      if (mounted) {
+        
+        setState(() {
+          widget.onCallEnded();
+        });
+      }
+      cancelCallTimeout();
       Navigator.pop(context);
     }
   }
@@ -359,11 +383,7 @@ class _CallScreenState extends State<CallScreen> {
     widget.socket!.off("callEnded");
     widget.socket!.off("IceCandidate");
     widget.socket!.off("callAnswered");
-    if (mounted) {
-      setState(() {
-        widget.onCallEnded();
-      });
-    }
+    cancelCallTimeout();
     super.dispose();
   }
 }

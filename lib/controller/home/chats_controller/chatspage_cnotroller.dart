@@ -18,8 +18,6 @@ class ChatController extends GetxController {
   int page = 1;
 
   void sendMessage( text, messageImageBytes,messageVideoBytes) {
-    print(";;;;;;;;;;;;;;;;;;;;;");
-    print(messageVideoBytes);
     DateTime now = DateTime.now();
       messages.insert(
         0,

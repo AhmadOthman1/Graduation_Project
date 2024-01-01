@@ -9,7 +9,7 @@ import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/homeScreen.dart';
 import 'package:growify/services/notification_service.dart';
 void main() async{
-  await NotificationService.initializeNotification();
+  
 
   firstName="";
   lastName="";

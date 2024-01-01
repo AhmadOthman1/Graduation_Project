@@ -61,7 +61,6 @@ abstract class HomePageController extends GetxController {
   toggleLikecomment(int index);
   gotoCommentPage(int id);
   //
-  goToChat();
   //
   goToCalenderPage();
 }
@@ -444,7 +443,6 @@ class HomePageControllerImp extends HomePageController {
     return responce;
   }
 
-  @override
   goToChat() async {
     var res = await getChats();
     if (res.statusCode == 403) {
@@ -459,8 +457,20 @@ class HomePageControllerImp extends HomePageController {
       return resbody['message'];
     } else if (res.statusCode == 200) {
       Mycolleagues.clear();
-      Mycolleagues.assignAll(
-          List<Map<String, dynamic>>.from(resbody['activeConnectionsInfo']));
+      for (var conversation in resbody['activeConnectionsInfo']) {
+        var name = conversation["firstname"] + " " + conversation["lastname"];
+        var username = conversation["username"];
+        var photo = conversation["photo"];
+        final Map<String, dynamic> extractedInfo = {
+          'name': name,
+          'username': username,
+          'photo': photo,
+          'type':"U",
+        };
+        Mycolleagues.add(extractedInfo);
+      }
+      /*Mycolleagues.assignAll(
+          List<Map<String, dynamic>>.from(resbody['activeConnectionsInfo']));*/
       colleaguesPreviousmessages.clear();
       for (var conversation
           in List<Map<String, dynamic>>.from(resbody['uniqueConversations'])) {
@@ -503,15 +513,19 @@ class HomePageControllerImp extends HomePageController {
           'photo': photo,
           'type': type,
         };
-        
+
         colleaguesPreviousmessages.add(extractedInfo);
       }
       //print(colleaguesPreviousmessages);
-      Get.to(const ChatMainPage(), arguments: {
-        'Mycolleagues': Mycolleagues,
-        'colleaguesPreviousmessages': colleaguesPreviousmessages,
-      });
     }
+  }
+
+  goToChatPage() async {
+    await goToChat();
+    Get.to(const ChatMainPage(), arguments: {
+      'Mycolleagues': Mycolleagues,
+      'colleaguesPreviousmessages': colleaguesPreviousmessages,
+    });
   }
 
   @override

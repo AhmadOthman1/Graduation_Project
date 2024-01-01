@@ -1,10 +1,15 @@
+import 'package:growify/controller/home/homepage_controller.dart';
+import 'package:growify/controller/home/homescreen_controller.dart';
 import 'package:growify/main.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:growify/view/screen/homescreen/chat/chatpagemessages.dart';
 import 'package:growify/view/screen/homescreen/notificationspages/notificationmainpage.dart';
+import 'package:get/get.dart';
 
 class NotificationService {
-  static Future<void> initializeNotification() async {
+  
+  static Future<void> initializeNotification(bool playSound) async {
     await AwesomeNotifications().initialize(
       null,
       [
@@ -18,7 +23,7 @@ class NotificationService {
           importance: NotificationImportance.Max,
           channelShowBadge: true,
           onlyAlertOnce: true,
-          playSound: true,
+          playSound: playSound,
           criticalAlerts: true,
         )
       ],
@@ -70,12 +75,37 @@ class NotificationService {
       ReceivedAction receivedAction) async {
     debugPrint('onActionReceivedMethod');
     final payload = receivedAction.payload ?? {};
+
     if (payload["navigate"] == "true") {
-      MyApp.navigatorKey.currentState?.push(
-        MaterialPageRoute(
-          builder: (_) => const NotificationsPage(),
-        ),
-      );
+      if (payload["call"] == "true") {
+        HomePageControllerImp controller =Get.put(HomePageControllerImp());
+        HomeScreenControllerImp controller2 =Get.put(HomeScreenControllerImp());
+        controller2.stopCallingSound();
+        await controller.goToChat();
+
+        Map<String, dynamic>? foundUser;
+        for (Map<String, dynamic> user
+            in controller.colleaguesPreviousmessages) {
+          if (user['username'] == receivedAction.body!.split(' ')[0]) {
+            foundUser = user;
+            break; 
+          }
+        }
+
+        if (foundUser != null) {
+          MyApp.navigatorKey.currentState?.push(
+          MaterialPageRoute(
+            builder: (_) => ChatPageMessages(data: foundUser),
+          ),
+        );
+        }
+      } else {
+        MyApp.navigatorKey.currentState?.push(
+          MaterialPageRoute(
+            builder: (_) => const NotificationsPage(),
+          ),
+        );
+      }
     }
   }
 
@@ -91,6 +121,8 @@ class NotificationService {
     final List<NotificationActionButton>? actionButtons,
     final bool scheduled = false,
     final int? interval,
+    final Duration? chronometer,
+    final Duration? timeoutAfter,
   }) async {
     assert(!scheduled || (scheduled && interval != null));
 
@@ -106,6 +138,8 @@ class NotificationService {
         category: category,
         payload: payload,
         bigPicture: bigPicture,
+        chronometer:chronometer,
+        timeoutAfter:timeoutAfter,
       ),
       actionButtons: actionButtons,
       schedule: scheduled
