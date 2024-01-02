@@ -203,7 +203,7 @@ class _PageProfileState extends State<PageProfile> {
         _buildDivider(10),
         InkWell(
           onTap: () {
-             controller.goToEditPageProfile();
+             controller.goToEditPageProfile(widget.userData);
           },
           child: Container(
             height: 35,
@@ -272,7 +272,7 @@ class _PageProfileState extends State<PageProfile> {
         _buildDivider(10),
         InkWell(
           onTap: () {
-            Get.to(NewPost());
+            Get.to(NewPost(profileImage:profileImage, isPage: true, pageId: widget.userData.id));
           },
           child: Container(
             height: 35,

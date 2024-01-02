@@ -11,12 +11,12 @@ LogOutButtonControllerImp _logoutController =
 class PageInfo {
   final String id;
   final String name;
-  final String description;
-  final String country;
-  final String address;
-  final String contactInfo;
-  final String specialty;
-  final String pageType;
+  final String? description;
+  final String? country;
+  final String? address;
+  final String? contactInfo;
+  final String? specialty;
+  final String? pageType;
   final String? photo;
   final String? coverImage;
   final String? postCount;

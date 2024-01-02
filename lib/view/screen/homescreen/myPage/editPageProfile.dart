@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:growify/controller/home/myPage_Controller/Page_profileSetting_Controller.dart';
+import 'package:growify/controller/home/myPages_controller.dart';
+import 'package:growify/core/functions/alertbox.dart';
 
 import 'package:growify/core/functions/validinput.dart';
 import 'package:growify/global.dart';
@@ -13,23 +15,19 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 class EditPageProfile extends StatelessWidget {
   EditPageProfile({super.key, required this.userData}) {
-    _controller1.text = userData[0]["name"];
-    _controller2.text = userData[0]["Speciality"];
-    _controller3.text = (userData[0]["address"] == null) ? "" : userData[0]["address"];
-    _controller4.text = (userData[0]["country"] == null) ? "" : userData[0]["country"];
-    _controller5.text = (userData[0]["pageType"] == null) ? "" : userData[0]["pageType"];
-    print(_controller4.text);
-  
-    _controller6.text = userData[0]["ContactInfo"];
-    _controller7.text = (userData[0]["Description"] == null) ? "" : userData[0]["Description"];
-    profileImage = (userData[0]["photo"] == null) ? "" : userData[0]["photo"];
-    coverImage = (userData[0]["coverImage"] == null) ? "" : userData[0]["coverImage"];
+    _controller1.text = userData.name;
+    _controller2.text = userData.specialty ?? "";
+    _controller3.text = userData.address ?? "" ;
+    _controller4.text = userData.country ?? "" ;
+    _controller6.text = userData.contactInfo??"";
+    _controller7.text = userData.description?? "" ;
+    profileImage = userData.photo?? "" ;
+    coverImage = userData.coverImage?? "" ;
     // Set initial values in the controller
     controller.textFieldText.value = _controller1.text;
     controller.textFieldText2.value = _controller2.text;
     controller.textFieldText3.value = _controller3.text;
     controller.country.value = _controller4.text;
-    controller.PageType.value = _controller5.text;
    
     controller.textFieldText6.value = _controller6.text;
     controller.textFieldText7.value = _controller7.text;
@@ -44,9 +42,6 @@ class EditPageProfile extends StatelessWidget {
   String? coverImageBytes;
   String? coverImageBytesName;
   String? coverImageExt;
-  String? cvBytes;
-  String? cvName;
-  String? cvExt;
   String? profileImage;
   String? coverImage;
   ImageProvider<Object>? profileBackgroundImage;
@@ -63,7 +58,7 @@ class EditPageProfile extends StatelessWidget {
   GlobalKey<FormState> formstate = GlobalKey();
   
   // Initial user data
-  final List<Map<String, dynamic>> userData ;
+  final PageInfo userData ;
 
   PageProfileSettingsController controller =
       Get.put(PageProfileSettingsController());
@@ -91,7 +86,6 @@ class EditPageProfile extends StatelessWidget {
         controller.isTextFieldEnabled6.value=false;
         controller.isTextFieldEnabled7.value=false;
         controller.isTextFieldEnabled11.value=false;
-        controller.isTextFieldEnabled12.value=false;
        print("obaida");
         return true;
         
@@ -540,79 +534,6 @@ class EditPageProfile extends StatelessWidget {
                           ],
                         ),
                       ),
-
-                       const SizedBox(height: 20),
-                       Obx(
-                        () => Row(
-                          children: [
-                            Container(
-                              width: 300,
-                              margin: const EdgeInsets.only(right: 10),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: DropdownButtonFormField(
-                                  decoration: InputDecoration(
-                                    alignLabelWithHint: true,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    hintStyle: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.always,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    label: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 9),
-                                      child: const Text("Your field of Page Type"),
-                                    ),
-                                  ),
-                                  isExpanded: true,
-                                  hint: const Text('Select Page Type',
-                                      style: TextStyle(color: Colors.grey)),
-                                  items: controller.PageTypeList.map((value) {
-                                    return DropdownMenuItem(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                  value: controller.PageType.value.isEmpty
-                                      ? null
-                                      : controller.PageType.value,
-                                  onChanged: controller.isTextFieldEnabled12.value
-                                      ? (value) {
-                                          controller.PageType.value =
-                                              value.toString();
-                                          print(controller.PageType.value);
-                                        }
-                                      : null, // Disable the dropdown when not enabled
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please select Page Type';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                // Toggle the enable state of the dropdown
-                                controller.isTextFieldEnabled12.toggle();
-                              },
-                              icon: const Icon(Icons.edit),
-                              color: controller.isTextFieldEnabled12.value
-                                  ? Colors.blue
-                                  : Colors.grey,
-                            )
-                          ],
-                        ),
-                      ),
-    
-                     
-    
                      
     
                       //////////////////
@@ -730,8 +651,29 @@ class EditPageProfile extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20)),
                         padding: const EdgeInsets.symmetric(
                             vertical: 13, horizontal: 135),
-                        onPressed: ()  {
-                          
+                        onPressed: ()  async {
+                          var message = await controller.SaveChanges(
+                            userData.id,
+                              profileImageBytes,
+                              profileImageBytesName,
+                              profileImageExt,
+                              coverImageBytes,
+                              coverImageBytesName,
+                              coverImageExt);
+                          (message != null)
+                              ? showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomAlertDialog(
+                                      title: 'Error',
+                                      icon: Icons.error,
+                                      text: message,
+                                      buttonText: 'OK',
+                                    );
+                                  },
+                                )
+                              : null;
+                        
                         },
                         color: const Color.fromARGB(255, 85, 191, 218),
                         textColor: Colors.white,

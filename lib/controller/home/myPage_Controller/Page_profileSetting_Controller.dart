@@ -1,14 +1,20 @@
 //PageProfileSettingsController
+import 'dart:convert';
+
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:growify/controller/home/logOutButton_controller.dart';
+import 'package:growify/core/constant/routes.dart';
+import 'package:growify/global.dart';
+import 'package:http/http.dart' as http;
 
 class PageProfileSettingsController extends GetxController {
-
-
-
   // for the profile image
   final RxString profileImageBytes = ''.obs;
   final RxString profileImageBytesName = ''.obs;
   final RxString profileImageExt = ''.obs;
+LogOutButtonControllerImp _logoutController =
+    Get.put(LogOutButtonControllerImp());
 
   void updateProfileImage(
       String base64String, String imageName, String imageExt) {
@@ -30,13 +36,6 @@ class PageProfileSettingsController extends GetxController {
     coverImageExt.value = imageExt;
     update();
   }
-
-  
-
-    //for the type of page 
-     final RxBool isTextFieldEnabled12 = false.obs;
-  final RxString PageType = ''.obs;
-  final List<String> PageTypeList = ["public", "private"];
 
   // for dropDown country
   final RxBool isTextFieldEnabled11 = false.obs;
@@ -295,8 +294,6 @@ class PageProfileSettingsController extends GetxController {
   RxBool isTextFieldEnabled3 = false.obs;
   RxString textFieldText3 = ''.obs;
   // four textfiled
-  RxBool isTextFieldEnabled4 = false.obs;
-  RxString textFieldText4 = ''.obs;
   // five textfiled
 
   // six textfiled
@@ -305,6 +302,87 @@ class PageProfileSettingsController extends GetxController {
   // seven textfiled
   RxBool isTextFieldEnabled7 = false.obs;
   RxString textFieldText7 = ''.obs;
+  postSaveChanges(
+    pageId,
+      profileImageBytes,
+      profileImageBytesName,
+      profileImageExt,
+      coverImageBytes,
+      coverImageBytesName,
+      coverImageExt) async {
+    var url = "$urlStarter/user/editPageInfo";
 
-  
+    Map<String, dynamic> jsonData = {
+      "pageId": pageId,
+      "name": (isTextFieldEnabled == true) ? textFieldText.trim() : null,
+      "specialty": (isTextFieldEnabled2 == true) ? textFieldText2.trim() : null,
+      "address": (isTextFieldEnabled3 == true) ? textFieldText3.trim() : null,
+      "country": (isTextFieldEnabled11 == true) ? country.trim() : null,
+      "contactInfo": (isTextFieldEnabled6 == true) ? textFieldText6.trim() : null,
+      "description": (isTextFieldEnabled7 == true) ? textFieldText7.trim() : null,
+      "profileImageBytes": profileImageBytes,
+      "profileImageBytesName": profileImageBytesName,
+      "profileImageExt": profileImageExt,
+      "coverImageBytes": coverImageBytes,
+      "coverImageBytesName": coverImageBytesName,
+      "coverImageExt": coverImageExt,
+    };
+    String jsonString = jsonEncode(jsonData);
+    int contentLength = utf8.encode(jsonString).length;
+    var responce = await http.post(Uri.parse(url), body: jsonString, headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+    return responce;
+  }
+
+  @override
+  SaveChanges(
+    pageId,
+      profileImageBytes,
+      profileImageBytesName,
+      profileImageExt,
+      coverImageBytes,
+      coverImageBytesName,
+      coverImageExt
+) async {
+    var res = await postSaveChanges(
+      pageId,
+        profileImageBytes,
+        profileImageBytesName,
+        profileImageExt,
+        coverImageBytes,
+        coverImageBytesName,
+        coverImageExt
+);
+    if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      SaveChanges(
+        pageId,
+          profileImageBytes,
+          profileImageBytesName,
+          profileImageExt,
+          coverImageBytes,
+          coverImageBytesName,
+          coverImageExt
+ );
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+    var resbody = jsonDecode(res.body);
+    print(resbody['message']);
+    print(res.statusCode);
+    if (res.statusCode == 409 || res.statusCode == 500) {
+      return res.statusCode.toString() + ":" + resbody['message'];
+    } else if (res.statusCode == 200) {
+      Get.offNamed(AppRoute.homescreen);
+      isTextFieldEnabled.value = false;
+      isTextFieldEnabled2.value = false;
+      isTextFieldEnabled3.value = false;
+      isTextFieldEnabled6.value = false;
+      isTextFieldEnabled7.value = false;
+      isTextFieldEnabled11.value = false;
+    }
+  }
 }

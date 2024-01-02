@@ -19,36 +19,7 @@ class PageProfileController extends GetxController {
 
 
 
-
-
- /*  final List<Map<String, dynamic>> userData = [
-    {
-      "firstname": "Al Qassam",
-      "address":"Aqraba",
-      "photo": null,
-      "coverImage": null,
-      "Description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      "contact":"facebook",
-      "country":"Palestine",
-      "speciality":"progrmming"
-    }
-  ];*/
-
-   final List<Map<String, dynamic>> userData = [
-    {
-      "name": "Obaida",
-      "Speciality": "developer",
-      "address": "123 Main Street",
-      "country": "United States",
-      'pageType': 'public',
-      "ContactInfo": "123-456-7890",
-      "Description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      "photo": null,
-      "coverImage": null,
-    }
-  ];
-
-  goToEditPageProfile(){
+  goToEditPageProfile(userData){
     Get.to(EditPageProfile(userData: userData,));
   }
 

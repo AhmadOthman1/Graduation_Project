@@ -7,15 +7,18 @@ import 'package:growify/controller/home/newpost_controller.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:growify/core/functions/alertbox.dart';
+import 'package:growify/global.dart';
 
 class NewPost extends StatelessWidget {
-  NewPost({super.key});
+  String? profileImage;
+  bool? isPage;
+  String? pageId;
+  NewPost({super.key, this.profileImage,this.isPage , this.pageId});
 
   String? postImageBytes;
   String? postImageBytesName;
   String? postImageExt;
 
-  ImageProvider<Object>? postBackgroundImage;
 
   final NewPostControllerImp controller = Get.put(NewPostControllerImp());
   GlobalKey<FormState> formstate = GlobalKey();
@@ -23,8 +26,9 @@ class NewPost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Set postBackgroundImage to null initially
-    postBackgroundImage = null;
-
+    ImageProvider<Object> profileBackgroundImage = (profileImage!=null && profileImage!="")
+        ? Image.network("$urlStarter/$profileImage").image
+        : const AssetImage("images/profileImage.jpg");
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 50),
@@ -55,10 +59,8 @@ class NewPost extends StatelessWidget {
                         padding: const EdgeInsets.only(left: 2, right: 15),
                         child: InkWell(
                           onTap: () {},
-                          child: const CircleAvatar(
-                            backgroundImage: AssetImage(
-                              'images/obaida.jpeg',
-                            ),
+                          child:  CircleAvatar(
+                            backgroundImage: profileBackgroundImage,
                             radius: 20,
                           ),
                         ),
@@ -89,6 +91,8 @@ class NewPost extends StatelessWidget {
                               postImageBytes,
                               postImageBytesName,
                               postImageExt,
+                              isPage,
+                              pageId,
                             );
                             (message != null)
                                 ? showDialog(
