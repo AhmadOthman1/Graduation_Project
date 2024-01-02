@@ -74,35 +74,52 @@ class PostControllerImp extends PostController {
     // Add more colleagues as needed
   ].obs;
   // add other list likes1 ...
-  final RxList<Map<String, dynamic>> posts = <Map<String, dynamic>>[
-    
-  ].obs;
+  final RxList<Map<String, dynamic>> posts = <Map<String, dynamic>>[].obs;
 
   int page = 1;
   int pageSize = 10;
 
-  PostgetPostfromDataBase(username, page, pageSize) async {
-    print("111111");
-    print(page);
-     print("111111");
-    var url = "$urlStarter/user/getPosts";
-
-    var responce = await http.post(
-      Uri.parse(url),
-      body: jsonEncode({
-        'username': username,
-        'pages': page,
-        'pageSize': pageSize,
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
-      },
-    );
-    return responce;
+  PostgetPostfromDataBase(username, page, pageSize,
+      [bool? isPage = false]) async {
+        print(page);
+        
+    if (isPage != null && isPage) {
+      print(isPage);
+      print("-------------------------------------");
+      var url = "$urlStarter/user/getPagePosts";
+      var responce = await http.post(
+        Uri.parse(url),
+        body: jsonEncode({
+          'pageId': username,
+          'pages': page,
+          'pageSize': pageSize,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+        },
+      );
+      return responce;
+    } else {
+      var url = "$urlStarter/user/getPosts";
+      var responce = await http.post(
+        Uri.parse(url),
+        body: jsonEncode({
+          'username': username,
+          'pages': page,
+          'pageSize': pageSize,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+        },
+      );
+      return responce;
+    }
   }
 
-  getPostfromDataBase(username, page) async {
+  getPostfromDataBase(username, page, [bool? isPage = false]) async {
+    print(isPage);
     if (isLoading) {
       return;
     }
@@ -110,10 +127,11 @@ class PostControllerImp extends PostController {
     print(username);
     print(page);
     print(pageSize);
-    var res = await PostgetPostfromDataBase(username, page, pageSize);
+    var res = await PostgetPostfromDataBase(username, page, pageSize, isPage);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      getPostfromDataBase(username, page);
+
+      getPostfromDataBase(username, page, isPage);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -123,6 +141,7 @@ class PostControllerImp extends PostController {
       return resbody['message'];
     } else if (res.statusCode == 200) {
       var data = jsonDecode(res.body);
+      print(data['posts']);
       posts.addAll(List<Map<String, dynamic>>.from(data['posts']));
       print("555555555555555555");
       print(data['posts']);
@@ -149,7 +168,6 @@ class PostControllerImp extends PostController {
     } else {
       post['likeCount']--;
       await removeLike(post['id']);
-      
     }
 
     update(); // Notify GetBuilder to rebuild
@@ -256,7 +274,7 @@ class PostControllerImp extends PostController {
       Uri.parse(url),
       body: jsonEncode({
         'postId': postId,
-        'commentContent' : commentContent,
+        'commentContent': commentContent,
       }),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
@@ -268,7 +286,7 @@ class PostControllerImp extends PostController {
 
   @override
   addComment(CommentModel comment) async {
-    if(comment.commentContent== ""){
+    if (comment.commentContent == "") {
       return;
     }
     comments.add(comment);
@@ -286,12 +304,9 @@ class PostControllerImp extends PostController {
     if (res.statusCode == 409) {
       return resbody['message'];
     } else if (res.statusCode == 200) {
-      
       await gotoCommentPage(comment.postId, hasRouteFlag: true);
     }
 
-    
-    
     // If you want to update the UI when a new comment is added, uncomment the following line
     //controller.comments.assignAll(comments1);
 
@@ -317,7 +332,6 @@ class PostControllerImp extends PostController {
 
   @override
   gotoCommentPage(int postId, {bool hasRouteFlag = false}) async {
-    
     var res = await getCommentPage(postId);
     print(res.statusCode);
     if (res.statusCode == 403) {
@@ -350,16 +364,16 @@ class PostControllerImp extends PostController {
         }).toList();
         comments1.clear();
         comments1.assignAll(newComments);
-        
+
         print("llllllllllllllllllllllllllllll");
         print(comments1);
-        if(!hasRouteFlag){
+        if (!hasRouteFlag) {
           print(hasRouteFlag);
           Get.to(const CommentsMainPage(), arguments: {
-          'comments': comments1,
-          'postId' : comments1[0].postId,
-        });
-        }else{
+            'comments': comments1,
+            'postId': comments1[0].postId,
+          });
+        } else {
           // update the comments
         }
       } else {
@@ -501,23 +515,22 @@ class PostControllerImp extends PostController {
   }
 
   /////////////////////////////////////////////////////
-    late int userPostCount;
+  late int userPostCount;
   late int userConnectionsCount;
-  
+
   getDashboard() async {
     var url = "$urlStarter/user/getUserProfileDashboard";
-    var responce = await http.post(Uri.parse(url),
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
-
-        });
-  print(responce);
+    var responce = await http.post(Uri.parse(url), headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+    print(responce);
     return responce;
   }
-loadDashboard() async {
- var res = await getDashboard();
- if (res.statusCode == 403) {
+
+  loadDashboard() async {
+    var res = await getDashboard();
+    if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
       loadDashboard();
       return;
@@ -525,18 +538,19 @@ loadDashboard() async {
       _logoutController.goTosigninpage();
     }
     var resbody = jsonDecode(res.body);
-    if(res.statusCode == 409){
+    if (res.statusCode == 409) {
       return resbody['message'];
-    }else if(res.statusCode == 200){
+    } else if (res.statusCode == 200) {
       userPostCount = resbody['userPostCount'];
-      userConnectionsCount =resbody['userConnectionsCount'] ;
+      userConnectionsCount = resbody['userConnectionsCount'];
       print(resbody);
-    } 
+    }
   }
-  
+
   @override
   Future getprfilepage() async {
-    var url = "$urlStarter/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
+    var url =
+        "$urlStarter/user/settingsGetMainInfo?email=${GetStorage().read("loginemail")}";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -561,9 +575,13 @@ loadDashboard() async {
       return resbody['message'];
     } else if (res.statusCode == 200) {
       GetStorage().write("photo", resbody["user"]["photo"]);
-      Get.to(ProfileMainPage(userData: [resbody["user"]], userPostCount: userPostCount, userConnectionsCount: userConnectionsCount));
+      Get.to(ProfileMainPage(
+          userData: [resbody["user"]],
+          userPostCount: userPostCount,
+          userConnectionsCount: userConnectionsCount));
     }
   }
+
   @override
   Future getUserProfilePage(String userUsername) async {
     var url =
@@ -577,7 +595,7 @@ loadDashboard() async {
 
   @override
   goToUserPage(String userUsername) async {
-    if(userUsername == GetStorage().read('username')){
+    if (userUsername == GetStorage().read('username')) {
       await goToprofilepage();
       return;
     }
@@ -601,6 +619,3 @@ loadDashboard() async {
     }
   }
 }
-
-
-

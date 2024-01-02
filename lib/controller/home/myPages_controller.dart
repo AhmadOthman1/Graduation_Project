@@ -19,8 +19,10 @@ class PageInfo {
   final String pageType;
   final String? photo;
   final String? coverImage;
+  final String? postCount;
+  final String? followCount;
 
-  PageInfo(this.id, this.name, this.description, this.country, this.address, this.contactInfo, this.specialty, this.pageType, this.photo, this.coverImage);
+  PageInfo(this.id, this.name, this.description, this.country, this.address, this.contactInfo, this.specialty, this.pageType, this.photo, this.coverImage, this.postCount , this.followCount);
 }
 
 
@@ -44,7 +46,7 @@ class MyPagesController {
       List<PageInfo> pages = [];
 
       for (var page in responseBody['pages']) {
-        pages.add(PageInfo(page['id'], page['name'], page['description'], page['country'], page['address'], page['contactInfo'], page['specialty'], page['pageType'], page['photo'], page['coverImage']));
+        pages.add(PageInfo(page['id'], page['name'], page['description'], page['country'], page['address'], page['contactInfo'], page['specialty'], page['pageType'], page['photo'], page['coverImage'],page['postCount'],page['followCount']));
         print('Page ID: ${page['id']}');
         print('Page Name: ${page['name']}');
         print('Page Image: ${page['photo']}');

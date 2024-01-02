@@ -9,7 +9,7 @@ import 'package:growify/view/widget/homePage/posts.dart';
 import 'package:get/get.dart';
 
 class PageProfile extends StatefulWidget {
-  final List<Map<String, dynamic>> userData;
+  final  userData;
 
   const PageProfile({Key? key, required this.userData}) : super(key: key);
 
@@ -38,10 +38,11 @@ class _PageProfileState extends State<PageProfile> {
   }
 
   void initializeUserData() {
-    profileImage = widget.userData[0]["photo"] ?? "";
-    coverImage = widget.userData[0]["coverImage"] ?? "";
-    Description = widget.userData[0]["Description"] ?? "";
-    firstName = widget.userData[0]['firstname'];
+    print(widget.userData);
+    profileImage = widget.userData.photo ?? "";
+    coverImage = widget.userData.coverImage ?? "";
+    Description = widget.userData.description ?? "";
+    firstName = widget.userData.name;
     loadImages();
   }
 
@@ -91,7 +92,7 @@ class _PageProfileState extends State<PageProfile> {
         ),
         ];
         },
-        body: Post(username: widget.userData[0]["username"]),
+        body: Post(username: widget.userData.id, isPage :true),
       ),
     );
   }
@@ -139,8 +140,8 @@ class _PageProfileState extends State<PageProfile> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildInfoItem('Posts', '150'),
-              _buildInfoItem('Connections', '500'),
+              _buildInfoItem('Posts', widget.userData.postCount),
+              _buildInfoItem('Followers', widget.userData.followCount),
             ],
           ),
         ],

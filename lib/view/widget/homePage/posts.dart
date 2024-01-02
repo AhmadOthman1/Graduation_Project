@@ -5,7 +5,8 @@ import 'package:growify/global.dart';
 
 class Post extends StatefulWidget {
   String? username;
-  Post({this.username, Key? key}) : super(key: key);
+  bool? isPage;
+  Post({this.username, Key? key , this.isPage}) : super(key: key);
 
   @override
   _PostState createState() => _PostState();
@@ -36,7 +37,7 @@ class _PostState extends State<Post> {
   Future<void> loadData() async {
     print('Loading data...');
     try {
-      await controller.getPostfromDataBase(widget.username, controller.page);
+      await controller.getPostfromDataBase(widget.username, controller.page,widget.isPage);
       setState(() {
         controller.page++;
         controller.posts;
