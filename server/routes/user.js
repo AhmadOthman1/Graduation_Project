@@ -68,6 +68,12 @@ router.get('/getUserMessages',authenticateToken,userMessages.getUserMessages);
 router.get('/getMyPages',authenticateToken,myPagesController.getMyPageInfo);
 router.post('/postCreatePage',authenticateToken,myPagesController.postCreatePage);
 router.post('/getPagePosts',authenticateToken,myPagesController.getPagePosts);
+router.post('/getPagePostLikes',authenticateToken,myPagesController.getPagePostLikes);
+router.post('/getPagePostComments',authenticateToken,myPagesController.getPagePostComments);
+router.post('/pageAddLike',authenticateToken,myPagesController.pageAddLike);
+router.post('/pageRemoveLike',authenticateToken,myPagesController.pageRemoveLike);
+router.post('/getPagePostComments',authenticateToken,myPagesController.getPagePostComments);
+router.post('/pageAddComment',authenticateToken,myPagesController.pageAddComment);
 
 
 

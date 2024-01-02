@@ -204,16 +204,19 @@ for (let i = 1; i < 20; i++) {
 
 }
 for (let i = 1; i < 20; i++) {
-    for (let j = iLimit; j < iLimit * 2; j++) {
+    for (let j = 881 + ((i-1) * 79); j < 960+ ((i-1) * 79); j++) {
+        for(let k =1; k<20 ; k++){
         like.create({
             postId: j,
-            username: "ahmad" + i,
+            username: "ahmad" + k,
         });
         comment.create({
             postId: j,
-            username: "ahmad" + i,
-            commentContent: "ahmad" + i,
+            username: "ahmad" + k,
+            commentContent: "ahmad" + k,
             Date: new Date()
         });
+        }
+        
     }
 }

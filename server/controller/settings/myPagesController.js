@@ -14,7 +14,7 @@ const comment = require('../../models/comment');
 const like = require('../../models/like');
 const moment = require('moment');
 const pageFollower = require("../../models/pageFollower");
-
+const Page = require("../../models/pages");
 exports.getMyPageInfo = async (req, res, next) => {
     try {
         const authHeader = req.headers['authorization']
@@ -275,4 +275,387 @@ exports.getPagePosts = async (req, res, next) => {
         message: 'server Error',
         body: req.body
     });
+}
+
+
+exports.getPagePostLikes = async (req, res, next) => {
+    try {
+        const { postId } = req.body;
+        console.log(postId)
+        console.log("-----------------------------------")
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername) {
+            const userPostLikes = await post.findOne({
+                where: { id: postId },
+                include: [
+                    {
+                        model: like,
+                        order: [['createdAt', 'DESC']],
+                    },
+
+                ],
+            });
+            if (!userPostLikes) {
+                return res.status(404).json({ error: 'Post not found' });
+            }
+
+            if (userPostLikes) {
+                // Extract likes from the userPostLikes object
+                const likes = await Promise.all(userPostLikes.likes.map(async (like) => {
+                    const createdBy = like.username || like.pageId;
+                    const isUser = !!like.username;
+                    const isPage = !!like.pageId;
+                    var name;
+                    var photo;
+
+                    if (isUser) {
+                        const user = await User.findOne({
+                            where: {
+                                username: createdBy
+                            },
+                        });
+                        name = user.firstname + " " + user.lastname;
+                        photo = user.photo;
+                    } else if (isPage) {
+                        const page = await Page.findOne({
+                            where: {
+                                id: createdBy
+                            },
+                        });
+                        name = page.name;
+                        photo = page.photo;
+                    }
+
+                    return {
+                        id: like.id,
+                        createdBy: createdBy,
+                        isUser: isUser,
+                        name: name,
+                        photo: photo,
+                    };
+                }));
+
+                console.log(likes);
+                console.log("-----------------------------------");
+
+                return res.status(200).json({ data: likes });
+            }
+        } else {
+            return res.status(500).json({
+                message: 'user not found',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        console.log("aaaaaaaaaaaaaaaaaaaaaaa00");
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+
+}
+exports.getPagePostComments = async (req, res, next) => {
+    try {
+        const { postId } = req.body;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername) {
+            const userPostComments = await post.findOne({
+                where: { id: postId },
+                include: [
+                    {
+                        model: comment,
+                        order: [['Date', 'DESC']],
+                    },
+
+                ],
+            });
+            if (!userPostComments) {
+                return res.status(404).json({ error: 'Post not found' });
+            }
+
+            if (userPostComments) {
+
+                const comments = await Promise.all(userPostComments.comments.map(async (comment) => {
+                    const createdBy = comment.username || comment.pageId;
+                    const isUser = comment.username;
+                    const isPage = comment.pageId;
+                    let name;
+                    let photo;
+
+                    if (isUser) {
+                        const user = await User.findOne({
+                            where: {
+                                username: createdBy
+                            },
+                        });
+
+                        name = user.firstname + " " + user.lastname;
+                        photo = user.photo;
+                        console.log(name);
+                    } else if (isPage) {
+                        const page = await Page.findOne({
+                            where: {
+                                id: createdBy
+                            },
+                        });
+                        name = page.name;
+                        photo = page.photo;
+                    }
+
+                    return {
+                        id: comment.id,
+                        postId: comment.postId,
+                        createdBy: createdBy,
+                        commentContent: comment.commentContent,
+                        Date: moment(comment.Date).format('YYYY-MM-DD HH:mm:ss'),
+                        isUser: isUser ? true : false,
+                        name: name,
+                        photo: photo,
+                    };
+                }));
+
+                return res.status(200).json({ data: comments });
+
+            }
+        } else {
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+
+}
+exports.pageAddLike = async (req, res, next) => {
+    try {
+        const { postId } = req.body;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername) {
+            const userPostLikes = await post.findOne({
+                where: { id: postId },
+                include: [
+                    {
+                        model: like,
+                        order: [['createdAt', 'DESC']],
+                    },
+
+                ],
+            });
+            if (userPostLikes) {
+                var userPageAdmin = await pageAdmin.findOne({
+                    where: { username: userUsername, pageId: userPostLikes.pageId }
+                });
+                if (userPageAdmin) {//add like as admin with pageId 
+                    await like.create({
+                        postId: postId,
+                        pageId: userPostLikes.pageId,
+                    });
+
+                    return res.status(200).json({
+                        message: 'like added',
+                        body: req.body
+                    });
+                } else {//add like as user
+                    await like.create({
+                        postId: postId,
+                        username: userUsername,
+                    });
+
+                    return res.status(200).json({
+                        message: 'like added',
+                        body: req.body
+                    });
+                }
+
+            } else {
+                return res.status(404).json({ error: 'Post not found' });
+
+            }
+        } else {
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+
+}
+exports.pageRemoveLike = async (req, res, next) => {
+    try {
+        const { postId } = req.body;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername) {
+            const pagePosts = await post.findOne({
+                where: { id: postId },
+            });
+            var userPageAdmin = await pageAdmin.findOne({
+                where: { username: userUsername, pageId: pagePosts.pageId }
+            });
+            if (userPageAdmin) {//add like as admin with pageId 
+                const userPostLikes = await like.findOne({
+                    where: { postId: postId, pageId: pagePosts.pageId },
+
+                });
+                if (!userPostLikes) {
+                    return res.status(404).json({ error: 'like not found' });
+                }
+                await userPostLikes.destroy();
+                return res.status(200).json({
+                    message: 'like removed',
+                    body: req.body
+                });
+
+            } else {//if user is not admin
+                const userPostLikes = await like.findOne({
+                    where: { postId: postId, username: userUsername },
+
+                });
+                if (!userPostLikes) {
+                    return res.status(404).json({ error: 'like not found' });
+                }
+                await userPostLikes.destroy();
+                return res.status(200).json({
+                    message: 'like removed',
+                    body: req.body
+                });
+
+            }
+        } else {
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+
+}
+
+exports.pageAddComment = async (req, res, next) => {
+    try {
+        const { postId, commentContent } = req.body;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        if (!postId || !commentContent) {
+            return res.status(409).json({
+                message: 'valuse cant be empty',
+                body: req.body
+            });
+        }
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername) {
+            const userPostComments = await post.findOne({
+                where: { id: postId },
+                include: [
+                    {
+                        model: comment,
+                        order: [['createdAt', 'DESC']],
+                    },
+
+                ],
+            });
+            if (!userPostComments) {
+                return res.status(404).json({ error: 'Post not found' });
+            }
+            // if the post created by a page
+            if (userPostComments.pageId) {
+                var userPageAdmin = await pageAdmin.findOne({
+                    where: { username: userUsername, pageId: userPostComments.pageId }
+                });
+                if (userPageAdmin) {
+                    // Extract comments from the userPostcommentsobject
+                    await comment.create({
+                        postId: postId,
+                        pageId: userPostComments.pageId,
+                        commentContent: commentContent,
+                        Date: new Date(),
+                    });
+
+                    return res.status(200).json({
+                        message: 'comment created',
+                        body: req.body
+                    });
+                }
+                else {
+                    await comment.create({
+                        postId: postId,
+                        username: username,
+                        commentContent: commentContent,
+                        Date: new Date(),
+                    });
+
+                    return res.status(200).json({
+                        message: 'comment created',
+                        body: req.body
+                    });
+                }
+            }else{
+
+            }
+        } else {
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+
 }
