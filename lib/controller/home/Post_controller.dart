@@ -433,7 +433,7 @@ class PostControllerImp extends PostController {
           if (!hasRouteFlag) {
             Get.to(const CommentsMainPage(), arguments: {
               'comments': comments1,
-              'postId': comments1[0].postId,
+              'postId': postId,
               'isPage': isPage,
               'name': name,
               'photo': photo,
@@ -447,7 +447,7 @@ class PostControllerImp extends PostController {
             print(hasRouteFlag);
             Get.to(const CommentsMainPage(), arguments: {
               'comments': comments1,
-              'postId': comments1[0].postId,
+              'postId': postId,
             });
           } else {
             // update the comments
