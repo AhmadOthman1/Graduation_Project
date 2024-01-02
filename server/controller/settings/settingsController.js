@@ -67,7 +67,7 @@ exports.getUserProfileDashboard = async (req, res, next) => {
 }
 exports.getMainInfo = async (req, res, next) => {
     try {
-        var email = req.query.email;
+        var email = req.user.email;
         const existingEmail = await User.findOne({
             where: {
                 email: email
@@ -177,7 +177,7 @@ exports.changeMainInfo = async (req, res, next) => {
         var validcv = false;
         const existingEmail = await User.findOne({
             where: {
-                email: email
+                email: req.user.email
             },
         });
         if (existingEmail) {
@@ -432,7 +432,7 @@ exports.changePassword = async (req, res, next) => {
         }
         const existingEmail = await User.findOne({
             where: {
-                email: email
+                email: req.user.email
             },
         });
         if (existingEmail) {
@@ -508,7 +508,7 @@ exports.changeEmail = async (req, res, next) => {
         console.log(Password);
         const existingEmail = await User.findOne({
             where: {
-                email: email
+                email: req.user.email
             },
         });
 
@@ -622,7 +622,7 @@ exports.postVerificationCode = async (req, res, next) => {
         console.log(email);
         const existingUserInChangeEamil = await changeEmail.findOne({
             where: {
-                email: email
+                email: req.user.email
             }
         });
         //if exists 

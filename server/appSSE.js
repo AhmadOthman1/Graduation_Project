@@ -145,7 +145,7 @@ io.on("connection", (socket) => {// first time socket connection
       const notification = {
         username: calleeId,
         notificationType: 'call', // Type of notifications
-        notificationContent: "is calling you...",
+        notificationContent: "wants to call you",
         notificationPointer: userUsername,
       };
       var isnotify = false

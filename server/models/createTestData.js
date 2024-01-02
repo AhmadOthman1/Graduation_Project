@@ -8,7 +8,9 @@ const like = require('./like');
 const comment = require('./comment');
 const notifications = require("../models/notifications");
 const messages = require("../models/messages");
-
+const pages = require("./pages");
+const pageAdmin = require("./pageAdmin");
+const pageFollower = require("./pageFollower");
 const bcrypt = require('bcrypt');
 var iLimit = 80;
 User.create({
@@ -97,7 +99,7 @@ for (let i = iLimit / 2; i < iLimit * (3 / 4); i++) {
         createdAt: currentDate,
     });
     const currentDate2 = new Date();
-    currentDate2.setSeconds(i-2);
+    currentDate2.setSeconds(i - 2);
     messages.create({
         senderUsername: "ahmad" + i,
         receiverUsername: "AhmadOthman",
@@ -105,7 +107,7 @@ for (let i = iLimit / 2; i < iLimit * (3 / 4); i++) {
         createdAt: currentDate2,
     });
 }
-for (let i =0 ; i < 57; i++) {
+for (let i = 0; i < 57; i++) {
     const currentDate = new Date();
     currentDate.setSeconds(i);
     messages.create({
@@ -117,11 +119,11 @@ for (let i =0 ; i < 57; i++) {
     messages.create({
         senderUsername: "AhmadOthman",
         receiverUsername: "ahmad59",
-        text: "message from AhmadOthman: "+i,
+        text: "message from AhmadOthman: " + i,
         createdAt: currentDate,
     });
     const currentDate2 = new Date();
-    currentDate2.setSeconds(i+2);
+    currentDate2.setSeconds(i + 2);
     messages.create({
         senderUsername: "ahmad59",
         receiverUsername: "AhmadOthman",
@@ -164,4 +166,54 @@ for (let i = 0; i < iLimit; i++) {
             date: new Date(),
         });
 }
+for (let i = 1; i < 20; i++) {
+    const pageData = {
+        id: "page " + i, // Generate a unique ID
+        name: "company " + i,
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        country: "palestine",
+        address: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        contactInfo: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        specialty: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        pageType: "public",
+    };
+    pages.create(pageData);
 
+
+}
+for (let i = 1; i < 20; i++) {
+    pageAdmin.create({
+        pageId: "page " + i,
+        username: "AhmadOthman",
+        adminType: 'A',
+    });
+    for (let j = 0; j < 20; j++) {
+        pageFollower.create({
+            pageId: "page " + i,
+            username: "ahmad" + j,
+        });
+    }
+    for (let j = 1; j < 80; j++) {
+        post.create({
+            postContent: "post " + j,
+            selectedPrivacy: "Any One",
+            postDate: new Date(),
+            pageId: "page " + i,
+        });
+    }
+
+}
+for (let i = 1; i < 20; i++) {
+    for (let j = iLimit; j < iLimit * 2; j++) {
+        like.create({
+            postId: j,
+            username: "ahmad" + i,
+        });
+        comment.create({
+            postId: j,
+            username: "ahmad" + i,
+            commentContent: "ahmad" + i,
+            Date: new Date()
+        });
+    }
+}

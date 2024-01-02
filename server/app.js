@@ -1,3 +1,4 @@
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/user');
@@ -50,6 +51,7 @@ const like =require('./models/like');
 const notifications =require('./models/notifications');
 const activeUsers =require('./models/activeUsers');
 const messages =require('./models/messages');
+const pageFollower =require('./models/pageFollower');
 
 
 //const queries =require('./models/queries.js');

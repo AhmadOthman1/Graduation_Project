@@ -7,7 +7,6 @@ const Sequelize = require('sequelize');
 
 exports.getSearchData = async (req, res, next) => {
     try {
-        var email = req.query.email;
         var search = req.query.search;
         var page = req.query.page || 1;
         var pageSize = req.query.pageSize || 10;
@@ -15,7 +14,7 @@ exports.getSearchData = async (req, res, next) => {
         // Calculate the offset based on page and pageSize
         const offset = (page - 1) * pageSize;
         if(searchType=="U"){
-            const result = await searchForUser(email, search, pageSize, offset);
+            const result = await searchForUser(req.user.email, search, pageSize, offset);
             return res.status(result.statusCode).json(result.body);
             
         }

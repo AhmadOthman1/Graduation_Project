@@ -11,7 +11,7 @@ const fs = require('fs');
 
 exports.getWorkExperience = async (req, res, next) => {
     try {
-        var email = req.query.email;
+        var email = req.user.email;
         const existingEmail = await User.findOne({
             where: {
                 email: email,
@@ -60,7 +60,7 @@ exports.postAddworkExperience = async (req, res, next) => {
         var validEndDate = false;
         const existingEmail = await User.findOne({
             where: {
-                email: email
+                email: req.user.email
             },
         });
         if (existingEmail) {
@@ -165,7 +165,7 @@ exports.postEditworkExperience = async (req, res, next) => {
         var validEndDate = false;
         const existingEmail = await User.findOne({
             where: {
-                email: email
+                email: req.user.email
             },
         });
         if (existingEmail) {
@@ -272,7 +272,7 @@ exports.postDeleteworkExperience = async (req, res, next) => {
         const { email, id } = req.body;
         const existingEmail = await User.findOne({
             where: {
-                email: email
+                email: req.user.email
             },
         });
         if (existingEmail) {

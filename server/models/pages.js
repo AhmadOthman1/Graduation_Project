@@ -27,7 +27,7 @@ const pages = sequelize.define('pages', {
         allowNull: false
     },
     specialty: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(2000),
         allowNull: false,
     },
     pageType:{

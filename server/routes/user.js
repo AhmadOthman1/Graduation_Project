@@ -64,12 +64,10 @@ router.get('/getUserNotifications',authenticateToken,userNotificationsController
 //chats
 router.get('/getChats',authenticateToken,chatsMainPage.getChats);
 router.get('/getUserMessages',authenticateToken,userMessages.getUserMessages);
-
-
-
-
+//user pages
 router.get('/getMyPages',authenticateToken,myPagesController.getMyPageInfo);
 router.post('/postCreatePage',authenticateToken,myPagesController.postCreatePage);
+router.post('/getPagePosts',authenticateToken,myPagesController.getPagePosts);
 
 
 
