@@ -74,6 +74,8 @@ router.post('/pageAddLike',authenticateToken,myPagesController.pageAddLike);
 router.post('/pageRemoveLike',authenticateToken,myPagesController.pageRemoveLike);
 router.post('/getPagePostComments',authenticateToken,myPagesController.getPagePostComments);
 router.post('/pageAddComment',authenticateToken,myPagesController.pageAddComment);
+router.post('/postNewPagePost',authenticateToken,myPagesController.postNewPagePost);
+router.post('/editPageInfo',authenticateToken,myPagesController.editPageInfo);
 
 
 

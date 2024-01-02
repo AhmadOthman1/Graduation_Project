@@ -641,7 +641,7 @@ exports.pageAddComment = async (req, res, next) => {
                         body: req.body
                     });
                 }
-            }else{
+            } else {
 
             }
         } else {
@@ -658,4 +658,291 @@ exports.pageAddComment = async (req, res, next) => {
         });
     }
 
+}
+exports.postNewPagePost = async (req, res, next) => {
+    try {
+        const { postContent, postImageBytes, postImageBytesName, postImageExt, pageId } = req.body;
+        var validphoto = false;
+        var newphotoname = null;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername) {
+            var userPageAdmin = await pageAdmin.findOne({
+                where: { username: userUsername, pageId: pageId }
+            });
+            if (userPageAdmin) {
+
+                if ((postContent == null || postContent.trim() == "") && (postImageBytes == null || postImageBytesName == null || postImageExt == null)) {
+                    return res.status(409).json({
+                        message: 'you must add a text or photo to create a new post',
+                        body: req.body
+                    });
+                }
+                if (postImageBytes != null && postImageBytesName != null && postImageExt != null) {//if feild change enables (!=null)
+                    validphoto = true;
+                }
+                if (validphoto) {
+                    const photoBuffer = Buffer.from(postImageBytes, 'base64');
+                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+                    newphotoname = userUsername + +"-" + uniqueSuffix + "." + postImageExt; // You can adjust the file extension based on the actual image type
+                    const uploadPath = path.join('images', newphotoname);
+
+                    // Save the image to the server
+                    fs.writeFileSync(uploadPath, photoBuffer);
+                    console.log("fff" + newphotoname);
+                    // Update the user record in the database with the new photo name
+                }
+                const result = await post.create({
+                    "pageId": pageId,
+                    "postContent": postContent,
+                    "selectedPrivacy": "Any One",
+                    "photo": newphotoname,
+                    "postDate": new Date(),
+
+                }).then(() => {
+                    res.status(200).json({
+                        message: "created sucsessfully",
+                    })
+                }).catch((err) => {
+                    console.log(err);
+                    return res.status(500).json({
+                        message: 'server Error',
+                        body: req.body
+                    });
+                });
+            } else {
+                return res.status(500).json({
+                    message: 'You are not Admin',
+                    body: req.body
+                });
+            }
+        } else {
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+}
+
+exports.editPageInfo = async (req, res, next) => {
+    try {
+        const { pageId, name, specialty, address, country, contactInfo, description, profileImageBytes, profileImageBytesName, profileImageExt, coverImageBytes, coverImageBytesName, coverImageExt } = req.body;
+        var validname = false;
+        var validspecialty = false;
+        var validaddress = false;
+        var validcountry = false;
+        var validcontactInfo = false;
+        var validdescription = false;
+        var validphoto = false;
+        var validcoverImage = false;
+        const existingEmail = await User.findOne({
+            where: {
+                email: req.user.email
+            },
+        });
+        if (existingEmail) {
+            var userPageAdmin = await pageAdmin.findOne({
+                where: { username: req.user.username, pageId: pageId, adminType: "A" }
+            });
+            if (userPageAdmin) {
+                var currentPageInfo = await Page.findOne({
+                    where: {
+                        id:pageId
+                    }
+                })
+                if (name != null) {//if feild change enables (!=null)
+                    if ( name.length < 1 || name.length > 50) {//validate
+                        return res.status(409).json({
+                            message: 'Not Valid name',
+                            body: req.body
+                        });
+                    } else {//change
+                        validname = true;
+                    }
+                }
+                if (specialty != null) {//if feild change enables (!=null)
+                    if ( specialty.length < 1 || specialty.length > 2000) {//validate
+                        return res.status(409).json({
+                            message: 'Not Valid specialty',
+                            body: req.body
+                        });
+                    } else {//change
+                        validspecialty = true;
+                    }
+                }
+                if (address != null) {//if feild change enables (!=null)
+                    if (address.length < 1 || address.length > 2000) {//validate
+                        return res.status(409).json({
+                            message: 'Not Valid address',
+                            body: req.body
+                        });
+                    } else {//change
+                        validaddress = true;
+                    }
+                }
+                if (country != null) {//if feild change enables (!=null)
+                    if (country.length < 1 || country.length > 250) {//validate
+                        return res.status(409).json({
+                            message: 'Not Valid country',
+                            body: req.body
+                        });
+                    } else {//change
+                        validcountry = true;
+                    }
+                }
+                if (contactInfo != null) {//if feild change enables (!=null)
+                    if ( contactInfo.length < 1 || contactInfo.length > 2000) {//validate
+                        return res.status(409).json({
+                            message: 'Not Valid contactInfo',
+                            body: req.body
+                        });
+                    } else {//change
+                        validcontactInfo = true;
+                    }
+                }
+                if (description != null) {//if feild change enables (!=null)
+                    if ( description.length < 1 || description.length > 2000) {//validate
+                        return res.status(409).json({
+                            message: 'Not Valid description',
+                            body: req.body
+                        });
+                    } else {//change
+                        validdescription = true;
+                    }
+                }
+                if (profileImageBytes != null && profileImageBytesName != null && profileImageExt != null) {//if feild change enables (!=null)
+                    validphoto = true;
+                }
+                if (coverImageBytes != null && coverImageBytesName != null && coverImageExt != null) {//if feild change enables (!=null)
+                    validcoverImage = true;
+                }
+
+                // save changes
+                if (validname) {
+                    const result = await Page.update(
+                        { name: name },
+                        {
+                            where: { id: pageId },
+                        }
+                    );
+                }
+                if (validspecialty) {
+                    const result = await Page.update(
+                        { specialty: specialty },
+                        {
+                            where: { id: pageId },
+                        }
+                    );
+                }
+                if (validaddress) {
+                    const result = await Page.update(
+                        { address: address },
+                        {
+                            where: { id: pageId },
+                        }
+                    );
+                }
+                if (validcountry) {
+                    const result = await Page.update(
+                        { country: country },
+                        {
+                            where: { id: pageId },
+                        }
+                    );
+                }
+                if (validcontactInfo) {
+                    const result = await Page.update(
+                        { contactInfo: contactInfo },
+                        {
+                            where: { id: pageId },
+                        }
+                    );
+                }
+                if (validdescription) {
+                    const result = await Page.update(
+                        { description: description },
+                        {
+                            where: { id: pageId },
+                        }
+                    );
+                }
+                if (validphoto) {
+                    var oldPhoto = currentPageInfo.photo;
+
+                    const photoBuffer = Buffer.from(profileImageBytes, 'base64');
+                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+                    const newphotoname = currentPageInfo.id + "-" + uniqueSuffix + "." + profileImageExt; // You can adjust the file extension based on the actual image type
+                    const uploadPath = path.join('images', newphotoname);
+
+                    // Save the image to the server
+                    fs.writeFileSync(uploadPath, photoBuffer);
+                    console.log("fff" + newphotoname);
+                    // Update the user record in the database with the new photo name
+                    const result = await Page.update({ photo: newphotoname }, { where: { id: pageId } });
+                    if (oldPhoto != null) {
+                        //delete the old photo from the  server image folder
+                        const oldPhotoPath = path.join('images', oldPhoto);
+
+                        fs.unlinkSync(oldPhotoPath);
+                    }
+
+                }
+                if (validcoverImage) {
+                    var oldCover = currentPageInfo.coverImage;
+
+                    const photoBuffer = Buffer.from(coverImageBytes, 'base64');
+                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+                    const newphotoname = currentPageInfo.id + +"-" + uniqueSuffix + "." + coverImageExt; // You can adjust the file extension based on the actual image type
+                    const uploadPath = path.join('images', newphotoname);
+
+                    // Save the image to the server
+                    fs.writeFileSync(uploadPath, photoBuffer);
+
+                    // Update the user record in the database with the new photo name
+                    const result = await Page.update({ coverImage: newphotoname }, { where: { id: pageId } });
+                    if (oldCover != null) {
+                        //delete the old photo from the  server image folder
+                        const oldCoverPath = path.join('images', oldCover);
+
+                        fs.unlinkSync(oldCoverPath);
+                    }
+
+                }
+
+                return res.status(200).json({
+                    message: 'updated',
+                    body: req.body
+                });
+            }else{
+                return res.status(500).json({
+                    message: 'you are not allowed to edit this page info',
+                    body: req.body
+                });
+            }
+        } else {
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
 }
