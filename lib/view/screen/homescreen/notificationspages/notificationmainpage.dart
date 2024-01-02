@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
+import 'package:growify/controller/home/homepage_controller.dart';
 import 'package:growify/controller/home/notification/notification_controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/main.dart';
+import 'package:growify/view/screen/homescreen/chat/chatpagemessages.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({Key? key}) : super(key: key);
@@ -50,7 +53,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       _loadData();
     }
   }
-  
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -75,13 +78,12 @@ class _NotificationsPageState extends State<NotificationsPage> {
               itemCount: _controller.notifications.length,
               itemBuilder: (context, index) {
                 final notice = _controller.notifications[index];
-                
+
                 return Column(
                   children: [
                     ListTile(
-                      onTap: (){
+                      onTap: () {
                         _controller.showPost();
-                        
                       },
                       leading: CircleAvatar(
                         backgroundImage: (notice['photo'] != null &&
@@ -98,10 +100,24 @@ class _NotificationsPageState extends State<NotificationsPage> {
                         children: [
                           IconButton(
                             icon: const Icon(Icons.open_in_new),
-                            onPressed: () {
+                            onPressed: () async {
                               if (notice['notificationType'] == "connection") {
                                 searchController.goToUserPage(
                                     notice['notificationPointer']!);
+                              } else if (notice['notificationType'] == "call") {
+                                HomePageControllerImp controller =
+                                    Get.put(HomePageControllerImp());
+                                var foundUser =
+                                    await controller.userChatProfileInfo(notice['notificationPointer']);
+
+                                if (foundUser != null) {
+                                  MyApp.navigatorKey.currentState?.push(
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          ChatPageMessages(data: foundUser),
+                                    ),
+                                  );
+                                }
                               }
                             },
                           ),

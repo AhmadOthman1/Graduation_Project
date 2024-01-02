@@ -69,7 +69,8 @@ class NotificationsController {
         }).toList();
 
         notifications.addAll(newNotifications);
-        //print(notifications);
+        print("ggggggggggggggggggggggggggggggggggggggggggggggggggg");
+        print(notifications);
       }
 
       isLoading = false;

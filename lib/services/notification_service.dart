@@ -81,16 +81,9 @@ class NotificationService {
         HomePageControllerImp controller =Get.put(HomePageControllerImp());
         HomeScreenControllerImp controller2 =Get.put(HomeScreenControllerImp());
         controller2.stopCallingSound();
-        await controller.goToChat();
+        var foundUser = await controller.userChatProfileInfo(receivedAction.body!.split(' ')[0]);
 
-        Map<String, dynamic>? foundUser;
-        for (Map<String, dynamic> user
-            in controller.colleaguesPreviousmessages) {
-          if (user['username'] == receivedAction.body!.split(' ')[0]) {
-            foundUser = user;
-            break; 
-          }
-        }
+        
 
         if (foundUser != null) {
           MyApp.navigatorKey.currentState?.push(

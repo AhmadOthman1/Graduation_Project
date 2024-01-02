@@ -527,7 +527,40 @@ class HomePageControllerImp extends HomePageController {
       'colleaguesPreviousmessages': colleaguesPreviousmessages,
     });
   }
-
+  getUserChatProfileInfo(String username) async {
+    var url = "$urlStarter/user/getUserProfileInfo?ProfileUsername=${username}";
+    var responce = await http.get(Uri.parse(url), headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+    return responce;
+  }
+  userChatProfileInfo(String username)async {
+    var res = await getUserChatProfileInfo(username);
+    if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      userChatProfileInfo(username);
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+    var resbody = jsonDecode(res.body);
+    if (res.statusCode == 409) {
+      return resbody['message'];
+    } else if (res.statusCode == 200) {
+      print(resbody["user"]);
+      var name = resbody["user"]["firstname"] + " " + resbody["user"]["lastname"];
+      var photo = resbody["user"]["photo"];
+      final Map<String, dynamic> extractedInfo = {
+          'name': name,
+          'username': username,
+          'photo': photo,
+          'type': "U",
+        };
+        print(extractedInfo);
+        return extractedInfo;
+    }
+  }
   @override
   goToCalenderPage() {
     Get.to(const Calender());
