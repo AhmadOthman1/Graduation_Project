@@ -61,7 +61,7 @@ LogOutButtonControllerImp _logoutController =
     var authUrl = '$urlSSEStarter/userNotifications/notificationsAuth';
     var responce = await http.get(Uri.parse(authUrl), headers: {
       'Content-type': 'application/json; charset=UTF-8',
-      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+      'Authorization': 'bearer ' + GetStorage().read('accessToken') ??"",
     });
     if (responce.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));

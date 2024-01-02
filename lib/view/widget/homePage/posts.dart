@@ -183,7 +183,7 @@ class _PostState extends State<Post> {
                                 InkWell(
                                   onTap: () {
                                     int postId = post['id'];
-                                    controller.goToLikePage(postId);
+                                    controller.goToLikePage(postId, widget.isPage);
                                   },
                                   child: Row(
                                     children: [
@@ -219,7 +219,7 @@ class _PostState extends State<Post> {
                                 InkWell(
                                   onTap: () {
                                     int postId = post['id'];
-                                    controller.gotoCommentPage(postId);
+                                    controller.gotoCommentPage(postId,false, widget.isPage,post['name'],post["photo"],post['createdBy']);
                                   },
                                   child: Row(
                                     children: [
@@ -259,7 +259,7 @@ class _PostState extends State<Post> {
                                 InkWell(
                                   onTap: () {
                                     setState(() {
-                                      controller.toggleLike(index);
+                                      controller.toggleLike(index, widget.isPage);
                                     });
                                   },
                                   child: Container(
@@ -281,7 +281,7 @@ class _PostState extends State<Post> {
                                 InkWell(
                                   onTap: () {
                                     int postId = post['id'];
-                                    controller.gotoCommentPage(postId);
+                                    controller.gotoCommentPage(postId,false, widget.isPage,post['name'],post["photo"],post['createdBy']);
                                   },
                                   child: const Column(
                                     children: [

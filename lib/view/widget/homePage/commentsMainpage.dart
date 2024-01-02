@@ -32,7 +32,10 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
     print("*******=======");
     print(comments);
     int postId = args['postId'];
-
+    String name = args['name'] != null ? args['name'] : GetStorage().read("firstname")+GetStorage().read("lastname");
+    bool? isPage = args['isPage'];
+    String photo = args['photo'] != null ? args['photo'] : GetStorage().read("photo");
+    String createdBy = args['createdBy'] != null ? args['createdBy'] : GetStorage().read("username");
     controller.comments.assignAll(comments);
 
     print("////////////////////");
@@ -137,15 +140,15 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                             final String formattedTime = time.toString();
                             final newCommentModel = CommentModel(
                               postId: postId,
-                              createdBy: GetStorage().read("username"),
+                              createdBy: createdBy,
                               commentContent: newComment,
                               Date: formattedTime,
                               isUser: true,
-                              name: GetStorage().read("firstname")+GetStorage().read("lastname"),
-                              photo: GetStorage().read("photo"),
+                              name: name,
+                              photo: photo,
                             );
 
-                            controller.addComment(newCommentModel);
+                            controller.addComment(newCommentModel,isPage);
 
                             //  Get.find<PostControllerImp>().addComment(newCommentModel);
                             //controller.update();

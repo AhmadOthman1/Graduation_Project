@@ -43,9 +43,6 @@ abstract class PostController extends GetxController {
   //// for comment
   getprofilefromcomment(String email);
   gotoprofileFromcomment(String email);
-  addComment(CommentModel a);
-
-  gotoCommentPage(int id);
 }
 
 class PostControllerImp extends PostController {
@@ -81,8 +78,8 @@ class PostControllerImp extends PostController {
 
   PostgetPostfromDataBase(username, page, pageSize,
       [bool? isPage = false]) async {
-        print(page);
-        
+    print(page);
+
     if (isPage != null && isPage) {
       print(isPage);
       print("-------------------------------------");
@@ -159,44 +156,60 @@ class PostControllerImp extends PostController {
     return posts[index]['comment'];
   }
 
-  void toggleLike(int index) async {
+  void toggleLike(int index, [bool? isPage]) async {
     final post = posts[index];
     post['isLiked'] = !post['isLiked'];
     if (post['isLiked']) {
       post['likeCount']++;
-      await addLike(post['id']);
+      await addLike(post['id'], isPage);
     } else {
       post['likeCount']--;
-      await removeLike(post['id']);
+      await removeLike(post['id'], isPage);
     }
 
     update(); // Notify GetBuilder to rebuild
   }
 
-  PostAddLike(postId) async {
-    var url = "$urlStarter/user/addLike";
+  PostAddLike(postId, [bool? isPage]) async {
+    if (isPage != null && isPage) {
+      var url = "$urlStarter/user/pageAddLike";
 
-    var responce = await http.post(
-      Uri.parse(url),
-      body: jsonEncode({
-        'postId': postId,
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
-      },
-    );
-    return responce;
+      var responce = await http.post(
+        Uri.parse(url),
+        body: jsonEncode({
+          'postId': postId,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+        },
+      );
+      return responce;
+    } else {
+      var url = "$urlStarter/user/addLike";
+
+      var responce = await http.post(
+        Uri.parse(url),
+        body: jsonEncode({
+          'postId': postId,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+        },
+      );
+      return responce;
+    }
   }
 
   @override
-  addLike(int postId) async {
-    var res = await PostAddLike(postId);
+  addLike(int postId, [bool? isPage]) async {
+    var res = await PostAddLike(postId, isPage);
     print(res.statusCode);
     print("===================================");
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      addLike(postId);
+      addLike(postId, isPage);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -207,30 +220,46 @@ class PostControllerImp extends PostController {
     } else if (res.statusCode == 200) {}
   }
 
-  postRemoveLike(postId) async {
-    var url = "$urlStarter/user/removeLike";
+  postRemoveLike(postId, [bool? isPage]) async {
+    if (isPage != null && isPage) {
+      var url = "$urlStarter/user/pageRemoveLike";
 
-    var responce = await http.post(
-      Uri.parse(url),
-      body: jsonEncode({
-        'postId': postId,
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
-      },
-    );
-    return responce;
+      var responce = await http.post(
+        Uri.parse(url),
+        body: jsonEncode({
+          'postId': postId,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+        },
+      );
+      return responce;
+    } else {
+      var url = "$urlStarter/user/removeLike";
+
+      var responce = await http.post(
+        Uri.parse(url),
+        body: jsonEncode({
+          'postId': postId,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+        },
+      );
+      return responce;
+    }
   }
 
   @override
-  removeLike(int postId) async {
-    var res = await postRemoveLike(postId);
+  removeLike(int postId, [bool? isPage]) async {
+    var res = await postRemoveLike(postId, isPage);
     print(res.statusCode);
     print("===================================");
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      removeLike(postId);
+      removeLike(postId, isPage);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -265,37 +294,50 @@ class PostControllerImp extends PostController {
     }
   }
 
-  PostAddComment(int postId, String commentContent) async {
-    var url = "$urlStarter/user/addComment";
-    print("===================================");
-    print(commentContent);
-
-    var responce = await http.post(
-      Uri.parse(url),
-      body: jsonEncode({
-        'postId': postId,
-        'commentContent': commentContent,
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
-      },
-    );
-    return responce;
+  PostAddComment(int postId, String commentContent, [bool? isPage]) async {
+    if (isPage != null && isPage) {
+      var url = "$urlStarter/user/pageAddComment";
+      var responce = await http.post(
+        Uri.parse(url),
+        body: jsonEncode({
+          'postId': postId,
+          'commentContent': commentContent,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+        },
+      );
+      return responce;
+    } else {
+      var url = "$urlStarter/user/addComment";
+      var responce = await http.post(
+        Uri.parse(url),
+        body: jsonEncode({
+          'postId': postId,
+          'commentContent': commentContent,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+        },
+      );
+      return responce;
+    }
   }
 
-  @override
-  addComment(CommentModel comment) async {
+  addComment(CommentModel comment, [bool? isPage]) async {
     if (comment.commentContent == "") {
       return;
     }
     comments.add(comment);
-    var res = await PostAddComment(comment.postId, comment.commentContent);
+    var res =
+        await PostAddComment(comment.postId, comment.commentContent, isPage);
     print(";;;;;;;;;;;;;;;;;;;;;;;;;;;;");
     print(res.statusCode);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      addComment(comment);
+      addComment(comment, isPage);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -304,7 +346,7 @@ class PostControllerImp extends PostController {
     if (res.statusCode == 409) {
       return resbody['message'];
     } else if (res.statusCode == 200) {
-      await gotoCommentPage(comment.postId, hasRouteFlag: true);
+      await gotoCommentPage(comment.postId, true, isPage);
     }
 
     // If you want to update the UI when a new comment is added, uncomment the following line
@@ -314,29 +356,49 @@ class PostControllerImp extends PostController {
     // controller.comments.add(newCommentModel);
   }
 
-  getCommentPage(postId) async {
-    var url = "$urlStarter/user/getPostComments";
+  getCommentPage(postId, [bool? isPage]) async {
+    if (isPage != null && isPage) {
+      var url = "$urlStarter/user/getPagePostComments";
 
-    var responce = await http.post(
-      Uri.parse(url),
-      body: jsonEncode({
-        'postId': postId,
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
-      },
-    );
-    return responce;
+      var responce = await http.post(
+        Uri.parse(url),
+        body: jsonEncode({
+          'postId': postId,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+        },
+      );
+      return responce;
+    } else {
+      var url = "$urlStarter/user/getPostComments";
+
+      var responce = await http.post(
+        Uri.parse(url),
+        body: jsonEncode({
+          'postId': postId,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+        },
+      );
+      return responce;
+    }
   }
 
-  @override
-  gotoCommentPage(int postId, {bool hasRouteFlag = false}) async {
-    var res = await getCommentPage(postId);
+  gotoCommentPage(int postId,
+      [bool hasRouteFlag = false,
+      bool? isPage,
+      String? name,
+      String? photo,
+      String? createdBy]) async {
+    var res = await getCommentPage(postId, isPage);
     print(res.statusCode);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      gotoCommentPage(postId);
+      gotoCommentPage(postId, hasRouteFlag, isPage, name, photo, createdBy);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -367,14 +429,29 @@ class PostControllerImp extends PostController {
 
         print("llllllllllllllllllllllllllllll");
         print(comments1);
-        if (!hasRouteFlag) {
-          print(hasRouteFlag);
-          Get.to(const CommentsMainPage(), arguments: {
-            'comments': comments1,
-            'postId': comments1[0].postId,
-          });
+        if (isPage != null && isPage) {
+          if (!hasRouteFlag) {
+            Get.to(const CommentsMainPage(), arguments: {
+              'comments': comments1,
+              'postId': comments1[0].postId,
+              'isPage': isPage,
+              'name': name,
+              'photo': photo,
+              'createdBy': createdBy,
+            });
+          } else {
+            // update the comments
+          }
         } else {
-          // update the comments
+          if (!hasRouteFlag) {
+            print(hasRouteFlag);
+            Get.to(const CommentsMainPage(), arguments: {
+              'comments': comments1,
+              'postId': comments1[0].postId,
+            });
+          } else {
+            // update the comments
+          }
         }
       } else {
         print("Invalid or missing 'data' property in response.");
@@ -413,29 +490,47 @@ class PostControllerImp extends PostController {
   }
 
   // should add your data from database in likes1
-  getPostLikes(postId) async {
-    var url = "$urlStarter/user/getPostLikes";
+  getPostLikes(postId, [bool? isPage]) async {
+    if (isPage != null && isPage) {
+      var url = "$urlStarter/user/getPagePostLikes";
 
-    var responce = await http.post(
-      Uri.parse(url),
-      body: jsonEncode({
-        'postId': postId,
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
-      },
-    );
-    return responce;
+      var responce = await http.post(
+        Uri.parse(url),
+        body: jsonEncode({
+          'postId': postId,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+        },
+      );
+      return responce;
+    } else {
+      var url = "$urlStarter/user/getPostLikes";
+
+      var responce = await http.post(
+        Uri.parse(url),
+        body: jsonEncode({
+          'postId': postId,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+        },
+      );
+      return responce;
+    }
   }
 
   @override
-  goToLikePage(int postId) async {
-    var res = await getPostLikes(postId);
+  goToLikePage(int postId, [bool? isPage]) async {
+    var res = await getPostLikes(postId, isPage);
     print(res.statusCode);
+    print(res);
+    print(res.body);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      goToLikePage(postId);
+      goToLikePage(postId, isPage);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
