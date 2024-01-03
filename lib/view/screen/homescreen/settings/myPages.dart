@@ -61,16 +61,12 @@ class MyPages extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
+                       print("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
                       print(pages[index]);
                       print(pages[index].photo);
                       Get.to(PageProfile(userData: pages[index]));
-                      //controller.goToMyPage();
-                     /* Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PageDetails_controller.goToMyPageInfo(pages[index].id),
-                        ),
-                      );*/
+                     
+
                     },
                     child: Card(
                       elevation: 5,

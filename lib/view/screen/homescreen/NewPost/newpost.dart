@@ -13,12 +13,11 @@ class NewPost extends StatelessWidget {
   String? profileImage;
   bool? isPage;
   String? pageId;
-  NewPost({super.key, this.profileImage,this.isPage , this.pageId});
+  NewPost({super.key, this.profileImage, this.isPage, this.pageId});
 
   String? postImageBytes;
   String? postImageBytesName;
   String? postImageExt;
-
 
   final NewPostControllerImp controller = Get.put(NewPostControllerImp());
   GlobalKey<FormState> formstate = GlobalKey();
@@ -26,9 +25,10 @@ class NewPost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Set postBackgroundImage to null initially
-    ImageProvider<Object> profileBackgroundImage = (profileImage!=null && profileImage!="")
-        ? Image.network("$urlStarter/$profileImage").image
-        : const AssetImage("images/profileImage.jpg");
+    ImageProvider<Object> profileBackgroundImage =
+        (profileImage != null && profileImage != "")
+            ? Image.network("$urlStarter/$profileImage").image
+            : const AssetImage("images/profileImage.jpg");
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 50),
@@ -59,7 +59,7 @@ class NewPost extends StatelessWidget {
                         padding: const EdgeInsets.only(left: 2, right: 15),
                         child: InkWell(
                           onTap: () {},
-                          child:  CircleAvatar(
+                          child: CircleAvatar(
                             backgroundImage: profileBackgroundImage,
                             radius: 20,
                           ),
@@ -122,6 +122,12 @@ class NewPost extends StatelessWidget {
                     child: TextFormField(
                       onChanged: (value) =>
                           controller.postContent.value = value,
+                      onFieldSubmitted: (value) {
+                        controller.postContent.value += '\n';
+                      },
+                      maxLines: null, // Allows for multiple lines
+                      keyboardType:
+                          TextInputType.multiline, // Enables the Enter key
                       decoration: const InputDecoration(
                         hintText: 'What do you want to talk about?',
                         border: OutlineInputBorder(

@@ -654,6 +654,11 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
                 hintText: "Type a message...",
                 border: InputBorder.none,
               ),
+              maxLines: null, // Allows for multiple lines
+              keyboardType: TextInputType.multiline, // Enables the Enter key
+              onSubmitted: (value) {
+                chatController.textController.text += '\n';
+              },
             ),
           ),
           IconButton(

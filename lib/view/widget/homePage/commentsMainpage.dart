@@ -34,13 +34,26 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
     int postId = args['postId'];
     String name = args['name'] != null ? args['name'] : GetStorage().read("firstname")+GetStorage().read("lastname");
     bool? isPage = args['isPage'];
-    String photo = args['photo'] != null ? args['photo'] : GetStorage().read("photo");
+   String photo;
+
+
+if (isPage == true) {
+  photo = args['photo'] ?? "";
+} else {
+  photo = GetStorage().read("photo");
+}
+
+profileBackgroundImage = (photo != null && photo.isNotEmpty)
+    ? Image.network("$urlStarter/$photo").image
+    : defultprofileImage;
     String createdBy = args['createdBy'] != null ? args['createdBy'] : GetStorage().read("username");
     controller.comments.assignAll(comments);
 
     print("////////////////////");
     print(comments.length);
     print("********");
+
+   
 
     return Scaffold(
       appBar: AppBar(

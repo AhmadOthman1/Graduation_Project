@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:growify/controller/home/JobsPage_Controller/ShowAllMyJobs_controller.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/JobsPages/ShowJobApplicants.dart';
+import 'package:growify/view/screen/homescreen/JobsPages/addnewjob.dart';
 
 class MyJobPage extends StatefulWidget {
   const MyJobPage({Key? key}) : super(key: key);
@@ -61,7 +63,7 @@ class _MyJobPageState extends State<MyJobPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notifications'),
+        title: const Text('Jobs'),
       ),
       body: Column(
         children: [
@@ -76,37 +78,57 @@ class _MyJobPageState extends State<MyJobPage> {
               itemBuilder: (context, index) {
                 final job = _controller.jobs[index];
 
-                return Card(
-                  margin: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: CircleAvatar(
-                          backgroundImage: (job['photo'] != null &&
-                                  job['photo'] != "")
-                              ? Image.network("$urlStarter/" + job['photo']!)
-                                  .image
-                              : defultprofileImage,
+                return InkWell(
+                  onTap: (){
+                    Get.to(ShowJobApplicants());
+                  },
+                  child: Card(
+                    margin: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: CircleAvatar(
+                            backgroundImage: (job['photo'] != null &&
+                                    job['photo'] != "")
+                                ? Image.network("$urlStarter/" + job['photo']!)
+                                    .image
+                                : defultprofileImage,
+                          ),
+                          title: Text(
+                            "${job['notificationContent']}",
+                          ),
                         ),
-                        title: Text(
-                          "${job['notificationContent']}",
-                          
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                job['notificationContent'],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                  
+                             /* Text(
+                                job['notificationContent'],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(job['notificationContent']),
+                              const SizedBox(height: 8),*/
+                              const SizedBox(height: 8),
+                              Text('Deadline: ${job['date']}'),
+                            ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Deadline: ${job['date']}'),
-                            const SizedBox(height: 8),
-                            Text(job['notificationContent']),
-                          ],
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               },
@@ -115,110 +137,13 @@ class _MyJobPageState extends State<MyJobPage> {
           if (_controller.isLoading) const CircularProgressIndicator(),
         ],
       ),
-    );
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-/*import 'package:flutter/material.dart';
-
-
-class JobPost {
-  final String company;
-  final String image;
-  final String deadline;
-  final String content;
-
-  JobPost({
-    required this.company,
-    required this.image,
-    required this.deadline,
-    required this.content,
-  });
-}
-
-class MyJobPage extends StatefulWidget {
-  @override
-  _MyJobPageState createState() => _MyJobPageState();
-}
-
-class _MyJobPageState extends State<MyJobPage> {
-
-
-  
-  final List<JobPost> jobPosts = [
-    JobPost(
-      company: "Tech Co.",
-      image: "images/harri.png",
-      deadline: "March 15, 2023",
-      content: "We are looking for a skilled software engineer...",
-    ),
-    JobPost(
-      company: "Design Studio",
-      image: "images/harri.png",
-      deadline: "March 20, 2023",
-      content: "Join our creative team as a graphic designer...",
-    ),
-    // Add more job posts as needed
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Job Posts'),
-      ),
-      body: ListView.builder(
-        itemCount: jobPosts.length,
-        itemBuilder: (context, index) {
-          return JobPostCard(jobPost: jobPosts[index]);
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Get.to(NewJobPost());
         },
+        tooltip: 'Add Job',
+        child: Icon(Icons.post_add_outlined),
       ),
     );
   }
 }
-
-class JobPostCard extends StatelessWidget {
-  final JobPost jobPost;
-
-  JobPostCard({required this.jobPost});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListTile(
-            leading: CircleAvatar(
-              backgroundImage: AssetImage(jobPost.image),
-            ),
-            title: Text(jobPost.company),
-            
-          ),
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Deadline: ${jobPost.deadline}'),
-                SizedBox(height: 8),
-                Text(jobPost.content),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}*/

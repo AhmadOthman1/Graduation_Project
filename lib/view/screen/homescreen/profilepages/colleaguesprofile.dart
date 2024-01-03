@@ -12,7 +12,6 @@ import 'package:growify/view/widget/homePage/posts.dart';
 class ColleaguesProfile extends StatefulWidget {
   late ColleaguesProfileControllerImp controller;
   final List<Map<String, dynamic>> userData;
-  
 
   ColleaguesProfile({super.key, required this.userData});
 
@@ -21,14 +20,23 @@ class ColleaguesProfile extends StatefulWidget {
 }
 
 class _ColleaguesProfileState extends State<ColleaguesProfile> {
-   late ColleaguesProfileControllerImp controller;
- 
+  late ColleaguesProfileControllerImp controller;
 
   @override
   void initState() {
     super.initState();
     controller = Get.put(ColleaguesProfileControllerImp());
-    
+    final userUsername = widget.userData[0]["username"];
+    final userFirstname = widget.userData[0]["firstname"];
+    final userLastname = widget.userData[0]["lastname"];
+    final userPhoto = widget.userData[0]["photo"];
+    Map<String, dynamic> userMap = {
+      'name': '$userFirstname $userLastname',
+      'username': userUsername,
+      'photo': userPhoto,
+      'type': 'U'
+    };
+    controller.colleaguesmessages.assign(userMap);
   }
 
   final AssetImage defultprofileImage =
@@ -37,26 +45,18 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
   String? profileImageBytes;
   String? profileImageBytesName;
   String? profileImageExt;
- 
 
-  
   String? coverImageBytes;
   String? coverImageBytesName;
   String? coverImageExt;
 
   final AssetImage defultcoverImage = const AssetImage("images/coverImage.jpg");
-  
 
   String? Bio;
 
-  
-
   @override
   Widget build(BuildContext context) {
-   
-
-  
-switch (widget.userData[0]["connection"]) {
+    switch (widget.userData[0]["connection"]) {
       case 'C':
         controller.result.value = "Connected";
         controller.isDeleteButtonVisible = false;
@@ -76,9 +76,8 @@ switch (widget.userData[0]["connection"]) {
     }
 
     return Scaffold(
-       
       body: NestedScrollView(
-       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
             SliverAppBar(
               backgroundColor: Colors.white,
@@ -90,30 +89,30 @@ switch (widget.userData[0]["connection"]) {
               ),
             ),
             SliverList(
-        delegate: SliverChildListDelegate(
-          [
-            _buildProfileInfo(context),
-              _Deatalis("Details"),
-              _buildDivider(10),
-              _buildMessage(),
-              _buildDivider(10),
-              _buildButtonsRow(),
-              _buildDivider(10),
-              _Deatalis("Posts"),
-            // Post(),
-          ],
-        ),)
+              delegate: SliverChildListDelegate(
+                [
+                  _buildProfileInfo(context),
+                  _Deatalis("Details"),
+                  _buildDivider(10),
+                  _buildButtonsRow(),
+                  _buildDivider(10),
+                  _Deatalis("Posts"),
+                  // Post(),
+                ],
+              ),
+            )
           ];
         },
-         body: Post(/*username: 'AhmadOthman'*/),
+        body: Post(/*username: 'AhmadOthman'*/),
       ),
     );
   }
 
-   Widget _buildCoverPhoto() {
+  Widget _buildCoverPhoto() {
     String coverImage = widget.userData[0]["coverImage"] ?? "";
-    ImageProvider<Object> coverBackgroundImage =
-        (coverImage.isNotEmpty) ? Image.network("$urlStarter/$coverImage").image : const AssetImage("images/coverImage.jpg");
+    ImageProvider<Object> coverBackgroundImage = (coverImage.isNotEmpty)
+        ? Image.network("$urlStarter/$coverImage").image
+        : const AssetImage("images/coverImage.jpg");
 
     return Container(
       height: 200,
@@ -128,8 +127,8 @@ switch (widget.userData[0]["connection"]) {
     );
   }
 
-   Widget _buildProfileInfo(context) {
-     String profileImage = widget.userData[0]["photo"] ?? "";
+  Widget _buildProfileInfo(context) {
+    String profileImage = widget.userData[0]["photo"] ?? "";
     ImageProvider<Object> profileBackgroundImage = (profileImage.isNotEmpty)
         ? Image.network("$urlStarter/$profileImage").image
         : const AssetImage("images/profileImage.jpg");
@@ -144,9 +143,27 @@ switch (widget.userData[0]["connection"]) {
                 : profileBackgroundImage, // Replace with your default photo URL
           ),
           const SizedBox(height: 16),
-          Text(
-            '${widget.userData[0]["firstname"]} ${widget.userData[0]["lastname"]}',
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(width: 3,),
+              Text(
+                '${widget.userData[0]["firstname"]} ${widget.userData[0]["lastname"]}',
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              InkWell(
+                      onTap: () {
+                        controller.goToChatMessage();
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 5, left: 3),
+                        child: const Icon(
+                          Icons.message_rounded,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+            ],
           ),
           Text(
             '@${widget.userData[0]["username"]}', // Replace with the actual username
@@ -239,8 +256,9 @@ switch (widget.userData[0]["connection"]) {
                               actions: <Widget>[
                                 TextButton(
                                   onPressed: () async {
-                                    var message = await controller
-                                        .sendRemoveReq(widget.userData[0]["username"]);
+                                    var message =
+                                        await controller.sendRemoveReq(
+                                            widget.userData[0]["username"]);
                                     Navigator.of(context).pop();
                                     (message != null)
                                         ? showDialog(
@@ -270,8 +288,8 @@ switch (widget.userData[0]["connection"]) {
                         );
                       }
                       if (controller.result.value == "Accept") {
-                        var message = await controller
-                            .sendAcceptConnectReq(widget.userData[0]["username"]);
+                        var message = await controller.sendAcceptConnectReq(
+                            widget.userData[0]["username"]);
                         (message != null)
                             ? showDialog(
                                 context: context,
@@ -313,7 +331,7 @@ switch (widget.userData[0]["connection"]) {
                   ),
                 ),
                 Expanded(
-                  flex: controller. isDeleteButtonVisible ? 1 : 0,
+                  flex: controller.isDeleteButtonVisible ? 1 : 0,
                   child: Visibility(
                     visible: controller.isDeleteButtonVisible,
                     child: MaterialButton(
@@ -446,33 +464,5 @@ switch (widget.userData[0]["connection"]) {
     );
   }
 
-   Widget _buildMessage() {
-    return Column(
-      children: [
-        InkWell(
-          onTap: () {
-            controller.goToChatMessage();
-       
-
-          },
-          child: Container(
-            height: 35,
-            padding: const EdgeInsets.only(left: 10),
-            child: const Row(
-              children: [
-                Icon(Icons.more_horiz),
-                SizedBox(width: 10),
-                Text(
-                  "Messaging",
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-                Spacer(),
-                Icon(Icons.arrow_forward, size: 30),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  
 }
