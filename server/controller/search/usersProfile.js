@@ -25,7 +25,7 @@ exports.getWorkExperience = async (req, res, next) => {
             include: WorkExperience,
         });
 
-        if (userUsername) {
+        if (userUsername !=null) {
             const workExperiences = userUsername.workExperiences.map((experience) => ({
 
                 'id': experience.id.toString(),
@@ -64,7 +64,7 @@ exports.getEducationLevel= async (req, res, next) => {
             include: EducationLevel,
         });
 
-        if (userUsername) {
+        if (userUsername !=null) {
             const educationLevel = userUsername.educationLevels.map((Level) => ({
                 'id': Level.id.toString(),
                 'Specialty': Level.specialty,
@@ -102,7 +102,7 @@ exports.postSendDeleteReq = async (req, res, next) => {
                 username: username
             },
         });
-        if(!existingUsername){
+        if(existingUsername == null){
             return res.status(409).json({
                 message: 'there is no user exists',
                 body: req.body
@@ -159,7 +159,7 @@ exports.postSendAcceptConnectReq = async (req, res, next) => {
                 username: username
             },
         });
-        if(!existingUsername){
+        if(existingUsername == null){
             return res.status(409).json({
                 message: 'there is no user exists',
                 body: req.body
@@ -219,7 +219,7 @@ exports.postSendRemoveConnection = async (req, res, next) => {
                 username: username
             },
         });
-        if(!existingUsername){
+        if(existingUsername == null){
             return res.status(409).json({
                 message: 'there is no user exists',
                 body: req.body
@@ -275,7 +275,7 @@ exports.postSendRemoveReq = async (req, res, next) => {
                 username: username
             },
         });
-        if(!existingUsername){
+        if(existingUsername == null){
             return res.status(409).json({
                 message: 'there is no user exists',
                 body: req.body
@@ -339,7 +339,7 @@ exports.postSendConnectReq = async (req, res, next) => {
                 username: username
             },
         });
-        if(!existingUsername){
+        if(existingUsername == null){
             return res.status(409).json({
                 message: 'there is no user exists',
                 body: req.body
@@ -405,7 +405,7 @@ exports.getUserProfileInfo = async (req, res, next) => {
                 username: findProfileUsername
             },
         });
-        if (ProfileUsername) {
+        if (ProfileUsername !=null) {
             var connection = "N";
             var photo;
             var coverimage;

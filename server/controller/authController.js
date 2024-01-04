@@ -55,7 +55,7 @@ function getRefreshToken(req, res, next) {
         email: user.email
       },
     });
-    if (existingEmail) {
+    if (existingEmail!=null) {
       if (existingEmail.token != refreshToken) return res.status(403).json({
         message: 'server Error',
         body: req.body

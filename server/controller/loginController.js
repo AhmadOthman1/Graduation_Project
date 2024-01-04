@@ -36,7 +36,7 @@ exports.postLogin = async (req, res, next) => {
             email: email
         },
     });
-    if (existingEmail) {
+    if (existingEmail!=null) {
         // mail  exists
         console.log(password);
         const isMatch = await bcrypt.compare(password, existingEmail.password);

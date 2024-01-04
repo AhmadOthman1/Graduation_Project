@@ -52,7 +52,7 @@ exports.addComment = async (req, res, next) => {
             },
         });
         // اذا كان الشخص بده يعلق ع بوست بنفحص اذا الشخص موجود اذا مش موجود بكون صفحة بدها تعلق ع بوست
-        if (existingUsername) {
+        if (existingUsername !=null) {
             const userPostComments = await post.findOne({
                 where: { id: postId },
                 include: [
@@ -63,7 +63,7 @@ exports.addComment = async (req, res, next) => {
 
                 ],
             });
-            if (!userPostComments) {
+            if (userPostComments == null) {
                 return res.status(404).json({ error: 'Post not found' });
             }
             // لازم نفحص اذا اليوزر نيم للبوست موجود بعدها بنطبق كل الي تحت واذا لا بكون بده يعلق ع بوست صفحة
@@ -139,7 +139,7 @@ exports.getPostComments = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingUsername) {
+        if (existingUsername !=null) {
             const userPostComments = await post.findOne({
                 where: { id: postId },
                 include: [
@@ -150,7 +150,7 @@ exports.getPostComments = async (req, res, next) => {
 
                 ],
             });
-            if (!userPostComments) {
+            if (userPostComments==null) {
                 return res.status(404).json({ error: 'Post not found' });
             }
 
@@ -226,12 +226,12 @@ exports.removeLike = async (req, res, next) => {
         });
         console.log(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
         console.log(userUsername);
-        if (existingUsername) {
+        if (existingUsername !=null) {
             const userPostLikes = await like.findOne({
                 where: { postId: postId , username: userUsername},
                 
             });
-            if (!userPostLikes) {
+            if (userPostLikes==null) {
                 return res.status(404).json({ error: 'like not found' });
             }
             await userPostLikes.destroy();
@@ -265,7 +265,7 @@ exports.addLike = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingUsername) {
+        if (existingUsername !=null) {
             const userPostLikes = await post.findOne({
                 where: { id: postId },
                 include: [
@@ -276,7 +276,7 @@ exports.addLike = async (req, res, next) => {
 
                 ],
             });
-            if (!userPostLikes) {
+            if (userPostLikes==null) {
                 return res.status(404).json({ error: 'Post not found' });
             }
 
@@ -346,7 +346,7 @@ exports.getPostLikes = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingUsername) {
+        if (existingUsername !=null) {
             const userPostLikes = await post.findOne({
                 where: { id: postId },
                 include: [
@@ -357,7 +357,7 @@ exports.getPostLikes = async (req, res, next) => {
 
                 ],
             });
-            if (!userPostLikes) {
+            if (userPostLikes==null) {
                 return res.status(404).json({ error: 'Post not found' });
             }
 
@@ -433,7 +433,7 @@ exports.getPosts = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingUsername) {
+        if (existingUsername !=null) {
             if (userUsername == username) {
                 const userPosts = await post.findAll({
                     where: { username: username },

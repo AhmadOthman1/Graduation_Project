@@ -20,7 +20,7 @@ exports.postVerificationCode=async (req,res,next)=>{
                 email: email 
         }});
         //if exists 
-        if (existingUserInTemp) {
+        if (existingUserInTemp !=null) {
             const storedVerificationCode = existingUserInTemp.code;// get the hashed code from the thable
             //const hashedVerificationCode = await bcrypt.hash(VerificationCode.toString(), 10);// hash the code from the user
             //compare
@@ -145,19 +145,19 @@ exports.postSignup=async (req,res,next)=>{
                     },
                 });
             //if user has a data on temuser will be removed 
-            if (existingUserNameInTemp) {
+            if (existingUserNameInTemp !=null) {
                 await existingUserNameInTemp.destroy();
             }   
-            if (existingEmailInTemp) {
+            if (existingEmailInTemp !=null) {
                 await existingEmailInTemp.destroy();
             }                  
-            if (existingUserName ) {
+            if (existingUserName  !=null) {
                 // User already exists
                 return res.status(409).json({
                   message: 'UserName already exists',
                   body :req.body
                 });
-            }if (existingEmail) {
+            }if (existingEmail !=null) {
                 // mail already exists
                 return res.status(409).json({
                   message: 'Email already exists',

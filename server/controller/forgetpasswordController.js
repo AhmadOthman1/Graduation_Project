@@ -17,7 +17,7 @@ exports.changePassword=async (req,res,next)=>{
             email: email 
     }});
     //if exists 
-    if (existingUserInforgetPasswordCode) {
+    if (existingUserInforgetPasswordCode !=null) {
         const hashedPassword = await bcrypt.hash(password, 10);
         const result = await User.update(
             { password: hashedPassword },
@@ -53,7 +53,7 @@ exports.postVerificationCode=async (req,res,next)=>{
                 email: email 
         }});
         //if exists 
-        if (existingUserInforgetPasswordCode) {
+        if (existingUserInforgetPasswordCode !=null) {
             const storedVerificationCode = existingUserInforgetPasswordCode.code;// get the hashed code from the thable
             //compare
             if(verificationCode == storedVerificationCode){
@@ -112,7 +112,7 @@ exports.postForgetPassword=async (req,res,next)=>{
                     email: email 
                 },
             });
-        if (existingEmail) {
+        if (existingEmail !=null) {
             // mail  exists
             //check if there is a pre code
             const existingEmailInForget = await forgetPasswordCode.findOne({
@@ -121,7 +121,7 @@ exports.postForgetPassword=async (req,res,next)=>{
                     },
                 });
             //delete code if existed
-            if(existingEmailInForget){
+            if(existingEmailInForget !=null){
                 await existingEmailInForget.destroy();
             }
             //create new code

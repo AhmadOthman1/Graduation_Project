@@ -26,7 +26,7 @@ exports.getMyPageInfo = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingEmail) {
+        if (existingEmail!=null) {
 
             pageAdmin.findAll({
                 where: { username: existingEmail.username },
@@ -98,7 +98,7 @@ exports.postCreatePage = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingEmail) {
+        if (existingEmail!=null) {
 
             if (!pageId || !pageName || !description || !address || !contactInfo || !country || !speciality || !pageType) {
                 return res.status(409).json({
@@ -202,7 +202,7 @@ exports.getPagePosts = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingUsername) {
+        if (existingUsername!=null) {
             //find if the user is admin in the page
             var userAdmin = await pageAdmin.findOne({
                 where: {
@@ -211,7 +211,7 @@ exports.getPagePosts = async (req, res, next) => {
                 },
                 include: userPages,
             });
-            if (userAdmin) {
+            if (userAdmin!=null) {
                 const pagePosts = await post.findAll({
                     where: { pageId: pageId },
                     order: [['postDate', 'DESC']], // Order posts by date
@@ -291,7 +291,7 @@ exports.getPagePostLikes = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingUsername) {
+        if (existingUsername!=null) {
             const userPostLikes = await post.findOne({
                 where: { id: postId },
                 include: [
@@ -302,11 +302,11 @@ exports.getPagePostLikes = async (req, res, next) => {
 
                 ],
             });
-            if (!userPostLikes) {
+            if (userPostLikes==null) {
                 return res.status(404).json({ error: 'Post not found' });
             }
 
-            if (userPostLikes) {
+            if (userPostLikes!=null) {
                 // Extract likes from the userPostLikes object
                 const likes = await Promise.all(userPostLikes.likes.map(async (like) => {
                     const createdBy = like.username || like.pageId;
@@ -374,7 +374,7 @@ exports.getPagePostComments = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingUsername) {
+        if (existingUsername!=null) {
             const userPostComments = await post.findOne({
                 where: { id: postId },
                 include: [
@@ -385,11 +385,11 @@ exports.getPagePostComments = async (req, res, next) => {
 
                 ],
             });
-            if (!userPostComments) {
+            if (userPostComments==null) {
                 return res.status(404).json({ error: 'Post not found' });
             }
 
-            if (userPostComments) {
+            if (userPostComments!=null) {
 
                 const comments = await Promise.all(userPostComments.comments.map(async (comment) => {
                     const createdBy = comment.username || comment.pageId;
@@ -459,7 +459,7 @@ exports.pageAddLike = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingUsername) {
+        if (existingUsername!=null) {
             const userPostLikes = await post.findOne({
                 where: { id: postId },
                 include: [
@@ -470,11 +470,11 @@ exports.pageAddLike = async (req, res, next) => {
 
                 ],
             });
-            if (userPostLikes) {
+            if (userPostLikes!=null) {
                 var userPageAdmin = await pageAdmin.findOne({
                     where: { username: userUsername, pageId: userPostLikes.pageId }
                 });
-                if (userPageAdmin) {//add like as admin with pageId 
+                if (userPageAdmin!=null) {//add like as admin with pageId 
                     await like.create({
                         postId: postId,
                         pageId: userPostLikes.pageId,
@@ -526,19 +526,19 @@ exports.pageRemoveLike = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingUsername) {
+        if (existingUsername!=null) {
             const pagePosts = await post.findOne({
                 where: { id: postId },
             });
             var userPageAdmin = await pageAdmin.findOne({
                 where: { username: userUsername, pageId: pagePosts.pageId }
             });
-            if (userPageAdmin) {//add like as admin with pageId 
+            if (userPageAdmin!=null) {//add like as admin with pageId 
                 const userPostLikes = await like.findOne({
                     where: { postId: postId, pageId: pagePosts.pageId },
 
                 });
-                if (!userPostLikes) {
+                if (userPostLikes==null) {
                     return res.status(404).json({ error: 'like not found' });
                 }
                 await userPostLikes.destroy();
@@ -552,7 +552,7 @@ exports.pageRemoveLike = async (req, res, next) => {
                     where: { postId: postId, username: userUsername },
 
                 });
-                if (!userPostLikes) {
+                if (userPostLikes==null) {
                     return res.status(404).json({ error: 'like not found' });
                 }
                 await userPostLikes.destroy();
@@ -595,7 +595,7 @@ exports.pageAddComment = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingUsername) {
+        if (existingUsername!=null) {
             const userPostComments = await post.findOne({
                 where: { id: postId },
                 include: [
@@ -606,7 +606,7 @@ exports.pageAddComment = async (req, res, next) => {
 
                 ],
             });
-            if (!userPostComments) {
+            if (userPostComments==null) {
                 return res.status(404).json({ error: 'Post not found' });
             }
             // if the post created by a page
@@ -614,7 +614,7 @@ exports.pageAddComment = async (req, res, next) => {
                 var userPageAdmin = await pageAdmin.findOne({
                     where: { username: userUsername, pageId: userPostComments.pageId }
                 });
-                if (userPageAdmin) {
+                if (userPageAdmin!=null) {
                     // Extract comments from the userPostcommentsobject
                     await comment.create({
                         postId: postId,
@@ -672,11 +672,11 @@ exports.postNewPagePost = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingUsername) {
+        if (existingUsername!=null) {
             var userPageAdmin = await pageAdmin.findOne({
                 where: { username: userUsername, pageId: pageId }
             });
-            if (userPageAdmin) {
+            if (userPageAdmin!=null) {
 
                 if ((postContent == null || postContent.trim() == "") && (postImageBytes == null || postImageBytesName == null || postImageExt == null)) {
                     return res.status(409).json({
@@ -753,18 +753,18 @@ exports.editPageInfo = async (req, res, next) => {
                 email: req.user.email
             },
         });
-        if (existingEmail) {
+        if (existingEmail!=null) {
             var userPageAdmin = await pageAdmin.findOne({
                 where: { username: req.user.username, pageId: pageId, adminType: "A" }
             });
-            if (userPageAdmin) {
+            if (userPageAdmin!=null) {
                 var currentPageInfo = await Page.findOne({
                     where: {
-                        id:pageId
+                        id: pageId
                     }
                 })
                 if (name != null) {//if feild change enables (!=null)
-                    if ( name.length < 1 || name.length > 50) {//validate
+                    if (name.length < 1 || name.length > 50) {//validate
                         return res.status(409).json({
                             message: 'Not Valid name',
                             body: req.body
@@ -774,7 +774,7 @@ exports.editPageInfo = async (req, res, next) => {
                     }
                 }
                 if (specialty != null) {//if feild change enables (!=null)
-                    if ( specialty.length < 1 || specialty.length > 2000) {//validate
+                    if (specialty.length < 1 || specialty.length > 2000) {//validate
                         return res.status(409).json({
                             message: 'Not Valid specialty',
                             body: req.body
@@ -804,7 +804,7 @@ exports.editPageInfo = async (req, res, next) => {
                     }
                 }
                 if (contactInfo != null) {//if feild change enables (!=null)
-                    if ( contactInfo.length < 1 || contactInfo.length > 2000) {//validate
+                    if (contactInfo.length < 1 || contactInfo.length > 2000) {//validate
                         return res.status(409).json({
                             message: 'Not Valid contactInfo',
                             body: req.body
@@ -814,7 +814,7 @@ exports.editPageInfo = async (req, res, next) => {
                     }
                 }
                 if (description != null) {//if feild change enables (!=null)
-                    if ( description.length < 1 || description.length > 2000) {//validate
+                    if (description.length < 1 || description.length > 2000) {//validate
                         return res.status(409).json({
                             message: 'Not Valid description',
                             body: req.body
@@ -926,7 +926,7 @@ exports.editPageInfo = async (req, res, next) => {
                     message: 'updated',
                     body: req.body
                 });
-            }else{
+            } else {
                 return res.status(500).json({
                     message: 'you are not allowed to edit this page info',
                     body: req.body
@@ -946,3 +946,165 @@ exports.editPageInfo = async (req, res, next) => {
         });
     }
 }
+exports.getPageAdmins = async (req, res, next) => {
+    try {
+        var page = req.query.page || 1;
+        var pageSize = req.query.pageSize || 10;
+        var pageId = req.query.pageId;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        // Calculate the offset based on page and pageSize
+        const offset = (page - 1) * pageSize;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername!=null) {
+            var userPageAdmin = await pageAdmin.findOne({
+                where: { username: userUsername, pageId: pageId, adminType: "A" }
+            });
+            if (userPageAdmin!=null) {
+
+                const allPageAdmin = await pageAdmin.findAll({
+                    where: {
+                        pageId: pageId,
+                    },
+                    limit: parseInt(pageSize),
+                    offset: parseInt(offset),
+                    order: [['createdAt', 'DESC']],
+                });
+                const fullPageAdminBody = await Promise.all(allPageAdmin.map(async (admin) => {
+                    const user = await User.findOne({
+                        where: {
+                            username: admin.username
+                        }
+                    });
+                    const photo = user ? user.photo : null;
+                    const firstname = user.firstname;
+                    const lastname = user.lastname;
+
+                    var adminType;
+                    if (admin.adminType == "A") {
+                        adminType = "Admin";
+                    } else {
+                        adminType = "Publisher";
+                    }
+                    return {
+                        ...admin.dataValues,
+                        firstname,
+                        lastname,
+                        createdAt: moment(admin.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+                        adminType: adminType,
+                        photo,
+                    };
+                }));
+                console.log(fullPageAdminBody);
+                return res.status(200).json({
+                    pageAdmins: fullPageAdminBody,
+                });
+            } else {
+                return res.status(500).json({
+                    message: 'You are not allowed to see this information',
+                    body: req.body,
+                });
+            }
+        }
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};
+
+exports.addNewAdmin = async (req, res, next) => {
+    try {
+        var pageId = req.body.pageId;
+        var adminUsername = req.body.adminUsername;
+        var selectedRole = req.body.selectedRole;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        // Calculate the offset based on page and pageSize
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername!=null) {
+            var userPageAdmin = await pageAdmin.findOne({
+                where: { username: userUsername, pageId: pageId, adminType: "A" }
+            });
+            if (userPageAdmin!=null) {
+                const existingAdminUsername = await User.findOne({
+                    where: {
+                        username: adminUsername
+                    },
+                });
+                if (existingAdminUsername!=null) {
+                    const isAddedUsernameAdmin = await pageAdmin.findOne({
+                        where: {
+                            pageId: pageId,
+                            username: adminUsername,
+                        },
+                    });
+                    if (isAddedUsernameAdmin!=null) {
+                        if (isAddedUsernameAdmin.adminType == selectedRole) {
+                            return res.status(500).json({
+                                message: 'This User Is already an Admin',
+                            });
+                        } else {
+                            await pageAdmin.update(
+                                { adminType: selectedRole },
+                                {
+                                    where: {
+                                        pageId: pageId,
+                                        username: adminUsername,
+                                    },
+                                });
+                            return res.status(500).json({
+                                message: 'you Changed ' + adminUsername + ' role successfully',
+                            });
+                        }
+
+                    } else {
+                        await pageAdmin.create({
+                            pageId: pageId,
+                            username: adminUsername,
+                            adminType: selectedRole,
+                        });
+                        return res.status(200).json({
+                            message: 'you added ' + adminUsername + ' as admin successfully',
+                        });
+                    }
+                }else{
+                    return res.status(404).json({
+                        message: 'User not found',
+                    });
+                }
+            } else {
+                return res.status(500).json({
+                    message: 'You are not allowed to edit this information',
+                    body: req.body,
+                });
+            }
+        }
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};

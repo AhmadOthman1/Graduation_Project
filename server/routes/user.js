@@ -76,6 +76,8 @@ router.post('/getPagePostComments',authenticateToken,myPagesController.getPagePo
 router.post('/pageAddComment',authenticateToken,myPagesController.pageAddComment);
 router.post('/postNewPagePost',authenticateToken,myPagesController.postNewPagePost);
 router.post('/editPageInfo',authenticateToken,myPagesController.editPageInfo);
+router.get('/getPageAdmins',authenticateToken,myPagesController.getPageAdmins);
+router.post('/addNewAdmin',authenticateToken,myPagesController.addNewAdmin);
 
 
 

@@ -20,7 +20,7 @@ exports.getUserNotifications = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if(existingUsername){
+        if(existingUsername !=null){
             const userNotifications = await notifications.findAll({
                 where: {
                   username: userUsername,

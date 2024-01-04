@@ -19,7 +19,7 @@ exports.getEducationLevel= async (req, res, next) => {
             include: EducationLevel,
         });
 
-        if (existingEmail) {
+        if (existingEmail !=null) {
             console.log(existingEmail.educationLevels);
             const educationLevel = existingEmail.educationLevels.map((Level) => ({
                 'id': Level.id.toString(),
@@ -61,7 +61,7 @@ exports.postAddEducationLevel = async (req, res, next) => {
                 email: req.user.email
             },
         });
-        if (existingEmail) {
+        if (existingEmail !=null) {
             if (Specialty != null) {//if feild change enables (!=null)
                 if (Specialty.length < 1 || Specialty.length > 250) {//validate
                     return res.status(409).json({
@@ -166,7 +166,7 @@ exports.postEditEducationLevel = async (req, res, next) => {
                 email: req.user.email
             },
         });
-        if (existingEmail) {
+        if (existingEmail !=null) {
             
             if (Specialty != null && Specialty != "") {//if feild change enables (!=null)
                 if (Specialty.length < 1 || Specialty.length > 250) {//validate
@@ -274,7 +274,7 @@ exports.postDeleteEducationLevel = async (req, res, next) => {
                 email: req.user.email
             },
         });
-        if (existingEmail) {
+        if (existingEmail !=null) {
             EducationLevel.destroy({
                 where: {
                     id: id,

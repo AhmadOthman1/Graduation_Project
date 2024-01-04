@@ -38,7 +38,7 @@ exports.getChats = async (req, res, next) => {
         });
 
         // Check each user from userConnections if they are exist in activeUsers
-        if (userConnections) {
+        if (userConnections !=null) {
             for (const connection of userConnections) {
                 var senderIsActive;
                 var receiverIsActive;

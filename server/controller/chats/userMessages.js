@@ -22,7 +22,28 @@ exports.getUserMessages = async (req, res, next) => {
         var pageSize = parseInt(req.query.pageSize) || 10;
         var type = req.query.type;
         const offset = (page - 1) * pageSize;
-        
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername==null) {
+            return res.status(500).json({
+                message: 'user not found',
+                body: req.body,
+            });
+        }
+        const existingotherUsername = await User.findOne({
+            where: {
+                username: otherUsername
+            },
+        });
+        if(existingotherUsername == null){
+            return res.status(500).json({
+                message: 'user not found',
+                body: req.body,
+            });
+        }
         if (type == "U") {
             console.log(userUsername);
     

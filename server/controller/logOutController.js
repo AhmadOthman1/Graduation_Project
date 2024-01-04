@@ -15,7 +15,7 @@ exports.postLogOut = async (req, res, next) => {
             username: userUsername
         },
     });
-    if (existingUsername) {
+    if (existingUsername!=null) {
         await User.update({ token: null }, {
             where: {
               username: userUsername
@@ -26,7 +26,7 @@ exports.postLogOut = async (req, res, next) => {
             username: userUsername,
             }
           });
-          if(activeUser){
+          if(activeUser!=null){
             await activeUser.destroy({
               where: {
                 username: userUsername,

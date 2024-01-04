@@ -41,7 +41,7 @@ async function searchForUser(email,search,pageSize,offset){
             },
         });
 
-        if (existingEmail) {
+        if (existingEmail !=null) {
             if (search[0] == '@') {
                 var searchValue = search.substring(1);
                 const searchResults = await User.findAll({

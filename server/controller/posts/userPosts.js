@@ -21,7 +21,7 @@ exports.postNewUserPost = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingUsername) {
+        if (existingUsername !=null) {
             if ((postContent == null || postContent.trim() == "") && (postImageBytes == null || postImageBytesName == null || postImageExt == null)) {
                 return res.status(409).json({
                     message: 'you must add a text or photo to create a new post',

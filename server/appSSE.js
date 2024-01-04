@@ -98,7 +98,7 @@ io.on("connection", (socket) => {// first time socket connection
             notificationPointer: userUsername,
           };
           var isnotify = false
-          isnotify = await notifyUser(calleeId, notification);
+          isnotify = await notifyUser(username, notification);
           console.log(isnotify);
         }
         //save the message in db after sending it via socket

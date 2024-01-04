@@ -24,7 +24,7 @@ exports.getUserProfileDashboard = async (req, res, next) => {
                 username : userUsername,
             },
         });
-        if(userExists){
+        if(userExists !=null){
             var userPostCount = await post.count({
                 where: {
                     username: userUsername,
@@ -73,7 +73,7 @@ exports.getMainInfo = async (req, res, next) => {
                 email: email
             },
         });
-        if (existingEmail) {
+        if (existingEmail !=null) {
             var photo;
             var coverimage;
             var cv;
@@ -180,7 +180,7 @@ exports.changeMainInfo = async (req, res, next) => {
                 email: req.user.email
             },
         });
-        if (existingEmail) {
+        if (existingEmail !=null) {
             if (firstName != null) {//if feild change enables (!=null)
                 if (!validator.isUsername(firstName) || firstName.length < 1 || firstName.length > 50) {//validate
                     return res.status(409).json({
@@ -435,7 +435,7 @@ exports.changePassword = async (req, res, next) => {
                 email: req.user.email
             },
         });
-        if (existingEmail) {
+        if (existingEmail !=null) {
             const isMatch = await bcrypt.compare(oldPassword, existingEmail.password);
             if (isMatch) {
                 const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -512,7 +512,7 @@ exports.changeEmail = async (req, res, next) => {
             },
         });
 
-        if (existingEmail) {//if user found by old email
+        if (existingEmail !=null) {//if user found by old email
 
             const isMatch = await bcrypt.compare(Password, existingEmail.password);
             if (isMatch) {//correct password
@@ -521,7 +521,7 @@ exports.changeEmail = async (req, res, next) => {
                         email: newEmail
                     },
                 });
-                if (existingNewEmail) {//if email already used
+                if (existingNewEmail !=null) {//if email already used
                     return res.status(409).json({
                         message: 'Email is already exists',
                         body: req.body
@@ -532,7 +532,7 @@ exports.changeEmail = async (req, res, next) => {
                             email: newEmail
                         },
                     });
-                    if (existingNewEmailInTemp) {//if email under signup prosecc
+                    if (existingNewEmailInTemp !=null) {//if email under signup prosecc
                         return res.status(409).json({
                             message: 'The email address is used for a registered account. Please complete the registration process through the signup page',
                             body: req.body
@@ -543,7 +543,7 @@ exports.changeEmail = async (req, res, next) => {
                                 email: newEmail
                             },
                         });
-                        if (existingNewEmailInChange) {
+                        if (existingNewEmailInChange !=null) {
                             await existingNewEmailInChange.destroy();
                         }
                         await createChangeEmail(existingEmail.username, newEmail);
@@ -626,7 +626,7 @@ exports.postVerificationCode = async (req, res, next) => {
             }
         });
         //if exists 
-        if (existingUserInChangeEamil) {
+        if (existingUserInChangeEamil !=null) {
             const storedVerificationCode = existingUserInChangeEamil.code;// get the hashed code from the thable
             //compare
             if (verificationCode == storedVerificationCode) {

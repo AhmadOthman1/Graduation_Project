@@ -19,7 +19,7 @@ exports.getWorkExperience = async (req, res, next) => {
             include: WorkExperience,
         });
 
-        if (existingEmail) {
+        if (existingEmail !=null) {
             console.log(existingEmail);
             const workExperiences = existingEmail.workExperiences.map((experience) => ({
 
@@ -63,7 +63,7 @@ exports.postAddworkExperience = async (req, res, next) => {
                 email: req.user.email
             },
         });
-        if (existingEmail) {
+        if (existingEmail !=null) {
             if (Specialty != null) {//if feild change enables (!=null)
                 if (Specialty.length < 1 || Specialty.length > 250) {//validate
                     return res.status(409).json({
@@ -168,7 +168,7 @@ exports.postEditworkExperience = async (req, res, next) => {
                 email: req.user.email
             },
         });
-        if (existingEmail) {
+        if (existingEmail !=null) {
 
             if (Specialty != null && Specialty != "") {//if feild change enables (!=null)
                 if (Specialty.length < 1 || Specialty.length > 250) {//validate
@@ -275,7 +275,7 @@ exports.postDeleteworkExperience = async (req, res, next) => {
                 email: req.user.email
             },
         });
-        if (existingEmail) {
+        if (existingEmail !=null) {
             WorkExperience.destroy({
                 where: {
                     id: id,
