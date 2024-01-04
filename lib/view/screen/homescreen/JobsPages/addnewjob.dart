@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/JobsPage_Controller/newJob_controller.dart';
+import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/newJob_controller.dart';
+import 'package:growify/core/functions/alertbox.dart';
 
 class NewJobPost extends StatelessWidget {
-  NewJobPost({super.key});
+  final pageId;
+  NewJobPost({super.key , required this.pageId});
 
   final NewJobControllerImp controller = Get.put(NewJobControllerImp());
   GlobalKey<FormState> formstate = GlobalKey<FormState>();
@@ -122,6 +124,21 @@ class NewJobPost extends StatelessWidget {
                           print('Interest: ${controller.postInterest}');
                           print('Description: ${controller.postDescription}');
                           print('Selected Date: ${controller.endDate.value}');
+                          var message = await controller.postJob(pageId);
+                          (message != null)
+                        ? showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CustomAlertDialog(
+                                title: 'Message',
+                                icon: Icons.error,
+                                text: message,
+                                buttonText: 'OK',
+                                
+                              );
+                            },
+                          )
+                        : null;
                         }
                       },
                       color: const Color.fromARGB(255, 85, 191, 218),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/JobsPage_Controller/ShowAllMyJobs_controller.dart';
-import 'package:growify/controller/home/JobsPage_Controller/companyJob_controller.dart';
+import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/ShowAllMyJobs_controller.dart';
+import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/companyJob_controller.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/JobsPages/showthejob.dart';

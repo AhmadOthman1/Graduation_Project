@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:get/get.dart';
-import 'package:growify/controller/home/JobsPage_Controller/ShowTheJob_controller.dart';
+import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/ShowTheJob_controller.dart';
 import 'package:growify/global.dart';
 
 class JobPost {

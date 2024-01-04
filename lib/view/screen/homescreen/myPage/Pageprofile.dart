@@ -274,7 +274,7 @@ class _PageProfileState extends State<PageProfile> {
         InkWell(
           onTap: () {
             //controller.goToSeeAboutInfo();
-            Get.to(MyJobPage());
+            Get.to(MyJobPage(pageId : widget.userData.id));
           },
           child: Container(
             height: 35,

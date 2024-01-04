@@ -18,10 +18,10 @@ class MyJobController {
   int pageSize = 10;
   int page = 1;
 
-  getUserNotifications(int page) async {
+  getPageJobs(int page, String pageId) async {
     
     var url =
-        "$urlStarter/user/getUserNotifications?page=$page&pageSize=$pageSize";
+        "$urlStarter/user/getPageJobs?page=$page&pageSize=$pageSize&pageId=$pageId";
     var response = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -29,17 +29,17 @@ class MyJobController {
     return response;
   }
 
-  Future<void> loadNotifications(page) async {
+  Future<void> loadPageJobs(page,pageId) async {
     if (isLoading) {
       return;
     }
     
     isLoading = true;
-    var response = await getUserNotifications(page);
+    var response = await getPageJobs(page,pageId);
     print(response.statusCode);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      loadNotifications(page);
+      loadPageJobs(page,pageId);
       return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -53,22 +53,22 @@ class MyJobController {
       
       
       var responseBody = jsonDecode(response.body);
-      final List<dynamic>? userNotifications = responseBody["notifications"];
-      print(userNotifications);
+      final List<dynamic>? pageJobs = responseBody["pageJobs"];
+      print(pageJobs);
       print("userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-      if (userNotifications != null) {
-        final newNotifications = userNotifications.map((notification) {
+      if (pageJobs != null) {
+        final newJob = pageJobs.map((job) {
           return {
-            'id': notification['id'],
-            'notificationType': notification['notificationType'],
-            'notificationContent': notification['notificationContent'],
-            'notificationPointer': notification['notificationPointer'],
-            'photo': notification['photo'],
-            'date': notification['createdAt'],
+            'pageJobId': job['pageJobId'],
+            'pageId': job['pageId'],
+            'title': job['title'],
+            'interest': job['interest'],
+            'description': job['description'],
+            'endDate': job['endDate'],
           };
         }).toList();
 
-        jobs.addAll(newNotifications);
+        jobs.addAll(newJob);
         //print(notifications);
       }
 

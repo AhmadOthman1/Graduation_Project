@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/JobsPage_Controller/ShowAllMyJobs_controller.dart';
+import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/ShowAllMyJobs_controller.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/JobsPages/ShowJobApplicants.dart';
 import 'package:growify/view/screen/homescreen/JobsPages/addnewjob.dart';
 
 class MyJobPage extends StatefulWidget {
-  const MyJobPage({Key? key}) : super(key: key);
+  final pageId;
+  const MyJobPage({Key? key, required this.pageId}) : super(key: key);
 
   @override
   _MyJobPageState createState() => _MyJobPageState();
@@ -33,7 +34,7 @@ class _MyJobPageState extends State<MyJobPage> {
   Future<void> _loadData() async {
     print('Loading data...');
     try {
-      await _controller.loadNotifications(_controller.page);
+      await _controller.loadPageJobs(_controller.page, widget.pageId);
       setState(() {
         _controller.page++;
         _controller.jobs;
@@ -79,41 +80,37 @@ class _MyJobPageState extends State<MyJobPage> {
                 final job = _controller.jobs[index];
 
                 return InkWell(
-                  onTap: (){
+                  onTap: () {
                     Get.to(ShowJobApplicants());
                   },
                   child: Card(
-                    margin: const EdgeInsets.all(16),
+                    margin: const EdgeInsets.all(10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ListTile(
                           contentPadding: EdgeInsets.zero,
-                          leading: CircleAvatar(
-                            backgroundImage: (job['photo'] != null &&
-                                    job['photo'] != "")
-                                ? Image.network("$urlStarter/" + job['photo']!)
-                                    .image
-                                : defultprofileImage,
-                          ),
                           title: Text(
-                            "${job['notificationContent']}",
+                            "${job['title']}",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(5),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                job['notificationContent'],
+                                job['description'],
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+                                  fontSize: 14,
                                 ),
                               ),
-                  
-                             /* Text(
+
+                              /* Text(
                                 job['notificationContent'],
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -123,7 +120,13 @@ class _MyJobPageState extends State<MyJobPage> {
                               Text(job['notificationContent']),
                               const SizedBox(height: 8),*/
                               const SizedBox(height: 8),
-                              Text('Deadline: ${job['date']}'),
+                              Text(
+                                'Deadline: ${job['endDate']}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -139,7 +142,7 @@ class _MyJobPageState extends State<MyJobPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Get.to(NewJobPost());
+          Get.to(NewJobPost(pageId:widget.pageId));
         },
         tooltip: 'Add Job',
         child: Icon(Icons.post_add_outlined),
