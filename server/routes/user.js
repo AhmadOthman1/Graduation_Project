@@ -16,6 +16,7 @@ const getPostsController=require('../controller/posts/getPosts')
 const userNotificationsController=require('../controller/notifications/userNotificationsController')
 const chatsMainPage=require('../controller/chats/chatsMainPage')
 const userMessages=require('../controller/chats/userMessages')
+const UserColleagues=require('../controller/mainUser/userColleagues')
 
 
 const router=express.Router();
@@ -40,6 +41,9 @@ router.post('/addEducationLevel',authenticateToken,educationLevelController.post
 router.post('/editEducationLevel',authenticateToken,educationLevelController.postEditEducationLevel);
 router.post('/deleteEducationLevele',authenticateToken,educationLevelController.postDeleteEducationLevel);
 router.post('/getUserProfileDashboard',authenticateToken,settingsController.getUserProfileDashboard);
+router.get('/getUserColleagues',authenticateToken,UserColleagues.getUserColleagues);
+router.get('/getUserRequestsReceived',authenticateToken,UserColleagues.getUserRequestsReceived);
+router.get('/getUserRequestsSent',authenticateToken,UserColleagues.getUserRequestsSent);
 //search
 router.get('/getSearchData',authenticateToken,getSearchDataController.getSearchData);
 //other users profile
