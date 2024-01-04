@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/Admin_controller/ShowAdmin_controller.dart';
+import 'package:growify/controller/home/myPage_Controller/Admin_controller/ShowAdmin_controller.dart';
 import 'package:growify/controller/home/network_controller/networdkmainpage_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/myPage/Admins/SelectAdmin.dart';
 
 class ShowAdmins extends StatefulWidget {
-  const ShowAdmins({Key? key}) : super(key: key);
+  final pageId;
+  const ShowAdmins({Key? key , required this.pageId}) : super(key: key);
 
   @override
   _ShowAdminsState createState() => _ShowAdminsState();
@@ -33,7 +34,7 @@ class _ShowAdminsState extends State<ShowAdmins> {
   Future<void> _loadData() async {
     print('Loading data...');
     try {
-      await _controller.loadNotifications(_controller.page);
+      await _controller.loadAdmins(_controller.page,widget.pageId);
       setState(() {
         _controller.page++;
         _controller.admins;
@@ -67,7 +68,8 @@ class _ShowAdminsState extends State<ShowAdmins> {
     TextButton(
       
       onPressed: () {
-       Get.to(AddAdmin());
+      
+       Get.off(AddAdmin(pageId:widget.pageId));
       },
       child: Text("Add Admin",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
     ),
@@ -90,6 +92,7 @@ class _ShowAdminsState extends State<ShowAdmins> {
                 final firstname=admin['firstname'];
                 final lastname =admin['lastname'];
                 final username =admin['username'];
+                final adminType =admin['adminType'];
                 
                 return Column(
                   children: [
@@ -106,7 +109,7 @@ class _ShowAdminsState extends State<ShowAdmins> {
                                 .image
                             : defultprofileImage,
                       ),
-                      title: Text('$firstname $lastname'),
+                      title: Text('$firstname $lastname ($adminType)'),
                       subtitle: Text('$username'),
                       
                     ),

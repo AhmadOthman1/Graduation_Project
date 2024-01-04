@@ -181,7 +181,7 @@ class _PageProfileState extends State<PageProfile> {
       children: [
          InkWell(
           onTap: () {
-             Get.to(ShowAdmins());
+             Get.to(ShowAdmins(pageId : widget.userData.id));
           },
           child: Container(
             height: 35,

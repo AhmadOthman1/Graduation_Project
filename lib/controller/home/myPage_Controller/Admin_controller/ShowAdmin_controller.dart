@@ -18,10 +18,10 @@ class ShowAdminsController {
   int pageSize = 10;
   int page = 1;
 
-  getUserNotifications(int page) async {
+  getPageAdmins(int page,String pageId) async {
     
     var url =
-        "$urlStarter/user/getUserNotifications?page=$page&pageSize=$pageSize";
+        "$urlStarter/user/getPageAdmins?page=$page&pageSize=$pageSize&pageId=$pageId";
     var response = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -29,17 +29,17 @@ class ShowAdminsController {
     return response;
   }
 
-  Future<void> loadNotifications(page) async {
+  Future<void> loadAdmins(page,String pageId) async {
     if (isLoading) {
       return;
     }
     
     isLoading = true;
-    var response = await getUserNotifications(page);
+    var response = await getPageAdmins(page,pageId);
     print(response.statusCode);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      loadNotifications(page);
+      loadAdmins(page,pageId);
       return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -53,22 +53,24 @@ class ShowAdminsController {
       
       
       var responseBody = jsonDecode(response.body);
-      final List<dynamic>? userNotifications = responseBody["notifications"];
-      print(userNotifications);
-      print("userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-      if (userNotifications != null) {
-        final newNotifications = userNotifications.map((notification) {
+      final List<dynamic>? pageAdmins = responseBody["pageAdmins"];
+      print(pageAdmins);
+      print(";;;;;;;;;;;;;;;;;;;;;");
+      if (pageAdmins != null) {
+        final admin = pageAdmins.map((pageAdmins) {
           return {
-            'id': notification['id'],
-            'notificationType': notification['notificationType'],
-            'notificationContent': notification['notificationContent'],
-            'notificationPointer': notification['notificationPointer'],
-            'photo': notification['photo'],
-            'date': notification['createdAt'],
+            'id': pageAdmins['id'],
+            'pageId': pageAdmins['pageId'],
+            'username': pageAdmins['username'],
+            'firstname': pageAdmins['firstname'],
+            'lastname': pageAdmins['lastname'],
+            'adminType': pageAdmins['adminType'],
+            'photo': pageAdmins['photo'],
+            'date': pageAdmins['createdAt'],
           };
         }).toList();
 
-        admins.addAll(newNotifications);
+        admins.addAll(admin);
         
       }
 
@@ -79,12 +81,6 @@ class ShowAdminsController {
     return;
   }
 
-  showPost(){
-
-    
-    Get.to(() => const ShowPost());
-
-  }
 
   
 }
