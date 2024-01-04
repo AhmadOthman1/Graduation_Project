@@ -15,6 +15,9 @@ const like = require('../../models/like');
 const moment = require('moment');
 const pageFollower = require("../../models/pageFollower");
 const Page = require("../../models/pages");
+const pageJobs = require("../../models/pageJobs");
+const jobApplication = require("../../models/jobApplication");
+
 exports.getMyPageInfo = async (req, res, next) => {
     try {
         const authHeader = req.headers['authorization']
@@ -1033,6 +1036,12 @@ exports.addNewAdmin = async (req, res, next) => {
         const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
         var userUsername = decoded.username;
         // Calculate the offset based on page and pageSize
+        if(pageId==null || adminUsername==null || selectedRole==null){
+            return res.status(500).json({
+                message: 'invalid values',
+                body: req.body,
+            });
+        }
         const existingUsername = await User.findOne({
             where: {
                 username: userUsername
@@ -1089,6 +1098,115 @@ exports.addNewAdmin = async (req, res, next) => {
                         message: 'User not found',
                     });
                 }
+            } else {
+                return res.status(500).json({
+                    message: 'You are not allowed to edit this information',
+                    body: req.body,
+                });
+            }
+        }
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};
+exports.getPageJobs = async (req, res, next) => {
+    try {
+        var page = req.query.page || 1;
+        var pageSize = req.query.pageSize || 10;
+        var pageId = req.query.pageId;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        // Calculate the offset based on page and pageSize
+        const offset = (page - 1) * pageSize;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername!=null) {
+            var userPageAdmin = await pageAdmin.findOne({
+                where: { username: userUsername, pageId: pageId, adminType: "A" }
+            });
+            if (userPageAdmin!=null) {
+
+                const allPageJobs = await pageJobs.findAll({
+                    where: {
+                        pageId: pageId,
+                    },
+                    limit: parseInt(pageSize),
+                    offset: parseInt(offset),
+                    order: [['endDate', 'DESC']],
+                });
+                
+                return res.status(200).json({
+                    pageJobs: allPageJobs,
+                });
+            } else {
+                return res.status(500).json({
+                    message: 'You are not allowed to see this information',
+                    body: req.body,
+                });
+            }
+        }
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};
+
+exports.addNewJob = async (req, res, next) => {
+    try {
+        var pageId = req.body.pageId;
+        var title = req.body.title;
+        var interest = req.body.interest;
+        var description = req.body.description;
+        var endDate = req.body.endDate;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        // Calculate the offset based on page and pageSize
+        if(pageId==null || title==null || interest==null || description==null || endDate==null){
+            return res.status(500).json({
+                message: 'invalid values',
+                body: req.body,
+            });
+        }
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername!=null) {
+            var userPageAdmin = await pageAdmin.findOne({
+                where: { username: userUsername, pageId: pageId, adminType: "A" }
+            });
+            if (userPageAdmin!=null) {
+                await pageJobs.create({
+                    pageId:pageId,
+                    title:title,
+                    interest:interest,
+                    description:description,
+                    endDate:endDate
+                });
+                return res.status(200).json({
+                    message: 'Job added successfully',
+                });
             } else {
                 return res.status(500).json({
                     message: 'You are not allowed to edit this information',

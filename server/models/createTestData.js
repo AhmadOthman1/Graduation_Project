@@ -12,6 +12,9 @@ const pages = require("./pages");
 const pageAdmin = require("./pageAdmin");
 const pageFollower = require("./pageFollower");
 const bcrypt = require('bcrypt');
+const pageJobs = require('./pageJobs');
+const jobApplication = require('./jobApplication');
+
 var iLimit = 80;
 User.create({
     firstname: "Ahmad",
@@ -20,6 +23,7 @@ User.create({
     email: "ahmadmajed20188@gmail.com",
     password: "$2b$10$onKV7UBFIShgI466b6bd2O4qAtMFFtoObF.QQrJcO7l4lNoBmFMxq",
     photo: "AhmadOthmanNaN1700761827122-645531203.jpg",
+    cv: "AhmadOthman-1701032805374-381183524.pdf",
     phone: "0569929734",
     dateOfBirth: "2001-05-18",
 });
@@ -203,19 +207,37 @@ for (let i = 1; i < 20; i++) {
 
 }
 for (let i = 1; i < 20; i++) {
-    for (let j = 881 + ((i-1) * 79); j < 960+ ((i-1) * 79); j++) {
-        for(let k =1; k<20 ; k++){
-        like.create({
-            postId: j,
-            username: "ahmad" + k,
-        });
-        comment.create({
-            postId: j,
-            username: "ahmad" + k,
-            commentContent: "ahmad" + k,
-            Date: new Date()
-        });
+    for (let j = 881 + ((i - 1) * 79); j < 960 + ((i - 1) * 79); j++) {
+        for (let k = 1; k < 20; k++) {
+            like.create({
+                postId: j,
+                username: "ahmad" + k,
+            });
+            comment.create({
+                postId: j,
+                username: "ahmad" + k,
+                commentContent: "ahmad" + k,
+                Date: new Date()
+            });
         }
-        
+
     }
+}
+for (let i = 1; i < 20; i++) {
+    for (let j = 1; j < 20; j++)
+        pageJobs.create({
+            pageId: "page " + i,
+            title: j % 2 ? "Frontend developer " + j : "Backend developer" + j,
+            interest: j % 2 ? "Frontend" : "Backend",
+            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            endDate: j % 3 == 0 ? new Date("2024-2-1") : new Date("2024-1-1"),
+        });
+}
+for (let i = 1; i < 20; i++) {
+    for (let j = 1; j < 20; j++)
+        jobApplication.create({
+            pageJobId: i,
+            username: "ahmad" + j,
+            note: j%3==0 ? null : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        });
 }

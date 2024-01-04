@@ -78,6 +78,8 @@ router.post('/postNewPagePost',authenticateToken,myPagesController.postNewPagePo
 router.post('/editPageInfo',authenticateToken,myPagesController.editPageInfo);
 router.get('/getPageAdmins',authenticateToken,myPagesController.getPageAdmins);
 router.post('/addNewAdmin',authenticateToken,myPagesController.addNewAdmin);
+router.get('/getPageJobs',authenticateToken,myPagesController.getPageJobs);
+router.post('/addNewJob',authenticateToken,myPagesController.addNewJob);
 
 
 
