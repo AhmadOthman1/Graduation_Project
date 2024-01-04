@@ -32,7 +32,7 @@ class _ShowColleaguesState extends State<ShowColleagues> {
   Future<void> _loadData() async {
     print('Loading data...');
     try {
-      await _controller.loadNotifications(_controller.page);
+      await _controller.loadColleagues(_controller.page);
       setState(() {
         _controller.page++;
         _controller.colleagues;
@@ -87,7 +87,7 @@ class _ShowColleaguesState extends State<ShowColleagues> {
                               Networkcontroller.goToUserPage(userUsername!);
                         
                       },
-                      trailing: CircleAvatar(
+                      leading: CircleAvatar(
                         backgroundImage: (colleague['photo'] != null &&
                                 colleague['photo'] != "")
                             ? Image.network("$urlStarter/" + colleague['photo']!)

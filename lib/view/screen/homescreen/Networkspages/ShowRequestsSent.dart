@@ -32,7 +32,7 @@ class _ShowRequestsSentState extends State<ShowRequestsSent> {
   Future<void> _loadData() async {
     print('Loading data...');
     try {
-      await _controller.loadNotifications(_controller.page);
+      await _controller.loadRequestsSent(_controller.page);
       setState(() {
         _controller.page++;
         _controller.requestsSent;
@@ -83,11 +83,11 @@ class _ShowRequestsSentState extends State<ShowRequestsSent> {
                 return Column(
                   children: [
                     ListTile(
-                      onTap: (){
-                        _controller.showPost();
-                        
+                      onTap: () {
+                        final userUsername = username;
+                              Networkcontroller.goToUserPage(userUsername!);
                       },
-                      trailing: CircleAvatar(
+                      leading: CircleAvatar(
                         backgroundImage: (sent['photo'] != null &&
                                 sent['photo'] != "")
                             ? Image.network("$urlStarter/" + sent['photo']!)

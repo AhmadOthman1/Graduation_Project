@@ -18,10 +18,10 @@ class ShowColleaguesController {
   int pageSize = 10;
   int page = 1;
 
-  getUserNotifications(int page) async {
+  getUserColleagues(int page) async {
     
     var url =
-        "$urlStarter/user/getUserNotifications?page=$page&pageSize=$pageSize";
+        "$urlStarter/user/getUserColleagues?page=$page&pageSize=$pageSize";
     var response = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -29,17 +29,17 @@ class ShowColleaguesController {
     return response;
   }
 
-  Future<void> loadNotifications(page) async {
+  Future<void> loadColleagues(page) async {
     if (isLoading) {
       return;
     }
     
     isLoading = true;
-    var response = await getUserNotifications(page);
+    var response = await getUserColleagues(page);
     print(response.statusCode);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      loadNotifications(page);
+      loadColleagues(page);
       return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -53,22 +53,20 @@ class ShowColleaguesController {
       
       
       var responseBody = jsonDecode(response.body);
-      final List<dynamic>? userNotifications = responseBody["notifications"];
-      print(userNotifications);
+      final List<dynamic>? userColleagues = responseBody["userConnections"];
+      print(userColleagues);
       print("userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-      if (userNotifications != null) {
-        final newNotifications = userNotifications.map((notification) {
+      if (userColleagues != null) {
+        final newColleagues = userColleagues.map((colleague) {
           return {
-            'id': notification['id'],
-            'notificationType': notification['notificationType'],
-            'notificationContent': notification['notificationContent'],
-            'notificationPointer': notification['notificationPointer'],
-            'photo': notification['photo'],
-            'date': notification['createdAt'],
+            'username': colleague['connection']['username'],
+            'firstname': colleague['connection']['firstname'],
+            'lastname': colleague['connection']['lastname'],
+            'photo': colleague['connection']['photo'],
           };
         }).toList();
 
-        colleagues.addAll(newNotifications);
+        colleagues.addAll(newColleagues);
         
       }
 

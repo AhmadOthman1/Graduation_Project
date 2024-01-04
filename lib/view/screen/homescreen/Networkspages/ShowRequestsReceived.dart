@@ -32,7 +32,7 @@ class _ShowRequestsReceivedState extends State<ShowRequestsReceived> {
   Future<void> _loadData() async {
     print('Loading data...');
     try {
-      await _controller.loadNotifications(_controller.page);
+      await _controller.loadRequestsReceived(_controller.page);
       setState(() {
         _controller.page++;
         _controller.requestsReceived;
@@ -87,7 +87,7 @@ class _ShowRequestsReceivedState extends State<ShowRequestsReceived> {
                         final userUsername = username;
                               Networkcontroller.goToUserPage(userUsername!);
                       },
-                      trailing: CircleAvatar(
+                      leading: CircleAvatar(
                         backgroundImage: (received['photo'] != null &&
                                 received['photo'] != "")
                             ? Image.network("$urlStarter/" + received['photo']!)

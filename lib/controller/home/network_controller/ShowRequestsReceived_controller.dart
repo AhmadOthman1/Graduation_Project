@@ -18,10 +18,10 @@ class ShowRequestsReceivedController {
   int pageSize = 10;
   int page = 1;
 
-  getUserNotifications(int page) async {
+  getUserRequestsReceived(int page) async {
     
     var url =
-        "$urlStarter/user/getUserNotifications?page=$page&pageSize=$pageSize";
+        "$urlStarter/user/getUserRequestsReceived?page=$page&pageSize=$pageSize";
     var response = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -29,17 +29,17 @@ class ShowRequestsReceivedController {
     return response;
   }
 
-  Future<void> loadNotifications(page) async {
+  Future<void> loadRequestsReceived(page) async {
     if (isLoading) {
       return;
     }
-    
+    print(page);
     isLoading = true;
-    var response = await getUserNotifications(page);
+    var response = await getUserRequestsReceived(page);
     print(response.statusCode);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      loadNotifications(page);
+      loadRequestsReceived(page);
       return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -53,22 +53,20 @@ class ShowRequestsReceivedController {
       
       
       var responseBody = jsonDecode(response.body);
-      final List<dynamic>? userNotifications = responseBody["notifications"];
-      print(userNotifications);
+      final List<dynamic>? userRequestsReceived = responseBody["userConnectionsRequestsReceived"];
+      print(userRequestsReceived);
       print("userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-      if (userNotifications != null) {
-        final newNotifications = userNotifications.map((notification) {
+      if (userRequestsReceived != null) {
+        final newColleagues = userRequestsReceived.map((Request) {
           return {
-            'id': notification['id'],
-            'notificationType': notification['notificationType'],
-            'notificationContent': notification['notificationContent'],
-            'notificationPointer': notification['notificationPointer'],
-            'photo': notification['photo'],
-            'date': notification['createdAt'],
+            'username': Request['senderUser']['username'],
+            'firstname': Request['senderUser']['firstname'],
+            'lastname': Request['senderUser']['lastname'],
+            'photo': Request['senderUser']['photo'],
           };
         }).toList();
 
-        requestsReceived.addAll(newNotifications);
+        requestsReceived.addAll(newColleagues);
         
       }
 
@@ -79,12 +77,8 @@ class ShowRequestsReceivedController {
     return;
   }
 
-  showPost(){
 
-    
-    Get.to(() => const ShowPost());
 
-  }
 
   
 }
