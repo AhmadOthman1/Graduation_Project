@@ -23,24 +23,10 @@ class PageProfileController extends GetxController {
     Get.to(EditPageProfile(userData: userData,));
   }
 
-    final RxMap personalDetails = {
-    'name': 'John Doe',
-    'description': 'A Flutter developer',
-    'address': '123 Main Street',
-    'contactInfo': 'john.doe@example.com',
-    'country': 'United States',
-    'speciality': 'Mobile App Development',
-    'pageType': 'public', // or 'private'
-  }.obs;
+    
 
 
-  goToSeeAboutInfo(){
-
-    Get.to(MyPageSeeAboutInfo(),arguments: {
-      'PersonalDetails':personalDetails,
-    });
-
-  }
+  
 
 
 }

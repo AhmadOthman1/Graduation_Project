@@ -1,3 +1,6 @@
+import 'package:get/get.dart';
+import 'package:growify/view/screen/homescreen/Groups/chatGroupMessage.dart';
+
 class Group {
   String name;
   String? imagePath;
@@ -15,6 +18,20 @@ class Group {
 }
 
 class GroupsController {
+late RxList<Map<String, dynamic>> Groupmessages= <Map<String, dynamic>>[].obs;
+
+
+
+
+
+ goToGroupChatMessage()async {
+    print("Hamassssssssss");
+print(Groupmessages);
+print("Hamassssssssss");
+       Get.to(GroupChatPageMessages(
+                      data: Groupmessages[0]
+                    ));
+  }
   List<Group> groups = [];
 
   GroupsController() {

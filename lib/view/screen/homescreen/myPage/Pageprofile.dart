@@ -6,6 +6,9 @@ import 'package:growify/view/screen/homescreen/JobsPages/addnewjob.dart';
 import 'package:growify/view/screen/homescreen/JobsPages/showAllMyPageJobs.dart';
 import 'package:growify/view/screen/homescreen/NewPost/newpost.dart';
 import 'package:growify/view/screen/homescreen/myPage/Admins/ShowAllAdmins.dart';
+import 'package:growify/view/screen/homescreen/myPage/Employees/ShowAllEmployees.dart';
+import 'package:growify/view/screen/homescreen/myPage/Employees/addEmployee.dart';
+import 'package:growify/view/screen/homescreen/myPage/seeAboutInfoMyPage.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 import 'package:get/get.dart';
 
@@ -203,6 +206,30 @@ class _PageProfileState extends State<PageProfile> {
 
         _buildDivider(10),
 
+        InkWell(
+          onTap: () {
+             Get.to(ShowEmployees(pageId : widget.userData.id));
+          },
+          child: Container(
+            height: 35,
+            padding: const EdgeInsets.only(left: 10),
+            child: const Row(
+              children: [
+                Icon(Icons.person),
+                SizedBox(width: 10),
+                Text(
+                  "Show Employees",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                Spacer(),
+                Icon(Icons.arrow_forward, size: 30),
+              ],
+            ),
+          ),
+        ),
+
+        _buildDivider(10),
+
         
         InkWell(
           onTap: () {
@@ -228,7 +255,7 @@ class _PageProfileState extends State<PageProfile> {
          _buildDivider(10),
         InkWell(
           onTap: () {
-             controller.goToEditPageProfile(widget.userData);
+               controller.goToEditPageProfile(widget.userData);
           },
           child: Container(
             height: 35,
@@ -250,7 +277,21 @@ class _PageProfileState extends State<PageProfile> {
         _buildDivider(10),
         InkWell(
           onTap: () {
-            controller.goToSeeAboutInfo();
+            print("llllllllllllllllll");
+            print(widget.userData.name);
+              print("llllllllllllllllll");
+               List userDataList = [
+  {
+    'name': widget.userData.name,
+    'description': widget.userData.description,
+    'address': widget.userData.address,
+    'contactInfo': widget.userData.contactInfo,
+    'country': widget.userData.country,
+    'speciality': widget.userData.specialty,
+    'pageType': widget.userData.pageType,
+  },];
+       
+            Get.to(MyPageSeeAboutInfo(userData:userDataList));
           },
           child: Container(
             height: 35,

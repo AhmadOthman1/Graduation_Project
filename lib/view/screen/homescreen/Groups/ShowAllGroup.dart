@@ -13,8 +13,22 @@ class _GroupPageState extends State<GroupPage> {
   final GroupsController groupsController = GroupsController();
   final double indentationPerLevel = 16.0;
 
-  Color darkColor = const Color.fromARGB(255, 116, 114, 114)!; // Dark color for parent groups and child groups
-  Color lightColor = Colors.grey[200]!; // Light color for parent groups and child groups
+  @override
+  void initState() {
+    super.initState();
+    Map<String, dynamic> userMap = {
+      'name': 'FrontEnd',
+      'username': 'member',
+      'photo': null,
+      'type': 'U'
+    };
+    groupsController.Groupmessages.assign(userMap);
+  }
+
+  Color darkColor = const Color.fromARGB(
+      255, 116, 114, 114)!; // Dark color for parent groups and child groups
+  Color lightColor =
+      Colors.grey[200]!; // Light color for parent groups and child groups
 
   Widget buildGroupTile(Group group, int level) {
     Color backgroundColor = group.isExpanded ? lightColor : darkColor;
@@ -31,27 +45,26 @@ class _GroupPageState extends State<GroupPage> {
                 ? Text("Parent Node: ${group.parentNode!.name}")
                 : null,
             leading: InkWell(
-              onTap: (){
+              onTap: () {
                 //go to chat group
+                groupsController.goToGroupChatMessage();
                 print("Enterd into chat");
               },
               child: CircleAvatar(
-                backgroundImage: (group.imagePath != null && group.imagePath != "")
-                    ? Image.network("$urlStarter/${group.imagePath}").image
-                    : defaultProfileImage,
+                backgroundImage:
+                    (group.imagePath != null && group.imagePath != "")
+                        ? Image.network("$urlStarter/${group.imagePath}").image
+                        : defaultProfileImage,
               ),
             ),
             trailing: InkWell(
               onTap: () {
-                // Handle tap on the icon in the trailing
                 setState(() {
                   group.isExpanded = !group.isExpanded;
                 });
               },
               child: Icon(
-                group.isExpanded
-                    ? Icons.arrow_drop_up
-                    : Icons.arrow_drop_down,
+                group.isExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
                 size: 40.0, // Adjust the size as needed
               ),
             ),
@@ -59,7 +72,8 @@ class _GroupPageState extends State<GroupPage> {
         ),
         if (group.isExpanded && group.subgroups.isNotEmpty)
           Container(
-            margin: EdgeInsets.only(left: indentationPerLevel * level, right: 8, bottom: 10),
+            margin: EdgeInsets.only(
+                left: indentationPerLevel * level, right: 8, bottom: 10),
             height: 2.0,
             color: Colors.black, // Adjust the color as needed
           ),
