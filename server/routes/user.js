@@ -63,6 +63,8 @@ router.post('/addLike',authenticateToken,getPostsController.addLike);
 router.post('/removeLike',authenticateToken,getPostsController.removeLike);
 router.post('/getPostComments',authenticateToken,getPostsController.getPostComments);
 router.post('/addComment',authenticateToken,getPostsController.addComment);
+router.post('/deletePost',authenticateToken,getPostsController.deletePost);
+router.post('/deleteComment',authenticateToken,getPostsController.deleteComment);
 //user notifications
 router.get('/getUserNotifications',authenticateToken,userNotificationsController.getUserNotifications);
 //chats
@@ -79,6 +81,8 @@ router.post('/pageRemoveLike',authenticateToken,myPagesController.pageRemoveLike
 router.post('/getPagePostComments',authenticateToken,myPagesController.getPagePostComments);
 router.post('/pageAddComment',authenticateToken,myPagesController.pageAddComment);
 router.post('/postNewPagePost',authenticateToken,myPagesController.postNewPagePost);
+router.post('/deletePagePost',authenticateToken,myPagesController.deletePagePost);
+router.post('/deletePageComment',authenticateToken,myPagesController.deletePageComment);
 router.post('/editPageInfo',authenticateToken,myPagesController.editPageInfo);
 router.get('/getPageAdmins',authenticateToken,myPagesController.getPageAdmins);
 router.post('/addNewAdmin',authenticateToken,myPagesController.addNewAdmin);

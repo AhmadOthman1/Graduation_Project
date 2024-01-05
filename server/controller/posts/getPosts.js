@@ -36,11 +36,11 @@ async function findIfUserInConnections(userUsername, findProfileUsername) {
 
 exports.addComment = async (req, res, next) => {
     try {
-        const { postId , commentContent } = req.body;
+        const { postId, commentContent } = req.body;
         const authHeader = req.headers['authorization']
         const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
         var userUsername = decoded.username;
-        if(!postId || !commentContent){
+        if (!postId || !commentContent) {
             return res.status(409).json({
                 message: 'valuse cant be empty',
                 body: req.body
@@ -52,7 +52,7 @@ exports.addComment = async (req, res, next) => {
             },
         });
         // اذا كان الشخص بده يعلق ع بوست بنفحص اذا الشخص موجود اذا مش موجود بكون صفحة بدها تعلق ع بوست
-        if (existingUsername !=null) {
+        if (existingUsername != null) {
             const userPostComments = await post.findOne({
                 where: { id: postId },
                 include: [
@@ -139,7 +139,7 @@ exports.getPostComments = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingUsername !=null) {
+        if (existingUsername != null) {
             const userPostComments = await post.findOne({
                 where: { id: postId },
                 include: [
@@ -150,7 +150,7 @@ exports.getPostComments = async (req, res, next) => {
 
                 ],
             });
-            if (userPostComments==null) {
+            if (userPostComments == null) {
                 return res.status(404).json({ error: 'Post not found' });
             }
 
@@ -162,14 +162,14 @@ exports.getPostComments = async (req, res, next) => {
                     const isPage = comment.pageId;
                     let name;
                     let photo;
-                    
+
                     if (isUser) {
                         const user = await User.findOne({
                             where: {
                                 username: createdBy
                             },
                         });
-                        
+
                         name = user.firstname + " " + user.lastname;
                         photo = user.photo;
                         console.log(name);
@@ -182,19 +182,19 @@ exports.getPostComments = async (req, res, next) => {
                         name = page.name;
                         photo = page.photo;
                     }
-                
+
                     return {
                         id: comment.id,
                         postId: comment.postId,
                         createdBy: createdBy,
                         commentContent: comment.commentContent,
                         Date: moment(comment.Date).format('YYYY-MM-DD HH:mm:ss'),
-                        isUser: isUser? true: false,
+                        isUser: isUser ? true : false,
                         name: name,
                         photo: photo,
                     };
                 }));
-                
+
                 return res.status(200).json({ data: comments });
 
             }
@@ -226,12 +226,12 @@ exports.removeLike = async (req, res, next) => {
         });
         console.log(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
         console.log(userUsername);
-        if (existingUsername !=null) {
+        if (existingUsername != null) {
             const userPostLikes = await like.findOne({
-                where: { postId: postId , username: userUsername},
-                
+                where: { postId: postId, username: userUsername },
+
             });
-            if (userPostLikes==null) {
+            if (userPostLikes == null) {
                 return res.status(404).json({ error: 'like not found' });
             }
             await userPostLikes.destroy();
@@ -265,7 +265,7 @@ exports.addLike = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingUsername !=null) {
+        if (existingUsername != null) {
             const userPostLikes = await post.findOne({
                 where: { id: postId },
                 include: [
@@ -276,7 +276,7 @@ exports.addLike = async (req, res, next) => {
 
                 ],
             });
-            if (userPostLikes==null) {
+            if (userPostLikes == null) {
                 return res.status(404).json({ error: 'Post not found' });
             }
 
@@ -346,7 +346,7 @@ exports.getPostLikes = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingUsername !=null) {
+        if (existingUsername != null) {
             const userPostLikes = await post.findOne({
                 where: { id: postId },
                 include: [
@@ -357,7 +357,7 @@ exports.getPostLikes = async (req, res, next) => {
 
                 ],
             });
-            if (userPostLikes==null) {
+            if (userPostLikes == null) {
                 return res.status(404).json({ error: 'Post not found' });
             }
 
@@ -433,7 +433,7 @@ exports.getPosts = async (req, res, next) => {
                 username: userUsername
             },
         });
-        if (existingUsername !=null) {
+        if (existingUsername != null) {
             if (userUsername == username) {
                 const userPosts = await post.findAll({
                     where: { username: username },
@@ -495,4 +495,110 @@ exports.getPosts = async (req, res, next) => {
         message: 'server Error',
         body: req.body
     });;
+}
+
+exports.deletePost = async (req, res, next) => {
+    console.log("innnnnnnnnnnnnnnnnnnn");
+    try {
+        const { postId } = req.body;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername != null) {
+            const userPost = await post.findOne({
+                where: { id: postId },
+            });
+            if (userPost == null) {
+                return res.status(404).json({ error: 'Post not found' });
+            }
+
+            if (userPost.username == userUsername) {
+                await userPost.destroy();
+                return res.status(200).json({
+                    message: 'Post deleted',
+                });
+            } else {
+                return res.status(500).json({
+                    message: 'You are not allowed to delete this post',
+                    body: req.body
+                });
+            }
+        } else {
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+
+}
+
+exports.deleteComment = async (req, res, next) => {
+    console.log("innnnnnnnnnnnnnnnnnnn");
+    try {
+        const { commentId } = req.body;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername != null) {
+            const userComment = await comment.findOne({
+                where: { id: commentId },
+            });
+            if (userComment == null) {
+                return res.status(404).json({ error: 'Comment not found' });
+            }
+            //if user created the comment
+            if (userComment.username == userUsername) {
+                await userComment.destroy();
+                return res.status(200).json({
+                    message: 'Comment deleted',
+                });
+            } else {
+                const userPost = await post.findOne({
+                    where: { id: userComment.postId },
+                });
+                if (userPost != null) {
+                    //if user created the post that the comment in it
+                    if (userPost.username == userUsername) {
+                        await userComment.destroy();
+                        return res.status(200).json({
+                            message: 'Comment deleted',
+                        });
+                    }else{
+                        return res.status(404).json({ error: 'You are not allowed to delete this comment' });
+                    }
+                } else {
+                    return res.status(404).json({ error: 'Post not found' });
+                }
+            }
+        } else {
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+
 }
