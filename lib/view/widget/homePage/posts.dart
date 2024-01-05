@@ -6,7 +6,7 @@ import 'package:growify/global.dart';
 class Post extends StatefulWidget {
   String? username;
   bool? isPage;
-  Post({this.username, Key? key , this.isPage}) : super(key: key);
+  Post({this.username, Key? key, this.isPage}) : super(key: key);
 
   @override
   _PostState createState() => _PostState();
@@ -37,7 +37,8 @@ class _PostState extends State<Post> {
   Future<void> loadData() async {
     print('Loading data...');
     try {
-      await controller.getPostfromDataBase(widget.username, controller.page,widget.isPage);
+      await controller.getPostfromDataBase(
+          widget.username, controller.page, widget.isPage);
       setState(() {
         controller.page++;
         controller.posts;
@@ -64,13 +65,15 @@ class _PostState extends State<Post> {
     return Center(
       child: Obx(
         () => ListView.separated(
-          controller: _scrollController,        
-          itemCount: controller.posts.length + 1, // +1 for the loading indicator
+          controller: _scrollController,
+          itemCount:
+              controller.posts.length + 1, // +1 for the loading indicator
           separatorBuilder: (context, index) => const Divider(),
           itemBuilder: (context, index) {
             if (index < controller.posts.length) {
               final post = controller.posts[index];
-              profileImage = (post["userPhoto"] == null) ? "" : post["userPhoto"];
+              profileImage =
+                  (post["userPhoto"] == null) ? "" : post["userPhoto"];
               profileBackgroundImage =
                   (profileImage != null && profileImage != "")
                       ? Image.network("$urlStarter/${profileImage!}").image
@@ -118,7 +121,8 @@ class _PostState extends State<Post> {
                                   ),
                                   const SizedBox(width: 10),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
@@ -143,17 +147,42 @@ class _PostState extends State<Post> {
                               ),
                               PopupMenuButton<String>(
                                 icon: const Icon(Icons.more_vert),
-                                onSelected: (String option) {
-                                  controller.onMoreOptionSelected(option);
+                                onSelected: (String option) async {
+                                  await controller.onMoreOptionSelected(
+                                      option, post['createdBy'] ,post['id'],widget.isPage);
                                 },
                                 itemBuilder: (BuildContext context) {
-                                  return controller.moreOptions
-                                      .map((String option) {
-                                    return PopupMenuItem<String>(
-                                      value: option,
-                                      child: Text(option),
-                                    );
-                                  }).toList();
+                                  if (post['createdBy'] == widget.username) {
+                                    controller.moreOptions
+                                        .assignAll(["Delete"]);
+                                    return controller.moreOptions
+                                        .map((String option) {
+                                      return PopupMenuItem<String>(
+                                        value: option,
+                                        child: Text(option),
+                                      );
+                                    }).toList();
+                                  } else if (widget.isPage != null) {
+                                    controller.moreOptions
+                                        .assignAll(["Delete"]);
+                                    return controller.moreOptions
+                                        .map((String option) {
+                                      return PopupMenuItem<String>(
+                                        value: option,
+                                        child: Text(option),
+                                      );
+                                    }).toList();
+                                  } else {
+                                    controller.moreOptions
+                                        .assignAll(["Report"]);
+                                    return controller.moreOptions
+                                        .map((String option) {
+                                      return PopupMenuItem<String>(
+                                        value: option,
+                                        child: Text(option),
+                                      );
+                                    }).toList();
+                                  }
                                 },
                               ),
                             ],
@@ -183,7 +212,8 @@ class _PostState extends State<Post> {
                                 InkWell(
                                   onTap: () {
                                     int postId = post['id'];
-                                    controller.goToLikePage(postId, widget.isPage);
+                                    controller.goToLikePage(
+                                        postId, widget.isPage);
                                   },
                                   child: Row(
                                     children: [
@@ -219,7 +249,12 @@ class _PostState extends State<Post> {
                                 InkWell(
                                   onTap: () {
                                     int postId = post['id'];
-                                    controller.gotoCommentPage(postId,false, widget.isPage,post['name'],post["photo"],post['createdBy']);
+                                    controller.gotoCommentPage(
+                                        postId,
+                                        widget.isPage,
+                                        post['name'],
+                                        post["photo"],
+                                        post['createdBy']);
                                   },
                                   child: Row(
                                     children: [
@@ -259,7 +294,8 @@ class _PostState extends State<Post> {
                                 InkWell(
                                   onTap: () {
                                     setState(() {
-                                      controller.toggleLike(index, widget.isPage);
+                                      controller.toggleLike(
+                                          index, widget.isPage);
                                     });
                                   },
                                   child: Container(
@@ -281,7 +317,12 @@ class _PostState extends State<Post> {
                                 InkWell(
                                   onTap: () {
                                     int postId = post['id'];
-                                    controller.gotoCommentPage(postId,false, widget.isPage,post['name'],post["photo"],post['createdBy']);
+                                    controller.gotoCommentPage(
+                                        postId,
+                                        widget.isPage,
+                                        post['name'],
+                                        post["photo"],
+                                        post['createdBy']);
                                   },
                                   child: const Column(
                                     children: [

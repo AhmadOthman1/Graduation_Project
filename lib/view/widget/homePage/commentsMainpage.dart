@@ -32,28 +32,27 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
     print("*******=======");
     print(comments);
     int postId = args['postId'];
-    String name = args['name'] != null ? args['name'] : GetStorage().read("firstname")+GetStorage().read("lastname");
+    String name = args['name'] != null
+        ? args['name']
+        : GetStorage().read("firstname") + GetStorage().read("lastname");
     bool? isPage = args['isPage'];
-   String photo;
+    String photo;
 
+    if (isPage == true) {
+      photo = args['photo'] ?? "";
+    } else {
+      photo = GetStorage().read("photo");
+    }
 
-if (isPage == true) {
-  photo = args['photo'] ?? "";
-} else {
-  photo = GetStorage().read("photo");
-}
-
-profileBackgroundImage = (photo != null && photo.isNotEmpty)
-    ? Image.network("$urlStarter/$photo").image
-    : defultprofileImage;
-    String createdBy = args['createdBy'] != null ? args['createdBy'] : GetStorage().read("username");
+    profileBackgroundImage = (photo != null && photo.isNotEmpty)
+        ? Image.network("$urlStarter/$photo").image
+        : defultprofileImage;
+    String createdBy = args['createdBy'];
     controller.comments.assignAll(comments);
 
     print("////////////////////");
     print(comments.length);
     print("********");
-
-   
 
     return Scaffold(
       appBar: AppBar(
@@ -64,7 +63,7 @@ profileBackgroundImage = (photo != null && photo.isNotEmpty)
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
-      body: GetBuilder<PostControllerImp>(
+      body: GetX<PostControllerImp>(
         builder: (controller) {
           return SizedBox(
             height: MediaQuery.of(context).size.height * 0.75,
@@ -77,7 +76,7 @@ profileBackgroundImage = (photo != null && photo.isNotEmpty)
                       final comment = comments[index];
                       profileImage =
                           (comment.photo == null) ? "" : comment.photo;
-                     
+
                       profileBackgroundImage = (profileImage != null &&
                               profileImage != "")
                           ? Image.network("$urlStarter/${profileImage!}").image
@@ -86,15 +85,65 @@ profileBackgroundImage = (photo != null && photo.isNotEmpty)
                       return Container(
                         margin: const EdgeInsets.symmetric(vertical: 8.0),
                         child: ListTile(
-                         /* onTap: () {
+                          /* onTap: () {
                           //  controller
                               //  .gotoprofileFromcomment(comment.createdBy);
                           },*/
                           contentPadding: const EdgeInsets.all(8.0),
+                          trailing: PopupMenuButton<String>(
+                            icon: const Icon(Icons.more_vert),
+                            onSelected: (String option) async {
+                              var status = await controller.onCommentOptionSelected(
+                                  option,
+                                  comment.createdBy,
+                                  comment.id,
+                                  isPage); // comment.createdBy: the username of the comment creator, we can find  the post creator via comment id
+                              if (status == 200) {
+                                var thisCommentId = comment.id;
+                                comments.removeWhere(
+                                    (comment) => comment.id == thisCommentId);
+                                    status = null;
+                                controller.update();
+                                
+                              }
+                            },
+                            itemBuilder: (BuildContext context) {
+                              //if the post created by the user, or the comment created by the user he can delete it
+                              if (createdBy == GetStorage().read("username") ||
+                                  comment.createdBy ==
+                                      GetStorage().read("username")) {
+                                controller.moreOptions.assignAll(["Delete"]);
+                                return controller.moreOptions
+                                    .map((String option) {
+                                  return PopupMenuItem<String>(
+                                    value: option,
+                                    child: Text(option),
+                                  );
+                                }).toList();
+                              } else if (isPage != null) {
+                                controller.moreOptions.assignAll(["Delete"]);
+                                return controller.moreOptions
+                                    .map((String option) {
+                                  return PopupMenuItem<String>(
+                                    value: option,
+                                    child: Text(option),
+                                  );
+                                }).toList();
+                              } else {
+                                controller.moreOptions.assignAll(["Report"]);
+                                return controller.moreOptions
+                                    .map((String option) {
+                                  return PopupMenuItem<String>(
+                                    value: option,
+                                    child: Text(option),
+                                  );
+                                }).toList();
+                              }
+                            },
+                          ),
                           leading: InkWell(
-                            onTap: (){
-                              controller
-                                .goToUserPage(comment.createdBy);
+                            onTap: () {
+                              controller.goToUserPage(comment.createdBy);
                             },
                             child: CircleAvatar(
                               backgroundImage:
@@ -146,7 +195,7 @@ profileBackgroundImage = (photo != null && photo.isNotEmpty)
                         ),
                         IconButton(
                           icon: const Icon(Icons.send),
-                          onPressed: () {
+                          onPressed: () async {
                             final newComment = commentController.text;
 
                             final time = DateTime.now();
@@ -160,13 +209,13 @@ profileBackgroundImage = (photo != null && photo.isNotEmpty)
                               name: name,
                               photo: photo,
                             );
-
-                            controller.addComment(newCommentModel,isPage);
-
+                            comments.add(newCommentModel);
+                            controller.update();
+                            await controller.addComment(
+                                newCommentModel, isPage);
                             //  Get.find<PostControllerImp>().addComment(newCommentModel);
                             //controller.update();
 
-                              comments.add(newCommentModel);
                             commentController.clear();
                           },
                         ),

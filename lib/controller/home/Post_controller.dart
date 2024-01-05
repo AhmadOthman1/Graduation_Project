@@ -140,6 +140,7 @@ class PostControllerImp extends PostController {
       var data = jsonDecode(res.body);
       print(data['posts']);
       posts.addAll(List<Map<String, dynamic>>.from(data['posts']));
+
       print("555555555555555555");
       print(data['posts']);
       print("555555555555555555");
@@ -276,21 +277,176 @@ class PostControllerImp extends PostController {
     return posts[index]['isLiked'];
   }
 
-  RxList<String> moreOptions = <String>[
+  final RxList<String> moreOptions = <String>[
     'Delete',
-    'report',
+    'Report',
   ].obs;
 
-  void onMoreOptionSelected(String option) {
-    // Handle the selected option here
-    switch (option) {
-      case 'Save Post':
-        // Implement save post functionality
-        break;
-      case 'Hide Post':
-        // Implement hide post functionality
-        break;
-      // Add more options as needed
+  Future<void> onMoreOptionSelected(
+      String option, createdBy, postId, isPage) async {
+    if (isPage != null) {
+      switch (option) {
+        case 'Delete':
+          await deletePagePost(createdBy, postId);
+          break;
+        case 'Report':
+          // Implement hide post functionality
+          break;
+      }
+    } else {
+      switch (option) {
+        case 'Delete':
+          await deletePost(createdBy, postId);
+          break;
+        case 'Report':
+          // Implement hide post functionality
+          break;
+      }
+    }
+  }
+
+  deletePagePost(pageId, postId) async {
+    var url = "$urlStarter/user/deletePagePost";
+
+    var responce = await http.post(
+      Uri.parse(url),
+      body: jsonEncode({
+        'postId': postId,
+        'pageId': pageId,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+      },
+    );
+    print(responce.statusCode);
+    print("===================================");
+    if (responce.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      deletePost(pageId, postId);
+      return;
+    } else if (responce.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+    var resbody = jsonDecode(responce.body);
+    if (responce.statusCode == 409) {
+      return resbody['message'];
+    } else if (responce.statusCode == 200) {
+      posts.removeWhere((post) => post['id'] == postId);
+    }
+  }
+
+  deletePost(username, postId) async {
+    var url = "$urlStarter/user/deletePost";
+
+    var responce = await http.post(
+      Uri.parse(url),
+      body: jsonEncode({
+        'postId': postId,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+      },
+    );
+    print(responce.statusCode);
+    print("===================================");
+    if (responce.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      deletePost(username, postId);
+      return;
+    } else if (responce.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+    var resbody = jsonDecode(responce.body);
+    if (responce.statusCode == 409) {
+      return resbody['message'];
+    } else if (responce.statusCode == 200) {
+      posts.removeWhere((post) => post['id'] == postId);
+    }
+  }
+
+onCommentOptionSelected(
+      String option, createdBy, commentId, isPage) async {
+    if (isPage != null) {
+      switch (option) {
+        case 'Delete':
+          return await deletePageComment(createdBy, commentId);
+          break;
+        case 'Report':
+          // Implement hide post functionality
+          break;
+      }
+    } else {
+      switch (option) {
+        case 'Delete':
+          return await deleteComment(createdBy, commentId);
+          break;
+        case 'Report':
+          // Implement hide post functionality
+          break;
+      }
+    }
+  }
+
+  deleteComment(username, commentId) async {
+    var url = "$urlStarter/user/deleteComment";
+
+    var responce = await http.post(
+      Uri.parse(url),
+      body: jsonEncode({
+        'commentId': commentId,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+      },
+    );
+    print(responce.statusCode);
+    print("===================================");
+    if (responce.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      deletePost(username, commentId);
+      return;
+    } else if (responce.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+    var resbody = jsonDecode(responce.body);
+    if (responce.statusCode == 409) {
+      return resbody['message'];
+    } else if (responce.statusCode == 200) {
+      return 200;
+    }
+  }
+
+  deletePageComment(pageId, commentId) async {
+    var url = "$urlStarter/user/deletePageComment";
+
+    var responce = await http.post(
+      Uri.parse(url),
+      body: jsonEncode({
+        'commentId': commentId,
+        'pageId': pageId,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+      },
+    );
+    print(responce.statusCode);
+    print("===================================");
+    if (responce.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      deletePost(pageId, commentId);
+      return;
+    } else if (responce.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+    var resbody = jsonDecode(responce.body);
+    if (responce.statusCode == 409) {
+      return resbody['message'];
+    } else if (responce.statusCode == 200) {
+      return 200;
     }
   }
 
@@ -330,7 +486,8 @@ class PostControllerImp extends PostController {
     if (comment.commentContent == "") {
       return;
     }
-    comments.add(comment);
+    
+
     var res =
         await PostAddComment(comment.postId, comment.commentContent, isPage);
     print(";;;;;;;;;;;;;;;;;;;;;;;;;;;;");
@@ -346,7 +503,7 @@ class PostControllerImp extends PostController {
     if (res.statusCode == 409) {
       return resbody['message'];
     } else if (res.statusCode == 200) {
-      await gotoCommentPage(comment.postId, true, isPage);
+      //await gotoCommentPage(comment.postId, true, isPage);
     }
 
     // If you want to update the UI when a new comment is added, uncomment the following line
@@ -389,7 +546,7 @@ class PostControllerImp extends PostController {
   }
 
   gotoCommentPage(int postId,
-      [bool hasRouteFlag = false,
+      [
       bool? isPage,
       String? name,
       String? photo,
@@ -398,7 +555,7 @@ class PostControllerImp extends PostController {
     print(res.statusCode);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      gotoCommentPage(postId, hasRouteFlag, isPage, name, photo, createdBy);
+      gotoCommentPage(postId, isPage, name, photo, createdBy);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -428,9 +585,8 @@ class PostControllerImp extends PostController {
         comments1.assignAll(newComments);
 
         print("llllllllllllllllllllllllllllll");
-        print(comments1);
+        print(data['data']);
         if (isPage != null && isPage) {
-          if (!hasRouteFlag) {
             Get.to(const CommentsMainPage(), arguments: {
               'comments': comments1,
               'postId': postId,
@@ -439,23 +595,15 @@ class PostControllerImp extends PostController {
               'photo': photo,
               'createdBy': createdBy,
             });
-          } else {
-            // update the comments
-          }
         } else {
-          if (!hasRouteFlag) {
-            print(hasRouteFlag);
             Get.to(const CommentsMainPage(), arguments: {
               'comments': comments1,
               'postId': postId,
+              'createdBy': createdBy,
             });
-          } else {
-            // update the comments
-          }
         }
       } else {
         print("Invalid or missing 'data' property in response.");
-        // Handle the case where 'data' property is missing or invalid
       }
     }
   }
