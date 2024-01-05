@@ -8,6 +8,8 @@ const post = require('../../models/post');
 const comment = require('../../models/comment');
 const like = require('../../models/like');
 const moment = require('moment');
+const Connections = require("../../models/connections");
+const { Op } = require('sequelize');
 
 async function findIfUserInConnections(userUsername, findProfileUsername) {
     const userConnections = await Connections.findAll({
@@ -108,6 +110,11 @@ exports.addComment = async (req, res, next) => {
                                 message: 'comment created',
                                 body: req.body
                             });
+                        }else {
+                            return res.status(500).json({
+                                message: 'You are not allowed to see add a comment',
+                                body: req.body
+                            });
                         }
                     }
                 }
@@ -197,6 +204,110 @@ exports.getPostComments = async (req, res, next) => {
 
                 return res.status(200).json({ data: comments });
 
+            }//if the post for other user
+            const existingOtherUsername = await User.findOne({
+                where: {
+                    username: userPostComments.username
+                },
+            });
+            if (existingOtherUsername != null) {
+                var userInConnections = await findIfUserInConnections(userUsername, userPostComments.username);
+                if (userInConnections[0]) { // check if user is connected to other user
+                    const comments = await Promise.all(userPostComments.comments.map(async (comment) => {
+                        const createdBy = comment.username || comment.pageId;
+                        const isUser = comment.username;
+                        const isPage = comment.pageId;
+                        let name;
+                        let photo;
+
+                        if (isUser) {
+                            const user = await User.findOne({
+                                where: {
+                                    username: createdBy
+                                },
+                            });
+
+                            name = user.firstname + " " + user.lastname;
+                            photo = user.photo;
+                            console.log(name);
+                        } else if (isPage) {
+                            const page = await Page.findOne({
+                                where: {
+                                    pageId: createdBy
+                                },
+                            });
+                            name = page.name;
+                            photo = page.photo;
+                        }
+
+                        return {
+                            id: comment.id,
+                            postId: comment.postId,
+                            createdBy: createdBy,
+                            commentContent: comment.commentContent,
+                            Date: moment(comment.Date).format('YYYY-MM-DD HH:mm:ss'),
+                            isUser: isUser ? true : false,
+                            name: name,
+                            photo: photo,
+                        };
+                    }));
+
+                    return res.status(200).json({ data: comments });
+
+                } else {// if the other user is not in user connections
+                    if (userPostComments.selectedPrivacy == "Any One") {// if the post is public
+                        const comments = await Promise.all(userPostComments.comments.map(async (comment) => {
+                            const createdBy = comment.username || comment.pageId;
+                            const isUser = comment.username;
+                            const isPage = comment.pageId;
+                            let name;
+                            let photo;
+
+                            if (isUser) {
+                                const user = await User.findOne({
+                                    where: {
+                                        username: createdBy
+                                    },
+                                });
+
+                                name = user.firstname + " " + user.lastname;
+                                photo = user.photo;
+                                console.log(name);
+                            } else if (isPage) {
+                                const page = await Page.findOne({
+                                    where: {
+                                        pageId: createdBy
+                                    },
+                                });
+                                name = page.name;
+                                photo = page.photo;
+                            }
+
+                            return {
+                                id: comment.id,
+                                postId: comment.postId,
+                                createdBy: createdBy,
+                                commentContent: comment.commentContent,
+                                Date: moment(comment.Date).format('YYYY-MM-DD HH:mm:ss'),
+                                isUser: isUser ? true : false,
+                                name: name,
+                                photo: photo,
+                            };
+                        }));
+
+                        return res.status(200).json({ data: comments });
+                    } else {
+                        return res.status(500).json({
+                            message: 'You are not allowed to see this info',
+                            body: req.body
+                        });
+                    }
+                }
+            } else {
+                return res.status(500).json({
+                    message: 'user not found',
+                    body: req.body
+                });
             }
         } else {
             return res.status(500).json({
@@ -314,6 +425,11 @@ exports.addLike = async (req, res, next) => {
                                 message: 'like added',
                                 body: req.body
                             });
+                        }else {
+                            return res.status(500).json({
+                                message: 'You are not allowed to see add like to this post',
+                                body: req.body
+                            });
                         }
                     }
                 }
@@ -361,7 +477,7 @@ exports.getPostLikes = async (req, res, next) => {
                 return res.status(404).json({ error: 'Post not found' });
             }
 
-            if (userPostLikes.username == userUsername) {
+            if (userPostLikes.username == userUsername) {// if it is the user post
                 // Extract likes from the userPostLikes object
                 const likes = await Promise.all(userPostLikes.likes.map(async (like) => {
                     const createdBy = like.username || like.pageId;
@@ -401,6 +517,106 @@ exports.getPostLikes = async (req, res, next) => {
                 console.log("-----------------------------------");
 
                 return res.status(200).json({ data: likes });
+            } else {//if the post for other user
+                const existingOtherUsername = await User.findOne({
+                    where: {
+                        username: userPostLikes.username
+                    },
+                });
+                if (existingOtherUsername != null) {
+                    var userInConnections = await findIfUserInConnections(userUsername, userPostLikes.username);
+                    if (userInConnections[0]) { // check if user is connected to other user
+                        const likes = await Promise.all(userPostLikes.likes.map(async (like) => {
+                            const createdBy = like.username || like.pageId;
+                            const isUser = !!like.username;
+                            const isPage = !!like.pageId;
+                            var name;
+                            var photo;
+
+                            if (isUser) {
+                                const user = await User.findOne({
+                                    where: {
+                                        username: createdBy
+                                    },
+                                });
+                                name = user.firstname + " " + user.lastname;
+                                photo = user.photo;
+                            } else if (isPage) {
+                                const page = await Page.findOne({
+                                    where: {
+                                        pageId: createdBy
+                                    },
+                                });
+                                name = page.name;
+                                photo = page.photo;
+                            }
+
+                            return {
+                                id: like.id,
+                                createdBy: createdBy,
+                                isUser: isUser,
+                                name: name,
+                                photo: photo,
+                            };
+                        }));
+
+                        console.log(likes);
+                        console.log("-----------------------------------");
+
+                        return res.status(200).json({ data: likes });
+                    } else {// if the other user is not in user connections
+                        if (userPostLikes.selectedPrivacy == "Any One") {// if the post is public
+                            const likes = await Promise.all(userPostLikes.likes.map(async (like) => {
+                                const createdBy = like.username || like.pageId;
+                                const isUser = !!like.username;
+                                const isPage = !!like.pageId;
+                                var name;
+                                var photo;
+
+                                if (isUser) {
+                                    const user = await User.findOne({
+                                        where: {
+                                            username: createdBy
+                                        },
+                                    });
+                                    name = user.firstname + " " + user.lastname;
+                                    photo = user.photo;
+                                } else if (isPage) {
+                                    const page = await Page.findOne({
+                                        where: {
+                                            pageId: createdBy
+                                        },
+                                    });
+                                    name = page.name;
+                                    photo = page.photo;
+                                }
+
+                                return {
+                                    id: like.id,
+                                    createdBy: createdBy,
+                                    isUser: isUser,
+                                    name: name,
+                                    photo: photo,
+                                };
+                            }));
+
+                            console.log(likes);
+                            console.log("-----------------------------------");
+
+                            return res.status(200).json({ data: likes });
+                        } else {
+                            return res.status(500).json({
+                                message: 'You are not allowed to see this info',
+                                body: req.body
+                            });
+                        }
+                    }
+                } else {
+                    return res.status(500).json({
+                        message: 'user not found',
+                        body: req.body
+                    });
+                }
             }
         } else {
             return res.status(500).json({
@@ -434,7 +650,7 @@ exports.getPosts = async (req, res, next) => {
             },
         });
         if (existingUsername != null) {
-            if (userUsername == username) {
+            if (userUsername == username) {// if it is the user post 
                 const userPosts = await post.findAll({
                     where: { username: username },
                     order: [['postDate', 'DESC']], // Order posts by date
@@ -451,10 +667,6 @@ exports.getPosts = async (req, res, next) => {
                         },
                     ],
                 });
-                console.log(pageSize)
-                console.log(offset)
-                console.log("pppppppppppppppppppppppppppppppppp")
-                console.log(userPosts.posts)
                 const posts = userPosts.map(post => {
                     const isLiked = post.likes.some(like => like.username === username);
 
@@ -477,10 +689,103 @@ exports.getPosts = async (req, res, next) => {
                     message: 'fetched',
                     posts: posts,
                 });
+            } else {// if its other user post
+                const existingOtherUsername = await User.findOne({
+                    where: {
+                        username: username
+                    },
+                });
+                if (existingOtherUsername != null) {// if the other user exist 
+                    var userInConnections = await findIfUserInConnections(userUsername, username);
+                    if (userInConnections[0]) { // check if user is connected to other user
+                        const userPosts = await post.findAll({
+                            where: { username: username },
+                            order: [['postDate', 'DESC']], // Order posts by date
+                            offset: offset, // Calculate the offset
+                            limit: pageSize, // Number of records to retrieve
+                            include: [
+                                {
+                                    model: comment,
+                                    order: [['Date', 'DESC']],
+                                },
+                                {
+                                    model: like,
+                                    order: [['createdAt', 'DESC']],
+                                },
+                            ],
+                        });
+                        const posts = userPosts.map(post => {
+                            const isLiked = post.likes.some(like => like.username === userUsername);
+
+                            return {
+                                id: post.id,
+                                createdBy: username,
+                                name: existingOtherUsername.firstname + ' ' + existingOtherUsername.lastname,
+                                userPhoto: existingOtherUsername.photo,
+                                postContent: post.postContent,
+                                selectedPrivacy: post.selectedPrivacy,
+                                photo: post.photo,
+                                postDate: moment(post.postDate).format('YYYY-MM-DD HH:mm:ss'),
+                                commentCount: post.comments.length,
+                                likeCount: post.likes.length,
+                                isLiked: isLiked,
+                            };
+                        });
+                        console.log(posts)
+                        return res.status(200).json({
+                            message: 'fetched',
+                            posts: posts,
+                        });
+                    } else {// if the user is not connected to the other user, return the public posts only
+                        const userPosts = await post.findAll({
+                            where: { username: username, selectedPrivacy: 'Any One' },
+                            order: [['postDate', 'DESC']], // Order posts by date
+                            offset: offset, // Calculate the offset
+                            limit: pageSize, // Number of records to retrieve
+                            include: [
+                                {
+                                    model: comment,
+                                    order: [['Date', 'DESC']],
+                                },
+                                {
+                                    model: like,
+                                    order: [['createdAt', 'DESC']],
+                                },
+                            ],
+                        });
+                        const posts = userPosts.map(post => {
+                            const isLiked = post.likes.some(like => like.username === userUsername);
+
+                            return {
+                                id: post.id,
+                                createdBy: username,
+                                name: existingOtherUsername.firstname + ' ' + existingOtherUsername.lastname,
+                                userPhoto: existingOtherUsername.photo,
+                                postContent: post.postContent,
+                                selectedPrivacy: post.selectedPrivacy,
+                                photo: post.photo,
+                                postDate: moment(post.postDate).format('YYYY-MM-DD HH:mm:ss'),
+                                commentCount: post.comments.length,
+                                likeCount: post.likes.length,
+                                isLiked: isLiked,
+                            };
+                        });
+                        console.log(posts)
+                        return res.status(200).json({
+                            message: 'fetched',
+                            posts: posts,
+                        });
+                    }
+                } else {
+                    return res.status(500).json({
+                        message: 'user not found',
+                        body: req.body
+                    });
+                }
             }
         } else {
             return res.status(500).json({
-                message: 'server Error',
+                message: 'user not found',
                 body: req.body
             });
         }
@@ -564,6 +869,8 @@ exports.deleteComment = async (req, res, next) => {
                 return res.status(404).json({ error: 'Comment not found' });
             }
             //if user created the comment
+            console.log(userComment.username)
+            console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
             if (userComment.username == userUsername) {
                 await userComment.destroy();
                 return res.status(200).json({
@@ -580,7 +887,7 @@ exports.deleteComment = async (req, res, next) => {
                         return res.status(200).json({
                             message: 'Comment deleted',
                         });
-                    }else{
+                    } else {
                         return res.status(404).json({ error: 'You are not allowed to delete this comment' });
                     }
                 } else {

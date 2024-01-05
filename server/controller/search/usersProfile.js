@@ -4,6 +4,7 @@ const sentConnection = require("../../models/sentConnection");
 const WorkExperience = require("../../models/workExperience");
 const EducationLevel = require("../../models/educationLevel");
 const {notifyUser , deleteNotificaion} = require("../notifications");
+const post = require('../../models/post');
 
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -480,7 +481,17 @@ exports.getUserProfileInfo = async (req, res, next) => {
 
                 }
             }
-
+            const connectionsCount = await Connections.count({
+                where: {
+                    [Op.or]: [
+                        { senderUsername: findProfileUsername },
+                        { receiverUsername: findProfileUsername },
+                    ],
+                },
+            });
+            const postsCount = await post.count({
+                where: { username: findProfileUsername },
+            });
             return res.status(200).json({
                 message: 'User found',
                 user: {
@@ -496,7 +507,8 @@ exports.getUserProfileInfo = async (req, res, next) => {
                     coverImage: coverimage,
                     cv: cv,
                     connection: connection,
-                    // Add other user properties as neededs
+                    connectionsCount: connectionsCount,
+                    postsCount:postsCount,
                 },
             });
         } else {

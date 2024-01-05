@@ -78,7 +78,7 @@ router.post('/getPagePostLikes',authenticateToken,myPagesController.getPagePostL
 router.post('/getPagePostComments',authenticateToken,myPagesController.getPagePostComments);
 router.post('/pageAddLike',authenticateToken,myPagesController.pageAddLike);
 router.post('/pageRemoveLike',authenticateToken,myPagesController.pageRemoveLike);
-router.post('/getPagePostComments',authenticateToken,myPagesController.getPagePostComments);
+//router.post('/getPagePostComments',authenticateToken,myPagesController.getPagePostComments);
 router.post('/pageAddComment',authenticateToken,myPagesController.pageAddComment);
 router.post('/postNewPagePost',authenticateToken,myPagesController.postNewPagePost);
 router.post('/deletePagePost',authenticateToken,myPagesController.deletePagePost);
