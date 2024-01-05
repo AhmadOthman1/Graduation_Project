@@ -311,7 +311,55 @@ exports.getPagePosts = async (req, res, next) => {
                     posts: posts,
                 });
             } else {//user is not admin
+                var existingPage = await Page.findOne({
+                    where: {
+                        id: pageId,
+                    }
+                });
+                if (existingPage == null) {
+                    return res.status(404).json({
+                        message: 'Page not found',
+                        body: req.body
+                    });
+                }
+                const pagePosts = await post.findAll({
+                    where: { pageId: pageId },
+                    order: [['postDate', 'DESC']], // Order posts by date
+                    offset: offset, // Calculate the offset
+                    limit: pageSize, // Number of records to retrieve
+                    include: [
+                        {
+                            model: comment,
+                            order: [['Date', 'DESC']],
+                        },
+                        {
+                            model: like,
+                            order: [['createdAt', 'DESC']],
+                        },
+                    ],
+                });
+                const posts = pagePosts.map(post => {
+                    const isLiked = post.likes.some(like => like.username === userUsername);
 
+                    return {
+                        id: post.id,
+                        createdBy: pageId,
+                        name: existingPage.name,
+                        userPhoto: existingPage.photo,
+                        postContent: post.postContent,
+                        selectedPrivacy: post.selectedPrivacy,
+                        photo: post.photo,
+                        postDate: moment(post.postDate).format('YYYY-MM-DD HH:mm:ss'),
+                        commentCount: post.comments.length,
+                        likeCount: post.likes.length,
+                        isLiked: isLiked,
+                    };
+                });
+                console.log(posts)
+                return res.status(200).json({
+                    message: 'fetched',
+                    posts: posts,
+                });
             }
 
         } else {
@@ -524,7 +572,7 @@ exports.deletePageComment = async (req, res, next) => {
                     where: { id: commentId },
                 });
                 if (pageComment == null) {
-                    return res.status(404).json({ error: 'Post not found' });
+                    return res.status(404).json({ error: 'Comment not found' });
                 }
 
                 if (pageComment.pageId == pageId) {// if page is the comment creator
@@ -544,18 +592,32 @@ exports.deletePageComment = async (req, res, next) => {
                         return res.status(200).json({
                             message: 'Comment deleted',
                         });
-                    }else{
+                    } else {
                         return res.status(500).json({
                             message: 'You are not allowed to delete this comment',
                             body: req.body
                         });
                     }
                 }
-            } else {
-                return res.status(500).json({
-                    message: 'You are not Admin',
-                    body: req.body
+            } else {// if user not admin => wants to remove his comment from the page post
+                const pageComment = await comment.findOne({
+                    where: { id: commentId },
                 });
+                if (pageComment == null) {
+                    return res.status(404).json({ error: 'Comment not found' });
+                }
+
+                if (pageComment.username == userUsername) {// if user is the comment creator
+                    await pageComment.destroy();
+                    return res.status(200).json({
+                        message: 'Comment deleted',
+                    });
+                } else {
+                    return res.status(500).json({
+                        message: 'You are not allowed to delete this comment',
+                        body: req.body
+                    });
+                }
             }
         } else {
             return res.status(500).json({
@@ -754,7 +816,7 @@ exports.pageAddComment = async (req, res, next) => {
                 else {
                     await comment.create({
                         postId: postId,
-                        username: username,
+                        username: userUsername,
                         commentContent: commentContent,
                         Date: new Date(),
                     });

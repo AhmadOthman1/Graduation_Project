@@ -17,6 +17,7 @@ const userNotificationsController=require('../controller/notifications/userNotif
 const chatsMainPage=require('../controller/chats/chatsMainPage')
 const userMessages=require('../controller/chats/userMessages')
 const UserColleagues=require('../controller/mainUser/userColleagues')
+const pagesProfile=require('../controller/search/pagesProfile')
 
 
 const router=express.Router();
@@ -88,6 +89,11 @@ router.get('/getPageAdmins',authenticateToken,myPagesController.getPageAdmins);
 router.post('/addNewAdmin',authenticateToken,myPagesController.addNewAdmin);
 router.get('/getPageJobs',authenticateToken,myPagesController.getPageJobs);
 router.post('/addNewJob',authenticateToken,myPagesController.addNewJob);
+
+// other Pages
+router.get('/getPageProfileInfo',authenticateToken,pagesProfile.getPageProfileInfo);
+router.post('/followPage',authenticateToken,pagesProfile.followPage);
+router.post('/removePageFollow',authenticateToken,pagesProfile.removePageFollow);
 
 
 
