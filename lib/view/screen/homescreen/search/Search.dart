@@ -67,7 +67,7 @@ class _SearchState extends State<Search> {
                               isLoading = false;
                               controller.Upage = 1;
                               controller.userList.clear();
-                              controller.userList.clear();
+                              controller.pageList.clear();
                             });
                             print(searchType);
                             controller.goTosearchPage(controller.searchValue,
@@ -285,7 +285,7 @@ class _SearchState extends State<Search> {
                         itemCount: controller.pageList.length,
                         itemBuilder: (context, index) {
                           final name = controller.pageList[index]['name'];
-                          final pageId = controller.pageList[index]['pageId'];
+                          final pageId = controller.pageList[index]['id'];
                           final photo = controller.pageList[index]['photo'];
                           profileBackgroundImage =
                               (photo != null && photo != "null" && photo != "")
@@ -293,7 +293,7 @@ class _SearchState extends State<Search> {
                                   : defultprofileImage;
                           return ListTile(
                             onTap: () {
-                              controller.goToUserPage(pageId!);
+                              controller.goToPage(pageId!);
                             },
                             title: Text('$name'),
                             subtitle: Text('$pageId'),

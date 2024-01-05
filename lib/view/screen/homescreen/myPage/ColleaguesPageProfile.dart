@@ -5,14 +5,15 @@ import 'package:growify/global.dart';
 
 import 'package:get/get.dart';
 import 'package:growify/view/screen/homescreen/JobsPages/ShowCompanyJobs.dart';
+import 'package:growify/view/screen/homescreen/myPage/seeAboutinfoPageColleagues.dart';
 import 'dart:convert';
 
 import 'package:growify/view/widget/homePage/posts.dart';
 
 class ColleaguesPageProfile extends StatefulWidget {
-  const ColleaguesPageProfile({super.key, required this.userData});
-
-  final List<Map<String, dynamic>> userData;
+  final userData;
+  final following;
+  const ColleaguesPageProfile({super.key, required this.following ,required this.userData});
 
   @override
   _ColleaguesPageProfileState createState() => _ColleaguesPageProfileState();
@@ -22,38 +23,44 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
   final ColleaguesPageProfile_Controller controller =
       Get.put(ColleaguesPageProfile_Controller());
 
-  String? firstName;
+  late String? profileImage;
+  late String? coverImage;
+  late String? contactInfo;
+  late String? firstName;
 
-  ////////////////////////////////
-  final AssetImage defultprofileImage =
+  final AssetImage defaultProfileImage =
       const AssetImage("images/profileImage.jpg");
-  String? profileImageBytes;
-  String? profileImageBytesName;
-  String? profileImageExt;
-  String? profileImage;
-  ImageProvider<Object>? profileBackgroundImage;
-  String? coverImage;
-  String? coverImageBytes;
-  String? coverImageBytesName;
-  String? coverImageExt;
-  final AssetImage defultcoverImage =
+  late ImageProvider<Object>? profileBackgroundImage;
+
+  final AssetImage defaultCoverImage =
       const AssetImage("images/coverImage.jpg");
   late ImageProvider<Object> coverBackgroundImage;
-  String? Description;
 
   @override
   void initState() {
     super.initState();
-    profileBackgroundImage = (profileImage != null && profileImage != "")
-        ? Image.network("$urlStarter/${profileImage!}").image
-        : defultprofileImage;
+    initializeUserData();
+  }
 
-    coverBackgroundImage = (coverImage != null && coverImage != "")
-        ? Image.network("$urlStarter/${coverImage!}").image
-        : defultcoverImage;
+  void initializeUserData() {
+    print(widget.userData);
+    controller.isFollowing = (widget.following == "F").obs;
+    profileImage = widget.userData.photo;
+    coverImage = widget.userData.coverImage;
+    contactInfo = widget.userData.contactInfo ?? "";
+    firstName = widget.userData.name;
+    loadImages();
+  }
 
-    firstName; //=userData[0]["firstname"];
-    final ss = firstName;
+  void loadImages() {
+    profileBackgroundImage = loadImage(profileImage, defaultProfileImage);
+    coverBackgroundImage = loadImage(coverImage, defaultCoverImage);
+  }
+
+  ImageProvider<Object> loadImage(String? imageUrl, AssetImage defaultImage) {
+    return (imageUrl != null && imageUrl.isNotEmpty)
+        ? Image.network("$urlStarter/$imageUrl").image
+        : defaultImage;
   }
 
   @override
@@ -62,8 +69,7 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
-
-             SliverAppBar(
+            SliverAppBar(
               backgroundColor: Colors.white,
               expandedHeight: 200,
               floating: false,
@@ -72,22 +78,22 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
                 background: _buildCoverPhoto(),
               ),
             ),
-            SliverToBoxAdapter(child: 
-            Column(
-          children: [
-            _buildProfileInfo(),
-            _Deatalis("Details"),
-            _buildDivider(10),
-            _buildButtonsRow(),
-            _buildDivider(10),
-            _Deatalis("Posts"),
-            // Post(),
-          ],
-        ),)
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  _buildProfileInfo(),
+                  _Deatalis("Details"),
+                  _buildDivider(10),
+                  _buildButtonsRow(),
+                  _buildDivider(10),
+                  _Deatalis("Posts"),
+                  // Post(),
+                ],
+              ),
+            )
           ];
         },
-        body: Post(username: 'AhmadOthman'),
-        
+        body: Post(username: widget.userData.id, isPage: true),
       ),
     );
   }
@@ -97,9 +103,7 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
       height: 200,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: controller.coverImageBytes.isNotEmpty
-              ? MemoryImage(base64Decode(controller.coverImageBytes.value))
-              : coverBackgroundImage,
+          image: coverBackgroundImage ?? defaultCoverImage,
           fit: BoxFit.cover,
         ),
       ),
@@ -113,14 +117,16 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
         children: [
           CircleAvatar(
             radius: 60,
-            backgroundImage: controller.profileImageBytes.isNotEmpty
-                ? MemoryImage(base64Decode(controller.profileImageBytes.value))
-                : profileBackgroundImage,
+            backgroundImage: profileBackgroundImage ?? defaultProfileImage,
           ),
           const SizedBox(height: 16),
           Text(
-            '${widget.userData[0]["firstname"]} ',
+            '$firstName',
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            '@${widget.userData.id}', // Replace with the actual username
+            style: const TextStyle(fontSize: 16, color: Colors.blue),
           ),
           Container(
             padding: const EdgeInsets.all(16.0),
@@ -129,7 +135,7 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
               children: [
                 const SizedBox(height: 8.0),
                 Text(
-                  '${widget.userData[0]["Description"]}',
+                  '$contactInfo',
                   style: TextStyle(
                       fontSize: 14.0,
                       fontWeight: FontWeight.normal,
@@ -142,8 +148,8 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildInfoItem('Posts', '150'),
-              _buildInfoItem('Connections', '500'),
+              _buildInfoItem('Posts', widget.userData.postCount),
+              _buildInfoItem('Followers', widget.userData.followCount),
             ],
           ),
           const SizedBox(height: 16),
@@ -184,7 +190,20 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
       children: [
         InkWell(
           onTap: () {
-            controller.goToSeeAboutInfoColleagues();
+            List userDataList = [
+              {
+                'name': widget.userData.name,
+                'description': widget.userData.description,
+                'address': widget.userData.address,
+                'contactInfo': widget.userData.contactInfo,
+                'country': widget.userData.country,
+                'speciality': widget.userData.specialty,
+                'pageType': widget.userData.pageType,
+              },
+            ];
+            Get.to(CollaguesPageSeeAboutInfo(), arguments: {
+              userDataList: userDataList,
+            });
           },
           child: Container(
             height: 35,
@@ -203,9 +222,7 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
             ),
           ),
         ),
-
-         _buildDivider(10),
-
+        _buildDivider(10),
         InkWell(
           onTap: () {
             //controller.goToSeeAboutInfo();
@@ -248,11 +265,12 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
     return Obx(() => SizedBox(
           width: 250,
           child: ElevatedButton(
-            onPressed: () {
-              controller.isFollowing.toggle();
+            onPressed: () async {
+              await controller.toggleFollow(widget.userData.id);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: controller.isFollowing.value ? Colors.grey : Colors.blue,
+              backgroundColor:
+                  controller.isFollowing.value ? Colors.grey : Colors.blue,
             ),
             child: Text(
               controller.isFollowing.value ? 'Following' : 'Follow',

@@ -64,7 +64,7 @@ class MyPages extends StatelessWidget {
                        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
                       print(pages[index]);
                       print(pages[index].photo);
-                      Get.to(PageProfile(userData: pages[index]));
+                      Get.to(PageProfile(isAdmin:true , userData: pages[index]));
                      
 
                     },

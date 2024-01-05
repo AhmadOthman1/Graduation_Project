@@ -33,11 +33,12 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
     print("*******=======");
     print(comments);
     int postId = args?['postId'] ?? 0;
-     String name = args?['name'] ?? (GetStorage().read("firstname") + GetStorage().read("lastname"));
+     String name = args?['name'] ?? (GetStorage().read("firstname") + " " +GetStorage().read("lastname"));
     bool? isPage = args?['isPage'] ?? false;
-    String photo;
+    bool? isAdmin = args?['isAdmin'] ?? false;
+    var photo;
 
-    if (isPage == true) {
+    if (isPage == true && isAdmin == true) {
       photo = args['photo'] ?? "";
     } else {
       photo = GetStorage().read("photo");
@@ -108,9 +109,6 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                             },
                             itemBuilder: (BuildContext context) {
                               //if the post created by the user, or the comment created by the user he can delete it
-                              print(createdBy);
-                              print(comment.createdBy);
-                              print(isPage);
                               if (createdBy == GetStorage().read("username") ||
                                   comment.createdBy ==
                                       GetStorage().read("username")) {
@@ -122,7 +120,7 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                                     child: Text(option),
                                   );
                                 }).toList();
-                              } else if (isPage != null) {
+                              } else if (isPage != null && isAdmin != null && isPage==true && isAdmin==true) {
                                 controller.moreOptions.assignAll(["Delete"]);
                                 return controller.moreOptions
                                     .map((String option) {
@@ -203,17 +201,28 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                           icon: const Icon(Icons.send),
                           onPressed: () async {
                             final newComment = commentController.text;
-
+                            var newCommentCreatedBy; 
+                            var newCommentName; 
+                            var newCommentPhoto; 
+                            if(isPage != null && isAdmin != null && isPage == true && isAdmin == true){
+                              newCommentCreatedBy = createdBy;
+                              newCommentName = name;
+                              newCommentPhoto = photo;
+                            }else{
+                              newCommentCreatedBy=GetStorage().read("username");
+                              newCommentName = GetStorage().read("firstname") + " " +GetStorage().read("lastname");
+                              newCommentPhoto = GetStorage().read("photo");
+                            }
                             final time = DateTime.now();
                             final String formattedTime = time.toString();
                             final newCommentModel = CommentModel(
                               postId: postId,
-                              createdBy: createdBy,
+                              createdBy: newCommentCreatedBy,
                               commentContent: newComment,
                               Date: formattedTime,
                               isUser: true,
-                              name: name,
-                              photo: photo,
+                              name: newCommentName,
+                              photo: newCommentPhoto,
                             );
                             comments.add(newCommentModel);
                             controller.update();

@@ -374,7 +374,7 @@ onCommentOptionSelected(
           return await deletePageComment(createdBy, commentId);
           break;
         case 'Report':
-          // Implement hide post functionality
+          // Implement report functionality
           break;
       }
     } else {
@@ -383,7 +383,7 @@ onCommentOptionSelected(
           return await deleteComment(createdBy, commentId);
           break;
         case 'Report':
-          // Implement hide post functionality
+          // Implement report functionality
           break;
       }
     }
@@ -548,6 +548,7 @@ onCommentOptionSelected(
   gotoCommentPage(int postId,
       [
       bool? isPage,
+      bool? isAdmin,
       String? name,
       String? photo,
       String? createdBy]) async {
@@ -555,7 +556,7 @@ onCommentOptionSelected(
     print(res.statusCode);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      gotoCommentPage(postId, isPage, name, photo, createdBy);
+      gotoCommentPage(postId, isPage,isAdmin, name, photo, createdBy);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -591,6 +592,7 @@ onCommentOptionSelected(
               'comments': comments1,
               'postId': postId,
               'isPage': isPage,
+              'isAdmin': isAdmin,
               'name': name,
               'photo': photo,
               'createdBy': createdBy,
@@ -818,7 +820,7 @@ onCommentOptionSelected(
       return resbody['message'];
     } else if (res.statusCode == 200) {
       GetStorage().write("photo", resbody["user"]["photo"]);
-      Get.to(ProfileMainPage(
+      Get.off(ProfileMainPage(
           userData: [resbody["user"]],
           userPostCount: userPostCount,
           userConnectionsCount: userConnectionsCount));

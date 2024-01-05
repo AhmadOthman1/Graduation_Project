@@ -7,7 +7,8 @@ import 'package:growify/global.dart';
 class Post extends StatefulWidget {
   String? username;
   bool? isPage;
-  Post({this.username, Key? key, this.isPage}) : super(key: key);
+  bool?isAdmin;
+  Post({this.username, Key? key, this.isPage, this.isAdmin}) : super(key: key);
 
   @override
   _PostState createState() => _PostState();
@@ -163,7 +164,7 @@ class _PostState extends State<Post> {
                                         child: Text(option),
                                       );
                                     }).toList();
-                                  } else if (widget.isPage != null) {
+                                  } else if (widget.isPage != null && widget.isAdmin != null && widget.isPage==true && widget.isAdmin==true) {
                                     controller.moreOptions
                                         .assignAll(["Delete"]);
                                     return controller.moreOptions
@@ -253,6 +254,7 @@ class _PostState extends State<Post> {
                                     controller.gotoCommentPage(
                                         postId,
                                         widget.isPage,
+                                        widget.isAdmin,                                        
                                         post['name'],
                                         post["photo"],
                                         post['createdBy']);
@@ -321,6 +323,7 @@ class _PostState extends State<Post> {
                                     controller.gotoCommentPage(
                                         postId,
                                         widget.isPage,
+                                        widget.isAdmin,
                                         post['name'],
                                         post["photo"],
                                         post['createdBy']);

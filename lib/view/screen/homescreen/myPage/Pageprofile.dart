@@ -14,9 +14,9 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class PageProfile extends StatefulWidget {
-  final  userData;
-
-  const PageProfile({Key? key, required this.userData}) : super(key: key);
+  final userData;
+  final isAdmin;
+  const PageProfile({Key? key, required this.isAdmin , required this.userData}) : super(key: key);
 
   @override
   _PageProfileState createState() => _PageProfileState();
@@ -30,10 +30,12 @@ class _PageProfileState extends State<PageProfile> {
   late String? Description;
   late String? firstName;
 
-  final AssetImage defaultProfileImage = const AssetImage("images/profileImage.jpg");
+  final AssetImage defaultProfileImage =
+      const AssetImage("images/profileImage.jpg");
   late ImageProvider<Object>? profileBackgroundImage;
 
-  final AssetImage defaultCoverImage = const AssetImage("images/coverImage.jpg");
+  final AssetImage defaultCoverImage =
+      const AssetImage("images/coverImage.jpg");
   late ImageProvider<Object> coverBackgroundImage;
 
   @override
@@ -44,8 +46,8 @@ class _PageProfileState extends State<PageProfile> {
 
   void initializeUserData() {
     print(widget.userData);
-    profileImage = widget.userData.photo ?? "";
-    coverImage = widget.userData.coverImage ?? "";
+    profileImage = widget.userData.photo;
+    coverImage = widget.userData.coverImage;
     Description = widget.userData.description ?? "";
     firstName = widget.userData.name;
     GetStorage().write("photopage", widget.userData.photo);
@@ -66,12 +68,10 @@ class _PageProfileState extends State<PageProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
-
-             SliverAppBar(
+            SliverAppBar(
               backgroundColor: Colors.white,
               expandedHeight: 200,
               floating: false,
@@ -80,25 +80,24 @@ class _PageProfileState extends State<PageProfile> {
                 background: _buildCoverPhoto(),
               ),
             ),
-
-         SliverToBoxAdapter(
-          child: Column(
-              children: [
-                _buildProfileInfo(),
-                _Details("Details"),
-                _buildDivider(10),
-                _buildButtonsRow(),
-                _buildDivider(10),
-                _Details("Posts"),
-              //  Expanded(
-                 // child: Post(username: widget.userData[0]["username"]), // Use Expanded for the Post widget
-               // ),
-              ],
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  _buildProfileInfo(),
+                  _Details("Details"),
+                  _buildDivider(10),
+                  _buildButtonsRow(),
+                  _buildDivider(10),
+                  _Details("Posts"),
+                  //  Expanded(
+                  // child: Post(username: widget.userData[0]["username"]), // Use Expanded for the Post widget
+                  // ),
+                ],
+              ),
             ),
-        ),
-        ];
+          ];
         },
-        body: Post(username: widget.userData.id, isPage :true),
+        body: Post(isAdmin : widget.isAdmin, username: widget.userData.id, isPage: true),
       ),
     );
   }
@@ -129,6 +128,10 @@ class _PageProfileState extends State<PageProfile> {
             '$firstName ',
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
+          Text(
+            '@${widget.userData.id}', // Replace with the actual username
+            style: const TextStyle(fontSize: 16, color: Colors.blue),
+          ),
           Container(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -137,7 +140,10 @@ class _PageProfileState extends State<PageProfile> {
                 const SizedBox(height: 8.0),
                 Text(
                   '$Description',
-                  style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal, color: Colors.grey[700]),
+                  style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.grey[700]),
                 ),
               ],
             ),
@@ -184,9 +190,9 @@ class _PageProfileState extends State<PageProfile> {
   Widget _buildButtonsRow() {
     return Column(
       children: [
-         InkWell(
+        InkWell(
           onTap: () {
-             Get.to(ShowAdmins(pageId : widget.userData.id));
+            Get.to(ShowAdmins(pageId: widget.userData.id));
           },
           child: Container(
             height: 35,
@@ -205,12 +211,10 @@ class _PageProfileState extends State<PageProfile> {
             ),
           ),
         ),
-
         _buildDivider(10),
-
         InkWell(
           onTap: () {
-             Get.to(ShowEmployees(pageId : widget.userData.id));
+            Get.to(ShowEmployees(pageId: widget.userData.id));
           },
           child: Container(
             height: 35,
@@ -229,13 +233,10 @@ class _PageProfileState extends State<PageProfile> {
             ),
           ),
         ),
-
         _buildDivider(10),
-
-        
         InkWell(
           onTap: () {
-             Get.to(GroupPage());
+            Get.to(GroupPage());
           },
           child: Container(
             height: 35,
@@ -254,10 +255,10 @@ class _PageProfileState extends State<PageProfile> {
             ),
           ),
         ),
-         _buildDivider(10),
+        _buildDivider(10),
         InkWell(
           onTap: () {
-               controller.goToEditPageProfile(widget.userData);
+            controller.goToEditPageProfile(widget.userData);
           },
           child: Container(
             height: 35,
@@ -279,21 +280,19 @@ class _PageProfileState extends State<PageProfile> {
         _buildDivider(10),
         InkWell(
           onTap: () {
-            print("llllllllllllllllll");
-            print(widget.userData.name);
-              print("llllllllllllllllll");
-               List userDataList = [
-  {
-    'name': widget.userData.name,
-    'description': widget.userData.description,
-    'address': widget.userData.address,
-    'contactInfo': widget.userData.contactInfo,
-    'country': widget.userData.country,
-    'speciality': widget.userData.specialty,
-    'pageType': widget.userData.pageType,
-  },];
-       
-            Get.to(MyPageSeeAboutInfo(userData:userDataList));
+            List userDataList = [
+              {
+                'name': widget.userData.name,
+                'description': widget.userData.description,
+                'address': widget.userData.address,
+                'contactInfo': widget.userData.contactInfo,
+                'country': widget.userData.country,
+                'speciality': widget.userData.specialty,
+                'pageType': widget.userData.pageType,
+              },
+            ];
+
+            Get.to(MyPageSeeAboutInfo(userData: userDataList));
           },
           child: Container(
             height: 35,
@@ -313,11 +312,10 @@ class _PageProfileState extends State<PageProfile> {
           ),
         ),
         _buildDivider(10),
-
         InkWell(
           onTap: () {
             //controller.goToSeeAboutInfo();
-            Get.to(MyJobPage(pageId : widget.userData.id));
+            Get.to(MyJobPage(pageId: widget.userData.id));
           },
           child: Container(
             height: 35,
@@ -336,11 +334,13 @@ class _PageProfileState extends State<PageProfile> {
             ),
           ),
         ),
-
         _buildDivider(10),
         InkWell(
           onTap: () {
-            Get.to(NewPost(profileImage:profileImage, isPage: true, pageId: widget.userData.id));
+            Get.to(NewPost(
+                profileImage: profileImage,
+                isPage: true,
+                pageId: widget.userData.id));
           },
           child: Container(
             height: 35,
@@ -359,7 +359,6 @@ class _PageProfileState extends State<PageProfile> {
             ),
           ),
         ),
-        
       ],
     );
   }

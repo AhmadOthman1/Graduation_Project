@@ -139,26 +139,7 @@ class SettingsControllerImp extends SettingsController {
   ];
 
 
-   final List<Map<String, dynamic>> userData1 = [
-    {
-      "username": "Al Hamas",
-      "firstname":"mojj",
-      "lastname":"lastname",
-      "bio":null,
-      "country":null,
-      "address":null,
-      "phone":"0569929734",
-      "dateOfBirth":"2001-05-18",
-      "photo": null,
-      "coverImage": null,
-      "cv":null,
-      "connection": "12"
-    }
-  ];
-
-  goToColleaguesPageProfile(){
-    Get.to(ColleaguesPageProfile(userData:userData));
-  }
+   
 
 
  

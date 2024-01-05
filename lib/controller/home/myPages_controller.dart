@@ -70,7 +70,7 @@ class MyPagesController {
     }
   ];
   goToMyPage(){
-    Get.to(PageProfile(userData: userData,));
+    Get.to(PageProfile(isAdmin: true,userData: userData,));
 
   }
 }

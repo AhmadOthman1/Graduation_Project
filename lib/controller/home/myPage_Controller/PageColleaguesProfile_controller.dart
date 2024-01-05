@@ -1,8 +1,16 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:growify/controller/home/logOutButton_controller.dart';
+import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/myPage/seeAboutinfoPageColleagues.dart';
+import 'package:http/http.dart' as http;
+
+LogOutButtonControllerImp _logoutController =
+    Get.put(LogOutButtonControllerImp());
 
 class ColleaguesPageProfile_Controller extends GetxController {
-
   RxBool isFollowing = false.obs;
 
   // for profile
@@ -16,26 +24,80 @@ class ColleaguesPageProfile_Controller extends GetxController {
   final RxString coverImageBytesName = ''.obs;
   final RxString coverImageExt = ''.obs;
 
+  toggleFollow(pageId) async {
+    if (isFollowing == false) {
+      await follow(pageId);
+    }else{
+      await removeFollow(pageId);
+    }
+  }
+PostRemoveFollow(pageId) async {
+    var url = "$urlStarter/user/removePageFollow";
 
-      final RxMap personalDetails = {
-    'name': 'Al Qassam',
-    'description': 'Resistance',
-    'address': '123 Main Street',
-    'contactInfo': 'john.doe@example.com',
-    'country': 'Palestine',
-    'speciality': 'Liberation of Palestine',
-    'pageType': 'public', // or 'private'
-  }.obs;
-
-
-  goToSeeAboutInfoColleagues(){
-
-    Get.to(CollaguesPageSeeAboutInfo(),arguments: {
-      'PersonalDetails':personalDetails,
-    });
-
+    var responce = await http.post(
+      Uri.parse(url),
+      body: jsonEncode({
+        'pageId': pageId,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+      },
+    );
+    return responce;
   }
 
+  @override
+  removeFollow(pageId) async {
+    var res = await PostRemoveFollow(pageId);
+    print(res.statusCode);
+    if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      removeFollow(pageId);
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+    var resbody = jsonDecode(res.body);
+    if (res.statusCode == 409) {
+      return resbody['message'];
+    } else if (res.statusCode == 200) {
+      isFollowing.toggle();
+    }
+  }
+  PostFollow(pageId) async {
+    var url = "$urlStarter/user/followPage";
+  
+    var responce = await http.post(
+      Uri.parse(url),
+      body: jsonEncode({
+        'pageId': pageId,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+      },
+    );
+    return responce;
+  }
 
-
+  @override
+  follow(pageId) async {
+    var res = await PostFollow(pageId);
+    print(res.statusCode);
+    if (res.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      follow(pageId);
+      return;
+    } else if (res.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+    
+    if (res.statusCode == 409) {
+      var resbody = jsonDecode(res.body);
+      return resbody['message'];
+    } else if (res.statusCode == 200) {
+      isFollowing.toggle();
+    }
+  }
 }

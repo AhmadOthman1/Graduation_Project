@@ -83,7 +83,7 @@ class MyPageSeeAboutInfo extends StatelessWidget {
         ),
         Text(
           value ?? '', 
-          style: TextStyle(color: Colors.grey),
+          style: TextStyle(color: Colors.grey[800]),
         ),
         SizedBox(height: 10),
       ],
