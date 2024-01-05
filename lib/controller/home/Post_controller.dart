@@ -284,7 +284,7 @@ class PostControllerImp extends PostController {
 
   Future<void> onMoreOptionSelected(
       String option, createdBy, postId, isPage) async {
-    if (isPage != null) {
+    if (isPage != null&& isPage== true) {
       switch (option) {
         case 'Delete':
           await deletePagePost(createdBy, postId);
@@ -368,7 +368,7 @@ class PostControllerImp extends PostController {
 
 onCommentOptionSelected(
       String option, createdBy, commentId, isPage) async {
-    if (isPage != null) {
+    if (isPage != null && isPage== true) {
       switch (option) {
         case 'Delete':
           return await deletePageComment(createdBy, commentId);
@@ -856,7 +856,7 @@ onCommentOptionSelected(
     } else if (res.statusCode == 200) {
       if (resbody['user'] is Map<String, dynamic>) {
         print([resbody["user"]]);
-        Get.to(ColleaguesProfile(userData: [resbody["user"]]));
+        Get.off(ColleaguesProfile(userData: [resbody["user"]]));
         return true;
       }
     }

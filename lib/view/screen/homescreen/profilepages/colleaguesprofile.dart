@@ -103,7 +103,7 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
             )
           ];
         },
-        body: Post(/*username: 'AhmadOthman'*/),
+        body: Post(username: widget.userData[0]["username"]),
       ),
     );
   }
@@ -187,8 +187,8 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildInfoItem('Posts', '23'),
-              _buildInfoItem('Connections', '167'),
+              _buildInfoItem('Posts', widget.userData[0]['postsCount'].toString()),
+              _buildInfoItem('Connections', widget.userData[0]['connectionsCount'].toString()),
             ],
           ),
           GetBuilder<ColleaguesProfileControllerImp>(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/Post_controller.dart';
 import 'package:growify/global.dart';
 
@@ -152,7 +153,7 @@ class _PostState extends State<Post> {
                                       option, post['createdBy'] ,post['id'],widget.isPage);
                                 },
                                 itemBuilder: (BuildContext context) {
-                                  if (post['createdBy'] == widget.username) {
+                                  if (post['createdBy'] == GetStorage().read('username')) {
                                     controller.moreOptions
                                         .assignAll(["Delete"]);
                                     return controller.moreOptions

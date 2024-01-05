@@ -108,6 +108,9 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                             },
                             itemBuilder: (BuildContext context) {
                               //if the post created by the user, or the comment created by the user he can delete it
+                              print(createdBy);
+                              print(comment.createdBy);
+                              print(isPage);
                               if (createdBy == GetStorage().read("username") ||
                                   comment.createdBy ==
                                       GetStorage().read("username")) {
