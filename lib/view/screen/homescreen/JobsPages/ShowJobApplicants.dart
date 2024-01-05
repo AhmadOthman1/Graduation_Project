@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:growify/controller/home/Search_Cotroller.dart';
+import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/ShowJobApplicants_controller.dart';
 import 'package:growify/global.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -11,10 +14,10 @@ class JobApplicant {
   final String name;
   final String username;
   final String notes;
-  final String cvPath; // Assuming the path to the CV file
+  final String cvPath;
 
   JobApplicant({
-     this.image,
+    this.image,
     required this.name,
     required this.username,
     required this.notes,
@@ -35,7 +38,7 @@ class JobPost {
     required this.title,
     required this.company,
     required this.interest,
-     this.image,
+    this.image,
     required this.deadline,
     required this.content,
     required this.applicants,
@@ -48,6 +51,49 @@ class ShowJobApplicants extends StatefulWidget {
 }
 
 class _ShowJobApplicantsState extends State<ShowJobApplicants> {
+  late ShowJobApplicantsController _controller;
+  final ScrollController _scrollController = ScrollController();
+  final AssetImage defaultProfileImage =
+      const AssetImage("images/profileImage.jpg");
+  final SearchControllerImp searchController = Get.put(SearchControllerImp());
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = ShowJobApplicantsController();
+    _loadData();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  Future<void> _loadData() async {
+    print('Loading data...');
+    try {
+      await _controller.loadPageJobs(_controller.page, 1);
+      setState(() {
+        _controller.page++;
+        _controller.jobs;
+      });
+      print('Data loaded: ${_controller.jobs.length} jobs');
+    } catch (error) {
+      print('Error loading data: $error');
+    }
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      // reached the bottom, load more notifications
+      _loadData();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+// get data from data base instead of this list
   final List<JobPost> jobPosts = [
     JobPost(
       title: "Software Engineer",
@@ -66,19 +112,17 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
               "I'm excited about this opportunity and believe my skills in software development make me a great fit. I have experience working on various projects and am eager to contribute to your team.",
           cvPath: "cv_file_path",
         ),
-      
       ],
     ),
   ];
 
-    Future download(String url, String filename) async {
+  Future download(String url, String filename) async {
     var savePath = '/storage/emulated/0/Download/$filename';
     var dio = Dio();
     dio.interceptors.add(LogInterceptor());
     try {
       var response = await dio.get(
         url,
-        //Received data with List<int>
         options: Options(
           responseType: ResponseType.bytes,
           followRedirects: false,
@@ -86,7 +130,6 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
       );
       var file = File(savePath);
       var raf = file.openSync(mode: FileMode.write);
-      // response.data is List<int> type
       raf.writeFromSync(response.data);
       await raf.close();
     } catch (e) {
@@ -94,8 +137,6 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
     }
   }
 
-  final AssetImage defaultProfileImage =
-      const AssetImage("images/profileImage.jpg");
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,36 +149,45 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
           children: [
             JobPostCard(jobPost: jobPosts[0]),
             SizedBox(height: 16),
-            Text('Applicants:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              'Applicants:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: 8),
             ...jobPosts[0].applicants.map((applicant) {
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: (applicant.image != null && applicant.image != "")
-                  ? Image.network("$urlStarter/${applicant.image}").image
-                  : defaultProfileImage,
+                  backgroundImage: (applicant.image != null &&
+                          applicant.image != "")
+                      ? Image.network("$urlStarter/${applicant.image}")
+                          .image
+                      : defaultProfileImage,
                 ),
                 title: Text(applicant.name),
                 subtitle: Text(applicant.username),
                 trailing: InkWell(
-                  onTap: (){
+                  onTap: () {
                     _showApplicantDetails(context, applicant);
                   },
-                  
-                  child: Text("More Details",style: TextStyle(fontSize: 14),)),
+                  child: Text(
+                    "More Details",
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ),
                 onTap: () {
                   //go to his profile
                 },
               );
             }).toList(),
+            if (_controller.isLoading) CircularProgressIndicator(),
           ],
         ),
       ),
     );
   }
 
-  void _showApplicantDetails(BuildContext context, JobApplicant applicant) {
+  void _showApplicantDetails(
+      BuildContext context, JobApplicant applicant) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -148,9 +198,11 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
             children: [
               ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: (applicant.image != null && applicant.image != "")
-                  ? Image.network("$urlStarter/${applicant.image}").image
-                  : defaultProfileImage,
+                  backgroundImage: (applicant.image != null &&
+                          applicant.image != "")
+                      ? Image.network("$urlStarter/${applicant.image}")
+                          .image
+                      : defaultProfileImage,
                 ),
                 title: Text(applicant.name),
                 subtitle: Text(applicant.username),
@@ -168,31 +220,30 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
                 ],
               ),
               SizedBox(height: 16),
-             ElevatedButton(
-  onPressed: () async {
-    var cvUrl = "$urlStarter/${applicant.cvPath}";
+              ElevatedButton(
+                onPressed: () async {
+                  var cvUrl = "$urlStarter/${applicant.cvPath}";
 
-    if (kIsWeb) {
-      if (await canLaunch(cvUrl)) {
-        await launch(
-          cvUrl,
-          headers: {
-            "Content-Type": "application/pdf",
-            "Content-Disposition": "inline"
-          },
-        );
-      } else {
-        throw "Could not launch $cvUrl";
-      }
-    } else {
-      download(cvUrl, applicant.cvPath);
-    }
+                  if (kIsWeb) {
+                    if (await canLaunch(cvUrl)) {
+                      await launch(
+                        cvUrl,
+                        headers: {
+                          "Content-Type": "application/pdf",
+                          "Content-Disposition": "inline"
+                        },
+                      );
+                    } else {
+                      throw "Could not launch $cvUrl";
+                    }
+                  } else {
+                    download(cvUrl, applicant.cvPath);
+                  }
 
-    Navigator.pop(context); // Close the modal bottom sheet
-  },
-  child: Text('Download CV'),
-),
-
+                  Navigator.pop(context); // Close the modal bottom sheet
+                },
+                child: Text('Download CV'),
+              ),
             ],
           ),
         );
@@ -219,7 +270,7 @@ class JobPostCard extends StatelessWidget {
         children: [
           ListTile(
             leading: CircleAvatar(
-               backgroundImage: (jobPost.image != null && jobPost.image != "")
+              backgroundImage: (jobPost.image != null && jobPost.image != "")
                   ? Image.network("$urlStarter/${jobPost.image}").image
                   : defaultProfileImage,
             ),

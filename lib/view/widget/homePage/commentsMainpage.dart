@@ -28,14 +28,13 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
   @override
   Widget build(BuildContext context) {
     var args = Get.arguments;
-    RxList<CommentModel> comments = args != null ? args['comments'] : [];
+        RxList<CommentModel> comments =
+        args != null ? (args['comments'] as List<CommentModel>).obs : <CommentModel>[].obs;
     print("*******=======");
     print(comments);
-    int postId = args['postId'];
-    String name = args['name'] != null
-        ? args['name']
-        : GetStorage().read("firstname") + GetStorage().read("lastname");
-    bool? isPage = args['isPage'];
+    int postId = args?['postId'] ?? 0;
+     String name = args?['name'] ?? (GetStorage().read("firstname") + GetStorage().read("lastname"));
+    bool? isPage = args?['isPage'] ?? false;
     String photo;
 
     if (isPage == true) {
@@ -47,7 +46,7 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
     profileBackgroundImage = (photo != null && photo.isNotEmpty)
         ? Image.network("$urlStarter/$photo").image
         : defultprofileImage;
-    String createdBy = args['createdBy'];
+    String createdBy = args?['createdBy'] ?? GetStorage().read("username") ?? 'defaultCreatedBy';
     controller.comments.assignAll(comments);
 
     print("////////////////////");
@@ -177,15 +176,19 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: TextField(
+                          child:  TextFormField(
                             controller: commentController,
+                            onFieldSubmitted: (value) {
+                              commentController.text += '\n';
+                            },
+                            maxLines: null,
+                            keyboardType: TextInputType.multiline,
                             decoration: const InputDecoration(
                               hintText: 'Write a comment...',
                               hintStyle: TextStyle(
                                 fontSize: 14,
                               ),
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
+                              floatingLabelBehavior: FloatingLabelBehavior.always,
                               contentPadding: EdgeInsets.symmetric(
                                 vertical: 15,
                                 horizontal: 30,

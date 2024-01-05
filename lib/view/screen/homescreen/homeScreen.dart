@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (controller) => Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Get.to(NewPost());
+            Get.to(NewPost(profileImage:GetStorage().read('photo')));
           },
           child: const Icon(Icons.post_add_outlined),
         ),

@@ -11,6 +11,7 @@ import 'package:growify/view/screen/homescreen/myPage/Employees/addEmployee.dart
 import 'package:growify/view/screen/homescreen/myPage/seeAboutInfoMyPage.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class PageProfile extends StatefulWidget {
   final  userData;
@@ -47,6 +48,7 @@ class _PageProfileState extends State<PageProfile> {
     coverImage = widget.userData.coverImage ?? "";
     Description = widget.userData.description ?? "";
     firstName = widget.userData.name;
+    GetStorage().write("photopage", widget.userData.photo);
     loadImages();
   }
 
