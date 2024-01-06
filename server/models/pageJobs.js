@@ -37,6 +37,6 @@ const pageJobs = sequelize.define('pageJobs', {
 });
 
 // Define foreign key constraint
-pages.hasMany(pageJobs, { foreignKey: 'pageId', onDelete: 'CASCADE' });
-pageJobs.belongsTo(pages, { foreignKey: 'pageId', onDelete: 'CASCADE' });
+pages.hasMany(pageJobs, { foreignKey: 'pageId', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
+pageJobs.belongsTo(pages, { foreignKey: 'pageId', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
 module.exports = pageJobs;

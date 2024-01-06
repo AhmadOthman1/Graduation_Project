@@ -1299,6 +1299,77 @@ exports.addNewAdmin = async (req, res, next) => {
         });
     }
 };
+exports.deleteAdmin = async (req, res, next) => {
+    try {
+        var pageId = req.body.pageId;
+        var adminUsername = req.body.adminUsername;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        // Calculate the offset based on page and pageSize
+        if (pageId == null || adminUsername == null ) {
+            return res.status(500).json({
+                message: 'invalid values',
+                body: req.body,
+            });
+        }
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername != null) {
+            var userPageAdmin = await pageAdmin.findOne({
+                where: { username: userUsername, pageId: pageId, adminType: "A" }
+            });
+            if (userPageAdmin != null) {
+                const existingAdminUsername = await User.findOne({
+                    where: {
+                        username: adminUsername
+                    },
+                });
+                if (existingAdminUsername != null) {
+                    const isAddedUsernameAdmin = await pageAdmin.findOne({
+                        where: {
+                            pageId: pageId,
+                            username: adminUsername,
+                        },
+                    });
+                    if (isAddedUsernameAdmin != null) {
+                        await isAddedUsernameAdmin.destroy();
+                        return res.status(200).json({
+                            message: 'Admin deleted',
+                        });
+                    } else {
+                        
+                        return res.status(404).json({
+                            message: 'This user is not admin in your page',
+                        });
+                    }
+                } else {
+                    return res.status(404).json({
+                        message: 'User not found',
+                    });
+                }
+            } else {
+                return res.status(500).json({
+                    message: 'You are not allowed to edit this information',
+                    body: req.body,
+                });
+            }
+        }
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};
 exports.getPageJobs = async (req, res, next) => {
     try {
         var page = req.query.page || 1;

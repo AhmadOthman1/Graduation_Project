@@ -18,6 +18,7 @@ const chatsMainPage=require('../controller/chats/chatsMainPage')
 const userMessages=require('../controller/chats/userMessages')
 const UserColleagues=require('../controller/mainUser/userColleagues')
 const pagesProfile=require('../controller/search/pagesProfile')
+const userTasks =require('../controller/tasks/userTasksController')
 
 
 const router=express.Router();
@@ -71,6 +72,11 @@ router.get('/getUserNotifications',authenticateToken,userNotificationsController
 //chats
 router.get('/getChats',authenticateToken,chatsMainPage.getChats);
 router.get('/getUserMessages',authenticateToken,userMessages.getUserMessages);
+//userTasks
+router.get('/getUserTasks',authenticateToken,userTasks.getUserTasks);
+router.post('/ChangeUserTaskStatus',authenticateToken,userTasks.ChangeUserTaskStatus);
+router.post('/CreateUserTask',authenticateToken,userTasks.CreateUserTask);
+
 //user pages
 router.get('/getMyPages',authenticateToken,myPagesController.getMyPageInfo);
 router.post('/postCreatePage',authenticateToken,myPagesController.postCreatePage);
@@ -89,7 +95,7 @@ router.get('/getPageAdmins',authenticateToken,myPagesController.getPageAdmins);
 router.post('/addNewAdmin',authenticateToken,myPagesController.addNewAdmin);
 router.get('/getPageJobs',authenticateToken,myPagesController.getPageJobs);
 router.post('/addNewJob',authenticateToken,myPagesController.addNewJob);
-
+router.post('/deleteAdmin',authenticateToken,myPagesController.deleteAdmin);
 // other Pages
 router.get('/getPageProfileInfo',authenticateToken,pagesProfile.getPageProfileInfo);
 router.post('/followPage',authenticateToken,pagesProfile.followPage);

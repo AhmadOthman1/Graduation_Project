@@ -52,8 +52,10 @@ const notifications =require('./models/notifications');
 const activeUsers =require('./models/activeUsers');
 const messages =require('./models/messages');
 const pageFollower =require('./models/pageFollower');
+const pageEmployees =require('./models/pageEmployees');
 const pageJobs =require('./models/pageJobs');
 const jobApplication =require('./models/jobApplication');
+const userTasks =require('./models/userTasks');
 
 
 //const queries =require('./models/queries.js');

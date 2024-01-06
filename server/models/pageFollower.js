@@ -14,19 +14,17 @@ const pageFollower = sequelize.define('pageFollower', {
     pageId: {
         type: Sequelize.STRING,
         allowNull: false,
-        primaryKey: true
     },
     username:{
         type:Sequelize.STRING,
         allowNull:false,
-        primaryKey:true
 
     },
 });
 
 // Define foreign key constraint
-pages.hasMany(pageFollower, { foreignKey: 'pageId', onDelete: 'CASCADE' });
-pageFollower.belongsTo(pages, { foreignKey: 'pageId', onDelete: 'CASCADE' });
-User.hasMany(pageFollower, { foreignKey: 'username', onDelete: 'CASCADE' });
-pageFollower.belongsTo(User, { foreignKey: 'username', onDelete: 'CASCADE' });
+pages.hasMany(pageFollower, { foreignKey: 'pageId', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
+pageFollower.belongsTo(pages, { foreignKey: 'pageId', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
+User.hasMany(pageFollower, { foreignKey: 'username', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
+pageFollower.belongsTo(User, { foreignKey: 'username', onDelete: 'CASCADE',onUpdate : 'CASCADE' });
 module.exports = pageFollower;

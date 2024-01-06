@@ -32,8 +32,8 @@ const WorkExperience = sequelize.define('workExperience', {
     type: Sequelize.DATE,
   },
 });
-User.hasMany(WorkExperience, { foreignKey: 'username', onDelete: 'CASCADE' });
-WorkExperience.belongsTo(User, { foreignKey: 'username', onDelete: 'CASCADE' });
+User.hasMany(WorkExperience, { foreignKey: 'username', onDelete: 'CASCADE',onUpdate : 'CASCADE' });
+WorkExperience.belongsTo(User, { foreignKey: 'username', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
 
 // Define foreign key constraint
 module.exports = WorkExperience;

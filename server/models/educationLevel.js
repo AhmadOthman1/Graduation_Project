@@ -33,7 +33,7 @@ const EducationLevel = sequelize.define('educationLevel', {
   },
 });
 
-User.hasMany(EducationLevel, { foreignKey: 'username', onDelete: 'CASCADE' });
-EducationLevel.belongsTo(User, { foreignKey: 'username', onDelete: 'CASCADE' });
+User.hasMany(EducationLevel, { foreignKey: 'username', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
+EducationLevel.belongsTo(User, { foreignKey: 'username', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
 // Define foreign key constraint
 module.exports = EducationLevel;

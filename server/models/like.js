@@ -18,13 +18,13 @@ const like = sequelize.define('like', {
 });
 
 
-post.hasMany(like, { foreignKey: 'postId', onDelete: 'CASCADE' });
-like.belongsTo(post, { foreignKey: 'postId', onDelete: 'CASCADE' });
+post.hasMany(like, { foreignKey: 'postId', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
+like.belongsTo(post, { foreignKey: 'postId', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
 
-User.hasMany(like, { foreignKey: 'username', onDelete: 'CASCADE' , onUpdate: 'CASCADE'});
-like.belongsTo(User, { foreignKey: 'username', onDelete: 'CASCADE' , onUpdate: 'CASCADE'});
+User.hasMany(like, { foreignKey: 'username', onDelete: 'CASCADE' , onUpdate: 'CASCADE',onUpdate : 'CASCADE'});
+like.belongsTo(User, { foreignKey: 'username', onDelete: 'CASCADE' , onUpdate: 'CASCADE',onUpdate : 'CASCADE'});
 
-Page.hasMany(like, { foreignKey: 'pageId', onDelete: 'CASCADE' , onUpdate: 'CASCADE'});
-like.belongsTo(Page, { foreignKey: 'pageId', onDelete: 'CASCADE' , onUpdate: 'CASCADE' });
+Page.hasMany(like, { foreignKey: 'pageId', onDelete: 'CASCADE' , onUpdate: 'CASCADE',onUpdate : 'CASCADE'});
+like.belongsTo(Page, { foreignKey: 'pageId', onDelete: 'CASCADE' , onUpdate: 'CASCADE' ,onUpdate : 'CASCADE'});
 
 module.exports = like;

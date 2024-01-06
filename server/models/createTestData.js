@@ -14,7 +14,7 @@ const pageFollower = require("./pageFollower");
 const bcrypt = require('bcrypt');
 const pageJobs = require('./pageJobs');
 const jobApplication = require('./jobApplication');
-
+const userTasks = require('./userTasks');
 var iLimit = 80;
 User.create({
     firstname: "Ahmad",
@@ -238,6 +238,34 @@ for (let i = 1; i < 20; i++) {
         jobApplication.create({
             pageJobId: i,
             username: "ahmad" + j,
-            note: j%3==0 ? null : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            note: j % 3 == 0 ? null : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         });
+}
+function getRandomDate(start, end) {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  }
+  
+  // Function to generate a random time
+  function getRandomTime() {
+    const hours = Math.floor(Math.random() * 24);
+    const minutes = Math.floor(Math.random() * 60);
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  }
+for (let i = 0; i < 80; i++) {
+    var s = ['ToDo', 'Doing', 'Done', 'Archived'];
+    const startDate = getRandomDate(new Date(2024, 1, 1), new Date(2023, 1, 6));
+    const endDate = getRandomDate(startDate, new Date(2024, 2, 1));
+    const startTime = getRandomTime();
+    const endTime = getRandomTime();
+
+    userTasks.create({
+        username: "AhmadOthman",
+        taskName: "task " + i,
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        status: s[i % 4],
+        startTime:startTime ,
+        startDate: startDate,
+        endTime: endTime,
+        endDate: endDate,
+    });
 }

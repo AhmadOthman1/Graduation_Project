@@ -25,6 +25,6 @@ const forgetPasswordCode=sequelize.define('forgetPasswordCode',{
     },
 
 });
-User.hasOne(forgetPasswordCode, { foreignKey: 'username', onDelete: 'CASCADE' });
+User.hasOne(forgetPasswordCode, { foreignKey: 'username', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
 
 module.exports=forgetPasswordCode;

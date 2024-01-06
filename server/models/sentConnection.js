@@ -24,9 +24,9 @@ const sentConnection=sequelize.define('sentConnection',{
     },
 });
 
-User.hasMany(sentConnection, { foreignKey: 'senderUsername', onDelete: 'CASCADE' });
-sentConnection.belongsTo(User, {  as: 'senderRUsername_FK',foreignKey: 'senderUsername', onDelete: 'CASCADE' });
-User.hasMany(sentConnection, {  foreignKey: 'receiverUsername', onDelete: 'CASCADE' });
-sentConnection.belongsTo(User, {  as: 'receiverRUsername_FK', foreignKey: 'receiverUsername', onDelete: 'CASCADE' });
+User.hasMany(sentConnection, { foreignKey: 'senderUsername', onDelete: 'CASCADE',onUpdate : 'CASCADE' });
+sentConnection.belongsTo(User, {  as: 'senderRUsername_FK',foreignKey: 'senderUsername', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
+User.hasMany(sentConnection, {  foreignKey: 'receiverUsername', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
+sentConnection.belongsTo(User, {  as: 'receiverRUsername_FK', foreignKey: 'receiverUsername', onDelete: 'CASCADE',onUpdate : 'CASCADE' });
 
 module.exports=sentConnection;

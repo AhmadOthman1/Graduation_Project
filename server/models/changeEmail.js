@@ -24,6 +24,6 @@ const changeEmail=sequelize.define('changeEmail',{
         allowNull:false
     },
 });
-User.hasOne(changeEmail, { foreignKey: 'username', onDelete: 'CASCADE' });
+User.hasOne(changeEmail, { foreignKey: 'username', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
 
 module.exports=changeEmail;

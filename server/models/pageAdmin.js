@@ -14,12 +14,10 @@ const pageAdmin = sequelize.define('pageAdmin', {
     pageId: {
         type: Sequelize.STRING,
         allowNull: false,
-        primaryKey: true
     },
     username:{
         type:Sequelize.STRING,
         allowNull:false,
-        primaryKey:true
 
     },
     adminType:{
@@ -28,8 +26,8 @@ const pageAdmin = sequelize.define('pageAdmin', {
 });
 
 // Define foreign key constraint
-pages.hasMany(pageAdmin, { foreignKey: 'pageId', onDelete: 'CASCADE' });
-pageAdmin.belongsTo(pages, { foreignKey: 'pageId', onDelete: 'CASCADE' });
-User.hasMany(pageAdmin, { foreignKey: 'username', onDelete: 'CASCADE' });
-pageAdmin.belongsTo(User, { foreignKey: 'username', onDelete: 'CASCADE' });
+pages.hasMany(pageAdmin, { foreignKey: 'pageId', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
+pageAdmin.belongsTo(pages, { foreignKey: 'pageId', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
+User.hasMany(pageAdmin, { foreignKey: 'username', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
+pageAdmin.belongsTo(User, { foreignKey: 'username', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
 module.exports = pageAdmin;
