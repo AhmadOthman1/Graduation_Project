@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/Groups_controller/Members_controller/AddMembers.dart';
+import 'package:growify/controller/home/Groups_controller/Members_controller/AddEmployeeMember_controller.dart';
+import 'package:growify/controller/home/Groups_controller/Members_controller/AddOtherMembers_controller.dart';
 import 'package:growify/controller/home/myPage_Controller/Employee_Controller/AddEmployee_controller.dart';
 import 'package:growify/core/functions/alertbox.dart';
 
-class AddMember extends StatefulWidget {
+class AddEmployeeMember extends StatefulWidget {
   final pageId;
 
-  const AddMember({Key? key, required this.pageId}) : super(key: key);
+  const AddEmployeeMember({Key? key, required this.pageId}) : super(key: key);
 
   @override
-  _AddMemberState createState() => _AddMemberState();
+  _AddEmployeeMemberState createState() => _AddEmployeeMemberState();
 }
 
-class _AddMemberState extends State<AddMember> {
-  late AddMembersController _controller;
+class _AddEmployeeMemberState extends State<AddEmployeeMember> {
+  late AddEmployeeMembersController _controller;
 
   TextEditingController _usernameController = TextEditingController();
   String? _selectedRole;
@@ -24,7 +25,7 @@ class _AddMemberState extends State<AddMember> {
   @override
   void initState() {
     super.initState();
-    _controller = AddMembersController();
+    _controller = AddEmployeeMembersController();
   }
 
   @override
@@ -36,13 +37,13 @@ class _AddMemberState extends State<AddMember> {
         child: Column(
           children: [
             Text(
-              'Add New Member',
+              'Add a member of the company\'s employees',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 25),
             Form(
               key: formKey,
               child: Column(
@@ -93,35 +94,45 @@ class _AddMemberState extends State<AddMember> {
                 ],
               ),
             ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () async {
-                if (formKey.currentState!.validate()) {
-                  if (_usernameController.text.trim().isNotEmpty &&
-                      _selectedRole != null) {
-                    var message = await _controller.addAdmin(
-                        widget.pageId,
-                        _usernameController.text.trim(),
-                        _selectedRole!);
-                    (message != null)
-                        ? showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return CustomAlertDialog(
-                                title: 'Error',
-                                icon: Icons.error,
-                                text: message,
-                                buttonText: 'OK',
-                                
-                              );
-                            },
-                          )
-                        : null;
-                        _usernameController.clear();
+            SizedBox(height: 30),
+            Container(
+              width: double.infinity,
+              child: MaterialButton(
+                onPressed: () async {
+                  if (formKey.currentState!.validate()) {
+                    if (_usernameController.text.trim().isNotEmpty &&
+                        _selectedRole != null) {
+                      var message = await _controller.addAdmin(
+                          widget.pageId,
+                          _usernameController.text.trim(),
+                          _selectedRole!);
+                      (message != null)
+                          ? showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CustomAlertDialog(
+                                  title: 'Error',
+                                  icon: Icons.error,
+                                  text: message,
+                                  buttonText: 'OK',
+                                  
+                                );
+                              },
+                            )
+                          : null;
+                          _usernameController.clear();
+                    }
                   }
-                }
-              },
-              child: Text('Add Member'),
+                },
+                color: const Color.fromARGB(255, 85, 191, 218),
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                child: Text('Add Member',
+                style: TextStyle(color: Colors.white, fontSize: 17),
+                ),
+              ),
             ),
           ],
         ),

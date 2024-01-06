@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Groups_controller/groups_controller.dart';
-import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/Groups/creategroup.dart';
 
 class GroupPage extends StatefulWidget {
   final pageId;
-  const GroupPage({Key? key, required this.pageId}) : super(key: key);
+  final groupsData;
+  const GroupPage({Key? key, required this.pageId, this.groupsData}) : super(key: key);
 
   @override
   _GroupPageState createState() => _GroupPageState();
@@ -14,72 +14,96 @@ class GroupPage extends StatefulWidget {
 
 class _GroupPageState extends State<GroupPage> {
   final GroupsController groupsController = GroupsController();
-  final double indentationPerLevel = 16.0;
+  late List<Map<String, dynamic>> groupsDatalocal;
+  late Map<String, bool> isExpandedMap;
 
   @override
   void initState() {
     super.initState();
-    dynamic result = groupsController.getPageAllGroup(widget.pageId);
 
-    Map<String, dynamic> userMap = {
-      'name': 'FrontEnd',
-      'username': 'member',
-      'photo': null,
-      'type': 'U'
-    };
-    groupsController.Groupmessages.assign(userMap);
+    groupsDatalocal = List<Map<String, dynamic>>.from(widget.groupsData);
+
+    isExpandedMap = {};
+
+    for (var groupData in groupsDatalocal) {
+      isExpandedMap[groupData['name']!] = false; // Change here
+    }
+
+   
   }
 
-  Color darkColor =
-      const Color.fromARGB(255, 116, 114, 114)!; // Dark color for parent groups
-  Color lightColor =
-      Colors.grey[200]!; // Light color for parent groups and child groups
+  Color darkColor = const Color.fromARGB(255, 116, 114, 114)!;
+  Color lightColor = Colors.grey[200]!;
 
-  Widget buildGroupTile(Group group, int level) {
-    Color backgroundColor = group.isExpanded ? lightColor : darkColor;
-    final AssetImage defaultProfileImage =
-        const AssetImage("images/profileImage.jpg");
+  bool isGroupExpanded(String groupName) { // Change here
+    return isExpandedMap[groupName] ?? false; // Change here
+  }
+
+  void setGroupExpanded(String groupName, bool isExpanded) { // Change here
+    isExpandedMap[groupName] = isExpanded; // Change here
+  }
+
+  Map<String, dynamic>? findGroupByName(String groupName) { // Change here
+    for (var groupData in groupsDatalocal) {
+      if (groupData['name'] == groupName) { // Change here
+        return groupData;
+      }
+    }
+    return null;
+  }
+
+  Widget buildGroupTile(Map<String, dynamic> groupData, int level) {
+    String groupName = groupData['name']!; // Change here
+    bool isGroupExpanded = isExpandedMap[groupName] ?? false; // Change here
+    Color backgroundColor = isGroupExpanded ? lightColor : darkColor;
 
     return Column(
       children: [
         Card(
           color: backgroundColor,
           child: ListTile(
-            title: Text(group.name),
-            subtitle: group.parentNode != null
-                ? Text("Parent Node: ${group.parentNode!.name}")
-                : null,
-            leading: InkWell(
+            title: InkWell(
               onTap: () {
+                 Map<String, dynamic> userMap = {
+          'name': groupData['name'],
+          'username': 'member',
+          'id':groupData['id'],
+          'pageId':widget.pageId
+      
+    };
+    groupsController.Groupmessages = <Map<String, dynamic>>[userMap].obs;
                 groupsController.goToGroupChatMessage();
-                
               },
-              child: CircleAvatar(
-                backgroundImage: (group.imagePath != null && group.imagePath != "")
-                    ? Image.network("$urlStarter/${group.imagePath}").image
-                    : defaultProfileImage,
+              child: Text(
+                groupName,
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
+            subtitle: groupData['parentNode'] != null
+                ? Text("Parent Node: ${findGroupByName(groupData['parentNode']!)!['name']}")
+                : null,
             trailing: InkWell(
               onTap: () {
-                // Toggle the expansion state
                 setState(() {
-                  group.isExpanded = !group.isExpanded;
+                  setGroupExpanded(groupName, !isGroupExpanded); // Change here
                 });
               },
               child: Icon(
-                group.isExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                size: 40.0, // Adjust the size as needed
+                isGroupExpanded
+                    ? Icons.arrow_drop_up
+                    : Icons.arrow_drop_down,
+                size: 40.0,
               ),
             ),
           ),
         ),
-        if (group.isExpanded)
+        if (isGroupExpanded)
           Column(
-            children: groupsController.groups
-                .where((subgroup) => subgroup.parentNode == group)
-                .map((subgroup) {
-              return buildGroupTile(subgroup, level + 1);
+            children: groupsDatalocal
+                .where((subgroupData) =>
+                    subgroupData['parentNode'] == groupName) // Change here
+                .map((subgroupData) {
+              return buildGroupTile(subgroupData, level + 1);
             }).toList(),
           ),
       ],
@@ -94,7 +118,6 @@ class _GroupPageState extends State<GroupPage> {
         actions: [
           TextButton(
             onPressed: () {
-              // Navigate to the create group page
               Get.to(CreateGroupPage());
             },
             child: Text(
@@ -110,15 +133,14 @@ class _GroupPageState extends State<GroupPage> {
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: 4),
         child: ListView.builder(
-          itemCount: groupsController.parentGroupNames.length,
+          itemCount: groupsDatalocal
+              .where((groupData) => groupData['parentNode'] == null)
+              .length,
           itemBuilder: (context, index) {
-            var parentGroupName = groupsController.parentGroupNames[index];
-            var parentGroup = groupsController.findGroupByName(parentGroupName);
-            if (parentGroup != null) {
-              return buildGroupTile(parentGroup, 0);
-            } else {
-              return SizedBox.shrink();
-            }
+            var parentGroupData = groupsDatalocal
+                .where((groupData) => groupData['parentNode'] == null)
+                .toList()[index];
+            return buildGroupTile(parentGroupData, 0);
           },
         ),
       ),

@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:growify/controller/home/Groups_controller/AdminsGroup_controller.dart/AdminsGroup_controller.dart';
 import 'package:growify/controller/home/Groups_controller/Members_controller/SHowMembers_controller.dart';
 import 'package:growify/controller/home/myPage_Controller/Admin_controller/ShowAdmin_controller.dart';
 import 'package:growify/controller/home/myPage_Controller/Employee_Controller/ShowEmployee_controller.dart';
 import 'package:growify/controller/home/network_controller/networdkmainpage_controller.dart';
 import 'package:growify/global.dart';
-import 'package:growify/view/screen/homescreen/Groups/Members/MemberType.dart';
+import 'package:growify/view/screen/homescreen/Groups/Admins/AddGroupAdmin.dart';
 import 'package:growify/view/screen/homescreen/myPage/Admins/SelectAdmin.dart';
 import 'package:growify/view/screen/homescreen/myPage/Employees/addEmployee.dart';
 
-class ShowMembers extends StatefulWidget {
+class GroupAdmins extends StatefulWidget {
   final pageId;
-  const ShowMembers({Key? key , required this.pageId}) : super(key: key);
+  const GroupAdmins({Key? key , required this.pageId}) : super(key: key);
 
   @override
-  _ShowMembersState createState() => _ShowMembersState();
+  _GroupAdminsState createState() => _GroupAdminsState();
 }
 
 final ScrollController scrollController = ScrollController();
 
-class _ShowMembersState extends State<ShowMembers> {
+class _GroupAdminsState extends State<GroupAdmins> {
   final NetworkMainPageControllerImp Networkcontroller = Get.put(NetworkMainPageControllerImp());
-  late ShowMembersController _controller;
+  late ShowGroupAdminsController _controller;
   final ScrollController _scrollController = ScrollController();
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
@@ -30,7 +31,7 @@ class _ShowMembersState extends State<ShowMembers> {
   @override
   void initState() {
     super.initState();
-    _controller = ShowMembersController();
+    _controller = ShowGroupAdminsController();
     _loadData();
     _scrollController.addListener(_scrollListener);
   }
@@ -73,9 +74,9 @@ class _ShowMembersState extends State<ShowMembers> {
       
       onPressed: () {
       
-       Get.off(MemberType(pageId:widget.pageId));
+       Get.off(AddGroupAdmin(pageId:widget.pageId));
       },
-      child: Text("Add Member",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
+      child: Text("Add Admin",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
     ),
    
   ],

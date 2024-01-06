@@ -236,7 +236,7 @@ class _PageProfileState extends State<PageProfile> {
         _buildDivider(10),
         InkWell(
           onTap: () {
-           Get.to(GroupPage(pageId : widget.userData.id));
+           controller.goToShowGroupPage(widget.userData.id);
           },
           child: Container(
             height: 35,

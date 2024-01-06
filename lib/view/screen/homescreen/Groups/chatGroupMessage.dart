@@ -8,6 +8,8 @@ import 'package:growify/controller/home/chats_controller/chatspage_cnotroller.da
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/resources/jitsi_meet.dart';
+import 'package:growify/view/screen/homescreen/Groups/CalendarGroup/calendargroup.dart';
+import 'package:growify/view/screen/homescreen/Groups/TrelloGroup/trellogroupmain.dart';
 import 'package:growify/view/screen/homescreen/Groups/settingGroupPage.dart';
 import 'package:growify/view/screen/homescreen/chat/CallScreen.dart';
 import 'package:growify/view/widget/homePage/chatmessage.dart';
@@ -461,7 +463,21 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                             },
                           ),
                           IconButton(
-                            icon: const Icon(Icons.apps ),
+                            icon: const Icon(Icons.calendar_today_rounded ),
+                            color: Colors.white,
+                            onPressed: () {
+                              Get.to(GroupCalender());
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.task ),
+                            color: Colors.white,
+                            onPressed: () {
+                              Get.to(GroupTrelloHomePage());
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.settings ),
                             color: Colors.white,
                             onPressed: () {
                               Get.to(GroupSettings());
