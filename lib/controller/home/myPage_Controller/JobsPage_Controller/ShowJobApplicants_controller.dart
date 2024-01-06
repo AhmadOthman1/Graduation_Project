@@ -11,7 +11,66 @@ import 'package:http/http.dart' as http;
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
+    class JobApplicant {
+  final String? image;
+  final String name;
+  final String username;
+  final String notes;
+  final String cvPath;
+
+  JobApplicant({
+    this.image,
+    required this.name,
+    required this.username,
+    required this.notes,
+    required this.cvPath,
+  });
+}
+
+class JobPost {
+  final String title;
+  final String company;
+  final String interest;
+  final String? image;
+  final String deadline;
+  final String content;
+  final List<JobApplicant> applicants;
+
+  JobPost({
+    required this.title,
+    required this.company,
+    required this.interest,
+    this.image,
+    required this.deadline,
+    required this.content,
+    required this.applicants,
+  });
+}
+
 class ShowJobApplicantsController {
+
+  final List<JobPost> jobPosts = [
+    JobPost(
+      title: "Software Engineer",
+      company: "Tech Co.",
+      interest: "Software Development",
+      image: null,
+      deadline: "2024-01-13",
+      content:
+          "We are looking for a skilled software engineer... We are looking for a skilled software engineer...We are looking for a skilled software engineer...We are looking for a skilled software engineer...",
+      applicants: [
+        JobApplicant(
+          image: null,
+          name: "Obaida Aws",
+          username: "@obaida_aws",
+          notes:
+              "I'm excited about this opportunity and believe my skills in software development make me a great fit. I have experience working on various projects and am eager to contribute to your team.",
+          cvPath: "cv_file_path",
+        ),
+      ],
+    ),
+  ];
+  
   final List<Map<String, dynamic>> jobs = [];
   final ScrollController scrollController = ScrollController();
   bool isLoading = false;

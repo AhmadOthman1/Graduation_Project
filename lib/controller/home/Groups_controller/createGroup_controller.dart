@@ -2,74 +2,54 @@ import 'package:get/get.dart';
 import 'package:growify/view/screen/homescreen/Groups/chatGroupMessage.dart';
 
 class Group {
-  String id;
   String name;
-  String? description;
   String? imagePath;
+  String id;
+  String? description;
   Group? parentNode;
   bool isExpanded;
 
   Group({
-    required this.id,
     required this.name,
-    this.description,
     this.imagePath,
+    required this.id,
+    this.description,
     this.parentNode,
     this.isExpanded = false,
   });
 }
 
-class GroupsController {
+class CreateGroupsController {
   late RxList<Map<String, dynamic>> Groupmessages = <Map<String, dynamic>>[].obs;
 
-  getPageAllGroup(String pageId) {
-    // Your implementation for fetching groups based on pageId
-  }
+  getPageAllGroup(String pageId) {}
 
   goToGroupChatMessage() async {
     print("Hamassssssssss");
     print(Groupmessages);
     print("Hamassssssssss");
-    Get.to(GroupChatPageMessages(
-      data: Groupmessages[0],
-    ));
+    Get.to(GroupChatPageMessages(data: Groupmessages[0]));
   }
 
   List<Group> groups = [];
 
-  GroupsController() {
+  CreateGroupsController() {
     Group mainGroup = Group(
-      id: "1", 
       name: "Main Group",
       imagePath: null,
+      id: "1",
     );
+
+    setParentNode(mainGroup, null);
     groups.add(mainGroup);
+  }
 
-    Group parentGroup1 = Group(
-      id: "2", 
-      name: "Parent Group 1",
-      imagePath: null,
-      parentNode: mainGroup,
-    );
-    groups.add(parentGroup1);
+  void setParentNode(Group group, Group? parentNode) {
+    group.parentNode = parentNode;
+  }
 
-    Group subgroup1_1 = Group(
-      id: "3", 
-      name: "Subgroup 1.1",
-      imagePath: null,
-      parentNode: parentGroup1,
-    );
-    groups.add(subgroup1_1);
-
-    Group subgroup1_2 = Group(
-      id: "4", 
-      name: "Subgroup 1.2",
-      imagePath: null,
-      parentNode: parentGroup1,
-    );
-    groups.add(subgroup1_2);
-
-    
+  void addGroup(Group newGroup) {
+    groups.add(newGroup);
   }
 
   List<String> get parentGroupNames {

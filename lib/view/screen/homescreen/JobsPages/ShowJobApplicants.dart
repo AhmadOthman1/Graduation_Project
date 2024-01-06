@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -9,42 +10,6 @@ import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/Sh
 import 'package:growify/global.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class JobApplicant {
-  final String? image;
-  final String name;
-  final String username;
-  final String notes;
-  final String cvPath;
-
-  JobApplicant({
-    this.image,
-    required this.name,
-    required this.username,
-    required this.notes,
-    required this.cvPath,
-  });
-}
-
-class JobPost {
-  final String title;
-  final String company;
-  final String interest;
-  final String? image;
-  final String deadline;
-  final String content;
-  final List<JobApplicant> applicants;
-
-  JobPost({
-    required this.title,
-    required this.company,
-    required this.interest,
-    this.image,
-    required this.deadline,
-    required this.content,
-    required this.applicants,
-  });
-}
-
 class ShowJobApplicants extends StatefulWidget {
   @override
   _ShowJobApplicantsState createState() => _ShowJobApplicantsState();
@@ -53,8 +18,7 @@ class ShowJobApplicants extends StatefulWidget {
 class _ShowJobApplicantsState extends State<ShowJobApplicants> {
   late ShowJobApplicantsController _controller;
   final ScrollController _scrollController = ScrollController();
-  final AssetImage defaultProfileImage =
-      const AssetImage("images/profileImage.jpg");
+  final AssetImage defaultProfileImage = const AssetImage("images/profileImage.jpg");
   final SearchControllerImp searchController = Get.put(SearchControllerImp());
 
   @override
@@ -71,7 +35,7 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
       await _controller.loadPageJobs(_controller.page, 1);
       setState(() {
         _controller.page++;
-        _controller.jobs;
+        // _controller.jobs; // This line doesn't seem to do anything, so I commented it out
       });
       print('Data loaded: ${_controller.jobs.length} jobs');
     } catch (error) {
@@ -80,8 +44,7 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
   }
 
   void _scrollListener() {
-    if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
+    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       // reached the bottom, load more notifications
       _loadData();
@@ -93,28 +56,8 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
     _scrollController.dispose();
     super.dispose();
   }
-// get data from data base instead of this list
-  final List<JobPost> jobPosts = [
-    JobPost(
-      title: "Software Engineer",
-      company: "Tech Co.",
-      interest: "Software Development",
-      image: null,
-      deadline: "2024-01-13",
-      content:
-          "We are looking for a skilled software engineer... We are looking for a skilled software engineer...We are looking for a skilled software engineer...We are looking for a skilled software engineer...",
-      applicants: [
-        JobApplicant(
-          image: null,
-          name: "Obaida Aws",
-          username: "@obaida_aws",
-          notes:
-              "I'm excited about this opportunity and believe my skills in software development make me a great fit. I have experience working on various projects and am eager to contribute to your team.",
-          cvPath: "cv_file_path",
-        ),
-      ],
-    ),
-  ];
+
+  // get data from data base instead of this list
 
   Future download(String url, String filename) async {
     var savePath = '/storage/emulated/0/Download/$filename';
@@ -147,20 +90,25 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            JobPostCard(jobPost: jobPosts[0]),
+            // Use ListView.builder to display all job posts dynamically
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: _controller.jobPosts.length,
+              itemBuilder: (context, index) {
+                return JobPostCard(jobPost: _controller.jobPosts[index]);
+              },
+            ),
             SizedBox(height: 16),
             Text(
               'Applicants:',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
-            ...jobPosts[0].applicants.map((applicant) {
+            ..._controller.jobPosts[0].applicants.map((applicant) {
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: (applicant.image != null &&
-                          applicant.image != "")
-                      ? Image.network("$urlStarter/${applicant.image}")
-                          .image
+                  backgroundImage: (applicant.image != null && applicant.image != "")
+                      ? Image.network("$urlStarter/${applicant.image}").image
                       : defaultProfileImage,
                 ),
                 title: Text(applicant.name),
@@ -175,7 +123,7 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
                   ),
                 ),
                 onTap: () {
-                  //go to his profile
+                  // go to his profile
                 },
               );
             }).toList(),
@@ -186,8 +134,7 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
     );
   }
 
-  void _showApplicantDetails(
-      BuildContext context, JobApplicant applicant) {
+  void _showApplicantDetails(BuildContext context, JobApplicant applicant) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -198,10 +145,8 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
             children: [
               ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: (applicant.image != null &&
-                          applicant.image != "")
-                      ? Image.network("$urlStarter/${applicant.image}")
-                          .image
+                  backgroundImage: (applicant.image != null && applicant.image != "")
+                      ? Image.network("$urlStarter/${applicant.image}").image
                       : defaultProfileImage,
                 ),
                 title: Text(applicant.name),
@@ -254,8 +199,7 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
 
 class JobPostCard extends StatelessWidget {
   final JobPost jobPost;
-  final AssetImage defaultProfileImage =
-      const AssetImage("images/profileImage.jpg");
+  final AssetImage defaultProfileImage = const AssetImage("images/profileImage.jpg");
 
   JobPostCard({required this.jobPost});
 

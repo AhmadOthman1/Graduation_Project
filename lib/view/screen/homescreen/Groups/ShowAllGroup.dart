@@ -5,6 +5,9 @@ import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/Groups/creategroup.dart';
 
 class GroupPage extends StatefulWidget {
+  final pageId;
+  const GroupPage({Key? key, required this.pageId}) : super(key: key);
+
   @override
   _GroupPageState createState() => _GroupPageState();
 }
@@ -16,6 +19,8 @@ class _GroupPageState extends State<GroupPage> {
   @override
   void initState() {
     super.initState();
+    dynamic result = groupsController.getPageAllGroup(widget.pageId);
+
     Map<String, dynamic> userMap = {
       'name': 'FrontEnd',
       'username': 'member',
@@ -25,8 +30,8 @@ class _GroupPageState extends State<GroupPage> {
     groupsController.Groupmessages.assign(userMap);
   }
 
-  Color darkColor = const Color.fromARGB(
-      255, 116, 114, 114)!; // Dark color for parent groups and child groups
+  Color darkColor =
+      const Color.fromARGB(255, 116, 114, 114)!; // Dark color for parent groups
   Color lightColor =
       Colors.grey[200]!; // Light color for parent groups and child groups
 
@@ -46,19 +51,18 @@ class _GroupPageState extends State<GroupPage> {
                 : null,
             leading: InkWell(
               onTap: () {
-                //go to chat group
                 groupsController.goToGroupChatMessage();
-                print("Enterd into chat");
+                
               },
               child: CircleAvatar(
-                backgroundImage:
-                    (group.imagePath != null && group.imagePath != "")
-                        ? Image.network("$urlStarter/${group.imagePath}").image
-                        : defaultProfileImage,
+                backgroundImage: (group.imagePath != null && group.imagePath != "")
+                    ? Image.network("$urlStarter/${group.imagePath}").image
+                    : defaultProfileImage,
               ),
             ),
             trailing: InkWell(
               onTap: () {
+                // Toggle the expansion state
                 setState(() {
                   group.isExpanded = !group.isExpanded;
                 });
@@ -70,17 +74,12 @@ class _GroupPageState extends State<GroupPage> {
             ),
           ),
         ),
-        if (group.isExpanded && group.subgroups.isNotEmpty)
-          Container(
-            margin: EdgeInsets.only(
-                left: indentationPerLevel * level, right: 8, bottom: 10),
-            height: 2.0,
-            color: Colors.black, // Adjust the color as needed
-          ),
-        if (group.isExpanded && group.subgroups.isNotEmpty)
+        if (group.isExpanded)
           Column(
-            children: group.subgroups.asMap().entries.map((entry) {
-              return buildGroupTile(entry.value, level + 1);
+            children: groupsController.groups
+                .where((subgroup) => subgroup.parentNode == group)
+                .map((subgroup) {
+              return buildGroupTile(subgroup, level + 1);
             }).toList(),
           ),
       ],
@@ -111,9 +110,15 @@ class _GroupPageState extends State<GroupPage> {
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: 4),
         child: ListView.builder(
-          itemCount: groupsController.groups.length,
+          itemCount: groupsController.parentGroupNames.length,
           itemBuilder: (context, index) {
-            return buildGroupTile(groupsController.groups[index], 0);
+            var parentGroupName = groupsController.parentGroupNames[index];
+            var parentGroup = groupsController.findGroupByName(parentGroupName);
+            if (parentGroup != null) {
+              return buildGroupTile(parentGroup, 0);
+            } else {
+              return SizedBox.shrink();
+            }
           },
         ),
       ),

@@ -39,7 +39,7 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
     var photo;
 
     if (isPage == true && isAdmin == true) {
-      photo = args['photo'] ?? "";
+      photo = GetStorage().read("photopage");
     } else {
       photo = GetStorage().read("photo");
     }
