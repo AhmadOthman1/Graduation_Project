@@ -8,8 +8,13 @@ const moment = require('moment');
 //refresh clint mab every time server run
 exports.populateClientsMap = async () => {
   try {
+    clientsMap.clear();
+    clientsMap = new Map();
     const activeUsersList = await activeUsers.findAll();
+    console.log(activeUsersList)
     activeUsersList.forEach(user => {
+      console.log(user.username)
+      console.log("================================")
       const username = user.username;
       clientsMap.set(username, []);
     });
@@ -27,7 +32,21 @@ exports.getevents = async (req, res) => {
 }
 //open sse connection and handel notifications
 exports.getNotifications = async (req, res) => {
-  const username = req.headers['username'];
+  const username = req.user.username;
+  console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+
+  const isClosedHeaderIndex = req.rawHeaders.indexOf('isclosed');
+  if (isClosedHeaderIndex !== -1) {
+
+    const isClosedValue = req.rawHeaders[isClosedHeaderIndex + 1];
+    if (isClosedValue == 'true') {
+      clientsMap.delete(username);
+      return res.status(200).json({
+        message: 'Closed',
+      });
+    }
+  }
+  console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
@@ -40,28 +59,20 @@ exports.getNotifications = async (req, res) => {
     },
   });
   if (existingUser) {
-    var user = await activeUsers.findOne({
-      where: {
-      username: username,
-      },
-    });
-    if (!user) {
-      await activeUsers.create({
-        username: username,
-      });
-    }
-    
+
+
     if (!clientsMap.get(username)) {
       clientsMap.set(username, []);
     }
-    const clients = clientsMap.get(username) || [];
+    const clients = [];
     clients.push(res);
     clientsMap.set(username, clients);
-    console.log("??????????????????????????????????????????");
-    console.log(clientsMap);
+    console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
     if (!clientsMap.has('_intervalId')) {
       // Set the initial interval
       const intervalId = setInterval(async () => {
+        console.log("??????????????????????????????????????????");
+        console.log(clientsMap);
         // Fetch new notifications after the current timestamp
         const newNotifications = await notifications.findAll({
           where: {
@@ -76,7 +87,7 @@ exports.getNotifications = async (req, res) => {
 
         // New notifications sent to the users
         newNotifications.forEach(async (notification) => {
-          const {id, username, notificationType, notificationContent, notificationPointer, createdAt } = notification;
+          const { id, username, notificationType, notificationContent, notificationPointer, createdAt } = notification;
           var createdat = moment(createdAt).format('YYYY-MM-DD HH:mm:ss')
           const notificationData = {
             id,
@@ -86,67 +97,63 @@ exports.getNotifications = async (req, res) => {
             notificationPointer,
             createdat,
           };
-          const userClients = clientsMap.get(username) || [];
-          userClients.forEach(async (client) => {
-            // Write the notification data to the client
-            client.write(`data: ${JSON.stringify(notificationData)}\n\n`);
-          });
+          var userClients = clientsMap.get(username) || [];
+          if (userClients != null && userClients != [])
+            userClients.forEach(async (client) => {
+              // Write the notification data to the client
+              console.log(":;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;");
+              console.log(userClients);
+              console.log(":;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;");
+              client.write(`data: ${JSON.stringify(notificationData)}\n\n`);
+            });
+          userClients = null;
         });
       }, 1000);
 
       // Store the intervalId in the clientsMap
       clientsMap.set('_intervalId', intervalId);
     }
-    /*
-    const intervalId = setInterval(async () => {
 
-      // Fetch new notifications after the current timestamp
-      const newNotifications = await notifications.findAll({
-        where: {
-          createdAt: {
-            [Sequelize.Op.gt]: new Date(new Date() - 1000),//duplicate notification if the same as time interval
-          },
-        },
-      });
-      console.log("''''''''''''''''''''''''''''''''''''''");
-      console.log(newNotifications);
-      //  new notifications sent to the users
-      newNotifications.forEach(async (notification) => {
-        const { username, notificationType, notificationContent, notificationPointer ,createdAt } = notification;
-        const notificationData = {
-          username,
-          notificationType,
-          notificationContent,
-          notificationPointer,
-          createdAt,
-        };
-        const clients = clientsMap.get(username) || [];
-        clients.forEach(async (client) => {
-          // Write the notification data to the client
-          client.write(`data: ${JSON.stringify(notificationData)}\n\n`);
-        });
-      });
-    }, 1000);
-    */
-    // Handle client disconnect
-    req.on('close', async () => {
-      const remainingClients = (clientsMap.get(username) || []).filter(client => client !== res);
-      clientsMap.set(username, remainingClients);
-      var user = await activeUsers.findOne({
-        username: username,
-      });
-      if(user){
-        user.destroy();
-      }
-      
-      //clearInterval(intervalId);
-    });
+
+
 
   }
-  // Store the response object for later use
 
 };
+exports.closeNotifications = async (username) => {
+  console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+  console.log(clientsMap)
+  console.log(username)
+  // Check if the user is in the map and has no remaining clients
+  for (const key of clientsMap.keys()) {
+    console.log(key);
+    console.log(";;;;;;;;;;;;;;;;;;;;;");
+    if (key == username) {
+      // Remove the user from the map
+      clientsMap.delete(username);
+      console.log(clientsMap);
+      console.log("ooooooooooooooooooooooooooooooooooooo");
+      // Clear the interval for this user if it exists
+      const intervalId = clientsMap.get('_intervalId');
+      if (intervalId) {
+        clearInterval(intervalId);
+        clientsMap.delete('_intervalId');
+      }
 
+      // Optionally, clean up any other resources related to the user
+      var user = await activeUsers.findOne({
+        where: {
+          username: username,
+        },
+      });
+      if (user != null) {
+        user.destroy();
+      }
+      return true;
+    }
+  }
+  return false;
+};
 
 /*
 exports.getNotifications = async (req, res) => {
@@ -217,7 +224,7 @@ exports.deleteNotificaion = async (username, notification) => {
     username: username,
   });
   if (user) {
-    var deletenotifications= await notifications.findOne({
+    var deletenotifications = await notifications.findOne({
       where: {
         username: username,
         notificationType: notification.notificationType,
@@ -225,7 +232,7 @@ exports.deleteNotificaion = async (username, notification) => {
         notificationPointer: notification.notificationPointer,
       }
     });
-    if(deletenotifications){
+    if (deletenotifications) {
       await deletenotifications.destroy();
     }
     return true;

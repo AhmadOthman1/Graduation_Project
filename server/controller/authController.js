@@ -56,7 +56,7 @@ function getRefreshToken(req, res, next) {
       },
     });
     if (existingEmail!=null) {
-      if (existingEmail.token != refreshToken) return res.status(403).json({
+      if (existingEmail.token != refreshToken) return res.status(401).json({
         message: 'server Error',
         body: req.body
       });
@@ -64,7 +64,7 @@ function getRefreshToken(req, res, next) {
       const accessToken = generateAccessToken(userInfo);
       res.json({ accessToken: accessToken })
     } else {
-      return res.status(403).json({
+      return res.status(401).json({
         message: 'server Error',
         body: req.body
       });

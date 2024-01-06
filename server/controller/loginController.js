@@ -8,6 +8,7 @@ const moment = require('moment');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const auth = require('./authController')
+const activeUsers = require("../models/activeUsers");
 
 
 
@@ -47,6 +48,16 @@ exports.postLogin = async (req, res, next) => {
             const result = await User.update({ token: refreshToken }, { where: { email } });
             console.log(accessToken)
             console.log(refreshToken)
+            var user = await activeUsers.findOne({
+                where: {
+                  username: existingEmail.username,
+                },
+              });
+              if (!user) {
+                await activeUsers.create({
+                  username: existingEmail.username,
+                });
+              }
             return res.status(200).json({
                 message: 'logged',
                 accessToken: accessToken,

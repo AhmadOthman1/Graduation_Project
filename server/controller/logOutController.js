@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const activeUsers = require('../models/activeUsers');
+const {closeNotifications} = require('../controller/notifications')
 
 
 exports.postLogOut = async (req, res, next) => {
@@ -34,11 +35,11 @@ exports.postLogOut = async (req, res, next) => {
             });
 
           }
+            return res.status(200).json({
+              message: 'logged out',
+              body: req.body
+          });
           
-          return res.status(200).json({
-            message: 'logged out',
-            body: req.body
-        });
     } else {
         return res.status(409).json({
             message: 'Email not exists',

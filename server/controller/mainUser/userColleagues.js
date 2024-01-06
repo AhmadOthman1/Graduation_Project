@@ -48,7 +48,7 @@ exports.getUserColleagues = async (req, res, next) => {
                             where: {
                                 username: connection.senderUsername,
                             },
-                            attributes: ['username', 'firstname', 'lastname', 'photo'], 
+                            attributes: ['username', 'firstname', 'lastname', 'photo'],
                         });
                     }
                     if (connection.receiverUsername != userUsername) {
@@ -57,7 +57,7 @@ exports.getUserColleagues = async (req, res, next) => {
                             where: {
                                 username: connection.receiverUsername,
                             },
-                            attributes: ['username', 'firstname', 'lastname', 'photo'], 
+                            attributes: ['username', 'firstname', 'lastname', 'photo'],
                         });
                     }
                     return {
@@ -66,7 +66,7 @@ exports.getUserColleagues = async (req, res, next) => {
                     };
                 })
             );
-            const filteredConnectionsWithUserInfo= connectionsWithUserInfo.filter(
+            const filteredConnectionsWithUserInfo = connectionsWithUserInfo.filter(
                 (item) => item !== null && item !== undefined
             );
             const responseData = {
@@ -108,18 +108,10 @@ exports.getUserRequestsReceived = async (req, res, next) => {
         if (userExists != null) {
             var userConnectionsRequestsReceived = await sentConnection.findAll({
                 where: {
-                    [Op.or]: [
-                        {
-                           receiverUsername: {
-                                [Op.eq]: userUsername,
-                            },
-                        },
-                        {
-                            senderUsername: {
-                                [Op.not]: userUsername,
-                            },
-                        },
-                    ],
+
+                    receiverUsername:
+                        userUsername,
+
                 },
                 limit: parseInt(pageSize),
                 offset: parseInt(offset),
@@ -133,20 +125,20 @@ exports.getUserRequestsReceived = async (req, res, next) => {
                             where: {
                                 username: Request.senderUsername,
                             },
-                            attributes: ['username', 'firstname', 'lastname', 'photo'], 
+                            attributes: ['username', 'firstname', 'lastname', 'photo'],
                         });
                         return {
                             senderUser,
                         };
                     }
-                    
-                    
+
+
                 })
             );
             const filteredRequestsReceivedWithUserInfo = RequestsReceivedWithUserInfo.filter(
-                (item) => item !== null&& item !== undefined
+                (item) => item !== null && item !== undefined
             );
-    
+
             const responseData = {
                 userConnectionsRequestsReceived: filteredRequestsReceivedWithUserInfo,
             };
@@ -186,24 +178,14 @@ exports.getUserRequestsSent = async (req, res, next) => {
         if (userExists != null) {
             var userConnectionsRequestsSent = await sentConnection.findAll({
                 where: {
-                    [Op.or]: [
-                        {
-                            senderUsername: {
-                                [Op.eq]: userUsername,
-                            },
-                        },
-                        {
-                            receiverUsername: {
-                                [Op.not]: userUsername,
-                            },
-                        },
-                    ],
+                    senderUsername:
+                        userUsername,
                 },
                 limit: parseInt(pageSize),
                 offset: parseInt(offset),
                 order: [['createdAt', 'DESC']],
             });
-            
+            console.log(userConnectionsRequestsSent)
             const RequestsSentWithUserInfo = await Promise.all(
                 userConnectionsRequestsSent.map(async (Request) => {
                     var receiverUser;
@@ -212,21 +194,21 @@ exports.getUserRequestsSent = async (req, res, next) => {
                             where: {
                                 username: Request.receiverUsername,
                             },
-                            attributes: ['username', 'firstname', 'lastname', 'photo'], 
+                            attributes: ['username', 'firstname', 'lastname', 'photo'],
                         });
                         return {
                             receiverUser,
                         };
                     }
-                    
-                    
+
+
                 })
             );
             console.log(RequestsSentWithUserInfo);
             const filteredRequestsSentWithUserInfo = RequestsSentWithUserInfo.filter(
-                (item) => item !== null&& item !== undefined
+                (item) => item !== null && item !== undefined
             );
-    
+
             const responseData = {
                 userConnectionsRequestsSent: filteredRequestsSentWithUserInfo,
             };

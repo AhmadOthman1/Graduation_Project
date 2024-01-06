@@ -26,6 +26,7 @@ app.use(express.static('images'));
 app.use(express.static('cvs'));
 
 app.use('/userNotifications', userRoutes);
+
 populateClientsMap();
 
 
@@ -70,7 +71,20 @@ io.on("connection", (socket) => {// first time socket connection
       console.log(msg.message);
       console.log(msg.messageVideoBytes);//messageVideoBytes
       if (msg.message != null || msg.messageImageBytes != null || msg.messageVideoBytes != null) {
-        const decoded = jwt.verify(authHeader, process.env.ACCESS_TOKEN_SECRET);
+        var decoded;
+        try {
+          decoded = jwt.verify(authHeader, process.env.ACCESS_TOKEN_SECRET);
+        } catch (err) {
+          socket.emit("/chatStatus", {
+            "status": 403,
+            "message": msg.message,
+            "username": msg.username,
+            "username": msg.username,
+            "messageImageBytes": msg.messageImageBytes,
+            "messageImageBytesName": msg.messageImageBytesName,
+            "messageImageExt": msg.messageImageExt,
+          });
+        }
         var userUsername = decoded.username;
         var messageImageName;
         var messageVideoName;
@@ -89,8 +103,9 @@ io.on("connection", (socket) => {// first time socket connection
         //if target user is in message page send it via his socket
         if (targetSocket) {
           console.log(msg.message);
-          targetSocket.emit("/chat", { message: msg.message, image: messageImageName, video: messageVideoName, date: new Date() });
+          targetSocket.emit("/chat", {sender: userUsername,  message: msg.message, image: messageImageName, video: messageVideoName, date: new Date() });
         } else {
+          console.log(username)
           const notification = {
             username: username,
             notificationType: 'message', // Type of notifications
@@ -130,12 +145,14 @@ io.on("connection", (socket) => {// first time socket connection
   socket.on("makeCall", async (data) => {
     let calleeId = data.calleeId;
     let sdpOffer = data.sdpOffer;
+    let photo = data.photo;
     var userUsername = data.callerId;
     const targetSocket = socketUsernameMap[calleeId];
     if (targetSocket) {//if other user's socket is open
       targetSocket.emit("newCall", {
         callerId: userUsername,
         sdpOffer: sdpOffer,
+        photo:photo,
       });
     } else {//send a notification
       callsUsernameMap[calleeId] = { userUsername, sdpOffer };

@@ -30,7 +30,7 @@ exports.getUserNotifications = async (req, res, next) => {
                 order: [['createdAt', 'DESC']],
               });
               const fullNotificationsBody = await Promise.all(userNotifications.map(async (notification) => {
-                if(notification.notificationType == "connection" || notification.notificationType == "call"){
+                if(notification.notificationType == "connection" || notification.notificationType == "call"|| notification.notificationType == "message"){
                     const user = await User.findOne({
                         where: {
                             username: notification.notificationPointer
