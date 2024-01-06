@@ -12,13 +12,13 @@ LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
 class ShowEmployeesController {
-  final List<Map<String, dynamic>> admins = [];
+  final List<Map<String, dynamic>> employees = [];
   final ScrollController scrollController = ScrollController();
   bool isLoading = false;
   int pageSize = 10;
   int page = 1;
 
-  getPageAdmins(int page,String pageId) async {
+  getPageEmployees(int page,String pageId) async {
     
     var url =
         "$urlStarter/user/getPageAdmins?page=$page&pageSize=$pageSize&pageId=$pageId";
@@ -29,17 +29,17 @@ class ShowEmployeesController {
     return response;
   }
 
-  Future<void> loadAdmins(page,String pageId) async {
+  Future<void> loadEmployees(page,String pageId) async {
     if (isLoading) {
       return;
     }
     
     isLoading = true;
-    var response = await getPageAdmins(page,pageId);
+    var response = await getPageEmployees(page,pageId);
     print(response.statusCode);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      loadAdmins(page,pageId);
+      loadEmployees(page,pageId);
       return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -53,24 +53,24 @@ class ShowEmployeesController {
       
       
       var responseBody = jsonDecode(response.body);
-      final List<dynamic>? pageAdmins = responseBody["pageAdmins"];
-      print(pageAdmins);
+      final List<dynamic>? pageEmployees = responseBody["pageEmployees"];
+      print(pageEmployees);
       print(";;;;;;;;;;;;;;;;;;;;;");
-      if (pageAdmins != null) {
-        final admin = pageAdmins.map((pageAdmins) {
+      if (pageEmployees != null) {
+        final employee = pageEmployees.map((pageEmployees) {
           return {
-            'id': pageAdmins['id'],
-            'pageId': pageAdmins['pageId'],
-            'username': pageAdmins['username'],
-            'firstname': pageAdmins['firstname'],
-            'lastname': pageAdmins['lastname'],
-            'adminType': pageAdmins['adminType'],
-            'photo': pageAdmins['photo'],
-            'date': pageAdmins['createdAt'],
+            'id': pageEmployees['id'],
+            'pageId': pageEmployees['pageId'],
+            'username': pageEmployees['username'],
+            'firstname': pageEmployees['firstname'],
+            'lastname': pageEmployees['lastname'],
+            'adminType': pageEmployees['employeeField'],
+            'photo': pageEmployees['photo'],
+            'date': pageEmployees['createdAt'],
           };
         }).toList();
 
-        admins.addAll(admin);
+        employees.addAll(employee);
         
       }
 

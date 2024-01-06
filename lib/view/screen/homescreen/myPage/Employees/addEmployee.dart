@@ -16,7 +16,8 @@ class _AddEmployeeState extends State<AddEmployee> {
   late AddEmployeeController _controller;
 
   TextEditingController _usernameController = TextEditingController();
-  String? _selectedRole;
+  TextEditingController _filedController = TextEditingController();
+  
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -69,58 +70,74 @@ class _AddEmployeeState extends State<AddEmployee> {
                     },
                   ),
                   SizedBox(height: 16),
-                /*  DropdownButtonFormField<String>(
-                    value: _selectedRole,
+
+                   TextFormField(
+                    controller: _filedController,
                     decoration: InputDecoration(
-                      labelText: "Select Role",
+                      hintText: "Enter Your Field",
+                      hintStyle: const TextStyle(
+                        fontSize: 14,
+                      ),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 30),
+                      labelText: "Field",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    items: ["Admin", "Publisher"]
-                        .map((role) => DropdownMenuItem(
-                              value: role,
-                              child: Text(role),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedRole = value;
-                      });
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a Username';
+                      }
+                      return null;
                     },
-                  ),*/
+                  ),
+                  SizedBox(height: 16),
+                
                 ],
               ),
             ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () async {
-                if (formKey.currentState!.validate()) {
-                  if (_usernameController.text.trim().isNotEmpty &&
-                      _selectedRole != null) {
-                    var message = await _controller.addAdmin(
-                        widget.pageId,
-                        _usernameController.text.trim(),
-                        _selectedRole!);
-                    (message != null)
-                        ? showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return CustomAlertDialog(
-                                title: 'Error',
-                                icon: Icons.error,
-                                text: message,
-                                buttonText: 'OK',
-                                
-                              );
-                            },
-                          )
-                        : null;
-                        _usernameController.clear();
+            SizedBox(height: 30),
+            Container(
+              width: double.infinity,
+              child: MaterialButton(
+                color: const Color.fromARGB(255, 85, 191, 218),
+                onPressed: () async {
+                  if (formKey.currentState!.validate()) {
+                    if (_usernameController.text.trim().isNotEmpty &&_filedController.text.trim().isNotEmpty) {
+                      var message = await _controller.addEmployee(
+                          widget.pageId,
+                          _usernameController.text.trim(),
+                           _filedController.text.trim(),);
+                      (message != null)
+                          ? showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CustomAlertDialog(
+                                  title: 'Error',
+                                  icon: Icons.error,
+                                  text: message,
+                                  buttonText: 'OK',
+                                  
+                                );
+                              },
+                            )
+                          : null;
+                          _usernameController.clear();
+                          _filedController.clear();
+
+                    }
                   }
-                }
-              },
-              child: Text('Add Employee'),
+                },
+                child: Text('Add Employee',
+                style: TextStyle(color: Colors.white, fontSize: 17)
+                ),
+                 elevation: 2,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+              ),
             ),
           ],
         ),

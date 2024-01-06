@@ -36,12 +36,12 @@ class _ShowEmployeesState extends State<ShowEmployees> {
   Future<void> _loadData() async {
     print('Loading data...');
     try {
-      await _controller.loadAdmins(_controller.page,widget.pageId);
+      await _controller.loadEmployees(_controller.page,widget.pageId);
       setState(() {
         _controller.page++;
-        _controller.admins;
+        _controller.employees;
       });
-      print('Data loaded: ${_controller.admins.length} admins');
+      print('Data loaded: ${_controller.employees.length} employees');
     } catch (error) {
       print('Error loading data: $error');
     }
@@ -88,13 +88,13 @@ class _ShowEmployeesState extends State<ShowEmployees> {
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
-              itemCount: _controller.admins.length,
+              itemCount: _controller.employees.length,
               itemBuilder: (context, index) {
-                final admin = _controller.admins[index];
-                final firstname=admin['firstname'];
-                final lastname =admin['lastname'];
-                final username =admin['username'];
-                final adminType =admin['adminType'];
+                final employee = _controller.employees[index];
+                final firstname=employee['firstname'];
+                final lastname =employee['lastname'];
+                final username =employee['username'];
+                final employeeFiled =employee['employeeField'];
                 
                 return Column(
                   children: [
@@ -105,13 +105,13 @@ class _ShowEmployeesState extends State<ShowEmployees> {
                         
                       },
                       trailing: CircleAvatar(
-                        backgroundImage: (admin['photo'] != null &&
-                                admin['photo'] != "")
-                            ? Image.network("$urlStarter/" + admin['photo']!)
+                        backgroundImage: (employee['photo'] != null &&
+                                employee['photo'] != "")
+                            ? Image.network("$urlStarter/" + employee['photo']!)
                                 .image
                             : defultprofileImage,
                       ),
-                      title: Text('$firstname $lastname ($adminType)'),
+                      title: Text('$firstname $lastname ($employeeFiled)'),
                       subtitle: Text('$username'),
                       
                     ),

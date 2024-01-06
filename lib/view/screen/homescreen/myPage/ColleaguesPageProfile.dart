@@ -201,9 +201,7 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
                 'pageType': widget.userData.pageType,
               },
             ];
-            Get.to(CollaguesPageSeeAboutInfo(), arguments: {
-              userDataList: userDataList,
-            });
+            Get.to(CollaguesPageSeeAboutInfo(userData: userDataList,));
           },
           child: Container(
             height: 35,

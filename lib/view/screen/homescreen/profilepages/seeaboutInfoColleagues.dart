@@ -180,7 +180,7 @@ Future<void> downloadFromWeb(String url, String filename) async {
                               style: const TextStyle(
                                   fontWeight: FontWeight.w500, fontSize: 16.0),
                             ),
-                            Text(value ?? ""),
+                            Text(value.toString()),
                           ] else if (key == "cv") ...[
                             Text(
                               '$key: ',
