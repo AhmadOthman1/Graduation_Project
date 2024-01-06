@@ -1,86 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:growify/controller/home/Groups_controller/AdminsGroup_controller.dart/AdminsGroup_controller.dart';
 import 'package:growify/controller/home/Groups_controller/Members_controller/SHowMembers_controller.dart';
-import 'package:growify/controller/home/myPage_Controller/Admin_controller/ShowAdmin_controller.dart';
-import 'package:growify/controller/home/myPage_Controller/Employee_Controller/ShowEmployee_controller.dart';
-import 'package:growify/controller/home/network_controller/networdkmainpage_controller.dart';
 import 'package:growify/global.dart';
-import 'package:growify/view/screen/homescreen/Groups/Members/MemberType.dart';
-import 'package:growify/view/screen/homescreen/myPage/Admins/SelectAdmin.dart';
-import 'package:growify/view/screen/homescreen/myPage/Employees/addEmployee.dart';
+import 'package:growify/view/screen/homescreen/Groups/Admins/AddGroupAdmin.dart';
 
 class ShowMembers extends StatefulWidget {
-  final pageId;
-  const ShowMembers({Key? key , required this.pageId}) : super(key: key);
+  final ShowMembersController _controller = ShowMembersController();
+  final  pageId;
+  final localMembers;
 
+  
+ShowMembers({required this.pageId, this.localMembers});
   @override
   _ShowMembersState createState() => _ShowMembersState();
 }
 
-final ScrollController scrollController = ScrollController();
-
 class _ShowMembersState extends State<ShowMembers> {
-  final NetworkMainPageControllerImp Networkcontroller = Get.put(NetworkMainPageControllerImp());
-  late ShowMembersController _controller;
-  final ScrollController _scrollController = ScrollController();
-  final AssetImage defultprofileImage =
-      const AssetImage("images/profileImage.jpg");
-  
-
   @override
   void initState() {
     super.initState();
-    _controller = ShowMembersController();
-    _loadData();
-    _scrollController.addListener(_scrollListener);
+     widget._controller.members.addAll(widget.localMembers);
   }
-
-  Future<void> _loadData() async {
-    print('Loading data...');
-    try {
-      await _controller.loadAdmins(_controller.page,widget.pageId);
-      setState(() {
-        _controller.page++;
-        _controller.admins;
-      });
-      print('Data loaded: ${_controller.admins.length} admins');
-    } catch (error) {
-      print('Error loading data: $error');
-    }
-  }
-
-  void _scrollListener() {
-    if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
-        !_scrollController.position.outOfRange) {
-      _loadData();
-    }
-  }
-  
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-  
-  actions: [
-    TextButton(
-      
-      onPressed: () {
-      
-       Get.off(MemberType(pageId:widget.pageId));
-      },
-      child: Text("Add Member",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
-    ),
-   
-  ],
-),
-
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Add your logic for "Add Admin" button
+            },
+            child: Text(
+              "Add Admin",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           const Divider(
@@ -89,33 +50,30 @@ class _ShowMembersState extends State<ShowMembers> {
           ),
           Expanded(
             child: ListView.builder(
-              controller: _scrollController,
-              itemCount: _controller.admins.length,
+              itemCount: widget._controller.members.length,
               itemBuilder: (context, index) {
-                final admin = _controller.admins[index];
-                final firstname=admin['firstname'];
-                final lastname =admin['lastname'];
-                final username =admin['username'];
-                final adminType =admin['adminType'];
-                
+                final admin = widget._controller.members[index];
+                final firstname = admin['firstname'];
+                final lastname = admin['lastname'];
+                final username = admin['username'];
+                final adminType = admin['adminType'];
+
                 return Column(
                   children: [
                     ListTile(
-                      onTap: (){
+                      onTap: () {
                         final userUsername = username;
-                              Networkcontroller.goToUserPage(userUsername!);
-                        
+                        // Navigate to user page
                       },
                       trailing: CircleAvatar(
                         backgroundImage: (admin['photo'] != null &&
                                 admin['photo'] != "")
                             ? Image.network("$urlStarter/" + admin['photo']!)
                                 .image
-                            : defultprofileImage,
+                            : widget._controller.defaultProfileImage,
                       ),
                       title: Text('$firstname $lastname ($adminType)'),
                       subtitle: Text('$username'),
-                      
                     ),
                     const Divider(
                       color: Color.fromARGB(255, 194, 193, 193),
@@ -126,7 +84,6 @@ class _ShowMembersState extends State<ShowMembers> {
               },
             ),
           ),
-          if (_controller.isLoading) const CircularProgressIndicator(),
         ],
       ),
     );

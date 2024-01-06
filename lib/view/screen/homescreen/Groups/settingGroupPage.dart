@@ -5,12 +5,16 @@ import 'package:growify/view/screen/homescreen/Groups/Admins/GroupAdmins.dart';
 import 'package:growify/view/screen/homescreen/Groups/CalendarGroup/calendargroup.dart';
 import 'package:growify/view/screen/homescreen/Groups/Members/ShowMembers.dart';
 import 'package:growify/view/screen/homescreen/Groups/TrelloGroup/trellogroupmain.dart';
+import 'package:growify/view/screen/homescreen/Groups/editGroupSettings.dart';
 import 'package:growify/view/screen/homescreen/settings/changeemail.dart';
 import 'package:growify/view/screen/homescreen/settings/changepassword.dart';
 import 'package:growify/view/screen/homescreen/settings/myPages.dart';
 
 class GroupSettings extends StatelessWidget {
-  GroupSettings({super.key});
+  final admins;
+  final members;
+  final pageId;
+  GroupSettings({super.key, this.admins, this.members, this.pageId});
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +54,7 @@ class GroupSettings extends StatelessWidget {
                 child: InkWell(
                   onTap: () {
                   //  controller.goToProfileSettingsPgae();
+                  Get.to(EditGroupSettingSettings(userData: [],));
                   },
                   child: Container(
                     height: 35,
@@ -79,7 +84,7 @@ class GroupSettings extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: InkWell(
                   onTap: () {
-                    Get.to(GroupAdmins(pageId:1));
+                    Get.to(GroupAdmins(pageId:pageId,localAdmins: admins,));
                   },
                   child: Container(
                     height: 35,
@@ -108,7 +113,7 @@ class GroupSettings extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: InkWell(
                   onTap: () {
-             Get.to(ShowMembers(pageId:1));
+             Get.to(ShowMembers(pageId:pageId,localMembers: members,));
                   },
                   child: Container(
                     height: 35,

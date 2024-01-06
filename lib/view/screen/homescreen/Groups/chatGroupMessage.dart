@@ -24,7 +24,10 @@ import 'package:http/http.dart' as http;
 
 class GroupChatPageMessages extends StatefulWidget {
   final data;
-  const GroupChatPageMessages({super.key, this.data});
+  final admins;
+  final members;
+
+  const GroupChatPageMessages({super.key, this.data,this.admins,this.members,});
 
   @override
   GroupChatPageMessagesState createState() => GroupChatPageMessagesState();
@@ -33,6 +36,7 @@ class GroupChatPageMessages extends StatefulWidget {
 final ScrollController scrollController = ScrollController();
 
 class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
+  
   late GroupChatController chatController;
   final ScrollController _scrollController = ScrollController();
   final AssetImage defultprofileImage =
@@ -480,7 +484,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                             icon: const Icon(Icons.settings ),
                             color: Colors.white,
                             onPressed: () {
-                              Get.to(GroupSettings());
+                              Get.to(GroupSettings(admins: widget.admins,members: widget.members,pageId: 1,));
                             },
                           ),
                         ],

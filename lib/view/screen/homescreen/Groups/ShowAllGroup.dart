@@ -68,7 +68,7 @@ class _GroupPageState extends State<GroupPage> {
           'name': groupData['name'],
           'username': 'member',
           'id':groupData['id'],
-          'pageId':widget.pageId
+          'pageId':1
       
     };
     groupsController.Groupmessages = <Map<String, dynamic>>[userMap].obs;
