@@ -161,13 +161,16 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
                   chatController.messages;
                 });
               }
-              chatController.addMessage(
+              if(msg["sender"] == widget.data['username']){// handel of user A,B,C has socket, A send to B message, but B is in C conversation (Dont show A message is B conversation)
+                chatController.addMessage(
                   msg["message"],
-                  widget.data["username"],
+                  msg["sender"],
                   widget.data["photo"],
                   msg["date"],
                   msg["image"],
                   msg["video"]);
+              }
+              
             }),
             socket.on("/chatMyVideo", (msg) {
               chatController.sendMessage(
@@ -266,7 +269,9 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
   _joinCall({
     required String callerId,
     required String calleeId,
+   
     dynamic offer,
+     String? photo,
   }) {
     Navigator.push(
       context,
@@ -275,6 +280,7 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
           callerId: callerId,
           calleeId: calleeId,
           offer: offer,
+          photo : photo,
           socket: socket,
           onCallEnded: () {
             // rebuild the parent screen
@@ -349,8 +355,8 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
                   child: Center(
                     child: CircleAvatar(
                       radius: 60,
-                      backgroundImage: widget.data["photo"] != null
-                          ? Image.network("$urlStarter/${widget.data["photo"]}")
+                      backgroundImage: incomingSDPOffer["photo"] != null
+                          ? Image.network("$urlStarter/${incomingSDPOffer["photo"]}")
                               .image
                           : profileBackgroundImage,
                     ),
@@ -482,6 +488,7 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
                               _joinCall(
                                 callerId: GetStorage().read("username"),
                                 calleeId: widget.data["username"],
+                                photo: GetStorage().read("photo"),
                               );
                             },
                           ),

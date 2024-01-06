@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _initController() async {
     await _controller.connectToSSE(GetStorage().read('username'));
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return GetBuilder<HomeScreenControllerImp>(

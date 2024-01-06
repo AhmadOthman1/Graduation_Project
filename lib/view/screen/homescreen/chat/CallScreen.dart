@@ -7,12 +7,14 @@ import 'package:growify/global.dart';
 
 class CallScreen extends StatefulWidget {
   final String callerId, calleeId;
+  final photo;
   final dynamic offer;
   final socket;
   final Function onCallEnded;
   const CallScreen({
     super.key,
     this.offer,
+    this.photo,
     required this.callerId,
     required this.calleeId,
     required this.socket,
@@ -235,6 +237,7 @@ void startCallTimeout() {
       widget.socket!.emit('makeCall', {
         "callerId": GetStorage().read("username"),
         "calleeId": widget.calleeId,
+        "photo" : widget.photo,
         "sdpOffer": offer.toMap(),
       });
     }

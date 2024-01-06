@@ -104,7 +104,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                               if (notice['notificationType'] == "connection") {
                                 searchController.goToUserPage(
                                     notice['notificationPointer']!);
-                              } else if (notice['notificationType'] == "call") {
+                              } else if (notice['notificationType'] == "call" || notice['notificationType'] == "message") {
                                 HomePageControllerImp controller =
                                     Get.put(HomePageControllerImp());
                                 var foundUser =

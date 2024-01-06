@@ -1,4 +1,3 @@
-
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/core/constant/routes.dart';
@@ -22,20 +21,9 @@ class LogOutButtonControllerImp extends GetxController {
   goTosigninpage() async {
     // GetStorage().write("loginemail", "");
     // GetStorage().write("loginpassword", "");
-    GetStorage().remove('loginemail');
-    GetStorage().remove('loginpassword');
-    var refreshToken= GetStorage().read("refreshToken");
-    var accessToken= GetStorage().read("accessToken");
-    GetStorage().remove('refreshToken');
-    GetStorage().remove('accessToken');
-    firstName = "";
-    lastName = "";
-    userName = "";
-    email = "";
-    password = "";
-    phone = "";
-    dateOfBirth = "";
-    code = "";
+
+    var refreshToken = GetStorage().read("refreshToken");
+    var accessToken = GetStorage().read("accessToken");
     try {
       var res = await postLogOut(accessToken);
       if (res.statusCode == 403) {
@@ -47,13 +35,46 @@ class LogOutButtonControllerImp extends GetxController {
       }
       if (res.statusCode == 409 || res.statusCode == 500) {
       } else if (res.statusCode == 200) {
-        Get.toNamed(AppRoute.login);
+        var url2 = '$urlSSEStarter/userNotifications/notifications';
+        var responce = await http.get(Uri.parse(url2), headers: {
+          'Authorization': 'bearer ' + accessToken,
+          "Accept": "text/event-stream",
+          "Cache-Control": "no-cache",
+          "isClosed": "true",
+        });
+        print(responce.statusCode);
+        if (responce.statusCode == 403) {
+          await getRefreshToken(refreshToken);
+          await goTosigninpage();
+          return null;
+        } else if (responce.statusCode == 401) {
+          Get.toNamed(AppRoute.login);
+        }
+        if (responce.statusCode == 200) {
+          GetStorage().remove('loginemail');
+          GetStorage().remove('loginpassword');
+          GetStorage().remove('refreshToken');
+          GetStorage().remove('accessToken');
+          GetStorage().remove('username');
+          GetStorage().remove('firstname');
+          GetStorage().remove('lastname');
+          GetStorage().remove('photo');
+          firstName = "";
+          lastName = "";
+          userName = "";
+          email = "";
+          password = "";
+          phone = "";
+          dateOfBirth = "";
+          code = "";
+          Get.toNamed(AppRoute.login);
+        }
       }
     } catch (err) {
       print(err);
       return "server error";
     }
 
-    Get.toNamed(AppRoute.login);
+    Get.offNamed(AppRoute.login);
   }
 }

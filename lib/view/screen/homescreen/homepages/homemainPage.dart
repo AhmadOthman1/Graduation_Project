@@ -189,8 +189,8 @@ class _HomepageState extends State<Homepage> {
               ListTile(
                 title: const Text("Log Out"),
                 leading: const Icon(Icons.logout_outlined),
-                onTap: () {
-                  logoutController.goTosigninpage();
+                onTap: () async {
+                  await logoutController.goTosigninpage();
                 },
               ),
             ],

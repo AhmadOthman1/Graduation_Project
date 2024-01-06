@@ -24,8 +24,9 @@ abstract class HomeScreeenController extends GetxController {
 
 class HomeScreenControllerImp extends HomeScreeenController {
   int currentpage = 0;
-LogOutButtonControllerImp _logoutController =
-    Get.put(LogOutButtonControllerImp());
+  late EventSource eventSource;
+  LogOutButtonControllerImp _logoutController =
+      Get.put(LogOutButtonControllerImp());
 
   List<Widget> listPage = [
     const Homepage(),
@@ -52,110 +53,117 @@ LogOutButtonControllerImp _logoutController =
     currentpage = indexofpage;
     update();
   }
+
   var receivedCallAudio;
 
   Future<void> connectToSSE(String username) async {
-    Platform platform = getPlatform();
-    var accessToken = GetStorage().read("accessToken") ?? "";
-    var url = '$urlSSEStarter/userNotifications/notifications';
-    var authUrl = '$urlSSEStarter/userNotifications/notificationsAuth';
-    var responce = await http.get(Uri.parse(authUrl), headers: {
-      'Content-type': 'application/json; charset=UTF-8',
-      'Authorization': 'bearer ' + GetStorage().read('accessToken') ??"",
-    });
-    if (responce.statusCode == 403) {
-      await getRefreshToken(GetStorage().read('refreshToken'));
-      connectToSSE(username);
-      return;
-    } else if (responce.statusCode == 401) {
-      _logoutController.goTosigninpage();
-      return;
-    }else if (responce.statusCode == 200){
-
-    print(platform.name);
-    if (platform.name == 'web') {
-      Map<String, dynamic> headers = {
-        'Authorization': 'bearer ' + accessToken,
-        "Accept": "text/event-stream",
-        "Cache-Control": "no-cache",
-        "username": username,
-      };
-      final responseStream = connect(url, 'GET', headers);
-      responseStream.listen(
-        (data) {
-          print('Received data: $data');
-          // Handle the received data
-        },
-        onDone: () {
-          print('Request completed');
-        },
-        onError: (error) {
-          print('Error: $error');
-          // Handle the error
-        },
-      );
-    } else {
-      EventSource eventSource = await EventSource.connect(
-        url,
-        headers: {
-          'Authorization': 'bearer ' + accessToken,
-          "Accept": "text/event-stream",
-          "Cache-Control": "no-cache",
-          "username": username,
-        },
-      );
-      eventSource.listen((Event event) async {
-        
-        var data = event.data;
-        if (data != null && data != [] && data != "") {
-          Map<String, dynamic> jsonData = json.decode(data);
-          //to solve duplicated notification problem
-          var lastNotificationId = GetStorage().read("lastNotificationId");
-          if (lastNotificationId == null ||
-              jsonData['id'] != lastNotificationId) {
-            GetStorage().write("lastNotificationId", jsonData['id']);
-            // Access individual properties
-            String username = jsonData['username'];
-            String notificationType = jsonData['notificationType'];
-            String notificationContent = jsonData['notificationContent'];
-            String notificationPointer = jsonData['notificationPointer'];
-            String createdAt = jsonData['createdat'];
-            var playSound = true;
-            Duration timeoutAfter = Duration(seconds: 5);
-            if(notificationType == "call"){
-              playSound=false;
-              timeoutAfter= Duration(seconds: 25) ;
-            }
-            await NotificationService.initializeNotification(playSound);
-            await NotificationService.showNotification(
-                title: "Growify",
-                body: "$notificationPointer $notificationContent",
-                summary: createdAt,
-                payload: {
-                  "navigate": "true",
-                  "call": notificationType == "call" ? "true" : "false",
-                },
-                chronometer: Duration.zero, 
-                timeoutAfter: timeoutAfter,
-                actionButtons: [
-                  NotificationActionButton(
-                    key: 'check',
-                    label: 'Check it out',
-                    actionType: ActionType.SilentAction,
-                    color: Colors.green,
-                  )
-                ]);
-                playCallingSound();
-
-          }
-
-          print("New event:");
-          print("  data: ${event.data}");
-        }
+    try {
+      Platform platform = getPlatform();
+      var accessToken = GetStorage().read("accessToken") ?? "";
+      var url = '$urlSSEStarter/userNotifications/notifications';
+      var authUrl = '$urlSSEStarter/userNotifications/notificationsAuth';
+      var responce = await http.get(Uri.parse(authUrl), headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        'Authorization': 'bearer ' + (GetStorage().read('accessToken') ?? ""),
       });
-    }
+      if (responce.statusCode == 403) {
+        await getRefreshToken(GetStorage().read('refreshToken'));
+        connectToSSE(username);
+        return;
+      } else if (responce.statusCode == 401) {
+        _logoutController.goTosigninpage();
+        return;
+      } else if (responce.statusCode == 200) {
+        print(platform.name);
+        if (platform.name == 'web') {
+          Map<String, dynamic> headers = {
+            'Authorization': 'bearer ' + accessToken,
+            "Accept": "text/event-stream",
+            "Cache-Control": "no-cache",
+            "username": username,
+          };
+          final responseStream = connect(url, 'GET', headers);
+          responseStream.listen(
+            (data) {
+              print('Received data: $data');
+              // Handle the received data
+            },
+            onDone: () {
+              print('Request completed');
+            },
+            onError: (error) {
+              print('Error: $error');
+              // Handle the error
+            },
+          );
+        } else {
+          eventSource = await EventSource.connect(url,
+              headers: {
+                'Authorization': 'bearer ' + accessToken,
+                "Accept": "text/event-stream",
+                "Cache-Control": "no-cache",
+                "username": username,
+              },
+              openOnlyOnFirstListener: true,
+              closeOnLastListener: true);
+
+          eventSource.listen((Event event) async {
+            if (GetStorage().read("username") == null) {
+              eventSource.lastStreamDisconnected();
+            } else {
+              var data = event.data;
+              if (data != null && data != [] && data != "") {
+                Map<String, dynamic> jsonData = json.decode(data);
+                //to solve duplicated notification problem
+                var lastNotificationId =
+                    GetStorage().read("lastNotificationId");
+                if (lastNotificationId == null ||
+                    jsonData['id'] != lastNotificationId) {
+                  GetStorage().write("lastNotificationId", jsonData['id']);
+                  // Access individual properties
+                  String username = jsonData['username'];
+                  String notificationType = jsonData['notificationType'];
+                  String notificationContent = jsonData['notificationContent'];
+                  String notificationPointer = jsonData['notificationPointer'];
+                  String createdAt = jsonData['createdat'];
+                  var playSound = true;
+                  Duration timeoutAfter = Duration(seconds: 5);
+                  if (notificationType == "call") {
+                    playSound = false;
+                    timeoutAfter = Duration(seconds: 25);
+                    playCallingSound();
+                  }
+                  await NotificationService.initializeNotification(playSound);
+                  await NotificationService.showNotification(
+                      title: "Growify",
+                      body: "$notificationPointer $notificationContent",
+                      summary: createdAt,
+                      payload: {
+                        "navigate": "true",
+                        "call": notificationType == "call" ? "true" : "false",
+                      },
+                      chronometer: Duration.zero,
+                      timeoutAfter: timeoutAfter,
+                      actionButtons: [
+                        NotificationActionButton(
+                          key: 'check',
+                          label: 'Check it out',
+                          actionType: ActionType.SilentAction,
+                          color: Colors.green,
+                        )
+                      ]);
+                }
+
+                print("New event:");
+                print("  data: ${event.data}");
+              }
+            }
+          });
+        }
+      }
+    } catch (err) {}
   }
-  }
+
   void playCallingSound() {
     receivedCallAudio = AssetsAudioPlayer();
     if (kIsWeb) {

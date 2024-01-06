@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/Groups_controller/AdminsGroup_controller.dart/AdminsGroup_controller.dart';
-import 'package:growify/controller/home/Groups_controller/Members_controller/SHowMembers_controller.dart';
+import 'package:growify/controller/home/Groups_controller/Members_controller/ShowMembers_controller.dart';
 import 'package:growify/global.dart';
-import 'package:growify/view/screen/homescreen/Groups/Admins/AddGroupAdmin.dart';
 
 class ShowMembers extends StatefulWidget {
   final ShowMembersController _controller = ShowMembersController();
