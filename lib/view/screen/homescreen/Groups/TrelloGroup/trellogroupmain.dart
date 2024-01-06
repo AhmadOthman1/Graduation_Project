@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Groups_controller/groupTrello_controller.dart';
-import 'package:growify/controller/home/trello_controller/trello_controller.dart';
+import 'package:growify/controller/home/tasks_controller/tasks_controller.dart';
 import 'package:growify/view/screen/homescreen/Groups/TrelloGroup/trellodescription.dart';
 import 'package:growify/view/screen/homescreen/Groups/TrelloGroup/trellotask.dart';
 import 'package:intl/intl.dart'; // Import the intl package

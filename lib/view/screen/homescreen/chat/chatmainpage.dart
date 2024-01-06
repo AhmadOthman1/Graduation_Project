@@ -58,19 +58,7 @@ class _ChatMainPageState extends State<ChatMainPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextFormField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    fillColor: Colors.grey[200],
-                    filled: true,
-                    prefixIcon: const Icon(Icons.search),
-                    hintText: "Search",
-                  ),
-                ),
-                const SizedBox(height: 30),
+                
                 const Text(
                   "Active colleagues",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
@@ -138,6 +126,10 @@ class _ChatMainPageState extends State<ChatMainPage> {
                       );
                     },
                   ),
+                ),
+                const Text(
+                  "Conversations",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ],
             ),

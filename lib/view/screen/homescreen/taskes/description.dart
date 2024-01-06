@@ -23,12 +23,24 @@ class DescriptionPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Task Name: ${task.taskName}',
+              '${task.taskName}',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            Text(
-              'Description: ${task.description}',
+            Container(
+              padding:
+                  EdgeInsets.only(left: 8.0), // Adjust the padding as needed
+              decoration: BoxDecoration(
+                border: Border(
+                  left: BorderSide(
+                    color: Colors.grey, // Set your desired border color
+                    width: 2.0, // Set your desired border width
+                  ),
+                ),
+              ),
+              child: Text(
+                '${task.description}',
+              ),
             ),
             const SizedBox(height: 10),
             Text(

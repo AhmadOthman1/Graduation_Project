@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Task {
+  int? id;
   final String taskName;
   final String description;
   final TimeOfDay startTime;
@@ -17,5 +18,6 @@ class Task {
     this.startDate, // Updated constructor to include start date
     this.endDate, // Updated constructor to include end date
     this.status,
+    [this.id]
   );
 }

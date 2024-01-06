@@ -5,7 +5,7 @@ import 'package:growify/controller/home/homepage_controller.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/search/Search.dart';
-import 'package:growify/view/screen/homescreen/trello/trellomainpage.dart';
+import 'package:growify/view/screen/homescreen/taskes/tasksmainpage.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 
 class Homepage extends StatefulWidget {
@@ -183,7 +183,7 @@ class _HomepageState extends State<Homepage> {
                 title: const Text("Trello"),
                 leading: const Icon(Icons.task),
                 onTap: () {
-                 Get.to(const TrelloHomePage());
+                 Get.to(const TasksHomePage());
                 },
               ),
               ListTile(

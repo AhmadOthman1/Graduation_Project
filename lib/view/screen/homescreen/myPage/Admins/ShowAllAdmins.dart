@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/myPage_Controller/Admin_controller/ShowAdmin_controller.dart';
 import 'package:growify/controller/home/network_controller/networdkmainpage_controller.dart';
+import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/myPage/Admins/SelectAdmin.dart';
 
 class ShowAdmins extends StatefulWidget {
   final pageId;
-  const ShowAdmins({Key? key , required this.pageId}) : super(key: key);
+  const ShowAdmins({Key? key, required this.pageId}) : super(key: key);
 
   @override
   _ShowAdminsState createState() => _ShowAdminsState();
@@ -16,12 +17,12 @@ class ShowAdmins extends StatefulWidget {
 final ScrollController scrollController = ScrollController();
 
 class _ShowAdminsState extends State<ShowAdmins> {
-  final NetworkMainPageControllerImp Networkcontroller = Get.put(NetworkMainPageControllerImp());
+  final NetworkMainPageControllerImp Networkcontroller =
+      Get.put(NetworkMainPageControllerImp());
   late ShowAdminsController _controller;
   final ScrollController _scrollController = ScrollController();
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
-  
 
   @override
   void initState() {
@@ -34,7 +35,7 @@ class _ShowAdminsState extends State<ShowAdmins> {
   Future<void> _loadData() async {
     print('Loading data...');
     try {
-      await _controller.loadAdmins(_controller.page,widget.pageId);
+      await _controller.loadAdmins(_controller.page, widget.pageId);
       setState(() {
         _controller.page++;
         _controller.admins;
@@ -52,7 +53,7 @@ class _ShowAdminsState extends State<ShowAdmins> {
       _loadData();
     }
   }
-  
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -63,20 +64,21 @@ class _ShowAdminsState extends State<ShowAdmins> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-  
-  actions: [
-    TextButton(
-      
-      onPressed: () {
-      
-       Get.off(AddAdmin(pageId:widget.pageId));
-      },
-      child: Text("Add Admin",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
-    ),
-   
-  ],
-),
-
+        actions: [
+          TextButton(
+            onPressed: () {
+              Get.off(AddAdmin(pageId: widget.pageId));
+            },
+            child: Text(
+              "Add Admin",
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           const Divider(
@@ -89,20 +91,50 @@ class _ShowAdminsState extends State<ShowAdmins> {
               itemCount: _controller.admins.length,
               itemBuilder: (context, index) {
                 final admin = _controller.admins[index];
-                final firstname=admin['firstname'];
-                final lastname =admin['lastname'];
-                final username =admin['username'];
-                final adminType =admin['adminType'];
-                
+                final firstname = admin['firstname'];
+                final lastname = admin['lastname'];
+                final username = admin['username'];
+                final adminType = admin['adminType'];
+
                 return Column(
                   children: [
                     ListTile(
-                      onTap: (){
+                      onTap: () {
                         final userUsername = username;
-                              Networkcontroller.goToUserPage(userUsername!);
-                        
+                        Networkcontroller.goToUserPage(userUsername!);
                       },
-                      trailing: CircleAvatar(
+                      trailing: PopupMenuButton<String>(
+                        icon: const Icon(Icons.more_vert),
+                        onSelected: (String option) async {
+                          var message = await _controller.onMoreOptionSelected(option,username,widget.pageId);
+                          (message != null)
+                        ? showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CustomAlertDialog(
+                                title: 'Error',
+                                icon: Icons.error,
+                                text: message,
+                                buttonText: 'OK',
+                                
+                              );
+                            },
+                          )
+                        : null;
+                        setState(() {
+                          
+                        });
+                        },
+                        itemBuilder: (BuildContext context) {
+                            return _controller.moreOptions.map((String option) {
+                              return PopupMenuItem<String>(
+                                value: option,
+                                child: Text(option),
+                              );
+                            }).toList();
+                        },
+                      ),
+                      leading: CircleAvatar(
                         backgroundImage: (admin['photo'] != null &&
                                 admin['photo'] != "")
                             ? Image.network("$urlStarter/" + admin['photo']!)
@@ -111,7 +143,6 @@ class _ShowAdminsState extends State<ShowAdmins> {
                       ),
                       title: Text('$firstname $lastname ($adminType)'),
                       subtitle: Text('$username'),
-                      
                     ),
                     const Divider(
                       color: Color.fromARGB(255, 194, 193, 193),

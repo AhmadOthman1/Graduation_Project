@@ -17,7 +17,44 @@ class ShowAdminsController {
   bool isLoading = false;
   int pageSize = 10;
   int page = 1;
+final RxList<String> moreOptions = <String>[
+    'Delete',
+  ].obs;
+onMoreOptionSelected(
+      String option ,String adminUsername, String pageId) async {
+      switch (option) {
+        case 'Delete':
+          return await deleteAdmin(pageId,adminUsername);
+          break;
+      }
+  }
+  deleteAdmin(pageId, adminUsername) async {
+    var url = "$urlStarter/user/deleteAdmin";
 
+    Map<String, dynamic> jsonData = {
+      "pageId": pageId,
+      "adminUsername": adminUsername,
+    };
+    String jsonString = jsonEncode(jsonData);
+    var response = await http.post(Uri.parse(url), body: jsonString, headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+    print(response.statusCode);
+    if (response.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      deleteAdmin(pageId, adminUsername);
+      return;
+    } else if (response.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    } else if( response.statusCode == 200){
+      var responseBody = jsonDecode(response.body);
+      print(responseBody['message']);
+      admins.removeWhere((admin) => admin['username'] == adminUsername);
+      return responseBody['message'];
+      
+    }
+  }
   getPageAdmins(int page,String pageId) async {
     
     var url =
