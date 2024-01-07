@@ -10,8 +10,51 @@ LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
 class NewJobControllerImp extends GetxController {
+  final RxList<String> selectedItems = <String>[].obs;
+  final List<String> items = [
+    'Accounting',
+    'Agricultural Engineering',
+    'American Studies',
+    'Anesthesia and Technical Resuscitation',
+    'Animal Production and Animal Health',
+    'Applied Chemistry',
+    'Arabic Language and Its Literature',
+    'Architecture',
+    'Banking and Finance',
+    'Biology Biotechnology',
+    'Biomedical Sciences Track',
+    'Business Intelligence',
+    'Business Management',
+    'Cardiac Perfusion',
+    'Ceramic Art',
+    'Chemical Engineering',
+    'Chemistry',
+    'Civil Engineering',
+    'Communication and Digital Marketing',
+    'Communication and Digital Media',
+    'Communications Engineering',
+    'Computer Engineering',
+    'Computer Information Systems',
+    'Computer Science',
+    'Computer Science in the Job Market',
+    'Construction Engineering',
+    'Cosmetics and Skin Care',
+    'Dental Laboratory Technology',
+    'Diploma in Educational Qualification',
+    'Doctor of Dental Medicine',
+  ];
+
+
+
+
+
+
+
+
+
+  ////////////////////////////////////////
   RxString postTitle = ''.obs;
-  RxString postInterest = ''.obs;
+  
   RxString postDescription = ''.obs;
   Rx<DateTime?> endDate = DateTime.now().obs;
 
@@ -23,9 +66,7 @@ class NewJobControllerImp extends GetxController {
     postTitle.value = newTitle;
   }
 
-  void updateInterest(String newInterest) {
-    postInterest.value = newInterest;
-  }
+  
 
   void updateDescription(String newDescription) {
     postDescription.value = newDescription;
@@ -36,7 +77,7 @@ class NewJobControllerImp extends GetxController {
     Map<String, dynamic> jsonData = {
       "pageId": pageId,
       "title": postTitle.value,
-      "interest": postInterest.value,
+      "interest": selectedItems.value,
       "description": postDescription.value,
       "endDate": endDate.value.toString(),
     };

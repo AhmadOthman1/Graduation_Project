@@ -51,6 +51,16 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
     Get.toNamed(AppRoute.settings);
   }
 
+
+
+   RxList<String> selectedItems = <String>[].obs;
+   // send it to the database 
+   RxList<String> items = RxList<String>();
+
+
+
+
+
   // for the profile image
   final RxString profileImageBytes = ''.obs;
   final RxString profileImageBytesName = ''.obs;
@@ -97,6 +107,18 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
       isTextFieldEnabled5.value = true; // Show the "Save" button
     }
   }
+
+
+  // for dropdown fildes
+  final RxBool isTextFieldEnabledFields = false.obs;
+  // for dropDown gender
+  final RxBool isTextFieldEnabledGender = false.obs;
+  final RxString gender = ''.obs;
+  final List<String> genderList = [
+    "Male",
+    "Female",
+    ];
+
 
   // for dropDown country
   final RxBool isTextFieldEnabled11 = false.obs;
@@ -390,10 +412,12 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
       "lastName": (isTextFieldEnabled2 == true) ? textFieldText2.trim() : null,
       "address": (isTextFieldEnabled3 == true) ? textFieldText3.trim() : null,
       "country": (isTextFieldEnabled11 == true) ? country.trim() : null,
+      "Gender": (isTextFieldEnabledGender == true) ? gender.trim() : null,
       "dateOfBirth":
           (isTextFieldEnabled5 == true) ? textFieldText5.trim() : null,
       "phone": (isTextFieldEnabled6 == true) ? textFieldText6.trim() : null,
       "bio": (isTextFieldEnabled7 == true) ? textFieldText7.trim() : null,
+      "Fields": (isTextFieldEnabledFields == true) ? selectedItems : null,
       "profileImageBytes": profileImageBytes,
       "profileImageBytesName": profileImageBytesName,
       "profileImageExt": profileImageExt,
@@ -412,6 +436,8 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
     });
     return responce;
   }
+
+
 
   @override
   SaveChanges(
@@ -465,6 +491,7 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
       isTextFieldEnabled6.value = false;
       isTextFieldEnabled7.value = false;
       isTextFieldEnabled11.value = false;
+      isTextFieldEnabledGender.value = false;
     }
   }
 }

@@ -4,7 +4,6 @@ import 'package:growify/controller/home/settings_controller.dart';
 import 'package:growify/view/screen/homescreen/Groups/Admins/GroupAdmins.dart';
 import 'package:growify/view/screen/homescreen/Groups/CalendarGroup/calendargroup.dart';
 import 'package:growify/view/screen/homescreen/Groups/Members/ShowMembers.dart';
-import 'package:growify/view/screen/homescreen/Groups/TrelloGroup/trellogroupmain.dart';
 import 'package:growify/view/screen/homescreen/Groups/editGroupSettings.dart';
 import 'package:growify/view/screen/homescreen/settings/changeemail.dart';
 import 'package:growify/view/screen/homescreen/settings/changepassword.dart';

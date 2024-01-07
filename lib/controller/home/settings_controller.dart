@@ -54,7 +54,11 @@ class SettingsControllerImp extends SettingsController {
       print(resbody['availableFields']);
       print(resbody['user']);
       GetStorage().write("photo", resbody["user"]["photo"]);
-      Get.to(ProfileSettings(userData: [resbody["user"]]));
+      Get.to(ProfileSettings(
+  userData: [resbody["user"]],
+  availableFields: List<Map<String, dynamic>>.from(resbody['availableFields']),
+));
+
     }
   }
 

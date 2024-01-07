@@ -9,13 +9,21 @@ import 'package:growify/global.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:growify/core/functions/alertbox.dart';
+import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
 
 class ProfileSettings extends StatelessWidget {
-  ProfileSettings({super.key, required this.userData}) {
+  ProfileSettings(
+      {super.key, required this.userData, required this.availableFields}) {
     _controller1.text = userData[0]["firstname"];
     _controller2.text = userData[0]["lastname"];
     _controller3.text =
         (userData[0]["address"] == null) ? "" : userData[0]["address"];
+    _controllergender.text =
+        (userData[0]["Gender"] == null) ? "" : userData[0]["Gender"];
+
     _controller4.text =
         (userData[0]["country"] == null) ? "" : userData[0]["country"];
     controller.startDateController.text = userData[0]["dateOfBirth"];
@@ -29,14 +37,22 @@ class ProfileSettings extends StatelessWidget {
     controller.textFieldText2.value = _controller2.text;
     controller.textFieldText3.value = _controller3.text;
     controller.country.value = _controller4.text;
+    controller.gender.value = _controllergender.text;
     controller.textFieldText5.value = controller.startDateController.text;
     controller.textFieldText6.value = _controller6.text;
     controller.textFieldText7.value = _controller7.text;
+    controller.items = RxList<String>.from(
+  availableFields.map<String>((map) => map['Field'].toString()),
+);
+controller.selectedItems = RxList<String>.from(
+  (userData[0]["Fields"] as String?)?.split(',') ?? [],
+);
 
     controller.update();
   }
 
-  final AssetImage defultprofileImage = const AssetImage("images/profileImage.jpg");
+  final AssetImage defultprofileImage =
+      const AssetImage("images/profileImage.jpg");
   String? profileImageBytes;
   String? profileImageBytesName;
   String? profileImageExt;
@@ -56,22 +72,24 @@ class ProfileSettings extends StatelessWidget {
   final TextEditingController _controller2 = TextEditingController();
   final TextEditingController _controller3 = TextEditingController();
   final TextEditingController _controller4 = TextEditingController();
-  // final TextEditingController _controller5 = TextEditingController();
+  final TextEditingController _controllergender = TextEditingController();
   final TextEditingController _controller6 = TextEditingController();
   final TextEditingController _controller7 = TextEditingController();
   GlobalKey<FormState> formstate = GlobalKey();
   final List<Map<String, dynamic>> userData;
+  final List<Map<String, dynamic>> availableFields;
   String? Firstname;
   String? Lastname;
   String? Address;
   String? Country;
+  String? Gender;
   String? DateOfBirth;
   String? Phone;
   String? Bio;
 
   ProfileSettingsControllerImp controller =
       Get.put(ProfileSettingsControllerImp());
-
+      
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +97,7 @@ class ProfileSettings extends StatelessWidget {
     Lastname = userData[0]["lastname"];
     Address = userData[0]["address"];
     Country = userData[0]["country"];
+    Gender = userData[0]["Gender"];
     DateOfBirth = userData[0]["dateOfBirth"];
     Phone = userData[0]["phone"];
     Bio = userData[0]["bio"];
@@ -94,16 +113,17 @@ class ProfileSettings extends StatelessWidget {
       onWillPop: () async {
         // Your custom logic here
         // For example, show a confirmation dialog
-        controller.isTextFieldEnabled.value=false;
-        controller.isTextFieldEnabled2.value=false;
-        controller.isTextFieldEnabled3.value=false;
-        controller.isTextFieldEnabled5.value=false;
-        controller.isTextFieldEnabled6.value=false;
-        controller.isTextFieldEnabled7.value=false;
-        controller.isTextFieldEnabled11.value=false;
-       print("obaida");
+        controller.isTextFieldEnabled.value = false;
+        controller.isTextFieldEnabled2.value = false;
+        controller.isTextFieldEnabled3.value = false;
+        controller.isTextFieldEnabled5.value = false;
+        controller.isTextFieldEnabled6.value = false;
+        controller.isTextFieldEnabled7.value = false;
+        controller.isTextFieldEnabled11.value = false;
+        controller.isTextFieldEnabledGender.value = false;
+        controller.isTextFieldEnabledFields.value = false;
+        print("obaida");
         return true;
-        
       },
       child: Scaffold(
         appBar: AppBar(
@@ -166,14 +186,13 @@ class ProfileSettings extends StatelessWidget {
                                           List<int> fileBytes =
                                               await File(file.path!)
                                                   .readAsBytes();
-                                          base64String = base64Encode(fileBytes);
+                                          base64String =
+                                              base64Encode(fileBytes);
                                         }
-                                        profileImageBytes=base64String;
-                                        profileImageBytesName=file.name;
-                                        profileImageExt=file.extension;
-                                        
+                                        profileImageBytes = base64String;
+                                        profileImageBytesName = file.name;
+                                        profileImageExt = file.extension;
 
-                             
                                         controller.updateProfileImage(
                                           base64String,
                                           file.name,
@@ -181,7 +200,8 @@ class ProfileSettings extends StatelessWidget {
                                               '', // Use the null-aware operator
                                         );
                                       } else {
-                                        controller.updateProfileImage('', '', '');
+                                        controller.updateProfileImage(
+                                            '', '', '');
                                       }
                                     } else {
                                       // User canceled the picker
@@ -200,7 +220,7 @@ class ProfileSettings extends StatelessWidget {
                           ],
                         ),
                       ),
-    
+
                       const SizedBox(height: 20),
                       Obx(
                         () => Row(
@@ -217,7 +237,8 @@ class ProfileSettings extends StatelessWidget {
                                     controller.textFieldText.value = value;
                                   },
                                   validator: (Value) {
-                                    return validInput(Value!, 50, 1, "username");
+                                    return validInput(
+                                        Value!, 50, 1, "username");
                                   },
                                   decoration: InputDecoration(
                                     hintText: controller.textFieldText.value,
@@ -255,7 +276,7 @@ class ProfileSettings extends StatelessWidget {
                           ],
                         ),
                       ),
-    
+
                       const SizedBox(height: 20),
                       Obx(
                         () => Row(
@@ -272,7 +293,8 @@ class ProfileSettings extends StatelessWidget {
                                     controller.textFieldText2.value = text;
                                   },
                                   validator: (Value) {
-                                    return validInput(Value!, 50, 1, "username");
+                                    return validInput(
+                                        Value!, 50, 1, "username");
                                   },
                                   decoration: InputDecoration(
                                     hintText: controller.textFieldText2.value,
@@ -310,7 +332,7 @@ class ProfileSettings extends StatelessWidget {
                           ],
                         ),
                       ),
-    
+
                       //////////////////
                       const SizedBox(height: 20),
                       Obx(
@@ -368,8 +390,8 @@ class ProfileSettings extends StatelessWidget {
                       ),
                       //////////////////
                       const SizedBox(height: 20),
-    
-                       Obx(
+
+                      Obx(
                         () => Row(
                           children: [
                             Container(
@@ -408,7 +430,8 @@ class ProfileSettings extends StatelessWidget {
                                   value: controller.country.value.isEmpty
                                       ? null
                                       : controller.country.value,
-                                  onChanged: controller.isTextFieldEnabled11.value
+                                  onChanged: controller
+                                          .isTextFieldEnabled11.value
                                       ? (value) {
                                           controller.country.value =
                                               value.toString();
@@ -437,9 +460,79 @@ class ProfileSettings extends StatelessWidget {
                           ],
                         ),
                       ),
-    
-                    
-    
+
+                      const SizedBox(height: 20),
+
+                      Obx(
+                        () => Row(
+                          children: [
+                            Container(
+                              width: 300,
+                              margin: const EdgeInsets.only(right: 10),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: DropdownButtonFormField(
+                                  decoration: InputDecoration(
+                                    alignLabelWithHint: true,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    hintStyle: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 30),
+                                    label: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 9),
+                                      child: const Text("Your Gender"),
+                                    ),
+                                  ),
+                                  isExpanded: true,
+                                  hint: const Text('Select Gender',
+                                      style: TextStyle(color: Colors.grey)),
+                                  items: controller.genderList.map((value) {
+                                    return DropdownMenuItem(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  value: controller.gender.value.isEmpty
+                                      ? null
+                                      : controller.gender.value,
+                                  onChanged: controller
+                                          .isTextFieldEnabledGender.value
+                                      ? (value) {
+                                          controller.gender.value =
+                                              value.toString();
+                                          print(controller.gender.value);
+                                        }
+                                      : null, // Disable the dropdown when not enabled
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please select gender';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                // Toggle the enable state of the dropdown
+                                controller.isTextFieldEnabledGender.toggle();
+                              },
+                              icon: const Icon(Icons.edit),
+                              color: controller.isTextFieldEnabledGender.value
+                                  ? Colors.blue
+                                  : Colors.grey,
+                            )
+                          ],
+                        ),
+                      ),
+
                       /*  Obx(
                         () => Row(
                           children: [
@@ -493,7 +586,7 @@ class ProfileSettings extends StatelessWidget {
                           ],
                         ),
                       ),*/
-    
+
                       //////////////////
                       const SizedBox(height: 20),
                       Obx(
@@ -512,8 +605,7 @@ class ProfileSettings extends StatelessWidget {
                                   onChanged: (text) {
                                     controller.textFieldText5.value = text;
                                   },
-                                  
-    
+
                                   validator: (Value) {
                                     return validInput(
                                         Value!, 10, 8, "dateOfBirth");
@@ -559,7 +651,7 @@ class ProfileSettings extends StatelessWidget {
                           ],
                         ),
                       ),
-    
+
                       //////////////////
                       const SizedBox(height: 20),
                       Obx(
@@ -615,7 +707,7 @@ class ProfileSettings extends StatelessWidget {
                           ],
                         ),
                       ),
-    
+
                       //////////////////
                       const SizedBox(height: 20),
                       Obx(
@@ -672,7 +764,82 @@ class ProfileSettings extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 20),
-    
+                      Container(
+                        padding: EdgeInsets.all(16.0),
+                        child: Obx(
+                          () => Row(
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    if (controller
+                                        .isTextFieldEnabledFields.value) {
+                                      
+                                    }
+                                  },
+                                  child: AbsorbPointer(
+                                    absorbing: !controller
+                                        .isTextFieldEnabledFields.value,
+                                    child: MultiSelectDialogField(
+                                      items: controller.items
+                                          .map<MultiSelectItem<String>>((item) {
+                                        return MultiSelectItem<String>(
+                                          item,
+                                          item,
+                                        );
+                                      }).toList(),
+                                      initialValue:
+                                          controller.selectedItems.toList(),
+                                      onConfirm: (values) {
+                                        controller.selectedItems
+                                            .assignAll(values);
+                                        print(
+                                          'Selected names: ${controller.selectedItems.join(',')}',
+                                        );
+                                      },
+                                      title: Text('Select Your Interests'),
+                                      buttonText: Text('Choose Your Interests',
+                                          style: TextStyle(fontSize: 14)),
+                                      chipDisplay: MultiSelectChipDisplay(
+                                        items: controller.selectedItems
+                                            .map<MultiSelectItem<String>>(
+                                                (item) {
+                                          return MultiSelectItem<String>(
+                                              item, item);
+                                        }).toList(),
+                                        onTap: (value) {
+                                          controller.selectedItems
+                                              .remove(value);
+                                        },
+                                      ),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  controller.isTextFieldEnabledFields.toggle();
+                                  controller.update();
+                                },
+                                icon: const Icon(Icons.edit),
+                                
+                                color: controller.isTextFieldEnabledFields.value
+                                    ? Colors.blue
+                                    : Colors.grey,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
                       Container(
                         child: const Text(
                           "Cover Page",
@@ -696,7 +863,8 @@ class ProfileSettings extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(20.0),
                                     image: DecorationImage(
                                       fit: BoxFit.cover,
-                                      image: controller.coverImageBytes.isNotEmpty
+                                      image: controller
+                                              .coverImageBytes.isNotEmpty
                                           ? MemoryImage(base64Decode(
                                               controller.coverImageBytes.value))
                                           : coverBackgroundImage, // Replace with your default photo URL
@@ -705,7 +873,8 @@ class ProfileSettings extends StatelessWidget {
                                 ),
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: const Color.fromARGB(255, 85, 191, 218),
+                                    color:
+                                        const Color.fromARGB(255, 85, 191, 218),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: IconButton(
@@ -723,7 +892,8 @@ class ProfileSettings extends StatelessWidget {
                                         );
                                         if (result != null &&
                                             result.files.isNotEmpty) {
-                                          PlatformFile file = result.files.first;
+                                          PlatformFile file =
+                                              result.files.first;
                                           if (file.extension == "jpg" ||
                                               file.extension == "jpeg" ||
                                               file.extension == "png") {
@@ -740,11 +910,10 @@ class ProfileSettings extends StatelessWidget {
                                                   base64Encode(fileBytes);
                                             }
 
-                                            coverImageBytes=base64String;
-                                            coverImageBytesName=file.name;
-                                            coverImageExt=file.extension;
+                                            coverImageBytes = base64String;
+                                            coverImageBytesName = file.name;
+                                            coverImageExt = file.extension;
 
-   
                                             controller.updateCoverImage(
                                               base64String,
                                               file.name,
@@ -757,7 +926,8 @@ class ProfileSettings extends StatelessWidget {
                                           }
                                         } else {
                                           // User canceled the picker
-                                          controller.updateCoverImage('', '', '');
+                                          controller.updateCoverImage(
+                                              '', '', '');
                                         }
                                       } catch (err) {
                                         print(err);
@@ -774,9 +944,9 @@ class ProfileSettings extends StatelessWidget {
                           ),
                         ],
                       ),
-    
+
                       const SizedBox(height: 20),
-    
+
                       Container(
                         child: ElevatedButton.icon(
                           onPressed: () async {
@@ -785,7 +955,7 @@ class ProfileSettings extends StatelessWidget {
                               allowedExtensions: ['pdf'],
                               allowMultiple: false,
                             );
-    
+
                             if (result != null && result.files.isNotEmpty) {
                               PlatformFile file = result.files.first;
                               if (file.extension == "pdf") {
@@ -817,7 +987,9 @@ class ProfileSettings extends StatelessWidget {
                           icon: const Icon(Icons.cloud_upload),
                           label: const Text('Upload CV'),
                           style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white, backgroundColor: const Color.fromARGB(255, 85, 191, 218),
+                            foregroundColor: Colors.white,
+                            backgroundColor:
+                                const Color.fromARGB(255, 85, 191, 218),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -826,9 +998,9 @@ class ProfileSettings extends StatelessWidget {
                           ),
                         ),
                       ),
-    
+
                       const SizedBox(height: 20),
-    
+
                       MaterialButton(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20)),
