@@ -130,7 +130,7 @@ exports.getMainInfo = async (req, res, next) => {
 
             }
             var availableFields = await systemFields.findAll({
-                attributes: ['id','Field'],
+                attributes: ['Field'],
             });
             return res.status(200).json({
                 message: 'User found',

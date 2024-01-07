@@ -52,6 +52,7 @@ class SettingsControllerImp extends SettingsController {
       return resbody['message'];
     } else if (res.statusCode == 200) {
       print(resbody['availableFields']);
+      print(resbody['user']);
       GetStorage().write("photo", resbody["user"]["photo"]);
       Get.to(ProfileSettings(userData: [resbody["user"]]));
     }
