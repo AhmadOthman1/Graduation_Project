@@ -21,7 +21,8 @@ class _HomepageState extends State<Homepage> {
       Get.put(LogOutButtonControllerImp());
 
   String? name;
-  ImageProvider<Object> avatarImage = const AssetImage("images/profileImage.jpg");
+  ImageProvider<Object> avatarImage =
+      const AssetImage("images/profileImage.jpg");
 
   @override
   void initState() {
@@ -63,75 +64,70 @@ class _HomepageState extends State<Homepage> {
 
     return Scaffold(
       body: NestedScrollView(
-        
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
             SliverToBoxAdapter(
-              child:
-      Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Container(
-          margin: const EdgeInsets.only(top: 30),
-          child: Column(
-            
-            children: [
-              Container(
-                height: 50,
-                margin: const EdgeInsets.symmetric(horizontal: 5),
-                child: Row(
-                  children: [
-                    avatarBuilder,
-                    Expanded(
-                      child: TextFormField(
-                        onTap: () {
-                          Get.to(const Search());
-                        },
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          fillColor: Colors.grey[200],
-                          filled: true,
-                          prefixIcon: const Icon(Icons.search),
-                          hintText: "Search",
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Container(
+                  margin: const EdgeInsets.only(top: 30),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 50,
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        child: Row(
+                          children: [
+                            avatarBuilder,
+                            Expanded(
+                              child: TextFormField(
+                                onTap: () {
+                                  Get.to(const Search());
+                                },
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  fillColor: Colors.grey[200],
+                                  filled: true,
+                                  prefixIcon: const Icon(Icons.search),
+                                  hintText: "Search",
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                controller.goToChatPage();
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.only(top: 5, left: 3),
+                                child: const Icon(
+                                  Icons.message_rounded,
+                                  size: 45,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        controller.goToChatPage();
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 5, left: 3),
-                        child: const Icon(
-                          Icons.message_rounded,
-                          size: 45,
-                        ),
+                      const SizedBox(
+                        height: 10,
                       ),
-                    ),
-                  ],
+                      const Divider(
+                        color: Color.fromARGB(255, 194, 193, 193),
+                        thickness: 4.0,
+                      ),
+                      //  Post(),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              const Divider(
-                color: Color.fromARGB(255, 194, 193, 193),
-                thickness: 4.0,
-              ),
-              //  Post(),
-            ],
-          ),
-        ),
-      ),
-
-       ),
+            ),
           ];
         },
         body: Post(username: 'AhmadOthman'),
-        
       ),
       drawer: Drawer(
         backgroundColor: Colors.white,
@@ -157,7 +153,7 @@ class _HomepageState extends State<Homepage> {
                   backgroundImage: avatarImage,
                 ),
                 accountName: Text(
-                  name??"",
+                  name ?? "",
                   style: const TextStyle(color: Colors.black),
                 ),
                 accountEmail: const Text(
@@ -179,11 +175,18 @@ class _HomepageState extends State<Homepage> {
                   controller.goToCalenderPage();
                 },
               ),
-               ListTile(
-                title: const Text("Trello"),
+              ListTile(
+                title: const Text("Tasks"),
                 leading: const Icon(Icons.task),
                 onTap: () {
-                 Get.to(const TasksHomePage());
+                  Get.to(const TasksHomePage());
+                },
+              ),
+              ListTile(
+                title: const Text("My Pages"),
+                leading: const Icon(Icons.contact_page),
+                onTap: () {
+                  controller.goToMyPages();
                 },
               ),
               ListTile(

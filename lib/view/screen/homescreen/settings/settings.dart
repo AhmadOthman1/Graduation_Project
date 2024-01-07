@@ -192,38 +192,6 @@ class Settings extends StatelessWidget {
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 2.0,
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 10, bottom: 10),
-                child: InkWell(
-                  onTap: () {
-                  
-                  Get.to(MyPages());
-                  },
-                  child: Container(
-                    height: 35,
-                    padding: const EdgeInsets.only(left: 10),
-                    child: const Row(
-                      children: [
-                        Icon(Icons.contact_page),
-                        SizedBox(width: 10),
-                        Text(
-                          "My Pages",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
-                        ),
-                        Spacer(),
-                        Icon(Icons.arrow_forward, size: 30),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const Divider(
-                color: Color.fromARGB(255, 194, 193, 193),
-                thickness: 2.0,
-              ),
-
-              
             ],
           ),
         ],

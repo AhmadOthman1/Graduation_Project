@@ -11,6 +11,7 @@ import 'package:growify/view/screen/homescreen/chat/chatmainpage.dart';
 //import 'package:growify/view/screen/homescreen/myPage/ColleaguesPageProfile.dart';
 import 'package:growify/view/screen/homescreen/profilepages/colleaguesprofile.dart';
 import 'package:growify/view/screen/homescreen/profilepages/profilemainpage.dart';
+import 'package:growify/view/screen/homescreen/settings/myPages.dart';
 import 'package:growify/view/widget/homePage/commentsMainpage.dart';
 import 'package:growify/view/widget/homePage/like.dart';
 import 'package:http/http.dart' as http;
@@ -323,7 +324,10 @@ class HomePageControllerImp extends HomePageController {
 
   @override
   goToForgetPassword() {
-    Get.offNamed(AppRoute.forgetpassword);
+    Get.to(AppRoute.forgetpassword);
+  }
+  goToMyPages() {
+    Get.to(MyPages());
   }
 
   getDashboard() async {

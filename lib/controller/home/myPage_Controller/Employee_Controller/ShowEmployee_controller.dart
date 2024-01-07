@@ -17,11 +17,48 @@ class ShowEmployeesController {
   bool isLoading = false;
   int pageSize = 10;
   int page = 1;
+final RxList<String> moreOptions = <String>[
+    'Delete',
+  ].obs;
+onMoreOptionSelected(
+      String option ,String employeeUsername, String pageId) async {
+      switch (option) {
+        case 'Delete':
+          return await deleteEmployee(pageId,employeeUsername);
+          break;
+      }
+  }
+  deleteEmployee(pageId, employeeUsername) async {
+    var url = "$urlStarter/user/deleteEmployee";
 
+    Map<String, dynamic> jsonData = {
+      "pageId": pageId,
+      "employeeUsername": employeeUsername,
+    };
+    String jsonString = jsonEncode(jsonData);
+    var response = await http.post(Uri.parse(url), body: jsonString, headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+    print(response.statusCode);
+    if (response.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      deleteEmployee(pageId, employeeUsername);
+      return;
+    } else if (response.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    } else if( response.statusCode == 200){
+      var responseBody = jsonDecode(response.body);
+      print(responseBody['message']);
+      employees.removeWhere((employee) => employee['username'] == employeeUsername);
+      return responseBody['message'];
+      
+    }
+  }
   getPageEmployees(int page,String pageId) async {
     
     var url =
-        "$urlStarter/user/getPageAdmins?page=$page&pageSize=$pageSize&pageId=$pageId";
+        "$urlStarter/user/getPageEmployees?page=$page&pageSize=$pageSize&pageId=$pageId";
     var response = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -58,20 +95,22 @@ class ShowEmployeesController {
       print(";;;;;;;;;;;;;;;;;;;;;");
       if (pageEmployees != null) {
         final employee = pageEmployees.map((pageEmployees) {
+           print(pageEmployees);
           return {
             'id': pageEmployees['id'],
             'pageId': pageEmployees['pageId'],
             'username': pageEmployees['username'],
             'firstname': pageEmployees['firstname'],
             'lastname': pageEmployees['lastname'],
-            'adminType': pageEmployees['employeeField'],
+            'employeeField': pageEmployees['field'],
             'photo': pageEmployees['photo'],
             'date': pageEmployees['createdAt'],
           };
+          
         }).toList();
 
         employees.addAll(employee);
-        
+       
       }
 
       isLoading = false;

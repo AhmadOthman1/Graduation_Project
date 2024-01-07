@@ -70,7 +70,7 @@ class _ShowAdminsState extends State<ShowAdmins> {
               Get.off(AddAdmin(pageId: widget.pageId));
             },
             child: Text(
-              "Add Admin",
+              "Edit Admins",
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -141,8 +141,8 @@ class _ShowAdminsState extends State<ShowAdmins> {
                                 .image
                             : defultprofileImage,
                       ),
-                      title: Text('$firstname $lastname ($adminType)'),
-                      subtitle: Text('$username'),
+                      title: Text('$firstname $lastname (@$username)'),
+                      subtitle: Text('$adminType'),
                     ),
                     const Divider(
                       color: Color.fromARGB(255, 194, 193, 193),

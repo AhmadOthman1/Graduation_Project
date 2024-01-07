@@ -35,7 +35,7 @@ class _AddAdminState extends State<AddAdmin> {
         child: Column(
           children: [
             Text(
-              'Add New Admin',
+              'Edit/Add Admin',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,

@@ -3,13 +3,14 @@ import 'package:get/get.dart';
 import 'package:growify/controller/home/myPage_Controller/Admin_controller/ShowAdmin_controller.dart';
 import 'package:growify/controller/home/myPage_Controller/Employee_Controller/ShowEmployee_controller.dart';
 import 'package:growify/controller/home/network_controller/networdkmainpage_controller.dart';
+import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/myPage/Admins/SelectAdmin.dart';
 import 'package:growify/view/screen/homescreen/myPage/Employees/addEmployee.dart';
 
 class ShowEmployees extends StatefulWidget {
   final pageId;
-  const ShowEmployees({Key? key , required this.pageId}) : super(key: key);
+  const ShowEmployees({Key? key, required this.pageId}) : super(key: key);
 
   @override
   _ShowEmployeesState createState() => _ShowEmployeesState();
@@ -18,12 +19,12 @@ class ShowEmployees extends StatefulWidget {
 final ScrollController scrollController = ScrollController();
 
 class _ShowEmployeesState extends State<ShowEmployees> {
-  final NetworkMainPageControllerImp Networkcontroller = Get.put(NetworkMainPageControllerImp());
+  final NetworkMainPageControllerImp Networkcontroller =
+      Get.put(NetworkMainPageControllerImp());
   late ShowEmployeesController _controller;
   final ScrollController _scrollController = ScrollController();
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
-  
 
   @override
   void initState() {
@@ -36,7 +37,7 @@ class _ShowEmployeesState extends State<ShowEmployees> {
   Future<void> _loadData() async {
     print('Loading data...');
     try {
-      await _controller.loadEmployees(_controller.page,widget.pageId);
+      await _controller.loadEmployees(_controller.page, widget.pageId);
       setState(() {
         _controller.page++;
         _controller.employees;
@@ -54,7 +55,7 @@ class _ShowEmployeesState extends State<ShowEmployees> {
       _loadData();
     }
   }
-  
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -65,20 +66,21 @@ class _ShowEmployeesState extends State<ShowEmployees> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-  
-  actions: [
-    TextButton(
-      
-      onPressed: () {
-      
-       Get.off(AddEmployee(pageId:widget.pageId));
-      },
-      child: Text("Add Employee",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
-    ),
-   
-  ],
-),
-
+        actions: [
+          TextButton(
+            onPressed: () {
+              Get.off(AddEmployee(pageId: widget.pageId));
+            },
+            child: Text(
+              "Edit Employees",
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           const Divider(
@@ -91,29 +93,59 @@ class _ShowEmployeesState extends State<ShowEmployees> {
               itemCount: _controller.employees.length,
               itemBuilder: (context, index) {
                 final employee = _controller.employees[index];
-                final firstname=employee['firstname'];
-                final lastname =employee['lastname'];
-                final username =employee['username'];
-                final employeeFiled =employee['employeeField'];
-                
+                final firstname = employee['firstname'];
+                final lastname = employee['lastname'];
+                final username = employee['username'];
+                final employeeFiled = employee['employeeField'];
+
                 return Column(
                   children: [
                     ListTile(
-                      onTap: (){
+                      onTap: () {
                         final userUsername = username;
-                              Networkcontroller.goToUserPage(userUsername!);
-                        
+                        Networkcontroller.goToUserPage(userUsername!);
                       },
-                      trailing: CircleAvatar(
+                      trailing: PopupMenuButton<String>(
+                        icon: const Icon(Icons.more_vert),
+                        onSelected: (String option) async {
+                          var message = await _controller.onMoreOptionSelected(option,username,widget.pageId);
+                          (message != null)
+                        ? showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CustomAlertDialog(
+                                title: 'Error',
+                                icon: Icons.error,
+                                text: message,
+                                buttonText: 'OK',
+                                
+                              );
+                            },
+                          )
+                        : null;
+                        setState(() {
+                          
+                        });
+                        },
+                        itemBuilder: (BuildContext context) {
+                            return _controller.moreOptions.map((String option) {
+                              return PopupMenuItem<String>(
+                                value: option,
+                                child: Text(option),
+                              );
+                            }).toList();
+                        },
+                      ),
+                      leading: CircleAvatar(
                         backgroundImage: (employee['photo'] != null &&
                                 employee['photo'] != "")
                             ? Image.network("$urlStarter/" + employee['photo']!)
                                 .image
                             : defultprofileImage,
                       ),
-                      title: Text('$firstname $lastname ($employeeFiled)'),
-                      subtitle: Text('$username'),
-                      
+                      title: Text('$firstname $lastname (@$username)'),
+                      subtitle: Text('$employeeFiled'),
+
                     ),
                     const Divider(
                       color: Color.fromARGB(255, 194, 193, 193),

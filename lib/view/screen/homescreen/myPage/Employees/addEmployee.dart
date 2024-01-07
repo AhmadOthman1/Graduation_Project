@@ -36,7 +36,7 @@ class _AddEmployeeState extends State<AddEmployee> {
         child: Column(
           children: [
             Text(
-              'Add New Employee',
+              'Edit/Add Employee',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
