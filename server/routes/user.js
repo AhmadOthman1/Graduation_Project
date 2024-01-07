@@ -85,7 +85,6 @@ router.post('/getPagePostLikes',authenticateToken,myPagesController.getPagePostL
 router.post('/getPagePostComments',authenticateToken,myPagesController.getPagePostComments);
 router.post('/pageAddLike',authenticateToken,myPagesController.pageAddLike);
 router.post('/pageRemoveLike',authenticateToken,myPagesController.pageRemoveLike);
-//router.post('/getPagePostComments',authenticateToken,myPagesController.getPagePostComments);
 router.post('/pageAddComment',authenticateToken,myPagesController.pageAddComment);
 router.post('/postNewPagePost',authenticateToken,myPagesController.postNewPagePost);
 router.post('/deletePagePost',authenticateToken,myPagesController.deletePagePost);
@@ -93,9 +92,13 @@ router.post('/deletePageComment',authenticateToken,myPagesController.deletePageC
 router.post('/editPageInfo',authenticateToken,myPagesController.editPageInfo);
 router.get('/getPageAdmins',authenticateToken,myPagesController.getPageAdmins);
 router.post('/addNewAdmin',authenticateToken,myPagesController.addNewAdmin);
+router.post('/deleteAdmin',authenticateToken,myPagesController.deleteAdmin);
+router.get('/getPageEmployees',authenticateToken,myPagesController.getPageEmployees);
+router.post('/addNewEmployee',authenticateToken,myPagesController.addNewEmployee);
+router.post('/deleteEmployee',authenticateToken,myPagesController.deleteEmployee);
+
 router.get('/getPageJobs',authenticateToken,myPagesController.getPageJobs);
 router.post('/addNewJob',authenticateToken,myPagesController.addNewJob);
-router.post('/deleteAdmin',authenticateToken,myPagesController.deleteAdmin);
 // other Pages
 router.get('/getPageProfileInfo',authenticateToken,pagesProfile.getPageProfileInfo);
 router.post('/followPage',authenticateToken,pagesProfile.followPage);

@@ -20,12 +20,12 @@ const pageJobs = sequelize.define('pageJobs', {
         allowNull:false,
 
     },
-    interest:{
-        type:Sequelize.STRING(2000),
-        allowNull:false,
+    Fields:{
+        type:Sequelize.STRING(6000),
+        allowNull:false
     },
     description:{
-        type:Sequelize.STRING(2000),
+        type:Sequelize.STRING(6000),
         allowNull:false,
 
     },

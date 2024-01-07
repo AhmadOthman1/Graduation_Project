@@ -11,6 +11,7 @@ const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const connections = require("../../models/connections");
 const post = require("../../models/post");
+const systemFields = require("../../models/systemFields");
 require('dotenv').config();
 
 exports.getUserProfileDashboard = async (req, res, next) => {
@@ -128,6 +129,9 @@ exports.getMainInfo = async (req, res, next) => {
                 }
 
             }
+            var availableFields = await systemFields.findAll({
+                attributes: ['id','Field'],
+            });
             return res.status(200).json({
                 message: 'User found',
                 user: {
@@ -139,11 +143,15 @@ exports.getMainInfo = async (req, res, next) => {
                     address: existingEmail.address,
                     phone: existingEmail.phone,
                     dateOfBirth: existingEmail.dateOfBirth,
+                    Gender: existingEmail.Gender,
+                    Fields:existingEmail.Fields,
                     photo: photo,
                     coverImage: coverimage,
                     cv: cv,
                     // Add other user properties as neededs
                 },
+                availableFields:availableFields,
+                
             });
         } else {
             return res.status(500).json({

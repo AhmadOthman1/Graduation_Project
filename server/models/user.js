@@ -38,6 +38,16 @@ const User=sequelize.define('user',{
         type:Sequelize.DATEONLY,
         allowNull:false
     },
+    Gender:{
+        type:Sequelize.STRING,
+        allowNull:true
+
+    },
+    Fields:{
+        type:Sequelize.STRING(6000),
+        allowNull:true
+
+    },
     photo:{
         type:Sequelize.STRING,
         allowNull:true

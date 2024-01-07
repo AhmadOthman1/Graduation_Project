@@ -1,6 +1,7 @@
 const User = require("../../models/user");
 const userPages = require("../../models/pages");
 const pageAdmin = require("../../models/pageAdmin");
+const pageEmployees = require("../../models/pageEmployees");
 const { Op } = require('sequelize');
 const validator = require('../validator');
 const bcrypt = require('bcrypt');
@@ -1329,14 +1330,14 @@ exports.deleteAdmin = async (req, res, next) => {
                     },
                 });
                 if (existingAdminUsername != null) {
-                    const isAddedUsernameAdmin = await pageAdmin.findOne({
+                    const isDeletedUsernameAdmin = await pageAdmin.findOne({
                         where: {
                             pageId: pageId,
                             username: adminUsername,
                         },
                     });
-                    if (isAddedUsernameAdmin != null) {
-                        await isAddedUsernameAdmin.destroy();
+                    if (isDeletedUsernameAdmin != null) {
+                        await isDeletedUsernameAdmin.destroy();
                         return res.status(200).json({
                             message: 'Admin deleted',
                         });
@@ -1344,6 +1345,235 @@ exports.deleteAdmin = async (req, res, next) => {
                         
                         return res.status(404).json({
                             message: 'This user is not admin in your page',
+                        });
+                    }
+                } else {
+                    return res.status(404).json({
+                        message: 'User not found',
+                    });
+                }
+            } else {
+                return res.status(500).json({
+                    message: 'You are not allowed to edit this information',
+                    body: req.body,
+                });
+            }
+        }
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};
+exports.getPageEmployees = async (req, res, next) => {
+    try {
+        var page = req.query.page || 1;
+        var pageSize = req.query.pageSize || 10;
+        var pageId = req.query.pageId;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        // Calculate the offset based on page and pageSize
+        const offset = (page - 1) * pageSize;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername != null) {
+            var userPageAdmin = await pageAdmin.findOne({
+                where: { username: userUsername, pageId: pageId, adminType: "A" }
+            });
+            if (userPageAdmin != null) {
+
+                const allPageEmployees= await pageEmployees.findAll({
+                    where: {
+                        pageId: pageId,
+                    },
+                    limit: parseInt(pageSize),
+                    offset: parseInt(offset),
+                    order: [['createdAt', 'DESC']],
+                });
+                const fullPageEmployeesBody = await Promise.all(allPageEmployees.map(async (employee) => {
+                    const user = await User.findOne({
+                        where: {
+                            username: employee.username
+                        }
+                    });
+                    const photo = user ? user.photo : null;
+                    const firstname = user.firstname;
+                    const lastname = user.lastname;
+                    return {
+                        ...employee.dataValues,
+                        firstname,
+                        lastname,
+                        createdAt: moment(employee.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+                        photo,
+                    };
+                }));
+                return res.status(200).json({
+                    pageEmployees: fullPageEmployeesBody,
+                });
+            } else {
+                return res.status(500).json({
+                    message: 'You are not allowed to see this information',
+                    body: req.body,
+                });
+            }
+        }
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};
+exports.addNewEmployee = async (req, res, next) => {
+    try {
+        var pageId = req.body.pageId;
+        var employeeUsername = req.body.employeeUsername;
+        var field = req.body.field;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        // Calculate the offset based on page and pageSize
+        if (pageId == null || employeeUsername == null || field == null) {
+            return res.status(500).json({
+                message: 'invalid values',
+                body: req.body,
+            });
+        }
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername != null) {
+            var userPageAdmin = await pageAdmin.findOne({
+                where: { username: userUsername, pageId: pageId, adminType: "A" }
+            });
+            if (userPageAdmin != null) {
+                const existingEmployeeUsername = await User.findOne({
+                    where: {
+                        username: employeeUsername
+                    },
+                });
+                if (existingEmployeeUsername != null) {
+                    const isAddedUsernameEmployee = await pageEmployees.findOne({
+                        where: {
+                            pageId: pageId,
+                            username: employeeUsername,
+                        },
+                    });
+                    if (isAddedUsernameEmployee != null) {
+                        if (isAddedUsernameEmployee.field == field) {
+                            return res.status(500).json({
+                                message: 'This User Is already an Employee',
+                            });
+                        } else {
+                            await pageEmployees.update(
+                                { field: field },
+                                {
+                                    where: {
+                                        pageId: pageId,
+                                        username: employeeUsername,
+                                    },
+                                });
+                            return res.status(500).json({
+                                message: 'you Changed ' + employeeUsername + ' field successfully',
+                            });
+                        }
+
+                    } else {
+                        await pageEmployees.create({
+                            pageId: pageId,
+                            username: employeeUsername,
+                            field: field,
+                        });
+                        return res.status(200).json({
+                            message: 'you added ' + employeeUsername + ' as employee successfully',
+                        });
+                    }
+                } else {
+                    return res.status(404).json({
+                        message: 'User not found',
+                    });
+                }
+            } else {
+                return res.status(500).json({
+                    message: 'You are not allowed to edit this information',
+                    body: req.body,
+                });
+            }
+        }
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};
+exports.deleteEmployee = async (req, res, next) => {
+    try {
+        var pageId = req.body.pageId;
+        var employeeUsername = req.body.employeeUsername;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        // Calculate the offset based on page and pageSize
+        if (pageId == null || employeeUsername == null ) {
+            return res.status(500).json({
+                message: 'invalid values',
+                body: req.body,
+            });
+        }
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername != null) {
+            var userPageAdmin = await pageAdmin.findOne({
+                where: { username: userUsername, pageId: pageId, adminType: "A" }
+            });
+            if (userPageAdmin != null) {
+                const existingEmployeeUsername = await User.findOne({
+                    where: {
+                        username: employeeUsername
+                    },
+                });
+                if (existingEmployeeUsername != null) {
+                    const isDeletedUsernameEmployee = await pageEmployees.findOne({
+                        where: {
+                            pageId: pageId,
+                            username: employeeUsername,
+                        },
+                    });
+                    if (isDeletedUsernameEmployee != null) {
+                        await isDeletedUsernameEmployee.destroy();
+                        return res.status(200).json({
+                            message: 'Employee deleted',
+                        });
+                    } else {
+                        
+                        return res.status(404).json({
+                            message: 'This user is not employee in your page',
                         });
                     }
                 } else {

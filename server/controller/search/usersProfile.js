@@ -505,6 +505,8 @@ exports.getUserProfileInfo = async (req, res, next) => {
                     dateOfBirth: ProfileUsername.dateOfBirth,
                     photo: photo,
                     coverImage: coverimage,
+                    Gender: ProfileUsername.Gender,
+                    Fields:ProfileUsername.Fields,
                     cv: cv,
                     connection: connection,
                     connectionsCount: connectionsCount,
