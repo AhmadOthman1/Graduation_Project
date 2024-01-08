@@ -77,7 +77,7 @@ class PostControllerImp extends PostController {
   int pageSize = 10;
 
   PostgetPostfromDataBase(username, page, pageSize,
-      [bool? isPage = false]) async {
+      [bool? isPage = false, String? postId]) async {
     print(page);
 
     if (isPage != null && isPage) {
@@ -98,24 +98,41 @@ class PostControllerImp extends PostController {
       );
       return responce;
     } else {
-      var url = "$urlStarter/user/getPosts";
-      var responce = await http.post(
-        Uri.parse(url),
-        body: jsonEncode({
-          'username': username,
-          'pages': page,
-          'pageSize': pageSize,
-        }),
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-          'Authorization': 'bearer ' + GetStorage().read('accessToken'),
-        },
-      );
-      return responce;
+      if (postId != null) {//get one post only
+        var url = "$urlStarter/user/getPost";
+        var responce = await http.post(
+          Uri.parse(url),
+          body: jsonEncode({
+            'username': username,
+            'postId': postId,
+          }),
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+            'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+          },
+        );
+        return responce;
+      } else {
+        var url = "$urlStarter/user/getPosts";
+        var responce = await http.post(
+          Uri.parse(url),
+          body: jsonEncode({
+            'username': username,
+            'pages': page,
+            'pageSize': pageSize,
+          }),
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+            'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+          },
+        );
+        return responce;
+      }
     }
   }
 
-  getPostfromDataBase(username, page, [bool? isPage = false]) async {
+  getPostfromDataBase(username, page,
+      [bool? isPage = false, String? postId]) async {
     print(isPage);
     if (isLoading) {
       return;
@@ -124,11 +141,12 @@ class PostControllerImp extends PostController {
     print(username);
     print(page);
     print(pageSize);
-    var res = await PostgetPostfromDataBase(username, page, pageSize, isPage);
+    var res =
+        await PostgetPostfromDataBase(username, page, pageSize, isPage, postId);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
 
-      getPostfromDataBase(username, page, isPage);
+      getPostfromDataBase(username, page, isPage, postId);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -284,7 +302,7 @@ class PostControllerImp extends PostController {
 
   Future<void> onMoreOptionSelected(
       String option, createdBy, postId, isPage) async {
-    if (isPage != null&& isPage== true) {
+    if (isPage != null && isPage == true) {
       switch (option) {
         case 'Delete':
           await deletePagePost(createdBy, postId);
@@ -366,9 +384,8 @@ class PostControllerImp extends PostController {
     }
   }
 
-onCommentOptionSelected(
-      String option, createdBy, commentId, isPage) async {
-    if (isPage != null && isPage== true) {
+  onCommentOptionSelected(String option, createdBy, commentId, isPage) async {
+    if (isPage != null && isPage == true) {
       switch (option) {
         case 'Delete':
           return await deletePageComment(createdBy, commentId);
@@ -486,7 +503,6 @@ onCommentOptionSelected(
     if (comment.commentContent == "") {
       return;
     }
-    
 
     var res =
         await PostAddComment(comment.postId, comment.commentContent, isPage);
@@ -546,8 +562,7 @@ onCommentOptionSelected(
   }
 
   gotoCommentPage(int postId,
-      [
-      bool? isPage,
+      [bool? isPage,
       bool? isAdmin,
       String? name,
       String? photo,
@@ -556,7 +571,7 @@ onCommentOptionSelected(
     print(res.statusCode);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      gotoCommentPage(postId, isPage,isAdmin, name, photo, createdBy);
+      gotoCommentPage(postId, isPage, isAdmin, name, photo, createdBy);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -588,21 +603,21 @@ onCommentOptionSelected(
         print("llllllllllllllllllllllllllllll");
         print(data['data']);
         if (isPage != null && isPage) {
-            Get.to(const CommentsMainPage(), arguments: {
-              'comments': comments1,
-              'postId': postId,
-              'isPage': isPage,
-              'isAdmin': isAdmin,
-              'name': name,
-              'photo': photo,
-              'createdBy': createdBy,
-            });
+          Get.to(const CommentsMainPage(), arguments: {
+            'comments': comments1,
+            'postId': postId,
+            'isPage': isPage,
+            'isAdmin': isAdmin,
+            'name': name,
+            'photo': photo,
+            'createdBy': createdBy,
+          });
         } else {
-            Get.to(const CommentsMainPage(), arguments: {
-              'comments': comments1,
-              'postId': postId,
-              'createdBy': createdBy,
-            });
+          Get.to(const CommentsMainPage(), arguments: {
+            'comments': comments1,
+            'postId': postId,
+            'createdBy': createdBy,
+          });
         }
       } else {
         print("Invalid or missing 'data' property in response.");

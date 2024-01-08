@@ -82,10 +82,10 @@ class NotificationsController {
     return;
   }
 
-  showPost(){
+  showPost(postId){
 
     
-    Get.to(() => const ShowPost());
+    Get.to(() =>  ShowPost(postId:postId));
 
   }
 

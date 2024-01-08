@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 
 class ShowPost extends StatefulWidget {
@@ -16,7 +17,7 @@ class _ShowPostState extends State<ShowPost> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Show Post'),
+        title: const Text('My Post'),
       ),
       body: NestedScrollView(
         
@@ -30,7 +31,7 @@ class _ShowPostState extends State<ShowPost> {
       )
       )
       ];},
-      body: Post(username: 'AhmadOthman'),
+      body: Post(username: GetStorage().read("username") , postId:widget.postId),
       )
     );
   }

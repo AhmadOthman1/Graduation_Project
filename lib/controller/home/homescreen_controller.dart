@@ -17,6 +17,7 @@ import 'package:growify/Platform.dart'; // our enum
 import 'package:growify/multiplatform.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 abstract class HomeScreeenController extends GetxController {
   changePage(int currentpage);
@@ -109,7 +110,9 @@ class HomeScreenControllerImp extends HomeScreeenController {
 
           eventSource.listen((Event event) async {
             if (GetStorage().read("username") == null) {
-              eventSource.lastStreamDisconnected();
+              try {
+                eventSource.lastStreamDisconnected();
+              } catch (err) {}
             } else {
               var data = event.data;
               if (data != null && data != [] && data != "") {
@@ -125,7 +128,11 @@ class HomeScreenControllerImp extends HomeScreeenController {
                   String notificationType = jsonData['notificationType'];
                   String notificationContent = jsonData['notificationContent'];
                   String notificationPointer = jsonData['notificationPointer'];
-                  String createdAt = jsonData['createdat'];
+                  //String createdAt = jsonData['createdat'];
+                  DateTime now = DateTime.now();
+                  String createdAt =
+                      DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
+
                   var playSound = true;
                   Duration timeoutAfter = Duration(seconds: 5);
                   if (notificationType == "call") {
@@ -136,7 +143,7 @@ class HomeScreenControllerImp extends HomeScreeenController {
                   await NotificationService.initializeNotification(playSound);
                   await NotificationService.showNotification(
                       title: "Growify",
-                      body: "$notificationPointer $notificationContent",
+                      body: notificationType != "post" ? "$notificationPointer $notificationContent" : "$notificationContent",
                       summary: createdAt,
                       payload: {
                         "navigate": "true",

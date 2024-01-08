@@ -8,7 +8,8 @@ class Post extends StatefulWidget {
   String? username;
   bool? isPage;
   bool?isAdmin;
-  Post({this.username, Key? key, this.isPage, this.isAdmin}) : super(key: key);
+  String? postId;
+  Post({this.username, Key? key, this.isPage, this.isAdmin,this.postId}) : super(key: key);
 
   @override
   _PostState createState() => _PostState();
@@ -40,7 +41,7 @@ class _PostState extends State<Post> {
     print('Loading data...');
     try {
       await controller.getPostfromDataBase(
-          widget.username, controller.page, widget.isPage);
+          widget.username, controller.page, widget.isPage,widget.postId);
       setState(() {
         controller.page++;
         controller.posts;

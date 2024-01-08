@@ -21,6 +21,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
   final ScrollController _scrollController = ScrollController();
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
+  final AssetImage defultNotificationImage =
+      const AssetImage("images/notification.jpg");
   final SearchControllerImp searchController = Get.put(SearchControllerImp());
 
   @override
@@ -82,18 +84,18 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 return Column(
                   children: [
                     ListTile(
-                      onTap: () {
-                        _controller.showPost();
-                      },
                       leading: CircleAvatar(
-                        backgroundImage: (notice['photo'] != null &&
-                                notice['photo'] != "")
-                            ? Image.network("$urlStarter/" + notice['photo']!)
-                                .image
-                            : defultprofileImage,
+                        backgroundImage: (notice['notificationType'] != "post")
+                            ? (notice['photo'] != null && notice['photo'] != "")
+                                ? Image.network(
+                                        "$urlStarter/" + notice['photo']!)
+                                    .image
+                                : defultprofileImage
+                            : defultNotificationImage,
                       ),
-                      title: Text(
-                          "${notice['notificationPointer']} ${notice['notificationContent']}"),
+                      title: Text(notice['notificationType'] != "post"
+                          ? "${notice['notificationPointer']} ${notice['notificationContent']}"
+                          : "${notice['notificationContent']}"),
                       subtitle: Text(notice['date']),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -104,11 +106,13 @@ class _NotificationsPageState extends State<NotificationsPage> {
                               if (notice['notificationType'] == "connection") {
                                 searchController.goToUserPage(
                                     notice['notificationPointer']!);
-                              } else if (notice['notificationType'] == "call" || notice['notificationType'] == "message") {
+                              } else if (notice['notificationType'] == "call" ||
+                                  notice['notificationType'] == "message") {
                                 HomePageControllerImp controller =
                                     Get.put(HomePageControllerImp());
                                 var foundUser =
-                                    await controller.userChatProfileInfo(notice['notificationPointer']);
+                                    await controller.userChatProfileInfo(
+                                        notice['notificationPointer']);
 
                                 if (foundUser != null) {
                                   MyApp.navigatorKey.currentState?.push(
@@ -118,6 +122,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                     ),
                                   );
                                 }
+                              } else if (notice['notificationType'] == "post") {
+                                _controller.showPost(notice['notificationPointer']);
                               }
                             },
                           ),
