@@ -18,7 +18,7 @@ var io = require('socket.io')(server, {
   maxHttpBufferSize: 1e8,
 });
 app.use(cors());
-
+app.use(express.json());
 app.use(express.static('messageVideos'));
 
 app.use(express.static('messageImages'));

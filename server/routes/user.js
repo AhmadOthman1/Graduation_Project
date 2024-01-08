@@ -60,6 +60,7 @@ router.get('/usersGetworkExperience',authenticateToken,usersProfile.getWorkExper
 //user posts
 router.post('/postNewUserPost',authenticateToken,userPostsController.postNewUserPost);
 router.post('/getPosts',authenticateToken,getPostsController.getPosts);
+router.post('/getPost',authenticateToken,getPostsController.getPost);
 router.post('/getPostLikes',authenticateToken,getPostsController.getPostLikes);
 router.post('/addLike',authenticateToken,getPostsController.addLike);
 router.post('/removeLike',authenticateToken,getPostsController.removeLike);

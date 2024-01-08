@@ -29,20 +29,24 @@ exports.getUserNotifications = async (req, res, next) => {
                 offset: parseInt(offset),
                 order: [['createdAt', 'DESC']],
               });
+              console.log(userNotifications);
+              console.log("llllllllllllllllllllllllllllllll");
               const fullNotificationsBody = await Promise.all(userNotifications.map(async (notification) => {
+                var photo;
                 if(notification.notificationType == "connection" || notification.notificationType == "call"|| notification.notificationType == "message"){
                     const user = await User.findOne({
                         where: {
                             username: notification.notificationPointer
                         }
                     });
-                    const photo = user ? user.photo : null;
-                    return {
-                        ...notification.dataValues,
-                        createdAt: moment(notification.createdAt).format('YYYY-MM-DD HH:mm:ss'),
-                        photo,
-                    };
+                    photo = user ? user.photo : null;
+                    
                 }
+                return {
+                    ...notification.dataValues,
+                    createdAt: moment(notification.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+                    photo,
+                };
             }));
             console.log(fullNotificationsBody);
             return res.status(200).json({

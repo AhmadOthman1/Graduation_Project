@@ -3,7 +3,7 @@ const Connections = require("../../models/connections");
 const sentConnection = require("../../models/sentConnection");
 const WorkExperience = require("../../models/workExperience");
 const EducationLevel = require("../../models/educationLevel");
-const {notifyUser , deleteNotificaion} = require("../notifications");
+const {notifyUser,deleteNotification} = require('../notifyUser');
 const post = require('../../models/post');
 
 const jwt = require('jsonwebtoken');
@@ -128,7 +128,7 @@ exports.postSendDeleteReq = async (req, res, next) => {
         var userInSenderConnections = await findIfUserInSentConnectionsSender(userUsername, username);
         console.log(userInSenderConnections);
         if (userInSenderConnections[0]) {// check if this user has a connection req from other user
-            sentConnection.destroy({ where: { id: userInSenderConnections[0].id } });
+            await sentConnection.destroy({ where: { id: userInSenderConnections[0].id } });
             return res.status(200).json({
                 message: 'request Accepted',
                 body: req.body
@@ -185,12 +185,22 @@ exports.postSendAcceptConnectReq = async (req, res, next) => {
         var userInSenderConnections = await findIfUserInSentConnectionsSender(userUsername, username);
         console.log(userInSenderConnections);
         if (userInSenderConnections[0]) {// check if this user has a connection req from other user
-            sentConnection.destroy({ where: { id: userInSenderConnections[0].id } });
-            Connections.create({
+            await sentConnection.destroy({ where: { id: userInSenderConnections[0].id } });
+            await Connections.create({
                 senderUsername: username,
                 receiverUsername: userUsername,
                 date: new Date(),
             })
+            const notification = {
+                username: username,  
+                notificationType: 'connection', // Type of notification
+                notificationContent: "accept connection request",  
+                notificationPointer: userUsername,
+              };
+              var isnotify= false
+              isnotify= await notifyUser (username, notification);
+            //isnotify = await notifyUser(username, notification);
+              console.log(isnotify);
             return res.status(200).json({
                 message: 'request Accepted',
                 body: req.body
@@ -245,7 +255,7 @@ exports.postSendRemoveConnection = async (req, res, next) => {
         }
         var userInConnections = await findIfUserInConnections(userUsername, username);
         if (userInConnections[0]) {// check if this user  connected with other user 
-            Connections.destroy({ where: { id: userInConnections[0].id } });
+            await Connections.destroy({ where: { id: userInConnections[0].id } });
             return res.status(200).json({
                 message: 'request removed',
                 body: req.body
@@ -300,7 +310,7 @@ exports.postSendRemoveReq = async (req, res, next) => {
         var userInReceiverConnections = await findIfUserInSentConnectionsReceiver(userUsername, username);
         console.log(userInReceiverConnections);
         if (userInReceiverConnections[0]) {// check if this user sent a connection req to other user 
-            sentConnection.destroy({ where: { id: userInReceiverConnections[0].id } });
+            await sentConnection.destroy({ where: { id: userInReceiverConnections[0].id } });
             const notification = {
                 username: username,  // Type of notification
                 notificationType: 'connection',  // Content of the notification
@@ -308,7 +318,7 @@ exports.postSendRemoveReq = async (req, res, next) => {
                 notificationPointer: userUsername,
               };
               var isnotify= false
-            isnotify = await deleteNotificaion(username, notification);
+            isnotify = await deleteNotification(username, notification);
               console.log(isnotify);
             return res.status(200).json({
                 message: 'request removed',
@@ -379,7 +389,8 @@ exports.postSendConnectReq = async (req, res, next) => {
             notificationPointer: userUsername,
           };
           var isnotify= false
-        isnotify = await notifyUser(username, notification);
+        //isnotify = await notifyUser(username, notification);
+        isnotify= await notifyUser (username, notification);
           console.log(isnotify);
         return res.status(200).json({
             message: 'request sent',
