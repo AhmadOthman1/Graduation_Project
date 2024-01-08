@@ -10,39 +10,40 @@ LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
 class NewJobControllerImp extends GetxController {
-  final RxList<String> selectedItems = <String>[].obs;
-  final List<String> items = [
-    'Accounting',
-    'Agricultural Engineering',
-    'American Studies',
-    'Anesthesia and Technical Resuscitation',
-    'Animal Production and Animal Health',
-    'Applied Chemistry',
-    'Arabic Language and Its Literature',
-    'Architecture',
-    'Banking and Finance',
-    'Biology Biotechnology',
-    'Biomedical Sciences Track',
-    'Business Intelligence',
-    'Business Management',
-    'Cardiac Perfusion',
-    'Ceramic Art',
-    'Chemical Engineering',
-    'Chemistry',
-    'Civil Engineering',
-    'Communication and Digital Marketing',
-    'Communication and Digital Media',
-    'Communications Engineering',
-    'Computer Engineering',
-    'Computer Information Systems',
-    'Computer Science',
-    'Computer Science in the Job Market',
-    'Construction Engineering',
-    'Cosmetics and Skin Care',
-    'Dental Laboratory Technology',
-    'Diploma in Educational Qualification',
-    'Doctor of Dental Medicine',
-  ];
+   RxList<String> selectedItems = <String>[].obs;
+    
+ RxList<String> items = RxList<String>([
+  'Accounting',
+  'Agricultural Engineering',
+  'American Studies',
+  'Anesthesia and Technical Resuscitation',
+  'Animal Production and Animal Health',
+  'Applied Chemistry',
+  'Arabic Language and Its Literature',
+  'Architecture',
+  'Banking and Finance',
+  'Biology Biotechnology',
+  'Biomedical Sciences Track',
+  'Business Intelligence',
+  'Business Management',
+  'Cardiac Perfusion',
+  'Ceramic Art',
+  'Chemical Engineering',
+  'Chemistry',
+  'Civil Engineering',
+  'Communication and Digital Marketing',
+  'Communication and Digital Media',
+  'Communications Engineering',
+  'Computer Engineering',
+  'Computer Information Systems',
+  'Computer Science',
+  'Computer Science in the Job Market',
+  'Construction Engineering',
+  'Cosmetics and Skin Care',
+  'Dental Laboratory Technology',
+  'Diploma in Educational Qualification',
+  'Doctor of Dental Medicine',
+]);
 
 
 
@@ -77,7 +78,7 @@ class NewJobControllerImp extends GetxController {
     Map<String, dynamic> jsonData = {
       "pageId": pageId,
       "title": postTitle.value,
-      "interest": selectedItems.value,
+      "interest": (selectedItems.value).join(','),
       "description": postDescription.value,
       "endDate": endDate.value.toString(),
     };

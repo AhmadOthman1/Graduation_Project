@@ -9,10 +9,14 @@ import 'package:growify/global.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:growify/core/functions/alertbox.dart';
-import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart';
-import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
-import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:multi_dropdown/enum/app_enums.dart';
+import 'package:multi_dropdown/models/chip_config.dart';
+import 'package:multi_dropdown/models/network_config.dart';
+import 'package:multi_dropdown/models/value_item.dart';
+import 'package:multi_dropdown/multiselect_dropdown.dart';
+import 'package:multi_dropdown/widgets/hint_text.dart';
+import 'package:multi_dropdown/widgets/selection_chip.dart';
+import 'package:multi_dropdown/widgets/single_selected_item.dart';
 
 class ProfileSettings extends StatelessWidget {
   ProfileSettings(
@@ -42,11 +46,11 @@ class ProfileSettings extends StatelessWidget {
     controller.textFieldText6.value = _controller6.text;
     controller.textFieldText7.value = _controller7.text;
     controller.items = RxList<String>.from(
-  availableFields.map<String>((map) => map['Field'].toString()),
-);
-controller.selectedItems = RxList<String>.from(
-  (userData[0]["Fields"] as String?)?.split(',') ?? [],
-);
+      availableFields.map<String>((map) => map['Field'].toString()),
+    );
+    controller.selectedItems = RxList<String>.from(
+      (userData[0]["Fields"] as String?)?.split(',') ?? [],
+    );
 
     controller.update();
   }
@@ -89,7 +93,6 @@ controller.selectedItems = RxList<String>.from(
 
   ProfileSettingsControllerImp controller =
       Get.put(ProfileSettingsControllerImp());
-      
 
   @override
   Widget build(BuildContext context) {
@@ -389,6 +392,64 @@ controller.selectedItems = RxList<String>.from(
                         ),
                       ),
                       //////////////////
+                      
+
+                      const SizedBox(height: 20),
+                      Container(
+                        padding: EdgeInsets.all(16.0),
+                        child: Obx(
+                          () => Column(
+                            children: [
+                              Container(
+                            margin: EdgeInsets.only(right: 230),
+                            child: Text("Your Fields",style: TextStyle(color: Colors.grey),)),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: AbsorbPointer(
+                                      absorbing: !controller
+                                          .isTextFieldEnabledFields.value,
+                                      child: MultiSelectDropDown(
+                                        searchEnabled: true,
+                                        onOptionSelected:
+                                            (List<ValueItem> selectedOptions) {
+                                              controller.finalselectedItems.assignAll(selectedOptions.map((item) => item.value));
+                                        },
+                                        options: controller.items
+                                            .map((item) =>
+                                                ValueItem(label: item, value: item))
+                                            .toList(),
+                                        selectionType: SelectionType.multi,
+                                        chipConfig: const ChipConfig(
+                                            wrapType: WrapType.scroll),
+                                        dropdownHeight: 300,
+                                        optionTextStyle:
+                                            const TextStyle(fontSize: 16),
+                                        selectedOptionIcon:
+                                            const Icon(Icons.check_circle),
+                                        selectedOptions: controller.selectedItems
+                                            .map((item) =>
+                                                ValueItem(label: item, value: item))
+                                            .toList(),
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      controller.isTextFieldEnabledFields.toggle();
+                                      controller.update();
+                                    },
+                                    icon: const Icon(Icons.edit),
+                                    color: controller.isTextFieldEnabledFields.value
+                                        ? Colors.blue
+                                        : Colors.grey,
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 20),
 
                       Obx(
@@ -763,80 +824,7 @@ controller.selectedItems = RxList<String>.from(
                           ],
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      Container(
-                        padding: EdgeInsets.all(16.0),
-                        child: Obx(
-                          () => Row(
-                            children: [
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    if (controller
-                                        .isTextFieldEnabledFields.value) {
-                                      
-                                    }
-                                  },
-                                  child: AbsorbPointer(
-                                    absorbing: !controller
-                                        .isTextFieldEnabledFields.value,
-                                    child: MultiSelectDialogField(
-                                      items: controller.items
-                                          .map<MultiSelectItem<String>>((item) {
-                                        return MultiSelectItem<String>(
-                                          item,
-                                          item,
-                                        );
-                                      }).toList(),
-                                      initialValue:
-                                          controller.selectedItems.toList(),
-                                      onConfirm: (values) {
-                                        controller.selectedItems
-                                            .assignAll(values);
-                                        print(
-                                          'Selected names: ${controller.selectedItems.join(',')}',
-                                        );
-                                      },
-                                      title: Text('Select Your Interests'),
-                                      buttonText: Text('Choose Your Interests',
-                                          style: TextStyle(fontSize: 14)),
-                                      chipDisplay: MultiSelectChipDisplay(
-                                        items: controller.selectedItems
-                                            .map<MultiSelectItem<String>>(
-                                                (item) {
-                                          return MultiSelectItem<String>(
-                                              item, item);
-                                        }).toList(),
-                                        onTap: (value) {
-                                          controller.selectedItems
-                                              .remove(value);
-                                        },
-                                      ),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(30),
-                                        border: Border.all(
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  controller.isTextFieldEnabledFields.toggle();
-                                  controller.update();
-                                },
-                                icon: const Icon(Icons.edit),
-                                
-                                color: controller.isTextFieldEnabledFields.value
-                                    ? Colors.blue
-                                    : Colors.grey,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
+                      
 
                       const SizedBox(height: 20),
 
@@ -1007,6 +995,9 @@ controller.selectedItems = RxList<String>.from(
                         padding: const EdgeInsets.symmetric(
                             vertical: 13, horizontal: 135),
                         onPressed: () async {
+                          print("oooooooooooooooooooo");
+                          print((controller.finalselectedItems.join(',')));
+                          print("oooooooooooooooooooo");
                           var message = await controller.SaveChanges(
                               profileImageBytes,
                               profileImageBytesName,

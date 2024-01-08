@@ -5,7 +5,14 @@ import 'package:growify/core/functions/alertbox.dart';
 import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
-
+import 'package:multi_dropdown/enum/app_enums.dart';
+import 'package:multi_dropdown/models/chip_config.dart';
+import 'package:multi_dropdown/models/network_config.dart';
+import 'package:multi_dropdown/models/value_item.dart';
+import 'package:multi_dropdown/multiselect_dropdown.dart';
+import 'package:multi_dropdown/widgets/hint_text.dart';
+import 'package:multi_dropdown/widgets/selection_chip.dart';
+import 'package:multi_dropdown/widgets/single_selected_item.dart';
 
 class NewJobPost extends StatelessWidget {
   final pageId;
@@ -70,18 +77,27 @@ class NewJobPost extends StatelessWidget {
                             },
                           ),
                           const SizedBox(height: 16),
-
-                          /*  buildTextFormField(
-                            hintText: 'Interest',
-                            onChanged: (value) => controller.updateInterest(value),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter an Interest';
-                              }
-                              return null;
-                            },
-                          ),*/
-                          const SizedBox(height: 16),
+                          Container(
+                            margin: EdgeInsets.only(left: 6),
+                            child: Text("The Fields",style: TextStyle(color: Colors.grey),)),
+                          MultiSelectDropDown(
+                            searchEnabled: true,
+                            onOptionSelected:
+                                (List<ValueItem> selectedOptions) {
+                                 controller.selectedItems.assignAll(selectedOptions.map((item) => item.value));
+                                },
+                            options: controller.items
+                                .map((item) =>
+                                    ValueItem(label: item, value: item))
+                                .toList(),
+                            selectionType: SelectionType.multi,
+                            chipConfig:
+                                const ChipConfig(wrapType: WrapType.scroll),
+                            dropdownHeight: 300,
+                            optionTextStyle: const TextStyle(fontSize: 16),
+                            selectedOptionIcon: const Icon(Icons.check_circle),
+                          ),
+                          const SizedBox(height: 20),
                           buildTextFormField(
                             hintText: 'Description',
                             maxLines: 8,
@@ -93,45 +109,6 @@ class NewJobPost extends StatelessWidget {
                               }
                               return null;
                             },
-                          ),
-                          const SizedBox(height: 16),
-                          Container(
-                            padding: EdgeInsets.all(16.0),
-                            child: Obx(
-                              () => MultiSelectDialogField(
-                                items: controller.items
-                                    .map<MultiSelectItem<String>>((item) {
-                                  return MultiSelectItem<String>(
-                                    item,
-                                    item,
-                                  );
-                                }).toList(),
-                                initialValue: controller.selectedItems.toList(),
-                                onConfirm: (values) {
-                                  controller.selectedItems.assignAll(values);
-                                  print(
-                                      'Selected names: ${controller.selectedItems.join(',')}');
-                                },
-                                title: Text('Select Your Interests'),
-                                buttonText: Text('Choose Your Interests',
-                                    style: TextStyle(fontSize: 14)),
-                                chipDisplay: MultiSelectChipDisplay(
-                                  items: controller.selectedItems
-                                      .map<MultiSelectItem<String>>((item) {
-                                    return MultiSelectItem<String>(item, item);
-                                  }).toList(),
-                                  onTap: (value) {
-                                    controller.selectedItems.remove(value);
-                                  },
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
-                            ),
                           ),
                           const SizedBox(height: 20),
                           ElevatedButton(
@@ -164,6 +141,8 @@ class NewJobPost extends StatelessWidget {
                     width: double.infinity,
                     child: MaterialButton(
                       onPressed: () async {
+                        print("ooooooooooooooooooooooooooooooooooo");
+                        print(controller.selectedItems);
                         if (formstate.currentState!.validate()) {
                           print('Title: ${controller.postTitle}');
                           print('Description: ${controller.postDescription}');

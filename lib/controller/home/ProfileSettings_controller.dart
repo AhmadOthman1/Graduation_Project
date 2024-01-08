@@ -56,6 +56,7 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
    RxList<String> selectedItems = <String>[].obs;
    // send it to the database 
    RxList<String> items = RxList<String>();
+   RxList<String> finalselectedItems = <String>[].obs;
 
 
 
@@ -417,7 +418,7 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
           (isTextFieldEnabled5 == true) ? textFieldText5.trim() : null,
       "phone": (isTextFieldEnabled6 == true) ? textFieldText6.trim() : null,
       "bio": (isTextFieldEnabled7 == true) ? textFieldText7.trim() : null,
-      "Fields": (isTextFieldEnabledFields == true) ? selectedItems : null,
+      "Fields": (isTextFieldEnabledFields == true) ? (finalselectedItems).join(',') : null,
       "profileImageBytes": profileImageBytes,
       "profileImageBytesName": profileImageBytesName,
       "profileImageExt": profileImageExt,
