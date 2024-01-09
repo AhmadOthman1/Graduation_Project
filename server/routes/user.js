@@ -97,13 +97,16 @@ router.post('/deleteAdmin',authenticateToken,myPagesController.deleteAdmin);
 router.get('/getPageEmployees',authenticateToken,myPagesController.getPageEmployees);
 router.post('/addNewEmployee',authenticateToken,myPagesController.addNewEmployee);
 router.post('/deleteEmployee',authenticateToken,myPagesController.deleteEmployee);
-
 router.get('/getPageJobs',authenticateToken,myPagesController.getPageJobs);
+router.get('/getPageJobApplications',authenticateToken,myPagesController.getPageJobApplications);
+router.get('/getJobFields',authenticateToken,myPagesController.getJobFields);
 router.post('/addNewJob',authenticateToken,myPagesController.addNewJob);
 // other Pages
 router.get('/getPageProfileInfo',authenticateToken,pagesProfile.getPageProfileInfo);
 router.post('/followPage',authenticateToken,pagesProfile.followPage);
 router.post('/removePageFollow',authenticateToken,pagesProfile.removePageFollow);
+router.get('/getJobs',authenticateToken,pagesProfile.getJobs);
+router.post('/saveJobApplication',authenticateToken,pagesProfile.saveJobApplication);
 
 
 

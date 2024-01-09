@@ -8,7 +8,8 @@ const post = require('../../models/post');
 const Page = require("../../models/pages");
 const pageFollower = require("../../models/pageFollower");
 const pageAdmin = require("../../models/pageAdmin");
-
+const pageJobs = require("../../models/pageJobs");
+const jobApplication = require("../../models/jobApplication");
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { Op } = require('sequelize');
@@ -16,6 +17,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const Sequelize = require('sequelize');
+const pageEmployees = require("../../models/pageEmployees");
 
 async function findIfUserInFollowers(userUsername, findPageProfile) {
     const userConnections = await pageFollower.findOne({
@@ -184,7 +186,7 @@ exports.getPageProfileInfo = async (req, res, next) => {
 }
 exports.followPage = async (req, res, next) => {
     try {
-        
+
         var pageId = req.body.pageId;
         console.log(pageId)
         const authHeader = req.headers['authorization']
@@ -198,28 +200,28 @@ exports.followPage = async (req, res, next) => {
         });
         if (existingUsername != null) {//find if user exist
             var existingPage = await Page.findOne({
-                where :{
-                    id:pageId,
+                where: {
+                    id: pageId,
                 }
             });
-            
-            if(existingPage != null){//find if Page exist
+
+            if (existingPage != null) {//find if Page exist
                 var isUserFollowingPage = await pageFollower.findOne({
-                    where:{
-                        pageId:pageId,
+                    where: {
+                        pageId: pageId,
                         username: userUsername,
                     }
                 });
-                if(isUserFollowingPage!=null){//find if user is following the page
+                if (isUserFollowingPage != null) {//find if user is following the page
                     return res.status(500).json({
                         message: 'You are already following this page',
                         body: req.body
                     });
-                }else{
-                    if(existingPage.pageType == "public"){//if the page is public
+                } else {
+                    if (existingPage.pageType == "public") {//if the page is public
                         await pageFollower.create({
-                                pageId:pageId,
-                                username: userUsername,
+                            pageId: pageId,
+                            username: userUsername,
                         });
                         return res.status(200).json({
                             message: 'Followed',
@@ -227,7 +229,7 @@ exports.followPage = async (req, res, next) => {
                         });
                     }
                 }
-            }else{
+            } else {
                 return res.status(404).json({
                     message: 'Page not found',
                     body: req.body
@@ -263,24 +265,24 @@ exports.removePageFollow = async (req, res, next) => {
         });
         if (existingUsername != null) {//find if user exist
             var existingPage = await Page.findOne({
-                where :{
-                    id:pageId,
+                where: {
+                    id: pageId,
                 }
             });
-            if(existingPage != null){//find if Page exist
+            if (existingPage != null) {//find if Page exist
                 var isUserFollowingPage = await pageFollower.findOne({
-                    where:{
-                        pageId:pageId,
+                    where: {
+                        pageId: pageId,
                         username: userUsername,
                     }
                 });
-                if(isUserFollowingPage==null){//find if user is following the page
+                if (isUserFollowingPage == null) {//find if user is following the page
                     return res.status(500).json({
                         message: 'You are not following this page',
                         body: req.body
                     });
-                }else{
-                    if(existingPage.pageType == "public"){//if the page is public
+                } else {
+                    if (existingPage.pageType == "public") {//if the page is public
                         await isUserFollowingPage.destroy();
                         return res.status(200).json({
                             message: 'Follow removed',
@@ -288,7 +290,7 @@ exports.removePageFollow = async (req, res, next) => {
                         });
                     }
                 }
-            }else{
+            } else {
                 return res.status(404).json({
                     message: 'Page not found',
                     body: req.body
@@ -310,3 +312,167 @@ exports.removePageFollow = async (req, res, next) => {
     }
 
 }
+exports.getJobs = async (req, res, next) => {
+    try {
+        var page = req.query.page || 1;
+        var pageSize = req.query.pageSize || 10;
+        var pageId = req.query.pageId;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        // Calculate the offset based on page and pageSize
+        const offset = (page - 1) * pageSize;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername != null) {
+            const finsPage = Page.findOne({
+                where: {
+                    id: pageId
+                }
+            })
+            if (finsPage != null) {
+                const allPageJobs = await pageJobs.findAll({
+                    where: {
+                        pageId: pageId,
+                    },
+                    limit: parseInt(pageSize),
+                    offset: parseInt(offset),
+                    order: [['endDate', 'DESC']],
+                });
+
+                return res.status(200).json({
+                    pageJobs: allPageJobs,
+                });
+            } else {
+                return res.status(404).json({
+                    message: 'Page not found',
+                    body: req.body,
+                });
+            }
+
+
+        }
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};
+exports.saveJobApplication = async (req, res, next) => {
+    try {
+        const { jobId, cvBytes, cvName, cvExt, notice } = req.body;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        // Calculate the offset based on page and pageSize
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        console.log(jobId)
+        if (existingUsername != null) {
+            const job = await pageJobs.findOne({
+                where: {
+                    pageJobId: jobId
+                }
+            })
+            if (job != null) {
+                console.log(job)
+                const isAdmin =  await pageAdmin.findOne({
+                    where: {
+                        username: userUsername,
+                        pageId: job.pageId,
+                    }
+                })
+                if (isAdmin == null) {
+                    const isEmployee = await  pageEmployees.findOne({
+                        where: {
+                            username: userUsername,
+                            pageId: job.pageId,
+                        }
+                    });
+                    if (isEmployee == null) {
+                        const isAlreadyApplied = await  jobApplication.findOne({
+                            where: {
+                                username: userUsername,
+                                pageJobId: jobId,
+                            }
+                        });
+                        if (isAlreadyApplied == null) {
+                            var validcv = false;
+                            if (cvBytes != null && cvName != null && cvExt != null) {//if feild change enables (!=null)
+                                validcv = true;
+                            }
+                            var newPdfName;
+                            if (validcv) {
+                                const pdfBuffer = Buffer.from(cvBytes, 'base64');
+                                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+                                newPdfName = userUsername + '-' + uniqueSuffix + '.pdf';
+                                const uploadPath = path.join('cvs', newPdfName); // Update the folder path as needed
+
+                                // Save the PDF to the server
+                                fs.writeFileSync(uploadPath, pdfBuffer);
+
+                            }
+                            await jobApplication.create({
+                                pageJobId: jobId,
+                                username: userUsername,
+                                note: notice,
+                                cv: newPdfName,
+                            })
+                            return res.status(500).json({
+                                message: 'Your job application have been submitted successfully',
+                                body: req.body,
+                            });
+                        }else{
+                            return res.status(500).json({
+                                message: 'You have been already applied for this job',
+                                body: req.body,
+                            });
+                        }
+
+                    } else {
+                        return res.status(500).json({
+                            message: 'You are Employee in this page',
+                            body: req.body,
+                        });
+                    }
+                } else {
+                    return res.status(500).json({
+                        message: 'You are admin in this page',
+                        body: req.body,
+                    });
+                }
+            } else {
+                return res.status(404).json({
+                    message: 'job not found',
+                    body: req.body,
+                });
+            }
+
+
+        }else{
+            return res.status(500).json({
+                message: 'Server Error',
+                body: req.body,
+            });
+        }
+        
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};

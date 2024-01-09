@@ -18,6 +18,7 @@ const pageFollower = require("../../models/pageFollower");
 const Page = require("../../models/pages");
 const pageJobs = require("../../models/pageJobs");
 const jobApplication = require("../../models/jobApplication");
+const systemFields = require("../../models/systemFields");
 
 exports.getMyPageInfo = async (req, res, next) => {
     try {
@@ -1308,7 +1309,7 @@ exports.deleteAdmin = async (req, res, next) => {
         const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
         var userUsername = decoded.username;
         // Calculate the offset based on page and pageSize
-        if (pageId == null || adminUsername == null ) {
+        if (pageId == null || adminUsername == null) {
             return res.status(500).json({
                 message: 'invalid values',
                 body: req.body,
@@ -1342,7 +1343,7 @@ exports.deleteAdmin = async (req, res, next) => {
                             message: 'Admin deleted',
                         });
                     } else {
-                        
+
                         return res.status(404).json({
                             message: 'This user is not admin in your page',
                         });
@@ -1392,7 +1393,7 @@ exports.getPageEmployees = async (req, res, next) => {
             });
             if (userPageAdmin != null) {
 
-                const allPageEmployees= await pageEmployees.findAll({
+                const allPageEmployees = await pageEmployees.findAll({
                     where: {
                         pageId: pageId,
                     },
@@ -1537,7 +1538,7 @@ exports.deleteEmployee = async (req, res, next) => {
         const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
         var userUsername = decoded.username;
         // Calculate the offset based on page and pageSize
-        if (pageId == null || employeeUsername == null ) {
+        if (pageId == null || employeeUsername == null) {
             return res.status(500).json({
                 message: 'invalid values',
                 body: req.body,
@@ -1571,7 +1572,7 @@ exports.deleteEmployee = async (req, res, next) => {
                             message: 'Employee deleted',
                         });
                     } else {
-                        
+
                         return res.status(404).json({
                             message: 'This user is not employee in your page',
                         });
@@ -1652,19 +1653,121 @@ exports.getPageJobs = async (req, res, next) => {
         });
     }
 };
+exports.getPageJobApplications = async (req, res, next) => {
+    try {
+        var pageJobId = req.query.pageJobId;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        // Calculate the offset based on page and pageSize
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername != null) {
+            var pageJob = await pageJobs.findOne({
+                where: {
+                    pageJobId: pageJobId
+                }
+            });
+            if (pageJob != null) {
+                var userPageAdmin = await pageAdmin.findOne({
+                    where: { username: userUsername, pageId: pageJob.pageId, adminType: "A" }
+                });
+                if (userPageAdmin != null) {
+
+                    var jobApplications = await jobApplication.findAll({
+                        where: {
+                            pageJobId:pageJobId
+                        },
+                        include: [{
+                            model: User,
+                            attributes: ['username', 'firstname', 'lastname', 'email','Fields', 'photo']
+                          }]
+                    });
+                    return res.status(200).json({
+                        pageJob: pageJob,
+                        application: jobApplications,
+                    });
+                } else {
+                    return res.status(500).json({
+                        message: 'You are not allowed to see this information',
+                        body: req.body,
+                    });
+                }
+            }else{
+                return res.status(404).json({
+                    message: 'job not found',
+                    body: req.body,
+                });
+            }
+        }
+        return res.status(404).json({
+            message: 'user not found',
+            body: req.body,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};
+exports.getJobFields = async (req, res, next) => {
+    try {
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        // Calculate the offset based on page and pageSize
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername != null) {
+            var availableFields = await systemFields.findAll({
+                attributes: ['Field'],
+            });
+            if (availableFields != null) {
+                return res.status(200).json({
+                    message: 'Fields fetched',
+                    availableFields: availableFields,
+
+                });
+            } else {
+                return res.status(500).json({
+                    message: 'Server Error',
+                    body: req.body,
+                });
+            }
+        }
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};
 
 exports.addNewJob = async (req, res, next) => {
     try {
         var pageId = req.body.pageId;
         var title = req.body.title;
-        var interest = req.body.interest;
+        var fields = req.body.fields;
         var description = req.body.description;
         var endDate = req.body.endDate;
         const authHeader = req.headers['authorization']
         const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
         var userUsername = decoded.username;
         // Calculate the offset based on page and pageSize
-        if (pageId == null || title == null || interest == null || description == null || endDate == null) {
+        if (pageId == null || title == null || fields == null || description == null || endDate == null) {
             return res.status(500).json({
                 message: 'invalid values',
                 body: req.body,
@@ -1680,13 +1783,24 @@ exports.addNewJob = async (req, res, next) => {
                 where: { username: userUsername, pageId: pageId, adminType: "A" }
             });
             if (userPageAdmin != null) {
+                console.log(fields)
+                availableSystemFields = await systemFields.findAll();
+                const fieldsArray = fields.split(',');
+                var fieldsToSave = "";
+                availableSystemFields.forEach(systemField => {
+                    if (fieldsArray.includes(systemField.dataValues.Field)) {
+                        fieldsToSave += systemField.dataValues.Field + ","
+                    }
+                });
+                fieldsToSave = fieldsToSave.slice(0, -1);
                 await pageJobs.create({
                     pageId: pageId,
                     title: title,
-                    interest: interest,
+                    Fields: fieldsToSave,
                     description: description,
                     endDate: endDate
                 });
+
                 return res.status(200).json({
                     message: 'Job added successfully',
                 });
@@ -1698,7 +1812,7 @@ exports.addNewJob = async (req, res, next) => {
             }
         }
         return res.status(500).json({
-            message: 'Server Error',
+            message: 'user not found',
             body: req.body,
         });
     } catch (err) {

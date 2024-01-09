@@ -21,11 +21,11 @@ exports.getUserProfileDashboard = async (req, res, next) => {
         const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
         var userUsername = decoded.username;
         var userExists = await User.findOne({
-            where:{
-                username : userUsername,
+            where: {
+                username: userUsername,
             },
         });
-        if(userExists !=null){
+        if (userExists != null) {
             var userPostCount = await post.count({
                 where: {
                     username: userUsername,
@@ -40,17 +40,17 @@ exports.getUserProfileDashboard = async (req, res, next) => {
                 },
             });
             const responseData = {
-                userPostCount: userPostCount??0,
-                userConnectionsCount: userConnectionsCount??0,
+                userPostCount: userPostCount ?? 0,
+                userConnectionsCount: userConnectionsCount ?? 0,
                 // Add more key-value pairs as needed
-              };
-            
-              // Sending the response as JSON
-              console.log(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
-              console.log(userPostCount)
-              console.log(userConnectionsCount)
-              res.status(200).json(responseData);
-        }else{
+            };
+
+            // Sending the response as JSON
+            console.log(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
+            console.log(userPostCount)
+            console.log(userConnectionsCount)
+            res.status(200).json(responseData);
+        } else {
             return res.status(500).json({
                 message: 'server Error',
                 body: req.body
@@ -74,7 +74,7 @@ exports.getMainInfo = async (req, res, next) => {
                 email: email
             },
         });
-        if (existingEmail !=null) {
+        if (existingEmail != null) {
             var photo;
             var coverimage;
             var cv;
@@ -144,14 +144,14 @@ exports.getMainInfo = async (req, res, next) => {
                     phone: existingEmail.phone,
                     dateOfBirth: existingEmail.dateOfBirth,
                     Gender: existingEmail.Gender,
-                    Fields:existingEmail.Fields,
+                    Fields: existingEmail.Fields,
                     photo: photo,
                     coverImage: coverimage,
                     cv: cv,
                     // Add other user properties as neededs
                 },
-                availableFields:availableFields,
-                
+                availableFields: availableFields,
+
             });
         } else {
             return res.status(500).json({
@@ -172,14 +172,16 @@ exports.getMainInfo = async (req, res, next) => {
 
 exports.changeMainInfo = async (req, res, next) => {
     try {
-        const { email, firstName, lastName, address, country, dateOfBirth, phone, bio, profileImageBytes, profileImageBytesName, profileImageExt, coverImageBytes, coverImageBytesName, coverImageExt, cvBytes, cvName, cvExt } = req.body;
+        const { email, firstName, lastName, address, country, Gender, dateOfBirth, phone, bio, Fields, profileImageBytes, profileImageBytesName, profileImageExt, coverImageBytes, coverImageBytesName, coverImageExt, cvBytes, cvName, cvExt } = req.body;
         var validfirstName = false;
         var validlastName = false;
         var validaddress = false;
         var validcountry = false;
+        var validGender = false;
         var validdateOfBirth = false;
         var validphone = false;
         var validbio = false;
+        var validFields = false;
         var validphoto = false;
         var validcoverImage = false;
         var validcv = false;
@@ -188,7 +190,7 @@ exports.changeMainInfo = async (req, res, next) => {
                 email: req.user.email
             },
         });
-        if (existingEmail !=null) {
+        if (existingEmail != null) {
             if (firstName != null) {//if feild change enables (!=null)
                 if (!validator.isUsername(firstName) || firstName.length < 1 || firstName.length > 50) {//validate
                     return res.status(409).json({
@@ -229,6 +231,21 @@ exports.changeMainInfo = async (req, res, next) => {
                     validcountry = true;
                 }
             }
+            if (Gender != null) {//if feild change enables (!=null)
+                if (Gender.length < 1 || Gender.length > 50) {//validate
+                    return res.status(409).json({
+                        message: 'Not Valid Gender',
+                        body: req.body
+                    });
+                } else if (Gender != "Male" && Gender != "Female") {
+                    return res.status(409).json({
+                        message: 'Not Valid Gender',
+                        body: req.body
+                    });
+                }else {//change
+                    validGender = true;
+                }
+            }
             if (dateOfBirth != null) {//if feild change enables (!=null)
                 if (!validator.isDate(dateOfBirth) || dateOfBirth.length < 8 || dateOfBirth.length > 10) {//validate
                     return res.status(409).json({
@@ -258,7 +275,18 @@ exports.changeMainInfo = async (req, res, next) => {
                 } else {//change
                     validbio = true;
                 }
-            } console.log("fff" + profileImageBytes + "fff" + profileImageBytesName + "fff" + profileImageExt);
+            }
+            if (Fields != null) {//if feild change enables (!=null)
+                if (Fields.length < 1 || Fields.length > 6000) {//validate
+                    return res.status(409).json({
+                        message: 'Not Valid Fields',
+                        body: req.body
+                    });
+                } else {//change
+                    validFields = true;
+                }
+            }
+            console.log("fff" + profileImageBytes + "fff" + profileImageBytesName + "fff" + profileImageExt);
             if (profileImageBytes != null && profileImageBytesName != null && profileImageExt != null) {//if feild change enables (!=null)
                 validphoto = true;
             }
@@ -275,7 +303,7 @@ exports.changeMainInfo = async (req, res, next) => {
                 const result = await User.update(
                     { firstname: firstName },
                     {
-                        where: { email: email },
+                        where: { email: req.user.email },
                     }
                 );
             }
@@ -283,7 +311,7 @@ exports.changeMainInfo = async (req, res, next) => {
                 const result = await User.update(
                     { lastname: lastName },
                     {
-                        where: { email: email },
+                        where: { email: req.user.email },
                     }
                 );
             }
@@ -291,7 +319,7 @@ exports.changeMainInfo = async (req, res, next) => {
                 const result = await User.update(
                     { address: address },
                     {
-                        where: { email: email },
+                        where: { email: req.user.email },
                     }
                 );
             }
@@ -299,7 +327,15 @@ exports.changeMainInfo = async (req, res, next) => {
                 const result = await User.update(
                     { country: country },
                     {
-                        where: { email: email },
+                        where: { email: req.user.email },
+                    }
+                );
+            }
+            if (validGender) {
+                const result = await User.update(
+                    { Gender: Gender },
+                    {
+                        where: { email: req.user.email },
                     }
                 );
             }
@@ -307,7 +343,7 @@ exports.changeMainInfo = async (req, res, next) => {
                 const result = await User.update(
                     { dateOfBirth: dateOfBirth },
                     {
-                        where: { email: email },
+                        where: { email: req.user.email },
                     }
                 );
             }
@@ -315,7 +351,7 @@ exports.changeMainInfo = async (req, res, next) => {
                 const result = await User.update(
                     { phone: phone },
                     {
-                        where: { email: email },
+                        where: { email: req.user.email },
                     }
                 );
             }
@@ -323,7 +359,24 @@ exports.changeMainInfo = async (req, res, next) => {
                 const result = await User.update(
                     { bio: bio },
                     {
-                        where: { email: email },
+                        where: { email: req.user.email },
+                    }
+                );
+            }
+            if (validFields) {
+                availableSystemFields = await systemFields.findAll();
+                const fieldsArray = Fields.split(',');
+                var fieldsToSave = "";
+                availableSystemFields.forEach(systemField => {
+                    if (fieldsArray.includes(systemField.dataValues.Field)) {
+                        fieldsToSave += systemField.dataValues.Field + ","
+                    }
+                });
+                fieldsToSave = fieldsToSave.slice(0, -1);
+                const result = await User.update(
+                    { Fields: fieldsToSave },
+                    {
+                        where: { email: req.user.email },
                     }
                 );
             }
@@ -332,14 +385,14 @@ exports.changeMainInfo = async (req, res, next) => {
 
                 const photoBuffer = Buffer.from(profileImageBytes, 'base64');
                 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                const newphotoname = existingEmail.username +"-" + uniqueSuffix + "." + profileImageExt; // You can adjust the file extension based on the actual image type
+                const newphotoname = existingEmail.username + "-" + uniqueSuffix + "." + profileImageExt; // You can adjust the file extension based on the actual image type
                 const uploadPath = path.join('images', newphotoname);
 
                 // Save the image to the server
                 fs.writeFileSync(uploadPath, photoBuffer);
                 console.log("fff" + newphotoname);
                 // Update the user record in the database with the new photo name
-                const result = await User.update({ photo: newphotoname }, { where: { email } });
+                const result = await User.update({ photo: newphotoname }, { where: { email:req.user.email } });
                 if (oldPhoto != null) {
                     //delete the old photo from the  server image folder
                     const oldPhotoPath = path.join('images', oldPhoto);
@@ -360,7 +413,7 @@ exports.changeMainInfo = async (req, res, next) => {
                 fs.writeFileSync(uploadPath, photoBuffer);
 
                 // Update the user record in the database with the new photo name
-                const result = await User.update({ coverImage: newphotoname }, { where: { email } });
+                const result = await User.update({ coverImage: newphotoname }, { where: { email:req.user.email } });
                 if (oldCover != null) {
                     //delete the old photo from the  server image folder
                     const oldCoverPath = path.join('images', oldCover);
@@ -382,7 +435,7 @@ exports.changeMainInfo = async (req, res, next) => {
                 fs.writeFileSync(uploadPath, pdfBuffer);
 
                 // Update the user record in the database with the new PDF name
-                const result = await User.update({ cv: newPdfName }, { where: { email } });
+                const result = await User.update({ cv: newPdfName }, { where: { email:req.user.email } });
                 if (oldCv != null) {
                     // Delete the old PDF file from the server folder
                     const oldPdfPath = path.join('cvs', oldCv); // Update the folder path as needed
@@ -443,14 +496,14 @@ exports.changePassword = async (req, res, next) => {
                 email: req.user.email
             },
         });
-        if (existingEmail !=null) {
+        if (existingEmail != null) {
             const isMatch = await bcrypt.compare(oldPassword, existingEmail.password);
             if (isMatch) {
                 const hashedPassword = await bcrypt.hash(newPassword, 10);
                 const result = await User.update(
                     { password: hashedPassword },
                     {
-                        where: { email: email },
+                        where: { email: req.user.email },
                     }
                 );
                 return res.status(200).json({
@@ -520,7 +573,7 @@ exports.changeEmail = async (req, res, next) => {
             },
         });
 
-        if (existingEmail !=null) {//if user found by old email
+        if (existingEmail != null) {//if user found by old email
 
             const isMatch = await bcrypt.compare(Password, existingEmail.password);
             if (isMatch) {//correct password
@@ -529,7 +582,7 @@ exports.changeEmail = async (req, res, next) => {
                         email: newEmail
                     },
                 });
-                if (existingNewEmail !=null) {//if email already used
+                if (existingNewEmail != null) {//if email already used
                     return res.status(409).json({
                         message: 'Email is already exists',
                         body: req.body
@@ -540,7 +593,7 @@ exports.changeEmail = async (req, res, next) => {
                             email: newEmail
                         },
                     });
-                    if (existingNewEmailInTemp !=null) {//if email under signup prosecc
+                    if (existingNewEmailInTemp != null) {//if email under signup prosecc
                         return res.status(409).json({
                             message: 'The email address is used for a registered account. Please complete the registration process through the signup page',
                             body: req.body
@@ -551,7 +604,7 @@ exports.changeEmail = async (req, res, next) => {
                                 email: newEmail
                             },
                         });
-                        if (existingNewEmailInChange !=null) {
+                        if (existingNewEmailInChange != null) {
                             await existingNewEmailInChange.destroy();
                         }
                         await createChangeEmail(existingEmail.username, newEmail);
@@ -630,11 +683,11 @@ exports.postVerificationCode = async (req, res, next) => {
         console.log(email);
         const existingUserInChangeEamil = await changeEmail.findOne({
             where: {
-                email: req.user.email
+                email: email
             }
         });
         //if exists 
-        if (existingUserInChangeEamil !=null) {
+        if (existingUserInChangeEamil != null) {
             const storedVerificationCode = existingUserInChangeEamil.code;// get the hashed code from the thable
             //compare
             if (verificationCode == storedVerificationCode) {
