@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/Groups_controller/groups_controller.dart';
+import 'package:growify/controller/home/Groups_controller/ShowAllgroups_controller.dart';
 import 'package:growify/view/screen/homescreen/Groups/creategroup.dart';
 
 class GroupPage extends StatefulWidget {
@@ -66,13 +66,16 @@ class _GroupPageState extends State<GroupPage> {
               onTap: () {
                  Map<String, dynamic> userMap = {
           'name': groupData['name'],
-          'username': 'member',
           'id':groupData['id'],
-          'pageId':1
+          'description':groupData['description'],
+          'parentNode':groupData['parentNode'],
+          'membersendmessage':groupData['membersendmessage'],
+          'pageId':widget.pageId,
+
       
     };
     groupsController.Groupmessages = <Map<String, dynamic>>[userMap].obs;
-                groupsController.goToGroupChatMessage();
+                groupsController.goToGroupChatMessage(widget.pageId);
               },
               child: Text(
                 groupName,

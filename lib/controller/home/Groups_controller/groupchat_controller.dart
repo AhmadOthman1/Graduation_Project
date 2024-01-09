@@ -51,29 +51,22 @@ addMessage( text,  username, userPhoto,  createdAt, image,video) async {
         messages.insert(0, chatMessage);
         
   }
-  getUserMessages(int page, String username, String type) async {
-    var url =
-        "$urlStarter/user/getUserMessages?page=$page&pageSize=$pageSize&type=$type";
-    var response = await http.get(Uri.parse(url), headers: {
-      'Content-type': 'application/json; charset=UTF-8',
-      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
-      'username': username,
-    });
-    return response;
+  getUserMessages(int page, int groupId, int pageId) async {
+    
   }
 
-  Future<void> loadUserMessages(page, username, type) async {
+  Future<void> loadUserMessages(page, groupId, pageId) async {
     print("innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnm");
     if (isLoading) {
       return;
     }
 
     isLoading = true;
-    var response = await getUserMessages(page, username, type);
+    var response = await getUserMessages(page, groupId, pageId);
     print(response.statusCode);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      loadUserMessages(page, username, type);
+      loadUserMessages(page, groupId, pageId);
       return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -84,7 +77,7 @@ addMessage( text,  username, userPhoto,  createdAt, image,video) async {
       print(responseBody['message']);
       return;
     } else if (response.statusCode == 200) {
-      if (type == "U") {}
+     // if (type == "U") {}
 
       var responseBody = jsonDecode(response.body);
       print("////////////////////////////////////////");
@@ -104,7 +97,6 @@ addMessage( text,  username, userPhoto,  createdAt, image,video) async {
             ? messageData['senderUsername_FK']['photo']
             : messageData['receiverUsername_FK']['photo'];
 
-        // Create a ChatMessage object based on the conditions
         ChatMessage chatMessage = ChatMessage(
           text: text?? '',
           isUser: senderUsername == GetStorage().read("username"),
@@ -117,41 +109,12 @@ addMessage( text,  username, userPhoto,  createdAt, image,video) async {
           video:messageData['video'],
         );
 
-        // Add the ChatMessage object to the list
         messages.add(chatMessage);
       }
-      /*messages.insert(
-        0,
-        ChatMessage(
-          text: text,
-          isUser: true,
-        ),
-      );*/
-      /*final List<dynamic>? userNotifications = responseBody["notifications"];
-      print(userNotifications);
-      print("userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-      if (userNotifications != null) {
-        final newNotifications = userNotifications.map((notification) {
-          return {
-            'id': notification['id'],
-            'notificationType': notification['notificationType'],
-            'notificationContent': notification['notificationContent'],
-            'notificationPointer': notification['notificationPointer'],
-            'photo': notification['photo'],
-            'date': notification['createdAt'],
-          };
-        }).toList();
-
-        notifications.addAll(newNotifications);
-        //print(notifications);
-      }*/
-
+      
       isLoading = false;
     }
 
-    /*
-    await Future.delayed(const Duration(seconds: 2), () {
-    });*/
     return;
   }
 }

@@ -5,7 +5,8 @@ import 'package:growify/view/screen/homescreen/Groups/Members/AddOtherMember.dar
 
 class MemberType extends StatelessWidget {
   final pageId;
-  MemberType({super.key, this.pageId});
+  final groupId;
+  MemberType({super.key, this.pageId, this.groupId});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class MemberType extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: InkWell(
                   onTap: () {
-                    Get.to(AddEmployeeMember(pageId:1));
+                    Get.to(AddEmployeeMember(pageId:pageId,groupId:groupId));
                   },
                   child: Container(
                     height: 35,
@@ -56,7 +57,7 @@ class MemberType extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: InkWell(
                   onTap: () {
-             Get.to(AddMember(pageId:1));
+             Get.to(AddMember(pageId:pageId,groupId:groupId));
                   },
                   child: Container(
                     height: 35,

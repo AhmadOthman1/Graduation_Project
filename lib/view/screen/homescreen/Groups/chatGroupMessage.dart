@@ -26,7 +26,12 @@ class GroupChatPageMessages extends StatefulWidget {
   final admins;
   final members;
 
-  const GroupChatPageMessages({super.key, this.data,this.admins,this.members,});
+  const GroupChatPageMessages({
+    super.key,
+    this.data,
+    this.admins,
+    this.members,
+  });
 
   @override
   GroupChatPageMessagesState createState() => GroupChatPageMessagesState();
@@ -35,7 +40,6 @@ class GroupChatPageMessages extends StatefulWidget {
 final ScrollController scrollController = ScrollController();
 
 class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
-  
   late GroupChatController chatController;
   final ScrollController _scrollController = ScrollController();
   final AssetImage defultprofileImage =
@@ -77,7 +81,6 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
             print(mounted);
             if (mounted) setState(() {});
 
-            //position.inMilliseconds = 0;
             if (receivedCallAudioCounter >= 5) {
               decline();
               incomingSDPOffer = null;
@@ -95,7 +98,8 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
       super.setState(fn);
     }
   }
-
+  bool doesUsernameIsAdmin = false;
+    bool canSendMessage = false;
   @override
   void initState() {
     super.initState();
@@ -107,7 +111,26 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
     _initCallingListener();
     _loadData();
 
+    // to check if the user is Admin
+    String username = GetStorage().read("username");
+    canSendMessage=widget.data['membersendmessage'];
+
     _scrollController.addListener(_scrollListener);
+
+  
+
+    for (var admin in widget.admins) {
+      if (admin['username'] == username) {
+        doesUsernameIsAdmin = true;
+        break;
+      }
+    }
+
+    if (doesUsernameIsAdmin) {
+      print('$username exists in the list of admins.');
+    } else {
+      print('$username does not exist in the list of admins.');
+    }
   }
 
   _socketConnect() async {
@@ -225,7 +248,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
     print('Loading data...');
     try {
       await chatController.loadUserMessages(
-          chatController.page, widget.data['username'], widget.data['type']);
+          chatController.page, widget.data['id'], widget.data['pageId']);
       print(mounted);
       print("bbbbbbbbbbbbbbbbbbbbbbbb");
       if (mounted)
@@ -302,7 +325,6 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
     });
     stopCallingSound();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -410,7 +432,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                 );
               }),
             ),
-          if (incomingSDPOffer == null) _buildMessageComposer(),
+          if (incomingSDPOffer == null&&(doesUsernameIsAdmin==true||canSendMessage==true)) _buildMessageComposer(),
         ],
       ),
     );
@@ -466,29 +488,31 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                             },
                           ),
                           IconButton(
-                            icon: const Icon(Icons.calendar_today_rounded ),
+                            icon: const Icon(Icons.calendar_today_rounded),
                             color: Colors.white,
                             onPressed: () {
                               Get.to(GroupCalender());
                             },
                           ),
                           IconButton(
-                            icon: const Icon(Icons.task ),
+                            icon: const Icon(Icons.task),
                             color: Colors.white,
                             onPressed: () {
-                            //  Get.to(GroupTrelloHomePage());
+                              //  Get.to(GroupTrelloHomePage());
                             },
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.settings ),
-                            color: Colors.white,
-                            onPressed: () {
-                              Get.to(GroupSettings(admins: widget.admins,members: widget.members,pageId: 1,));
-                            },
-                          ),
+                          if (doesUsernameIsAdmin)
+                            IconButton(
+                              icon: const Icon(Icons.settings),
+                              color: Colors.white,
+                              onPressed: () {
+                                Get.to(GroupSettings(
+                                    admins: widget.admins,
+                                    members: widget.members,
+                                    groupData: widget.data));
+                              },
+                            ),
                         ],
-
-                        
                       ),
                     ),
                   ],

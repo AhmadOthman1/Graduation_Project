@@ -12,23 +12,17 @@ LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
 class AddEmployeeMembersController {
-  final List<Map<String, dynamic>> admins = [];
+  
   final ScrollController scrollController = ScrollController();
 
-  addAdmin(pageId, adminUsername,selectedRole) async {
+  addEmployeeMember(pageId, MemberUsername,groupId) async {
     var url = "$urlStarter/user/addNewAdmin";
     var SR;
-    if(selectedRole == "Admin"){
-      SR = "A";
-    }else if(selectedRole == "Publisher") {
-      SR="P";
-    }else{
-      return "selectedRole not valid";
-    }
+   
     Map<String, dynamic> jsonData = {
       "pageId": pageId,
-      "adminUsername": adminUsername,
-      "selectedRole": SR,
+      "memberUsername": MemberUsername,
+      "groupId": groupId,
     };
     String jsonString = jsonEncode(jsonData);
     var response = await http.post(Uri.parse(url), body: jsonString, headers: {
@@ -38,7 +32,7 @@ class AddEmployeeMembersController {
     print(response.statusCode);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      addAdmin(pageId, adminUsername,selectedRole);
+      addEmployeeMember(pageId, MemberUsername,groupId);
       return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();
