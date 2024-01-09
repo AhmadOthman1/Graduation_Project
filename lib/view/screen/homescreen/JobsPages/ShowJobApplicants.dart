@@ -8,11 +8,13 @@ import 'package:get/get.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
 import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/ShowJobApplicants_controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/taskes/tasksmainpage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ShowJobApplicants extends StatefulWidget {
-    final pageJobId;
-    const ShowJobApplicants({Key? key, required this.pageJobId}) : super(key: key);
+  final pageJobId;
+  const ShowJobApplicants({Key? key, required this.pageJobId})
+      : super(key: key);
 
   @override
   _ShowJobApplicantsState createState() => _ShowJobApplicantsState();
@@ -21,7 +23,8 @@ class ShowJobApplicants extends StatefulWidget {
 class _ShowJobApplicantsState extends State<ShowJobApplicants> {
   late ShowJobApplicantsController _controller;
   final ScrollController _scrollController = ScrollController();
-  final AssetImage defaultProfileImage = const AssetImage("images/profileImage.jpg");
+  final AssetImage defaultProfileImage =
+      const AssetImage("images/profileImage.jpg");
   final SearchControllerImp searchController = Get.put(SearchControllerImp());
 
   @override
@@ -38,18 +41,17 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
       await _controller.loadPageJobs(widget.pageJobId);
       setState(() {
         _controller.page++;
-        // _controller.jobs; // This line doesn't seem to do anything, so I commented it out
       });
-      print('Data loaded: ${_controller.jobs.length} jobs');
+     // print('Data loaded: ${_controller.jobs.length} jobs');
     } catch (error) {
       print('Error loading data: $error');
     }
   }
 
   void _scrollListener() {
-    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
-      // reached the bottom, load more notifications
       _loadData();
     }
   }
@@ -59,8 +61,6 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
     _scrollController.dispose();
     super.dispose();
   }
-
-  // get data from data base instead of this list
 
   Future download(String url, String filename) async {
     var savePath = '/storage/emulated/0/Download/$filename';
@@ -93,7 +93,6 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Use ListView.builder to display all job posts dynamically
             ListView.builder(
               shrinkWrap: true,
               itemCount: _controller.jobPosts.length,
@@ -107,15 +106,23 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
-            ..._controller.jobPosts[0].applicants.map((applicant) {
+            ..._controller.Aqraba.map((applicant) {
               return ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: (applicant.image != null && applicant.image != "")
-                      ? Image.network("$urlStarter/${applicant.image}").image
-                      : defaultProfileImage,
+                leading: InkWell(
+                  onTap: (){
+                     _controller.goToUserPage(applicant['user']['username']);
+                  },
+                  child: CircleAvatar(
+                    backgroundImage: (applicant['user']['photo'] != null)
+                        ? Image.network(
+                                "${urlStarter}/${applicant['user']['photo']}")
+                            .image
+                        : defaultProfileImage,
+                  ),
                 ),
-                title: Text(applicant.name),
-                subtitle: Text(applicant.username),
+                title: Text(
+                    "${applicant['user']['firstname']} ${applicant['user']['lastname']}"),
+                subtitle: Text("@${applicant['user']['username']}"),
                 trailing: InkWell(
                   onTap: () {
                     _showApplicantDetails(context, applicant);
@@ -130,30 +137,38 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
                 },
               );
             }).toList(),
-            if (_controller.isLoading) CircularProgressIndicator(),
           ],
         ),
       ),
     );
   }
 
-  void _showApplicantDetails(BuildContext context, JobApplicant applicant) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
+  _showApplicantDetails(BuildContext context, dynamic applicant) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return SingleChildScrollView(
+        child: Container(
           padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
+            shrinkWrap: true,
             children: [
               ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: (applicant.image != null && applicant.image != "")
-                      ? Image.network("$urlStarter/${applicant.image}").image
-                      : defaultProfileImage,
+                leading: InkWell(
+                  onTap: (){
+                    _controller.goToUserPage(applicant['user']['username']);
+                  },
+                  child: CircleAvatar(
+                    backgroundImage: (applicant['user']['photo'] != null)
+                        ? Image.network("${urlStarter}/${applicant['user']['photo']}")
+                            .image
+                        : defaultProfileImage,
+                  ),
                 ),
-                title: Text(applicant.name),
-                subtitle: Text(applicant.username),
+                title: Text(
+                  "${applicant['user']['firstname']} ${applicant['user']['lastname']}",
+                ),
+                subtitle: Text("@${applicant['user']['username']}"),
               ),
               SizedBox(height: 16),
               Text('Notes:', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -161,48 +176,60 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
               ExpansionTile(
                 title: Text('Expand to view notes'),
                 children: [
-                  Text(
-                    applicant.notes,
-                    style: TextStyle(fontSize: 16),
+                  SingleChildScrollView(
+                    child: Container(
+                      padding: EdgeInsets.all(16),
+                      child: Text(
+                        applicant['note'] ?? 'No notes available',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
                   ),
                 ],
               ),
               SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () async {
-                  var cvUrl = "$urlStarter/${applicant.cvPath}";
+              
+              Visibility(
+  visible: applicant['cv'] != null,
+  child: ElevatedButton(
+    onPressed: () async {
+      var cvUrl = "$urlStarter/${applicant['cv']}";
 
-                  if (kIsWeb) {
-                    if (await canLaunch(cvUrl)) {
-                      await launch(
-                        cvUrl,
-                        headers: {
-                          "Content-Type": "application/pdf",
-                          "Content-Disposition": "inline"
-                        },
-                      );
-                    } else {
-                      throw "Could not launch $cvUrl";
-                    }
-                  } else {
-                    download(cvUrl, applicant.cvPath);
-                  }
+      if (kIsWeb) {
+        if (await canLaunch(cvUrl)) {
+          await launch(
+            cvUrl,
+            headers: {
+              "Content-Type": "application/pdf",
+              "Content-Disposition": "inline"
+            },
+          );
+        } else {
+          throw "Could not launch $cvUrl";
+        }
+      } else {
+        download(cvUrl, applicant['cv']);
+      }
 
-                  Navigator.pop(context); // Close the modal bottom sheet
-                },
-                child: Text('Download CV'),
-              ),
+      Navigator.pop(context); 
+    },
+    child: Text('Download CV'),
+  ),
+),
             ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
+
 }
 
 class JobPostCard extends StatelessWidget {
   final JobPost jobPost;
-  final AssetImage defaultProfileImage = const AssetImage("images/profileImage.jpg");
+  final AssetImage defaultProfileImage =
+      const AssetImage("images/profileImage.jpg");
 
   JobPostCard({required this.jobPost});
 
@@ -216,13 +243,10 @@ class JobPostCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ListTile(
-            leading: CircleAvatar(
-              backgroundImage: (jobPost.image != null && jobPost.image != "")
-                  ? Image.network("$urlStarter/${jobPost.image}").image
-                  : defaultProfileImage,
+            title: Text(
+              jobPost.title,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            title: Text(jobPost.company),
-            subtitle: Text(jobPost.title),
           ),
           Padding(
             padding: EdgeInsets.all(16),
@@ -231,7 +255,7 @@ class JobPostCard extends StatelessWidget {
               children: [
                 Text('Fields: ${jobPost.Fields}'),
                 SizedBox(height: 8),
-                Text(jobPost.content),
+                Text(jobPost.description),
                 SizedBox(height: 16),
                 Text('Deadline: ${jobPost.deadline}'),
               ],

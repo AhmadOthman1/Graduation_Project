@@ -49,9 +49,6 @@ class MyJobController {
       isLoading = false;
     }
 
-    /*
-    await Future.delayed(const Duration(seconds: 2), () {
-    });*/
     return;
   }
 
@@ -103,15 +100,11 @@ class MyJobController {
         }).toList();
 
         jobs.addAll(newJob);
-        //print(notifications);
       }
 
       isLoading = false;
     }
 
-    /*
-    await Future.delayed(const Duration(seconds: 2), () {
-    });*/
     return;
   }
 }

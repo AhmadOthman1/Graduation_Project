@@ -1,33 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/tasks_controller/tasks_controller.dart';
-import 'package:intl/intl.dart'; // Import the intl package
-import 'description.dart';
-import 'task.dart';
+import 'package:growify/controller/home/Groups_controller/taskGroup_controller/taskGroup_Controller.dart';
+import 'package:growify/view/screen/homescreen/Groups/TaskGroup/descriptiongroup.dart';
+import 'package:intl/intl.dart';
+import 'taskGroup.dart';
+import 'package:multi_dropdown/enum/app_enums.dart';
+import 'package:multi_dropdown/models/chip_config.dart';
+import 'package:multi_dropdown/models/network_config.dart';
+import 'package:multi_dropdown/models/value_item.dart';
+import 'package:multi_dropdown/multiselect_dropdown.dart';
+import 'package:multi_dropdown/widgets/hint_text.dart';
+import 'package:multi_dropdown/widgets/selection_chip.dart';
+import 'package:multi_dropdown/widgets/single_selected_item.dart';
 
-class TasksHomePage extends StatefulWidget {
-  const TasksHomePage({super.key});
-
+class TasksGroupHomePage extends StatefulWidget {
+  const TasksGroupHomePage({super.key, this.isAdmin, this.members});
+  final isAdmin;
+  final members;
   @override
-  _TasksHomePageState createState() => _TasksHomePageState();
+  _TasksGroupHomePageState createState() => _TasksGroupHomePageState();
 }
 
-TasksController controller = Get.put(TasksController());
+TasksGroupController controller = Get.put(TasksGroupController());
 
-class _TasksHomePageState extends State<TasksHomePage> {
+class _TasksGroupHomePageState extends State<TasksGroupHomePage> {
   GlobalKey<FormState> formstate = GlobalKey();
 
   TimeOfDay? startTime;
   TimeOfDay? endTime;
   DateTime? startDate;
   DateTime? endDate;
+  List<String> usernames = [];
+  List<String> selectedUsernames = [];
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    if (widget.members != null && widget.members is List) {
+      usernames = widget.members
+          .whereType<Map<String, dynamic>>()
+          .where((member) => member['username'] is String)
+          .map<String>((member) => member['username'] as String)
+          .toList();
+    }
+    // to store in the database
   }
 
   void _addTask() async {
+ 
     var selectedStatus = 'ToDo';
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
     final result = await showDialog<Task>(
@@ -141,23 +160,59 @@ class _TasksHomePageState extends State<TasksHomePage> {
                               ],
                             ),
                             const SizedBox(height: 20),
-                            Column(
+                            Row(
                               children: [
+                                const Text('Members:'),
+                                const SizedBox(width: 10),
+                                Container(
+                                  width: 200,
+                                  child: MultiSelectDropDown(
+                                    searchEnabled: true,
+                                    onOptionSelected:
+                                        (List<ValueItem> selectedOptions) {
+                                          print("p888888888888888888888");
+                                          print("Selected options: $selectedOptions");
+                                      selectedUsernames = selectedOptions
+                                          .map((option) =>
+                                              option.value.toString())
+                                          .toList();
+                                    },
+                                    options: usernames
+                                        .map((username) => ValueItem(
+                                            label: username, value: username))
+                                        .toList(),
+                                    selectionType: SelectionType.multi,
+                                    chipConfig: const ChipConfig(
+                                        wrapType: WrapType.scroll),
+                                    dropdownHeight: 300,
+                                    optionTextStyle:
+                                        const TextStyle(fontSize: 16),
+                                    selectedOptionIcon:
+                                        const Icon(Icons.check_circle),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            Column(
+                              children: <Widget>[
                                 Container(
                                   margin: const EdgeInsets.only(right: 8),
-                                  child: const Text('Start',style: TextStyle(
-                                     fontSize: 16,
-                                    fontWeight: FontWeight.bold
-                                  ),),
+                                  child: const Text(
+                                    'Start',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                                 Row(
-                                  children: <Widget>[
-                                    
+                                  children: [
                                     ElevatedButton(
                                       onPressed: () async {
                                         final pickedDate = await showDatePicker(
                                           context: context,
-                                          initialDate: startDate ?? DateTime.now(),
+                                          initialDate:
+                                              startDate ?? DateTime.now(),
                                           firstDate: DateTime(2000),
                                           lastDate: DateTime(2101),
                                         );
@@ -176,7 +231,8 @@ class _TasksHomePageState extends State<TasksHomePage> {
                                       onPressed: () async {
                                         final pickedTime = await showTimePicker(
                                           context: context,
-                                          initialTime: startTime ?? TimeOfDay.now(),
+                                          initialTime:
+                                              startTime ?? TimeOfDay.now(),
                                         );
                                         if (pickedTime != null) {
                                           setState(() {
@@ -187,7 +243,7 @@ class _TasksHomePageState extends State<TasksHomePage> {
                                       child: const Text('Select Time'),
                                     ),
                                   ],
-                                ),
+                                )
                               ],
                             ),
                             if (startDate != null && startTime != null)
@@ -204,19 +260,21 @@ class _TasksHomePageState extends State<TasksHomePage> {
                               children: [
                                 Container(
                                   margin: const EdgeInsets.only(right: 8),
-                                  child: const Text('End',style: TextStyle(
-                                     fontSize: 16,
-                                    fontWeight: FontWeight.bold
-                                  ),),
+                                  child: const Text(
+                                    'End',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                                 Row(
                                   children: <Widget>[
-                                    
                                     ElevatedButton(
                                       onPressed: () async {
                                         final pickedDate = await showDatePicker(
                                           context: context,
-                                          initialDate: endDate ?? DateTime.now(),
+                                          initialDate:
+                                              endDate ?? DateTime.now(),
                                           firstDate: DateTime(2000),
                                           lastDate: DateTime(2101),
                                         );
@@ -235,7 +293,8 @@ class _TasksHomePageState extends State<TasksHomePage> {
                                       onPressed: () async {
                                         final pickedTime = await showTimePicker(
                                           context: context,
-                                          initialTime: endTime ?? TimeOfDay.now(),
+                                          initialTime:
+                                              endTime ?? TimeOfDay.now(),
                                         );
                                         if (pickedTime != null) {
                                           setState(() {
@@ -269,6 +328,9 @@ class _TasksHomePageState extends State<TasksHomePage> {
                     children: <Widget>[
                       TextButton(
                         onPressed: () async {
+                             print("AAAAAAAAAAAAAAAAAAAAAAA");
+    print(selectedUsernames);
+    print("AAAAAAAAAAAAAAAAAAAAAAA");
                           if (formKey.currentState!.validate()) {
                             if (endDate != null && startDate != null) {
                               if (endDate!.isBefore(startDate!)) {
@@ -341,7 +403,7 @@ class _TasksHomePageState extends State<TasksHomePage> {
                                 selectedStatus,
                               );
                               var newTaskId =
-                                  await controller.createUserTask(task);
+                                  await controller.createUserTask(task,selectedUsernames.toString());
                               if (newTaskId != null)
                                 Navigator.pop(
                                   context,
@@ -389,7 +451,7 @@ class _TasksHomePageState extends State<TasksHomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DescriptionPage(task: task),
+        builder: (context) => DescriptionGroupPage(task: task),
       ),
     );
   }
@@ -425,10 +487,10 @@ class _TasksHomePageState extends State<TasksHomePage> {
                 ),
                 body: TabBarView(
                   children: [
-                    buildTab('ToDo'),
-                    buildTab('Doing'),
-                    buildTab('Done'),
-                    buildTab('Archived'),
+                    buildTab('ToDo', widget.isAdmin),
+                    buildTab('Doing', widget.isAdmin),
+                    buildTab('Done', widget.isAdmin),
+                    buildTab('Archived', widget.isAdmin),
                   ],
                 ),
               ),
@@ -437,9 +499,16 @@ class _TasksHomePageState extends State<TasksHomePage> {
         });
   }
 
-  Widget buildTab(String status) {
+  Widget buildTab(String status, bool isAdmin) {
     List<Task> filteredTasks =
         tasks.where((task) => task.status == status).toList();
+
+    List<String> dropdownItems = ['ToDo', 'Doing', 'Done'];
+
+    if (isAdmin) {
+      // Add 'Archived' and 'Delete' only if isAdmin is true
+      dropdownItems.addAll(['Archived', 'Delete']);
+    }
 
     return Scaffold(
       body: filteredTasks.isEmpty
@@ -460,49 +529,53 @@ class _TasksHomePageState extends State<TasksHomePage> {
                       ),
                     ],
                   ),
-                  trailing: DropdownButton<String>(
-                    value: filteredTasks[index].status,
-                    items: <String>[
-                      'ToDo',
-                      'Doing',
-                      'Done',
-                      'Archived',
-                      'Delete'
-                    ].map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) async {
-                      if (newValue != null) {
-                        var result = await controller.changeUserTaskStatus(
-                            filteredTasks[index], newValue);
-                        if (result && newValue != 'Delete') {
-                          filteredTasks[index].status = newValue;
-                          setState(() {});
-                        }
-                        if (result && newValue == 'Delete') {
-                          filteredTasks[index].status = newValue;
-                          setState(() {
-                            // Remove the task from filteredTasks if the status is 'Delete'
-                            filteredTasks
-                                .removeWhere((task) => task.status == 'Delete');
-                          });
-                        }
-                      }
-                    },
-                  ),
+                  trailing: (status != 'Archived') ||
+                          isAdmin ||
+                          (isAdmin && status == 'Archived')
+                      ? DropdownButton<String>(
+                          value: filteredTasks[index].status,
+                          items: dropdownItems.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) async {
+                            if (newValue != null) {
+                              var result =
+                                  await controller.changeUserTaskStatus(
+                                filteredTasks[index],
+                                newValue,
+                              );
+                              if (result && newValue != 'Delete') {
+                                filteredTasks[index].status = newValue;
+                                setState(() {});
+                              }
+                              if (result && newValue == 'Delete') {
+                                filteredTasks[index].status = newValue;
+                                setState(() {
+                                  // Remove the task from filteredTasks if the status is 'Delete'
+                                  filteredTasks.removeWhere(
+                                      (task) => task.status == 'Delete');
+                                });
+                              }
+                            }
+                          },
+                        )
+                      : null,
                   onTap: () {
                     _goToDescriptionPage(filteredTasks[index]);
                   },
                 );
               },
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addTask,
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: isAdmin
+          ? FloatingActionButton(
+              onPressed:_addTask,
+              
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }
