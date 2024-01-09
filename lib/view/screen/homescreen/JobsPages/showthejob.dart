@@ -6,50 +6,67 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:get/get.dart';
 import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/ShowTheJob_controller.dart';
+import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/global.dart';
 
 class JobPost {
   final String title;
   final String company;
-  final String interest;
+  final String Fields;
   final String? image; // Change the type to String?
   final String deadline;
   final String content;
-
+  final jobId;
   JobPost({
     required this.title,
     required this.company,
-    required this.interest,
+    required this.Fields,
     this.image, // Update the type to String?
     required this.deadline,
     required this.content,
+    required this.jobId,
   });
 }
 
 
 class ShowTheJob extends StatefulWidget {
+final String title;
+  final String company;
+  final String Fields;
+  final String? image; // Change the type to String?
+  final String deadline;
+  final String content;
+  final jopId;
+    const ShowTheJob({Key? key , required this.title,
+    required this.company,
+    required this.Fields,
+    this.image, // Update the type to String?
+    required this.deadline,
+    required this.content,required this.jopId}) : super(key: key);
+
   @override
   _ShowTheJobState createState() => _ShowTheJobState();
 }
 
 class _ShowTheJobState extends State<ShowTheJob> {
-  final List<JobPost> jobPosts = [
-    JobPost(
-      title: "Software Engineer",
-      company: "Tech Co.",
-      interest: "Software Development",
-      image: null,
-      deadline: "2024-01-13",
-      content:
-          "We are looking for a skilled software engineer... We are looking for a skilled software engineer...We are looking for a skilled software engineer...We are looking for a skilled software engineer...",
-    ),
-  ];
+  
  
 
 
 
   @override
   Widget build(BuildContext context) {
+    final List<JobPost> jobPosts = [
+    JobPost(
+      title: widget.title,
+      company: widget.company,
+      Fields: widget.Fields,
+      image: widget.image,
+      deadline: widget.deadline,
+      content:widget.content,
+      jobId: widget.jopId,
+    ),
+  ];
     return Scaffold(
       appBar: AppBar(
         title: Text('Job Post'),
@@ -99,7 +116,7 @@ class JobPostCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Interest: ${jobPost.interest}'),
+                Text('Fields: ${jobPost.Fields}'),
                 SizedBox(height: 8),
                 Text(jobPost.content),
                 SizedBox(height: 16),
@@ -177,17 +194,30 @@ class JobPostCard extends StatelessWidget {
                           Container(
                             width: 150,
                             child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 String notice = noticeController.text;
                                 // Process the notice as needed
                                 if (formKey.currentState!.validate()) {
                                   print('Title: ${jobPost.title}');
-                                  print('Interest: ${jobPost.interest}');
+                                  print('Fields: ${jobPost.Fields}');
                                   print('Company: ${jobPost.company}');
                                   print('Notice: $notice');
                                   print('Selected CV: $cvName');
-                                  Controller22.SaveChange(
-                                      cvBytes, cvName, cvExt, notice);
+                                  var message = await Controller22.SaveApplication(
+                                      cvBytes, cvName, cvExt, notice,jobPost.jobId);
+                                      (message != null)
+                              ? showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomAlertDialog(
+                                      title: 'Message',
+                                      icon: Icons.error,
+                                      text: message,
+                                      buttonText: 'OK',
+                                    );
+                                  },
+                                )
+                              : null;
                                 }
                               },
                               child: Text('Apply'),

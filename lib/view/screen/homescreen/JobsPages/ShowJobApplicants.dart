@@ -11,6 +11,9 @@ import 'package:growify/global.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ShowJobApplicants extends StatefulWidget {
+    final pageJobId;
+    const ShowJobApplicants({Key? key, required this.pageJobId}) : super(key: key);
+
   @override
   _ShowJobApplicantsState createState() => _ShowJobApplicantsState();
 }
@@ -32,7 +35,7 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
   Future<void> _loadData() async {
     print('Loading data...');
     try {
-      await _controller.loadPageJobs(_controller.page, 1);
+      await _controller.loadPageJobs(widget.pageJobId);
       setState(() {
         _controller.page++;
         // _controller.jobs; // This line doesn't seem to do anything, so I commented it out
@@ -226,7 +229,7 @@ class JobPostCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Interest: ${jobPost.interest}'),
+                Text('Fields: ${jobPost.Fields}'),
                 SizedBox(height: 8),
                 Text(jobPost.content),
                 SizedBox(height: 16),

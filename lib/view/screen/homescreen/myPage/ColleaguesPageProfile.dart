@@ -224,7 +224,7 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
         InkWell(
           onTap: () {
             //controller.goToSeeAboutInfo();
-            Get.to(CompanyJobPage());
+            Get.to(CompanyJobPage(pageId:widget.userData.id,image:widget.userData.photo));
           },
           child: Container(
             height: 35,

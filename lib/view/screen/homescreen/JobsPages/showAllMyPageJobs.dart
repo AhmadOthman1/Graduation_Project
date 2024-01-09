@@ -81,7 +81,7 @@ class _MyJobPageState extends State<MyJobPage> {
 
                 return InkWell(
                   onTap: () {
-                    Get.to(ShowJobApplicants());
+                    Get.to(ShowJobApplicants(pageJobId:job['pageJobId']));
                   },
                   child: Card(
                     margin: const EdgeInsets.all(10),
@@ -104,21 +104,25 @@ class _MyJobPageState extends State<MyJobPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
+                                'Fields: ${job['Fields']}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
                                 job['description'],
                                 style: TextStyle(
                                   fontSize: 14,
                                 ),
                               ),
-
-                              /* Text(
-                                job['notificationContent'],
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text(job['notificationContent']),
-                              const SizedBox(height: 8),*/
                               const SizedBox(height: 8),
                               Text(
                                 'Deadline: ${job['endDate']}',
@@ -142,7 +146,8 @@ class _MyJobPageState extends State<MyJobPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Get.to(NewJobPost(pageId:widget.pageId));
+          _controller.getFields(widget.pageId);
+          
         },
         tooltip: 'Add Job',
         child: Icon(Icons.post_add_outlined),

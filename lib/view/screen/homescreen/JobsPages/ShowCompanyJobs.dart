@@ -7,7 +7,9 @@ import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/JobsPages/showthejob.dart';
 
 class CompanyJobPage extends StatefulWidget {
-  const CompanyJobPage({Key? key}) : super(key: key);
+  final pageId;
+  final image;
+  const CompanyJobPage({Key? key , required this.pageId, required this.image}) : super(key: key);
 
   @override
   _CompanyJobPageState createState() => _CompanyJobPageState();
@@ -33,7 +35,7 @@ class _CompanyJobPageState extends State<CompanyJobPage> {
   Future<void> _loadData() async {
     print('Loading data...');
     try {
-      await _controller.loadNotifications(_controller.page);
+      await _controller.loadJobs(_controller.page, widget.pageId);
       setState(() {
         _controller.page++;
         _controller.jobs;
@@ -79,6 +81,73 @@ class _CompanyJobPageState extends State<CompanyJobPage> {
                 final job = _controller.jobs[index];
 
                 return Card(
+                    margin: const EdgeInsets.all(10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.open_in_new),
+                            onPressed: () {
+                              Get.to(ShowTheJob(jopId: job['pageJobId'],title:job['title'],company:widget.pageId,Fields: job['Fields'], image:widget.image,deadline:job['endDate'],content:job['description']));
+                            },
+                          ),
+                        ],
+                      ),
+                          title: Text(
+                            "${job['title']}",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                            
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Fields: ${job['Fields']}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                job['description'],
+                                style: TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Deadline: ${job['endDate']}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                /*
+                Card(
                   margin: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,7 +190,7 @@ class _CompanyJobPageState extends State<CompanyJobPage> {
                       ),
                     ],
                   ),
-                );
+                );*/
               },
             ),
           ),

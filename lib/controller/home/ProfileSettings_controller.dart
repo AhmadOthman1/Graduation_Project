@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -406,7 +407,8 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
       cvName,
       cvExt) async {
     var url = "$urlStarter/user/settingsChangeMainInfo";
-
+    print(finalselectedItems);
+    print(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;");
     Map<String, dynamic> jsonData = {
       "email": GetStorage().read("loginemail"),
       "firstName": (isTextFieldEnabled == true) ? textFieldText.trim() : null,
@@ -481,7 +483,7 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
     print(resbody['message']);
     print(res.statusCode);
     if (res.statusCode == 409 || res.statusCode == 500) {
-      return res.statusCode + ":" + resbody['message'];
+      return res.statusCode.toString() + ":" + resbody['message'];
     } else if (res.statusCode == 200) {
       
       Get.offNamed(AppRoute.homescreen);
@@ -493,6 +495,7 @@ class ProfileSettingsControllerImp extends ProfileSettingsController {
       isTextFieldEnabled7.value = false;
       isTextFieldEnabled11.value = false;
       isTextFieldEnabledGender.value = false;
+      isTextFieldEnabledFields.value=false;
     }
   }
 }

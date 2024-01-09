@@ -100,7 +100,7 @@ class _JobsPageState extends State<JobsPage> {
                           IconButton(
                             icon: const Icon(Icons.open_in_new),
                             onPressed: () {
-                              Get.to(ShowTheJob());
+                              //Get.to(ShowTheJob());
                             },
                           ),
                         ],

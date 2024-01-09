@@ -16,13 +16,17 @@ import 'package:multi_dropdown/widgets/single_selected_item.dart';
 
 class NewJobPost extends StatelessWidget {
   final pageId;
-  NewJobPost({super.key, required this.pageId});
+  final List<Map<String, dynamic>> availableFields;
+  NewJobPost({super.key, required this.pageId, required this.availableFields});
 
   final NewJobControllerImp controller = Get.put(NewJobControllerImp());
   GlobalKey<FormState> formstate = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
+    controller.items.clear();
+    controller.items = RxList<String>.from(
+      availableFields.map<String>((map) => map['Field'].toString()),
+    );
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 50),
@@ -149,7 +153,7 @@ class NewJobPost extends StatelessWidget {
                           print('Selected Date: ${controller.endDate.value}');
                           var message = await controller.postJob(pageId);
                           (message != null)
-                              ? showDialog(
+                              ? await showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
                                     return CustomAlertDialog(
@@ -161,6 +165,7 @@ class NewJobPost extends StatelessWidget {
                                   },
                                 )
                               : null;
+                              Get.back();
                         }
                       },
                       color: const Color.fromARGB(255, 85, 191, 218),

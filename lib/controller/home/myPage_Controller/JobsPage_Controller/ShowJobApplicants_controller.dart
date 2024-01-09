@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
-    class JobApplicant {
+class JobApplicant {
   final String? image;
   final String name;
   final String username;
@@ -30,7 +30,7 @@ LogOutButtonControllerImp _logoutController =
 class JobPost {
   final String title;
   final String company;
-  final String interest;
+  final String Fields;
   final String? image;
   final String deadline;
   final String content;
@@ -39,7 +39,7 @@ class JobPost {
   JobPost({
     required this.title,
     required this.company,
-    required this.interest,
+    required this.Fields,
     this.image,
     required this.deadline,
     required this.content,
@@ -48,12 +48,11 @@ class JobPost {
 }
 
 class ShowJobApplicantsController {
-
   final List<JobPost> jobPosts = [
     JobPost(
       title: "Software Engineer",
       company: "Tech Co.",
-      interest: "Software Development",
+      Fields: "Software Development",
       image: null,
       deadline: "2024-01-13",
       content:
@@ -70,17 +69,15 @@ class ShowJobApplicantsController {
       ],
     ),
   ];
-  
+
   final List<Map<String, dynamic>> jobs = [];
   final ScrollController scrollController = ScrollController();
   bool isLoading = false;
   int pageSize = 10;
   int page = 1;
 
-  getPageJobs(int page, String pageId) async {
-    
-    var url =
-        "$urlStarter/user/getPageJobs?page=$page&pageSize=$pageSize&pageId=$pageId";
+  getPageJobs(pageJobId) async {
+    var url = "$urlStarter/user/getPageJobApplications?pageJobId=$pageJobId";
     var response = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -88,17 +85,17 @@ class ShowJobApplicantsController {
     return response;
   }
 
-  Future<void> loadPageJobs(page,pageId) async {
+  Future<void> loadPageJobs(pageJobId) async {
     if (isLoading) {
       return;
     }
-    
+
     isLoading = true;
-    var response = await getPageJobs(page,pageId);
+    var response = await getPageJobs(pageJobId);
     print(response.statusCode);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      loadPageJobs(page,pageId);
+      loadPageJobs(pageJobId);
       return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -109,37 +106,34 @@ class ShowJobApplicantsController {
       print(responseBody['message']);
       return;
     } else if (response.statusCode == 200) {
-      
-      
       var responseBody = jsonDecode(response.body);
-      final List<dynamic>? pageJobs = responseBody["pageJobs"];
-      print(pageJobs);
+      /*final List<dynamic>? pageJob = responseBody["pageJob"];
+      print(pageJob);
       print("userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-      if (pageJobs != null) {
-        final newJob = pageJobs.map((job) {
+      if (pageJob != null) {
+        final newJob = pageJob.map((job) {
           return {
             'pageJobId': job['pageJobId'],
             'pageId': job['pageId'],
             'title': job['title'],
-            'interest': job['interest'],
+            'Fields': job['Fields'],
             'description': job['description'],
             'endDate': job['endDate'],
           };
         }).toList();
 
         jobs.addAll(newJob);
+        print(responseBody["pageJob"]);
+        print(responseBody["application"]);
         //print(notifications);
-      }
-
+      }*/
+      print(responseBody["pageJob"]);
+      print(responseBody["application"]);
       isLoading = false;
     }
-    
+
     /*
     await Future.delayed(const Duration(seconds: 2), () {
     });*/
-    return;
   }
-
-
-  
 }
