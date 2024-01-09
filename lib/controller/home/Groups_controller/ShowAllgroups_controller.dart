@@ -6,39 +6,64 @@ class GroupsController {
 
    final List<Map<String, dynamic>> admins = [
     {
-      'firstname': 'Admin',
-      'lastname': 'AdminLastName',
-      'username': 'admin_username',
-      'adminType': 'Admin',
+      'firstname': 'Ahmad',
+      'lastname': 'Othman',
+      'username': 'AhmadOthman',
       'photo': null,
-      'date': '2022-01-06',
     },
-    // Add more default admin data as needed
+
+    {
+      'firstname': 'Obaida',
+      'lastname': 'Aws',
+      'username': 'ObaidaAws',
+      'photo': null,
+    },
+
+    {
+      'firstname': 'Mazen',
+      'lastname': 'Fursan',
+      'username': 'MazenFursan',
+      'photo': null,
+    },
+
+
+    {
+      'firstname': 'Mohammad',
+      'lastname': 'Fadi',
+      'username': 'MohammadFadi',
+      'photo': null,
+    },
+
+    {
+      'firstname': 'Hossam',
+      'lastname': 'Moaeead',
+      'username': 'HossamMoaeead',
+      'photo': null,
+    },
   ];
 
   final List<Map<String, dynamic>> members = [
     {
-      'firstname': 'John',
-      'lastname': 'Doe',
-      'username': 'john_doe',
-      'adminType': 'Member',
-      'photo': null,
-      'date': '2022-01-06',
+      'firstname': 'Obaida',
+      'lastname': 'Aws',
+      'username': 'obaida_aws',
+      'memberType': 'Employee',
+      'photo':null
+
     },
     {
       'firstname': 'Jane',
       'lastname': 'Doe',
       'username': 'jane_doe',
-      'adminType': 'Member',
-      'photo': null,
-      'date': '2022-01-06',
+      'MemberType': 'Not Employee',
+      'photo':null
     },
-    // Add more default member data as needed
   ];
 
-  goToGroupChatMessage() async {
+  goToGroupChatMessage(pageId) async {
 
     // here get data for all chat , members,admins,
+    print(pageId);
     print("Hamassssssssss");
     print(Groupmessages);
     print("Hamassssssssss");

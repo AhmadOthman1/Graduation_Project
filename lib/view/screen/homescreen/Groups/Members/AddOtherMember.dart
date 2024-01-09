@@ -6,8 +6,9 @@ import 'package:growify/core/functions/alertbox.dart';
 
 class AddMember extends StatefulWidget {
   final pageId;
+  final groupId;
 
-  const AddMember({Key? key, required this.pageId}) : super(key: key);
+  const AddMember({Key? key, required this.pageId, this.groupId}) : super(key: key);
 
   @override
   _AddMemberState createState() => _AddMemberState();
@@ -17,7 +18,7 @@ class _AddMemberState extends State<AddMember> {
   late AddMembersController _controller;
 
   TextEditingController _usernameController = TextEditingController();
-  String? _selectedRole;
+  
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -70,26 +71,6 @@ class _AddMemberState extends State<AddMember> {
                     },
                   ),
                   SizedBox(height: 16),
-                /*  DropdownButtonFormField<String>(
-                    value: _selectedRole,
-                    decoration: InputDecoration(
-                      labelText: "Select Role",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    items: ["Admin", "Publisher"]
-                        .map((role) => DropdownMenuItem(
-                              value: role,
-                              child: Text(role),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedRole = value;
-                      });
-                    },
-                  ),*/
                 ],
               ),
             ),
@@ -99,12 +80,11 @@ class _AddMemberState extends State<AddMember> {
               child: MaterialButton(
                 onPressed: () async {
                   if (formKey.currentState!.validate()) {
-                    if (_usernameController.text.trim().isNotEmpty &&
-                        _selectedRole != null) {
-                      var message = await _controller.addAdmin(
+                    if (_usernameController.text.trim().isNotEmpty ) {
+                      var message = await _controller.addMember(
                           widget.pageId,
                           _usernameController.text.trim(),
-                          _selectedRole!);
+                          widget.groupId);
                       (message != null)
                           ? showDialog(
                               context: context,

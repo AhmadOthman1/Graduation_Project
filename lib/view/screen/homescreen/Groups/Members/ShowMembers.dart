@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Groups_controller/Members_controller/ShowMembers_controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/Groups/Members/MemberType.dart';
 
 class ShowMembers extends StatefulWidget {
   final ShowMembersController _controller = ShowMembersController();
   final  pageId;
+  final groupId;
   final localMembers;
 
   
-ShowMembers({required this.pageId, this.localMembers});
+ShowMembers({required this.pageId, this.localMembers, this.groupId});
   @override
   _ShowMembersState createState() => _ShowMembersState();
 }
@@ -27,10 +29,10 @@ class _ShowMembersState extends State<ShowMembers> {
         actions: [
           TextButton(
             onPressed: () {
-              // Add your logic for "Add Admin" button
+              Get.to(MemberType(pageId: widget.pageId,groupId:widget.groupId));
             },
             child: Text(
-              "Add Admin",
+              "Add Member",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -54,14 +56,14 @@ class _ShowMembersState extends State<ShowMembers> {
                 final firstname = admin['firstname'];
                 final lastname = admin['lastname'];
                 final username = admin['username'];
-                final adminType = admin['adminType'];
+                final memberType = admin['memberType'];
 
                 return Column(
                   children: [
                     ListTile(
                       onTap: () {
                         final userUsername = username;
-                        // Navigate to user page
+                        
                       },
                       trailing: CircleAvatar(
                         backgroundImage: (admin['photo'] != null &&
@@ -70,7 +72,7 @@ class _ShowMembersState extends State<ShowMembers> {
                                 .image
                             : widget._controller.defaultProfileImage,
                       ),
-                      title: Text('$firstname $lastname ($adminType)'),
+                      title: Text('$firstname $lastname ($memberType)'),
                       subtitle: Text('$username'),
                     ),
                     const Divider(

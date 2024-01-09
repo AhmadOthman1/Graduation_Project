@@ -7,9 +7,10 @@ import 'package:growify/view/screen/homescreen/Groups/Admins/AddGroupAdmin.dart'
 class GroupAdmins extends StatefulWidget {
   final ShowGroupAdminsController _controller = ShowGroupAdminsController();
   final  pageId;
+  final groupId;
   final localAdmins;
 
-  GroupAdmins({required this.pageId, this.localAdmins});
+  GroupAdmins({required this.pageId, this.localAdmins, this.groupId});
 
   @override
   _GroupAdminsState createState() => _GroupAdminsState();
@@ -28,7 +29,7 @@ class _GroupAdminsState extends State<GroupAdmins> {
         actions: [
           TextButton(
             onPressed: () {
-              // Add your logic for "Add Admin" button
+              Get.to(AddGroupAdmin(pageId: widget.pageId,groupId:widget.groupId));
             },
             child: Text(
               "Add Admin",
@@ -55,14 +56,13 @@ class _GroupAdminsState extends State<GroupAdmins> {
                 final firstname = admin['firstname'];
                 final lastname = admin['lastname'];
                 final username = admin['username'];
-                final adminType = admin['adminType'];
+          
 
                 return Column(
                   children: [
                     ListTile(
                       onTap: () {
                         final userUsername = username;
-                        // Navigate to user page
                       },
                       trailing: CircleAvatar(
                         backgroundImage: (admin['photo'] != null &&
@@ -71,7 +71,7 @@ class _GroupAdminsState extends State<GroupAdmins> {
                                 .image
                             : widget._controller.defaultProfileImage,
                       ),
-                      title: Text('$firstname $lastname ($adminType)'),
+                      title: Text('$firstname $lastname '),
                       subtitle: Text('$username'),
                     ),
                     const Divider(

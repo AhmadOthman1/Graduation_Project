@@ -7,8 +7,9 @@ import 'package:growify/core/functions/alertbox.dart';
 
 class AddGroupAdmin extends StatefulWidget {
   final pageId;
+  final groupId;
 
-  const AddGroupAdmin({Key? key, required this.pageId}) : super(key: key);
+  const AddGroupAdmin({Key? key, required this.pageId, this.groupId}) : super(key: key);
 
   @override
   _AddAddGroupAdmin createState() => _AddAddGroupAdmin();
@@ -18,7 +19,7 @@ class _AddAddGroupAdmin extends State<AddGroupAdmin> {
   late AddGroupAdminController _controller;
 
   TextEditingController _usernameController = TextEditingController();
-  String? _selectedRole;
+ 
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -71,58 +72,52 @@ class _AddAddGroupAdmin extends State<AddGroupAdmin> {
                     },
                   ),
                   SizedBox(height: 16),
-                /*  DropdownButtonFormField<String>(
-                    value: _selectedRole,
-                    decoration: InputDecoration(
-                      labelText: "Select Role",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    items: ["Admin", "Publisher"]
-                        .map((role) => DropdownMenuItem(
-                              value: role,
-                              child: Text(role),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedRole = value;
-                      });
-                    },
-                  ),*/
+                
                 ],
               ),
             ),
             SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () async {
-                if (formKey.currentState!.validate()) {
-                  if (_usernameController.text.trim().isNotEmpty &&
-                      _selectedRole != null) {
-                    var message = await _controller.addAdmin(
-                        widget.pageId,
-                        _usernameController.text.trim(),
-                        _selectedRole!);
-                    (message != null)
-                        ? showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return CustomAlertDialog(
-                                title: 'Error',
-                                icon: Icons.error,
-                                text: message,
-                                buttonText: 'OK',
-                                
-                              );
-                            },
-                          )
-                        : null;
-                        _usernameController.clear();
+            Container(
+              width: double.infinity,
+              child: MaterialButton(
+                onPressed: () async {
+                  print("*****************************");
+                  print(widget.groupId);
+                  print(widget.pageId);
+                  print("******************************");
+                  if (formKey.currentState!.validate()) {
+                    if (_usernameController.text.trim().isNotEmpty ) {
+                      var message = await _controller.addAdmin(
+                          widget.pageId,
+                          _usernameController.text.trim(),
+                          widget.groupId);
+                      (message != null)
+                          ? showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CustomAlertDialog(
+                                  title: 'Error',
+                                  icon: Icons.error,
+                                  text: message,
+                                  buttonText: 'OK',
+                                  
+                                );
+                              },
+                            )
+                          : null;
+                          _usernameController.clear();
+                    }
                   }
-                }
-              },
-              child: Text('Add Admin'),
+                },
+                color: const Color.fromARGB(255, 85, 191, 218),
+                elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                child: Text('Add Admin',style: TextStyle(color: Colors.white, fontSize: 17),),
+
+              
+              ),
             ),
           ],
         ),

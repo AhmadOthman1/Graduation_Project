@@ -155,7 +155,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                         fontSize: 14,
                       ),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
-                      labelText: "Parent Node",
+                      labelText: "Parent Group",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),

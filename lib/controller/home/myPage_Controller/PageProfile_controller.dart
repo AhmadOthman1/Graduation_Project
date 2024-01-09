@@ -28,30 +28,30 @@ class PageProfileController extends GetxController {
   {
     'name': "Main Group", 
     'id':3,
-    'description': null,
+    'description': "im Main Group",
     'parentNode': null,
-    'usersendmessage': false
+    'membersendmessage': false
   },
   {
     'name': "Group 1", 
     'id':8,
-    'description': null,
+    'description': "im Group 1",
     'parentNode': "Main Group", 
-    'usersendmessage': false
+    'membersendmessage': true
   },
   {
     'name': "Sub 1.1", 
     'id':7,
-    'description': null,
-    'parentNode': "Parent Group 1", 
-    'usersendmessage': false
+    'description': "im Sub 1.1",
+    'parentNode': "Group 1", 
+    'membersendmessage': false
   },
   {
     'name': "Sub 1.2", 
     'id':5,
-    'description': null,
-    'parentNode': "Parent Group 1", 
-    'usersendmessage': false
+    'description': "im Sub 1.2",
+    'parentNode': "Group 1", 
+    'membersendmessage': false
   },
 ];
 
@@ -59,7 +59,9 @@ class PageProfileController extends GetxController {
 
   goToShowGroupPage(String pageId){
 
-
+print("why whyw jjjjjjjjjjjjjjjjjjjjjjjjjj");
+print(pageId);
+print("why whyw jjjjjjjjjjjjjjjjjjjjjjjjjj");
 
     Get.to(GroupPage(pageId: pageId, groupsData: groupsData));
   }

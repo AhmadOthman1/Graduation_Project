@@ -12,8 +12,8 @@ import 'package:growify/view/screen/homescreen/settings/myPages.dart';
 class GroupSettings extends StatelessWidget {
   final admins;
   final members;
-  final pageId;
-  GroupSettings({super.key, this.admins, this.members, this.pageId});
+  final groupData;
+  GroupSettings({super.key, this.admins, this.members,  this.groupData});
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +52,7 @@ class GroupSettings extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: InkWell(
                   onTap: () {
-                  //  controller.goToProfileSettingsPgae();
-                  Get.to(EditGroupSettingSettings(userData: [],));
+                  Get.to(EditGroupSettingSettings(userData: [groupData],));
                   },
                   child: Container(
                     height: 35,
@@ -83,7 +82,7 @@ class GroupSettings extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: InkWell(
                   onTap: () {
-                    Get.to(GroupAdmins(pageId:pageId,localAdmins: admins,));
+                    Get.to(GroupAdmins(pageId:groupData['pageId'],groupId:groupData['id'],localAdmins: admins,));
                   },
                   child: Container(
                     height: 35,
@@ -112,7 +111,7 @@ class GroupSettings extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: InkWell(
                   onTap: () {
-             Get.to(ShowMembers(pageId:pageId,localMembers: members,));
+             Get.to(ShowMembers(pageId:groupData['pageId'],groupId:groupData['id'],localMembers: members,));
                   },
                   child: Container(
                     height: 35,
