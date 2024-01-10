@@ -61,6 +61,7 @@ class LoginControllerImp extends LoginController {
         return resbody['message'];
       } else if (res.statusCode == 200) {
         resbody['message'] = "";
+        print(resbody['accessToken']);
         GetStorage().write("accessToken", resbody['accessToken']);
         GetStorage().write("refreshToken", resbody['refreshToken']);
         GetStorage().write("loginemail", email);

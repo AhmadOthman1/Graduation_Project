@@ -17,6 +17,7 @@ const userNotificationsController=require('../controller/notifications/userNotif
 const chatsMainPage=require('../controller/chats/chatsMainPage')
 const userMessages=require('../controller/chats/userMessages')
 const UserColleagues=require('../controller/mainUser/userColleagues')
+const userNetworkPages=require('../controller/mainUser/userNetworkPages')
 const pagesProfile=require('../controller/otherPages/pagesProfile')
 const userTasks =require('../controller/tasks/userTasksController')
 const pageGroups=require('../controller/myPages/pageGroups')
@@ -47,6 +48,9 @@ router.post('/getUserProfileDashboard',authenticateToken,settingsController.getU
 router.get('/getUserColleagues',authenticateToken,UserColleagues.getUserColleagues);
 router.get('/getUserRequestsReceived',authenticateToken,UserColleagues.getUserRequestsReceived);
 router.get('/getUserRequestsSent',authenticateToken,UserColleagues.getUserRequestsSent);
+router.get('/getUserFollowedPages',authenticateToken,userNetworkPages.getUserFollowedPages);
+router.get('/getUserEmployedPages',authenticateToken,userNetworkPages.getUserEmployedPages);
+
 //search
 router.get('/getSearchData',authenticateToken,getSearchDataController.getSearchData);
 //other users profile
