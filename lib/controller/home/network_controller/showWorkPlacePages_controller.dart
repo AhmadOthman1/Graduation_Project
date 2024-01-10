@@ -5,23 +5,22 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
-import 'package:growify/view/screen/homescreen/notificationspages/showPost.dart';
 import 'package:http/http.dart' as http;
 
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
-class JobMainPageController {
-  final List<Map<String, dynamic>> jobs = [];
+class ShowMyWorkPlacePagesController {
+  final List<Map<String, dynamic>> WorkPlacePages = [];
   final ScrollController scrollController = ScrollController();
   bool isLoading = false;
   int pageSize = 10;
   int page = 1;
 
-  getJobs(page,username) async {
+  getWorkPlacePages(int page) async {
     
     var url =
-        "$urlStarter/user/getJobs?page=$page&pageSize=$pageSize&pageId=$username";
+        "$urlStarter/user/getUserColleagues?page=$page&pageSize=$pageSize";
     var response = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -29,17 +28,17 @@ class JobMainPageController {
     return response;
   }
 
-  Future<void> loadJobs(page,username) async {
+  Future<void> loadPages(page) async {
     if (isLoading) {
       return;
     }
     
     isLoading = true;
-    var response = await getJobs(page,username);
+    var response = await getWorkPlacePages(page);
     print(response.statusCode);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      loadJobs(page,username);
+      loadPages(page);
       return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -50,37 +49,37 @@ class JobMainPageController {
       print(responseBody['message']);
       return;
     } else if (response.statusCode == 200) {
+      
+      
       var responseBody = jsonDecode(response.body);
-      final List<dynamic>? pageJobs = responseBody["pageJobs"];
-      print(pageJobs);
+      final List<dynamic>? Pages = responseBody["userConnections"];
+      print(Pages);
       print("userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-      if (pageJobs != null) {
-        final newJob = pageJobs.map((job) {
+      if (Pages != null) {
+        final newPages = Pages.map((pages) {
           return {
-            'pageJobId': job['pageJobId'],
-            'pageId': job['pageId'],
-            'title': job['title'],
-            'Fields': job['Fields'],
-            'description': job['description'],
-            'endDate': job['endDate'],
-            'photo':job['photo'],
-            
+            'name': pages['connection']['name'],
+            'id': pages['connection']['id'],
+            'photo': pages['connection']['photo'],
           };
         }).toList();
 
-        jobs.addAll(newJob);
-        //print(notifications);
+        WorkPlacePages.addAll(newPages);
+        
       }
 
       isLoading = false;
     }
     
-    /*
-    await Future.delayed(const Duration(seconds: 2), () {
-    });*/
+
     return;
   }
 
 
   
 }
+ 
+
+
+
+
