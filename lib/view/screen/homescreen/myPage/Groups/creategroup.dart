@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:growify/controller/home/Groups_controller/createGroup_controller.dart';
 
 class CreateGroupPage extends StatefulWidget {
+  final groupsData;
+
+  const CreateGroupPage({Key? key, this.groupsData}) : super(key: key);
+
   @override
   _CreateGroupPageState createState() => _CreateGroupPageState();
 }
@@ -18,7 +23,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
   @override
   void initState() {
     super.initState();
-    groupsController = CreateGroupsController();
+    groupsController = CreateGroupsController(groupsData: widget.groupsData);
     defaultParentNodes = groupsController.parentGroupNames;
   }
 
@@ -27,24 +32,16 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
       String groupName = _groupNameController.text.trim();
       String description = _descriptionController.text.trim();
 
-      Group newGroup = Group(
-        name: groupName,
-        imagePath: null,
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        description: description,
-      );
+      Map<String, dynamic> newGroup = {
+        'name': groupName,
+        'id': DateTime.now().millisecondsSinceEpoch.toString(),
+        'parentNode': (_selectedParentNode != null)
+            ? groupsController.findGroupByName(_selectedParentNode!) ?? null
+            : null,
+        'description': description,
+      };
 
-      if (_selectedParentNode != null) {
-        Group? parentGroup = groupsController.findGroupByName(_selectedParentNode!);
-
-        if (parentGroup != null) {
-          groupsController.setParentNode(newGroup, parentGroup);
-        } else {
-          print("Parent node not found: $_selectedParentNode");
-        }
-      } else {
-        groupsController.groups.add(newGroup);
-      }
+      groupsController.addGroup(newGroup);
 
       _groupNameController.clear();
       _descriptionController.clear();
@@ -80,8 +77,8 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                         fontSize: 14,
                       ),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 30),
+                      contentPadding:
+                          const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                       labelText: "Group id",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -103,8 +100,8 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                         fontSize: 14,
                       ),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 30),
+                      contentPadding:
+                          const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                       labelText: "Group Name",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -127,8 +124,8 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                         fontSize: 14,
                       ),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 30),
+                      contentPadding:
+                          const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                       labelText: "Description",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -179,14 +176,14 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                   child: MaterialButton(
                     color: const Color.fromARGB(255, 85, 191, 218),
                     onPressed: _createGroup,
-                    child: Text('Create',
-                    style: TextStyle(color: Colors.white, fontSize: 17),
+                    child: Text(
+                      'Create',
+                      style: TextStyle(color: Colors.white, fontSize: 17),
                     ),
                     elevation: 2,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-
+                      borderRadius: BorderRadius.circular(30),
+                    ),
                   ),
                 ),
               ),
