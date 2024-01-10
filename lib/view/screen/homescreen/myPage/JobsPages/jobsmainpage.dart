@@ -1,30 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/JobMainPage_controller.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/myPage/JobsPages/showthejob.dart';
 
+
+
 class JobsPage extends StatefulWidget {
-  const JobsPage({Key? key}) : super(key: key);
+ final image;
+  const JobsPage({Key? key, this.image}) : super(key: key);
 
   @override
-  _JobsPageState createState() => _JobsPageState();
+  _CompanyJobPageState createState() => _CompanyJobPageState();
 }
 
 final ScrollController scrollController = ScrollController();
 
-class _JobsPageState extends State<JobsPage> {
-  late JobsController _controller;
+class _CompanyJobPageState extends State<JobsPage> {
+  late JobMainPageController _controller;
   final ScrollController _scrollController = ScrollController();
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
   final SearchControllerImp searchController = Get.put(SearchControllerImp());
 
+  String username = GetStorage().read("username");
+
   @override
   void initState() {
     super.initState();
-    _controller = JobsController();
+    _controller = JobMainPageController();
     _loadData();
     _scrollController.addListener(_scrollListener);
   }
@@ -32,7 +38,7 @@ class _JobsPageState extends State<JobsPage> {
   Future<void> _loadData() async {
     print('Loading data...');
     try {
-      await _controller.loadNotifications(_controller.page);
+      await _controller.loadJobs(_controller.page, username);
       setState(() {
         _controller.page++;
         _controller.jobs;
@@ -47,11 +53,10 @@ class _JobsPageState extends State<JobsPage> {
     if (_scrollController.offset >=
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
-      // reached the bottom, load more notifications
       _loadData();
     }
   }
-  
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -62,7 +67,7 @@ class _JobsPageState extends State<JobsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Jobs'),
+        title: const Text('All Jops'),
       ),
       body: Column(
         children: [
@@ -76,42 +81,74 @@ class _JobsPageState extends State<JobsPage> {
               itemCount: _controller.jobs.length,
               itemBuilder: (context, index) {
                 final job = _controller.jobs[index];
-                
-                return Column(
-                  children: [
-                    ListTile(
-                      onTap: (){
-                      //  _controller.showPost();
-                        
-                      },
-                      leading: CircleAvatar(
-                        backgroundImage: (job['photo'] != null &&
-                                job['photo'] != "")
-                            ? Image.network("$urlStarter/" + job['photo']!)
-                                .image
-                            : defultprofileImage,
-                      ),
-                      title: Text(
-                          "${job['notificationPointer']} ${job['notificationContent']}"),
-                      subtitle: Text(job['date']),
-                      trailing: Row(
+
+                return Card(
+                    margin: const EdgeInsets.all(10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
                             icon: const Icon(Icons.open_in_new),
                             onPressed: () {
-                              //Get.to(ShowTheJob());
+                              Get.to(ShowTheJob(jopId: job['pageJobId'],title:job['title'],company:job['pageId'],Fields: job['Fields'], image:job['photo'],deadline:job['endDate'],content:job['description']));
                             },
                           ),
                         ],
                       ),
+                          title: Text(
+                            "${job['title']}",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                            
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Fields: ${job['Fields']}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                job['description'],
+                                style: TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Deadline: ${job['endDate']}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    const Divider(
-                      color: Color.fromARGB(255, 194, 193, 193),
-                      thickness: 2.0,
-                    ),
-                  ],
-                );
+                  );
+                
               },
             ),
           ),
@@ -121,3 +158,14 @@ class _JobsPageState extends State<JobsPage> {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
