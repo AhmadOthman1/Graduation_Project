@@ -60,13 +60,9 @@ class GroupsController {
     },
   ];
 
-  goToGroupChatMessage(pageId) async {
+  goToGroupChatMessage(groupId) async {
 
-    // here get data for all chat , members,admins,
-    print(pageId);
-    print("Hamassssssssss");
-    print(Groupmessages);
-    print("Hamassssssssss");
+    
     Get.to(GroupChatPageMessages(
       data: Groupmessages[0],admins: admins,members: members,
     ));

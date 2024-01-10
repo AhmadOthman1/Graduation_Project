@@ -17,6 +17,10 @@ const jobApplication = require('./jobApplication');
 const userTasks = require('./userTasks');
 const systemFields = require('./systemFields');
 const pageGroup= require('./pageGroup');
+const pageEmployees= require('./pageEmployees');
+const groupAdmin= require('./groupAdmin');
+const groupMember= require('./groupMember');
+const groupMessage= require('./groupMessage');
 
 
 
@@ -421,5 +425,55 @@ for(let i = 2;i<20 ; i++){
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         parentGroup: i%2 ? i-2 : i-1,
         memberSendMessage:i%2 ? true :false,
+    })
+}
+for (let i = 80; i <= 500; i++) {
+    User.create({
+        firstname: "Ahmad",
+        lastname: "Othman"+i,
+        username: "ahmad" + i,
+        email: "ahmad" + i + "@gmail.com",
+        password: "$2b$10$onKV7UBFIShgI466b6bd2O4qAtMFFtoObF.QQrJcO7l4lNoBmFMxq",
+        phone: "0569929734",
+        dateOfBirth: "2001-05-18",
+    });
+}
+for (let i = 80; i <= 400; i++){
+    pageEmployees.create({
+        pageId: "page 1",
+        username: "ahmad"+i,
+        field: systemFieldsList[i%systemFieldsList.length],
+    })
+}
+for (let i = 100; i <= 140; i++){
+    groupMember.create({
+        groupId: i%21 ? i%21 : 1,
+        username: "ahmad"+i,
+    })
+}
+for (let i = 100; i <= 140; i++){
+    groupAdmin.create({
+        groupId: i%21? i%21 : 1,
+        username: "ahmad"+i,
+    })
+}
+for (let i = 100; i <= 140; i++){
+    groupMessage.create({
+        groupId: i%21? i%21 : 1,
+        senderUsername: "ahmad"+i,
+        text: "message from ahmad" + i,
+    })
+}
+for (let i = 141; i <= 500; i++){
+    groupMember.create({
+        groupId: i%21? i%21 : 1,
+        username: "ahmad"+i,
+    })
+}
+for (let i = 141; i <= 500; i++){
+    groupMessage.create({
+        groupId: i%21? i%21: 1,
+        senderUsername: "ahmad"+i,
+        text: "message from ahmad" + i,
     })
 }

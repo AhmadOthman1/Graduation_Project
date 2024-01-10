@@ -16,7 +16,7 @@ class EditGroupSettingSettings extends StatelessWidget {
     _controller1.text = userData[0]["id"].toString();
     _controller2.text = (userData[0]["description"] == null) ? "" : userData[0]["description"];
     _controller3.text = userData[0]["name"];
-    _controller4.text = (userData[0]["parentNode"] == null) ? "" : userData[0]["parentNode"];
+    _controller4.text = (userData[0]["parentNode"] == null) ? "" : userData[0]["parentNode"].toString();
     MemberSendMessages=userData[0]["membersendmessage"];
     pageId=userData[0]["id"];
     groupId=userData[0]["id"];

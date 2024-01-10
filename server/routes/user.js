@@ -108,6 +108,8 @@ router.get('/getJobFields',authenticateToken,myPagesController.getJobFields);
 router.post('/addNewJob',authenticateToken,myPagesController.addNewJob);
 //user page groups
 router.get('/getMyPageGroups',authenticateToken,pageGroups.getMyPageGroups);
+router.get('/getMyPageGroupInfo',authenticateToken,pageGroups.getMyPageGroupInfo);
+router.get('/getMyPageGroupMessages',authenticateToken,pageGroups.getMyPageGroupMessages);
 
 // other Pages
 router.get('/getPageProfileInfo',authenticateToken,pagesProfile.getPageProfileInfo);
