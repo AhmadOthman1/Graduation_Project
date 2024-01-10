@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:growify/view/screen/homescreen/Groups/chatGroupMessage.dart';
+import 'package:growify/view/screen/homescreen/myPage/Groups/chatGroupMessage.dart';
 
 class Group {
   String name;

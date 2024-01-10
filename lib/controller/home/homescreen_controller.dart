@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/view/screen/homescreen/homepages/homemainPage.dart';
 import 'package:growify/view/screen/homescreen/Networkspages/networkmainpage.dart';
-import 'package:growify/view/screen/homescreen/JobsPages/jobsmainpage.dart';
+import 'package:growify/view/screen/homescreen/myPage/JobsPages/jobsmainpage.dart';
 import 'package:growify/view/screen/homescreen/notificationspages/notificationmainpage.dart';
 import 'dart:convert';
 import 'package:featurehub_sse_client/featurehub_sse_client.dart';
@@ -143,7 +143,7 @@ class HomeScreenControllerImp extends HomeScreeenController {
                   await NotificationService.initializeNotification(playSound);
                   await NotificationService.showNotification(
                       title: "Growify",
-                      body: notificationType != "post" ? "$notificationPointer $notificationContent" : "$notificationContent",
+                      body: notificationType != "post" && notificationType != "job" ? "$notificationPointer $notificationContent" : "$notificationContent",
                       summary: createdAt,
                       payload: {
                         "navigate": "true",

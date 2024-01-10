@@ -4,7 +4,7 @@ import 'package:growify/controller/home/myPage_Controller/PageColleaguesProfile_
 import 'package:growify/global.dart';
 
 import 'package:get/get.dart';
-import 'package:growify/view/screen/homescreen/JobsPages/ShowCompanyJobs.dart';
+import 'package:growify/view/screen/homescreen/myPage/JobsPages/ShowCompanyJobs.dart';
 import 'package:growify/view/screen/homescreen/myPage/seeAboutinfoPageColleagues.dart';
 import 'dart:convert';
 

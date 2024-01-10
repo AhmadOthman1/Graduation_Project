@@ -85,7 +85,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   children: [
                     ListTile(
                       leading: CircleAvatar(
-                        backgroundImage: (notice['notificationType'] != "post")
+                        backgroundImage: (notice['notificationType'] != "post" && notice['notificationType'] != "job" )
                             ? (notice['photo'] != null && notice['photo'] != "")
                                 ? Image.network(
                                         "$urlStarter/" + notice['photo']!)
@@ -93,7 +93,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                 : defultprofileImage
                             : defultNotificationImage,
                       ),
-                      title: Text(notice['notificationType'] != "post"
+                      title: Text(notice['notificationType'] != "post" &&notice['notificationType'] != "job" 
                           ? "${notice['notificationPointer']} ${notice['notificationContent']}"
                           : "${notice['notificationContent']}"),
                       subtitle: Text(notice['date']),
@@ -124,6 +124,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                 }
                               } else if (notice['notificationType'] == "post") {
                                 _controller.showPost(notice['notificationPointer']);
+                              }else if (notice['notificationType'] == "job") {
+                                await _controller.showJob(notice['notificationPointer']);
                               }
                             },
                           ),

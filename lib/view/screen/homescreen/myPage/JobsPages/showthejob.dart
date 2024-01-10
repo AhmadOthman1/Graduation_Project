@@ -94,7 +94,6 @@ class JobPostCard extends StatelessWidget {
   Widget build(BuildContext context) {
     DateTime deadlineDate = DateTime.parse(jobPost.deadline);
     bool isBeforeDeadline = DateTime.now().isBefore(deadlineDate);
-
     TextEditingController noticeController = TextEditingController();
 
     return Card(
@@ -218,6 +217,7 @@ class JobPostCard extends StatelessWidget {
                                   },
                                 )
                               : null;
+                              Get.back();
                                 }
                               },
                               child: Text('Apply'),

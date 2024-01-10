@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Groups_controller/taskGroup_controller/taskGroup_Controller.dart';
-import 'package:growify/view/screen/homescreen/Groups/TaskGroup/descriptiongroup.dart';
+import 'package:growify/view/screen/homescreen/myPage/Groups/TaskGroup/descriptiongroup.dart';
 import 'package:intl/intl.dart';
 import 'taskGroup.dart';
 import 'package:multi_dropdown/enum/app_enums.dart';

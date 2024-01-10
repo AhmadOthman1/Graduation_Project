@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/view/screen/homescreen/Groups/Members/AddEmployeeMember.dart';
-import 'package:growify/view/screen/homescreen/Groups/Members/AddOtherMember.dart';
+import 'package:growify/view/screen/homescreen/myPage/Groups/Members/AddEmployeeMember.dart';
+import 'package:growify/view/screen/homescreen/myPage/Groups/Members/AddOtherMember.dart';
 
 class MemberType extends StatelessWidget {
   final pageId;

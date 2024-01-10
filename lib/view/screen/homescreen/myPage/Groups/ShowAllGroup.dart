@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Groups_controller/ShowAllgroups_controller.dart';
-import 'package:growify/view/screen/homescreen/Groups/creategroup.dart';
+import 'package:growify/view/screen/homescreen/myPage/Groups/creategroup.dart';
 
 class GroupPage extends StatefulWidget {
   final pageId;
   final groupsData;
-  const GroupPage({Key? key, required this.pageId, this.groupsData}) : super(key: key);
+  const GroupPage({Key? key, required this.pageId, this.groupsData})
+      : super(key: key);
 
   @override
   _GroupPageState createState() => _GroupPageState();
@@ -28,28 +29,30 @@ class _GroupPageState extends State<GroupPage> {
     for (var groupData in groupsDatalocal) {
       isExpandedMap[groupData['name']!] = false; // Change here
     }
-
-   
   }
 
   Color darkColor = const Color.fromARGB(255, 116, 114, 114)!;
   Color lightColor = Colors.grey[200]!;
 
-  bool isGroupExpanded(String groupName) { // Change here
+  bool isGroupExpanded(String groupName) {
+    // Change here
     return isExpandedMap[groupName] ?? false; // Change here
   }
 
-  void setGroupExpanded(String groupName, bool isExpanded) { // Change here
+  void setGroupExpanded(String groupName, bool isExpanded) {
+    // Change here
     isExpandedMap[groupName] = isExpanded; // Change here
   }
 
-  Map<String, dynamic>? findGroupByName(String groupName) { // Change here
+  findGroupByName(int groupId) {
+    // Change here
     for (var groupData in groupsDatalocal) {
-      if (groupData['name'] == groupName) { // Change here
-        return groupData;
+      if (groupData['id'] == groupId) {
+        // Change here
+        return groupData['name'] ;
       }
     }
-    return null;
+    return ;
   }
 
   Widget buildGroupTile(Map<String, dynamic> groupData, int level) {
@@ -64,17 +67,16 @@ class _GroupPageState extends State<GroupPage> {
           child: ListTile(
             title: InkWell(
               onTap: () {
-                 Map<String, dynamic> userMap = {
-          'name': groupData['name'],
-          'id':groupData['id'],
-          'description':groupData['description'],
-          'parentNode':groupData['parentNode'],
-          'membersendmessage':groupData['membersendmessage'],
-          'pageId':widget.pageId,
-
-      
-    };
-    groupsController.Groupmessages = <Map<String, dynamic>>[userMap].obs;
+                Map<String, dynamic> userMap = {
+                  'name': groupData['name'],
+                  'id': groupData['id'],
+                  'description': groupData['description'],
+                  'parentNode': groupData['parentNode'],
+                  'membersendmessage': groupData['membersendmessage'],
+                  'pageId': widget.pageId,
+                };
+                groupsController.Groupmessages =
+                    <Map<String, dynamic>>[userMap].obs;
                 groupsController.goToGroupChatMessage(widget.pageId);
               },
               child: Text(
@@ -83,7 +85,8 @@ class _GroupPageState extends State<GroupPage> {
               ),
             ),
             subtitle: groupData['parentNode'] != null
-                ? Text("Parent Node: ${findGroupByName(groupData['parentNode']!)!['name']}")
+                ? Text(
+                    "Parent Group: ${findGroupByName(groupData['parentNode']!)}")
                 : null,
             trailing: InkWell(
               onTap: () {
@@ -92,9 +95,7 @@ class _GroupPageState extends State<GroupPage> {
                 });
               },
               child: Icon(
-                isGroupExpanded
-                    ? Icons.arrow_drop_up
-                    : Icons.arrow_drop_down,
+                isGroupExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
                 size: 40.0,
               ),
             ),
@@ -104,7 +105,8 @@ class _GroupPageState extends State<GroupPage> {
           Column(
             children: groupsDatalocal
                 .where((subgroupData) =>
-                    subgroupData['parentNode'] == groupName) // Change here
+                    subgroupData['parentNode'] ==
+                    groupData['id']) // Change here
                 .map((subgroupData) {
               return buildGroupTile(subgroupData, level + 1);
             }).toList(),

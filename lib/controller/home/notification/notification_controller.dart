@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/myPage/JobsPages/showthejob.dart';
 import 'package:growify/view/screen/homescreen/notificationspages/showPost.dart';
 import 'package:http/http.dart' as http;
 
@@ -88,6 +89,19 @@ class NotificationsController {
     Get.to(() =>  ShowPost(postId:postId));
 
   }
+  showJob(jobId) async {
+    var url =
+        "$urlStarter/user/getOneJob?jobId=$jobId";
+    var response = await http.get(Uri.parse(url), headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+    var responseBody = jsonDecode(response.body);
+    var job = responseBody['job'];
+    var page = job['page'];
+    print(page['id']);
+    Get.to(ShowTheJob(jopId: job['pageJobId'],title:job['title'],company:page['id'],Fields: job['Fields'], image:page['photo'],deadline:job['endDate'],content:job['description']));
 
+  }
   
 }

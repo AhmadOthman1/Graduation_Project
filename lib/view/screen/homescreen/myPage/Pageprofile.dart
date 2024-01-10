@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:growify/controller/home/myPage_Controller/PageProfile_controller.dart';
 import 'package:growify/global.dart';
-import 'package:growify/view/screen/homescreen/Groups/ShowAllGroup.dart';
-import 'package:growify/view/screen/homescreen/JobsPages/addnewjob.dart';
-import 'package:growify/view/screen/homescreen/JobsPages/showAllMyPageJobs.dart';
+import 'package:growify/view/screen/homescreen/myPage/Groups/ShowAllGroup.dart';
+import 'package:growify/view/screen/homescreen/myPage/JobsPages/addnewjob.dart';
+import 'package:growify/view/screen/homescreen/myPage/JobsPages/showAllMyPageJobs.dart';
 import 'package:growify/view/screen/homescreen/NewPost/newpost.dart';
 import 'package:growify/view/screen/homescreen/myPage/Admins/ShowAllAdmins.dart';
 import 'package:growify/view/screen/homescreen/myPage/Employees/ShowAllEmployees.dart';

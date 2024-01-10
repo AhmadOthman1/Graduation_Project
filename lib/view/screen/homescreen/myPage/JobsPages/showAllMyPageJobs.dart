@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/ShowAllMyJobs_controller.dart';
-import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/companyJob_controller.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
 import 'package:growify/global.dart';
-import 'package:growify/view/screen/homescreen/JobsPages/showthejob.dart';
+import 'package:growify/view/screen/homescreen/myPage/JobsPages/ShowJobApplicants.dart';
+import 'package:growify/view/screen/homescreen/myPage/JobsPages/addnewjob.dart';
 
-class CompanyJobPage extends StatefulWidget {
+class MyJobPage extends StatefulWidget {
   final pageId;
-  final image;
-  const CompanyJobPage({Key? key , required this.pageId, required this.image}) : super(key: key);
+  const MyJobPage({Key? key, required this.pageId}) : super(key: key);
 
   @override
-  _CompanyJobPageState createState() => _CompanyJobPageState();
+  _MyJobPageState createState() => _MyJobPageState();
 }
 
 final ScrollController scrollController = ScrollController();
 
-class _CompanyJobPageState extends State<CompanyJobPage> {
-  late CompanyJobController _controller;
+class _MyJobPageState extends State<MyJobPage> {
+  late MyJobController _controller;
   final ScrollController _scrollController = ScrollController();
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
@@ -27,7 +26,7 @@ class _CompanyJobPageState extends State<CompanyJobPage> {
   @override
   void initState() {
     super.initState();
-    _controller = CompanyJobController();
+    _controller = MyJobController();
     _loadData();
     _scrollController.addListener(_scrollListener);
   }
@@ -35,7 +34,7 @@ class _CompanyJobPageState extends State<CompanyJobPage> {
   Future<void> _loadData() async {
     print('Loading data...');
     try {
-      await _controller.loadJobs(_controller.page, widget.pageId);
+      await _controller.loadPageJobs(_controller.page, widget.pageId);
       setState(() {
         _controller.page++;
         _controller.jobs;
@@ -65,7 +64,7 @@ class _CompanyJobPageState extends State<CompanyJobPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notifications'),
+        title: const Text('Jobs'),
       ),
       body: Column(
         children: [
@@ -80,31 +79,23 @@ class _CompanyJobPageState extends State<CompanyJobPage> {
               itemBuilder: (context, index) {
                 final job = _controller.jobs[index];
 
-                return Card(
+                return InkWell(
+                  onTap: () {
+                    Get.to(ShowJobApplicants(pageJobId:job['pageJobId']));
+                  },
+                  child: Card(
                     margin: const EdgeInsets.all(10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ListTile(
                           contentPadding: EdgeInsets.zero,
-                          trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.open_in_new),
-                            onPressed: () {
-                              Get.to(ShowTheJob(jopId: job['pageJobId'],title:job['title'],company:widget.pageId,Fields: job['Fields'], image:widget.image,deadline:job['endDate'],content:job['description']));
-                            },
-                          ),
-                        ],
-                      ),
                           title: Text(
                             "${job['title']}",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
-                            
                           ),
                         ),
                         Padding(
@@ -145,69 +136,22 @@ class _CompanyJobPageState extends State<CompanyJobPage> {
                         ),
                       ],
                     ),
-                  );
-                /*
-                Card(
-                  margin: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: CircleAvatar(
-                          backgroundImage: (job['photo'] != null &&
-                                  job['photo'] != "")
-                              ? Image.network("$urlStarter/" + job['photo']!)
-                                  .image
-                              : defultprofileImage,
-                        ),
-                        title: Text(
-                          "${job['notificationContent']}",
-                          
-                        ),
-                        trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.open_in_new),
-                            onPressed: () {
-                              Get.to(ShowTheJob());
-                            },
-                          ),
-                        ],
-                      ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Deadline: ${job['date']}'),
-                            const SizedBox(height: 8),
-                            Text(job['notificationContent']),
-                          ],
-                        ),
-                      ),
-                    ],
                   ),
-                );*/
+                );
               },
             ),
           ),
           if (_controller.isLoading) const CircularProgressIndicator(),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _controller.getFields(widget.pageId);
+          
+        },
+        tooltip: 'Add Job',
+        child: Icon(Icons.post_add_outlined),
+      ),
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-

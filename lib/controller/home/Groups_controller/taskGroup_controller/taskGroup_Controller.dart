@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
-import 'package:growify/view/screen/homescreen/Groups/TaskGroup/taskGroup.dart';
+import 'package:growify/view/screen/homescreen/myPage/Groups/TaskGroup/taskGroup.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
