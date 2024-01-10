@@ -57,6 +57,12 @@ const pageJobs =require('./models/pageJobs');
 const jobApplication =require('./models/jobApplication');
 const userTasks =require('./models/userTasks');
 const systemFields =require('./models/systemFields')
+const pageGroup =require('./models/pageGroup')
+const groupMember =require('./models/groupMember')
+const groupAdmin =require('./models/groupAdmin')
+const groupMessage =require('./models/groupMessage')
+const groupTask =require('./models/groupTask')
+const groupTaskUser =require('./models/groupTaskUser')
 
 //const queries =require('./models/queries.js');
 

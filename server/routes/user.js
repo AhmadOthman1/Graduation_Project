@@ -6,7 +6,7 @@ const forgetpasswordController=require('../controller/forgetpasswordController')
 const settingsController=require('../controller/settings/settingsController')
 const workExperienceController=require('../controller/settings/workExperienceController')
 const educationLevelController=require('../controller/settings/educationLevelController')
-const myPagesController=require('../controller/settings/myPagesController')
+const myPagesController=require('../controller/myPages/myPagesController')
 const getSearchDataController=require('../controller/search/getSearchDataController')
 const usersProfile=require('../controller/search/usersProfile')
 const { authenticateToken } = require('../controller/authController');
@@ -17,8 +17,9 @@ const userNotificationsController=require('../controller/notifications/userNotif
 const chatsMainPage=require('../controller/chats/chatsMainPage')
 const userMessages=require('../controller/chats/userMessages')
 const UserColleagues=require('../controller/mainUser/userColleagues')
-const pagesProfile=require('../controller/search/pagesProfile')
+const pagesProfile=require('../controller/otherPages/pagesProfile')
 const userTasks =require('../controller/tasks/userTasksController')
+const pageGroups=require('../controller/myPages/pageGroups')
 
 
 const router=express.Router();
@@ -101,12 +102,16 @@ router.get('/getPageJobs',authenticateToken,myPagesController.getPageJobs);
 router.get('/getPageJobApplications',authenticateToken,myPagesController.getPageJobApplications);
 router.get('/getJobFields',authenticateToken,myPagesController.getJobFields);
 router.post('/addNewJob',authenticateToken,myPagesController.addNewJob);
+//user page groups
+router.get('/getMyPageGroups',authenticateToken,pageGroups.getMyPageGroups);
+
 // other Pages
 router.get('/getPageProfileInfo',authenticateToken,pagesProfile.getPageProfileInfo);
 router.post('/followPage',authenticateToken,pagesProfile.followPage);
 router.post('/removePageFollow',authenticateToken,pagesProfile.removePageFollow);
 router.get('/getJobs',authenticateToken,pagesProfile.getJobs);
 router.post('/saveJobApplication',authenticateToken,pagesProfile.saveJobApplication);
+router.get('/getOneJob',authenticateToken,pagesProfile.getOneJob);
 
 
 

@@ -16,6 +16,10 @@ const pageJobs = require('./pageJobs');
 const jobApplication = require('./jobApplication');
 const userTasks = require('./userTasks');
 const systemFields = require('./systemFields');
+const pageGroup= require('./pageGroup');
+
+
+
 var iLimit = 80;
 var systemFieldsList = ['Life Sciences',
     'Biology Biotechnology',
@@ -396,4 +400,26 @@ for (let i = 0; i < 80; i++) {
         endTime: endTime,
         endDate: endDate,
     });
+}
+pageGroup.create({
+    pageId: "page 1",
+    name: "Main Group",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    memberSendMessage:true,
+})
+pageGroup.create({
+    pageId: "page 1",
+    name: "Main Group2",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    memberSendMessage:true,
+})
+for(let i= 0;i<1000;i++);
+for(let i = 2;i<20 ; i++){
+    pageGroup.create({
+        pageId: "page 1",
+        name: "Group " + i,
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        parentGroup: i%2 ? i-2 : i-1,
+        memberSendMessage:i%2 ? true :false,
+    })
 }
