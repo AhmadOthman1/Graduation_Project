@@ -64,68 +64,70 @@ addMessage( text,  username, userPhoto,  createdAt, image,video) async {
     return response;
   }
 
-  Future<void> loadUserMessages(page, groupId) async {
-    print("innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnm");
-    if (isLoading) {
-      return;
-    }
-
-    isLoading = true;
-    var response = await getUserMessages(page, groupId);
-    print(response.statusCode);
-    if (response.statusCode == 403) {
-      await getRefreshToken(GetStorage().read('refreshToken'));
-      loadUserMessages(page ,groupId);
-      return;
-    } else if (response.statusCode == 401) {
-      _logoutController.goTosigninpage();
-    }
-
-    if (response.statusCode == 409) {
-      var responseBody = jsonDecode(response.body);
-      print("Awssssssssssssssssssss");
-      print(responseBody['message']);
-      return;
-    } else if (response.statusCode == 200) {
- 
-
-      var responseBody = jsonDecode(response.body);
-      print(responseBody);
-      print("////////////////////////////////////////");
-     /* print(List<Map<String, dynamic>>.from(responseBody['messages']));
-      List<Map<String, dynamic>> messagesData =
-          List<Map<String, dynamic>>.from(responseBody['messages']);
-
-
-      List<ChatMessage> chatMessages = [];
-
-
-      for (var messageData in messagesData) {
-        String text = messageData['text'];
-        String senderUsername = messageData['senderUsername'];
-        String receiverUsername = messageData['receiverUsername'];
-        String? userPhoto = senderUsername != GetStorage().read("username")
-            ? messageData['senderUsername_FK']['photo']
-            : messageData['receiverUsername_FK']['photo'];
-
-        ChatMessage chatMessage = ChatMessage(
-          text: text?? '',
-          isUser: senderUsername == GetStorage().read("username"),
-          userName: senderUsername != GetStorage().read("username")
-              ? messageData['senderUsername_FK']['username'] 
-              : messageData['receiverUsername_FK']['username'],
-          userPhoto: (userPhoto==null) ? '': userPhoto,
-          createdAt: messageData['createdAt'],
-          image: messageData['image'],
-          video:messageData['video'],
-        );
-
-        messages.add(chatMessage);
-      }
-      
-      isLoading = false;*/
-    }
-
+  // Modify your loadUserMessages function
+Future<void> loadUserMessages(page, groupId) async {
+  print("innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnm");
+  if (isLoading) {
     return;
   }
+
+  isLoading = true;
+  var response = await getUserMessages(page, groupId);
+  print(response.statusCode);
+  if (response.statusCode == 403) {
+    await getRefreshToken(GetStorage().read('refreshToken'));
+    loadUserMessages(page, groupId);
+    return;
+  } else if (response.statusCode == 401) {
+    _logoutController.goTosigninpage();
+  }
+
+  if (response.statusCode == 409) {
+    var responseBody = jsonDecode(response.body);
+    print("Awssssssssssssssssssss");
+    print(responseBody['message']);
+    return;
+  } else if (response.statusCode == 200) {
+    var responseBody = jsonDecode(response.body);
+    print(responseBody);
+
+    // Assuming 'groupMessages' is the key for the list of messages
+    List<Map<String, dynamic>> messagesData =
+        List<Map<String, dynamic>>.from(responseBody['groupMessages']);
+
+    // Create a list to store ChatMessage objects
+    List<ChatMessage> chatMessages = [];
+
+    for (var messageData in messagesData) {
+      String text = messageData['text'];
+      String senderUsername = messageData['senderUsername'];
+      // Check the actual structure of your response for 'receiverUsername' and 'createdAt'
+      // Adjust these lines accordingly
+      String receiverUsername = messageData['receiverUsername'] ?? '';
+      String createdAt = messageData['createdAt'] ?? '';
+      String? userPhoto = senderUsername != GetStorage().read("username")
+          ? messageData['user']['photo']
+          : '';
+
+      ChatMessage chatMessage = ChatMessage(
+        text: text ?? '',
+        isUser: senderUsername == GetStorage().read("username"),
+        userName: senderUsername != GetStorage().read("username")
+            ? messageData['user']['username']
+            : receiverUsername,
+        userPhoto: userPhoto ?? '',
+        createdAt: createdAt,
+        image: messageData['image'],
+        video: messageData['video'],
+      );
+
+      messages.add(chatMessage);
+    }
+
+    isLoading = false;
+  }
+
+  return;
+}
+
 }

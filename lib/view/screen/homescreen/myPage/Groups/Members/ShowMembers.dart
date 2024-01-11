@@ -59,7 +59,7 @@ class _ShowMembersState extends State<ShowMembers> {
                 final firstname = admin['firstname'];
                 final lastname = admin['lastname'];
                 final username = admin['username'];
-                final memberType = admin['memberType'];
+                
 
                 return Column(
                   children: [
@@ -75,7 +75,7 @@ class _ShowMembersState extends State<ShowMembers> {
                                 .image
                             : _controller.defaultProfileImage,
                       ),
-                      title: Text('$firstname $lastname ($memberType)'),
+                      title: Text('$firstname $lastname '),
                       subtitle: Text('$username'),
                       trailing:  PopupMenuButton<String>(
                         icon: const Icon(Icons.more_vert),
