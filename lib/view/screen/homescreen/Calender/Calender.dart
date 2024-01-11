@@ -29,7 +29,7 @@ class _CalendarPageState extends State<Calender> {
                     Appointment(
                      startTime: ,
                       subject: ,
-                      remindMe: ,
+                      eventTime: ,
                     )];
     then use this function _addAppointment(newAppointments2)
     */
@@ -38,12 +38,12 @@ class _CalendarPageState extends State<Calender> {
       Appointment(
         startTime: DateTime(2023, 12, 14),
         subject: 'Meeting 1',
-        remindMe: '5:35 AM',
+        eventTime: '5:35 AM',
       ),
       Appointment(
         startTime: DateTime(2023, 12, 15),
         subject: 'Meeting 2',
-        remindMe: '3:35 AM',
+        eventTime: '3:35 AM',
       ),
     ];
 
@@ -150,7 +150,7 @@ class _CalendarPageState extends State<Calender> {
                 ),
                 const SizedBox(height: 8.0),
                 Text(
-                  'Remind Me: ${appointments[index].remindMe}',
+                  'time: ${appointments[index].eventTime}',
                 ),
               ],
             ),
@@ -241,7 +241,7 @@ class _CalendarPageState extends State<Calender> {
                       Appointment(
                         startTime: combinedDateTime,
                         subject: titleController.text,
-                        remindMe: selectedTime!.format(context),
+                        eventTime: selectedTime!.format(context),
                       ),
                     ];
 
@@ -266,11 +266,11 @@ class _CalendarPageState extends State<Calender> {
 class Appointment {
   DateTime startTime;
   String subject;
-  String remindMe;
+  String eventTime;
 
   Appointment({
     required this.startTime,
     required this.subject,
-    required this.remindMe,
+    required this.eventTime,
   });
 }

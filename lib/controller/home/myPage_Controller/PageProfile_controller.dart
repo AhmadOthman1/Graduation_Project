@@ -31,34 +31,7 @@ class PageProfileController extends GetxController {
   }
 
   late List<Map<String, dynamic>> groupsData = [
-    {
-      'name': "Main Group",
-      'id': 3,
-      'description': "im Main Group",
-      'parentNode': null,
-      'membersendmessage': false
-    },
-    {
-      'name': "Group 1",
-      'id': 8,
-      'description': "im Group 1",
-      'parentNode': 3,
-      'membersendmessage': true
-    },
-    {
-      'name': "Sub 1.1",
-      'id': 7,
-      'description': "im Sub 1.1",
-      'parentNode': 8,
-      'membersendmessage': false
-    },
-    {
-      'name': "Sub 1.2",
-      'id': 5,
-      'description': "im Sub 1.2",
-      'parentNode': 8,
-      'membersendmessage': false
-    },
+    
   ];
 
   getMyPageGroups(pageId) async {

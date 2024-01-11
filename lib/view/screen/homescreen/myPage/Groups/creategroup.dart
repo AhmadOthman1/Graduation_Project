@@ -4,8 +4,8 @@ import 'package:growify/controller/home/Groups_controller/createGroup_controller
 
 class CreateGroupPage extends StatefulWidget {
   final groupsData;
-
-  const CreateGroupPage({Key? key, this.groupsData}) : super(key: key);
+  final pageId;
+  const CreateGroupPage({Key? key, required this.groupsData, required this.pageId}) : super(key: key);
 
   @override
   _CreateGroupPageState createState() => _CreateGroupPageState();
@@ -34,11 +34,11 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
 
       Map<String, dynamic> newGroup = {
         'name': groupName,
-        'id': DateTime.now().millisecondsSinceEpoch.toString(),
         'parentNode': (_selectedParentNode != null)
             ? groupsController.findGroupByName(_selectedParentNode!) ?? null
             : null,
         'description': description,
+        'pageId': widget.pageId,
       };
 
       groupsController.addGroup(newGroup);
@@ -69,29 +69,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
               key: formKey,
               child: Column(
                 children: [
-                  TextFormField(
-                    controller: _groupNameController,
-                    decoration: InputDecoration(
-                      hintText: "Enter a unique group id",
-                      hintStyle: const TextStyle(
-                        fontSize: 14,
-                      ),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      contentPadding:
-                          const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                      labelText: "Group id",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a Group Name';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
+                  
                   TextFormField(
                     controller: _groupNameController,
                     decoration: InputDecoration(

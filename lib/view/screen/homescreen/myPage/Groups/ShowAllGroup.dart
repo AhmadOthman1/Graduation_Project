@@ -123,7 +123,7 @@ class _GroupPageState extends State<GroupPage> {
         actions: [
           TextButton(
             onPressed: () {
-              Get.to(CreateGroupPage(groupsData: widget.groupsData,));
+              Get.off(CreateGroupPage(groupsData: widget.groupsData,pageId:widget.pageId));
             },
             child: Text(
               'Create',

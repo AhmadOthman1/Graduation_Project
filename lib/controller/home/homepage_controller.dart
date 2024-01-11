@@ -76,90 +76,13 @@ class HomePageControllerImp extends HomePageController {
 
   final RxList<CommentModel> comments = <CommentModel>[].obs;
 
-  final RxList<CommentModel> comments1 = <CommentModel>[
-    CommentModel(
-      username: 'User1',
-      comment: 'This is a comment.',
-      userImage: const AssetImage('images/islam.jpeg'),
-      time: DateTime.now(),
-      email: 'awsobaida07@gmail.com',
-      likes: 12,
-      isLiked: true,
-    ),
-    CommentModel(
-      username: 'User2',
-      comment: 'Nice post!',
-      userImage: const AssetImage('images/Netflix.png'),
-      time: DateTime.now().subtract(const Duration(minutes: 30)),
-      likes: 5,
-      email: 'awsobaida07@gmail.com',
-    ),
-    CommentModel(
-      username: 'User3',
-      comment: 'Great content.',
-      userImage: const AssetImage('images/harri.png'),
-      time: DateTime.now().subtract(const Duration(hours: 2)),
-      likes: 10,
-      email: 's11923787@stu.najah.edu',
-    ),
-  ].obs;
-
-  final RxList<Map<String, dynamic>> likesOnComment = <Map<String, dynamic>>[
-    {
-      'name': 'Islam Aws',
-      'username': '@islam_aws',
-      'image': 'images/islam.jpeg',
-      'email': 'awsobaida07@gmail.com',
-    },
-    {
-      'name': 'Obaida Aws',
-      'username': '@obaida_aws',
-      'image': 'images/obaida.jpeg',
-      'email': 's11923787@stu.najah.edu',
-    },
-    // Add more colleagues as needed
-  ].obs;
+  final RxList<CommentModel> comments1 = <CommentModel>[].obs;
 
   final RxList<Map<String, dynamic>> likes = <Map<String, dynamic>>[
-    {
-      'name': 'Islam Aws',
-      'username': '@islam_aws',
-      'image': 'images/islam.jpeg',
-      'email': 'awsobaida07@gmail.com',
-    },
-    {
-      'name': 'Obaida Aws',
-      'username': '@obaida_aws',
-      'image': 'images/obaida.jpeg',
-      'email': 's11923787@stu.najah.edu',
-    },
     // Add more colleagues as needed
   ].obs;
 
-  final RxList<Map<String, dynamic>> posts = <Map<String, dynamic>>[
-    {
-      'name': 'Obaida Aws',
-      'id': 1,
-      'time': '1 hour ago',
-      'content': 'Computer engineer in my fifth year at Al Najah University.',
-      'image': 'images/obaida.jpeg',
-      'like': 165,
-      'comment': 87,
-      'isLiked': false,
-      'email': 's11923787@stu.najah.edu',
-    },
-    {
-      'name': 'Islam Aws',
-      'id': 2,
-      'time': '2 hours ago',
-      'content': 'This is my brother, and he is 8 months old.',
-      'image': 'images/islam.jpeg',
-      'like': 123,
-      'comment': 46,
-      'isLiked': false,
-      'email': 'awsobaida07@gmail.com',
-    },
-  ].obs;
+  final RxList<Map<String, dynamic>> posts = <Map<String, dynamic>>[].obs;
 
   int getLikes(int index) {
     return posts[index]['like'];
@@ -326,6 +249,7 @@ class HomePageControllerImp extends HomePageController {
   goToForgetPassword() {
     Get.to(AppRoute.forgetpassword);
   }
+
   goToMyPages() {
     Get.to(MyPages());
   }
@@ -469,7 +393,7 @@ class HomePageControllerImp extends HomePageController {
           'name': name,
           'username': username,
           'photo': photo,
-          'type':"U",
+          'type': "U",
         };
         Mycolleagues.add(extractedInfo);
       }
@@ -531,6 +455,7 @@ class HomePageControllerImp extends HomePageController {
       'colleaguesPreviousmessages': colleaguesPreviousmessages,
     });
   }
+
   getUserChatProfileInfo(String username) async {
     var url = "$urlStarter/user/getUserProfileInfo?ProfileUsername=${username}";
     var responce = await http.get(Uri.parse(url), headers: {
@@ -539,7 +464,8 @@ class HomePageControllerImp extends HomePageController {
     });
     return responce;
   }
-  userChatProfileInfo(String username)async {
+
+  userChatProfileInfo(String username) async {
     var res = await getUserChatProfileInfo(username);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
@@ -553,18 +479,20 @@ class HomePageControllerImp extends HomePageController {
       return resbody['message'];
     } else if (res.statusCode == 200) {
       print(resbody["user"]);
-      var name = resbody["user"]["firstname"] + " " + resbody["user"]["lastname"];
+      var name =
+          resbody["user"]["firstname"] + " " + resbody["user"]["lastname"];
       var photo = resbody["user"]["photo"];
       final Map<String, dynamic> extractedInfo = {
-          'name': name,
-          'username': username,
-          'photo': photo,
-          'type': "U",
-        };
-        print(extractedInfo);
-        return extractedInfo;
+        'name': name,
+        'username': username,
+        'photo': photo,
+        'type': "U",
+      };
+      print(extractedInfo);
+      return extractedInfo;
     }
   }
+
   @override
   goToCalenderPage() {
     Get.to(const Calender());
