@@ -6,7 +6,7 @@ const sequelize = new Sequelize('growify', 'root', '123456', {
   pool: {
     max: 20,
     min: 0,
-    acquire: 60000,
+    acquire: 100000,
   }
 });
 

@@ -21,6 +21,7 @@ const pageEmployees= require('./pageEmployees');
 const groupAdmin= require('./groupAdmin');
 const groupMember= require('./groupMember');
 const groupMessage= require('./groupMessage');
+const userCalender= require('./userCalender');
 
 
 
@@ -200,6 +201,26 @@ for (let i = 0; i < iLimit; i++) {
         phone: "0569929734",
         dateOfBirth: "2001-05-18",
     });
+}
+
+for (let i = 1; i <= 500; i++){
+    const currentDate = new Date();
+    const randomDays = Math.floor(Math.random() * 50);
+    currentDate.setDate(currentDate.getDate() + randomDays);
+    const randomHour = Math.floor(Math.random() * 24); 
+    const randomMinute = Math.floor(Math.random() * 60); 
+    const randomSecond = Math.floor(Math.random() * 60); 
+      const formattedHour = String(randomHour).padStart(2, '0');
+    const formattedMinute = String(randomMinute).padStart(2, '0');
+    const formattedSecond = String(randomSecond).padStart(2, '0');
+  
+    userCalender.create({
+        username: "AhmadOthman",
+        subject: "subject "+i,
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        date:currentDate,
+        time: `${formattedHour}:${formattedMinute}:${formattedSecond}`,
+    })
 }
 for (let i = 0; i < iLimit / 4; i++) {
     sentConnection.create({

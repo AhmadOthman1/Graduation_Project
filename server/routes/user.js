@@ -20,6 +20,7 @@ const UserColleagues=require('../controller/mainUser/userColleagues')
 const userNetworkPages=require('../controller/mainUser/userNetworkPages')
 const pagesProfile=require('../controller/otherPages/pagesProfile')
 const userTasks =require('../controller/tasks/userTasksController')
+const userCalender =require('../controller/calender/userCalender')
 const pageGroups=require('../controller/myPages/pageGroups')
 
 
@@ -82,6 +83,8 @@ router.get('/getUserMessages',authenticateToken,userMessages.getUserMessages);
 router.get('/getUserTasks',authenticateToken,userTasks.getUserTasks);
 router.post('/ChangeUserTaskStatus',authenticateToken,userTasks.ChangeUserTaskStatus);
 router.post('/CreateUserTask',authenticateToken,userTasks.CreateUserTask);
+//user calender
+router.get('/getUserCalender',authenticateToken,userCalender.getUserCalender);
 
 //user pages
 router.get('/getMyPages',authenticateToken,myPagesController.getMyPageInfo);
@@ -110,6 +113,7 @@ router.post('/addNewJob',authenticateToken,myPagesController.addNewJob);
 router.get('/getMyPageGroups',authenticateToken,pageGroups.getMyPageGroups);
 router.get('/getMyPageGroupInfo',authenticateToken,pageGroups.getMyPageGroupInfo);
 router.get('/getMyPageGroupMessages',authenticateToken,pageGroups.getMyPageGroupMessages);
+router.post('/createPageGroup',authenticateToken,pageGroups.createPageGroup);
 
 // other Pages
 router.get('/getPageProfileInfo',authenticateToken,pagesProfile.getPageProfileInfo);
