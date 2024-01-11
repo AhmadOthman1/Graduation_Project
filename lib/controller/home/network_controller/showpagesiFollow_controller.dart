@@ -19,9 +19,8 @@ class ShowPagesIFollowController {
   int page = 1;
 
   getPagesIFollow(int page) async {
-    
     var url =
-        "$urlStarter/user/getUserColleagues?page=$page&pageSize=$pageSize";
+        "$urlStarter/user/getUserFollowedPages?page=$page&pageSize=$pageSize";
     var response = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -33,10 +32,12 @@ class ShowPagesIFollowController {
     if (isLoading) {
       return;
     }
-    
+
     isLoading = true;
     var response = await getPagesIFollow(page);
+    print("//////////////////////");
     print(response.statusCode);
+    print("//////////////////////");
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
       loadPages(page);
@@ -50,37 +51,33 @@ class ShowPagesIFollowController {
       print(responseBody['message']);
       return;
     } else if (response.statusCode == 200) {
-      
-      
       var responseBody = jsonDecode(response.body);
-      final List<dynamic>? Pages = responseBody["userConnections"];
+      print("hiiiiiiiiii");
+      print(responseBody);
+      print("hiiiiiiiiii");
+
+      final List<dynamic>? Pages = responseBody["pages"];
+ // Update this line
+
       print(Pages);
       print("userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+
       if (Pages != null) {
         final newPages = Pages.map((pages) {
           return {
-            'name': pages['connection']['name'],
-            'id': pages['connection']['id'],
-            'photo': pages['connection']['photo'],
+            'name': pages[
+                'name'], // Adjust this line based on your data structure
+            'id': pages['id'],
+            'photo': pages['photo'],
           };
         }).toList();
 
         PagesIfollow.addAll(newPages);
-        
       }
 
       isLoading = false;
     }
-    
 
     return;
   }
-
-
-  
 }
- 
-
-
-
-

@@ -249,7 +249,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
     print('Loading data...');
     try {
       await chatController.loadUserMessages(
-          chatController.page, widget.data['id'], widget.data['pageId']);
+          chatController.page, widget.data['id']);
       print(mounted);
       print("bbbbbbbbbbbbbbbbbbbbbbbb");
       if (mounted)

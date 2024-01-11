@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Groups_controller/AdminsGroup_controller.dart/AdminsGroup_controller.dart';
+import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/Admins/AddGroupAdmin.dart';
 
 class GroupAdmins extends StatefulWidget {
-  final ShowGroupAdminsController _controller = ShowGroupAdminsController();
   final  pageId;
   final groupId;
   final localAdmins;
@@ -17,10 +17,12 @@ class GroupAdmins extends StatefulWidget {
 }
 
 class _GroupAdminsState extends State<GroupAdmins> {
+  late ShowGroupAdminsController _controller;
   @override
   void initState() {
     super.initState();
-     widget._controller.admins.addAll(widget.localAdmins);
+    _controller = ShowGroupAdminsController();
+     _controller.admins.addAll(widget.localAdmins);
   }
   @override
   Widget build(BuildContext context) {
@@ -50,9 +52,9 @@ class _GroupAdminsState extends State<GroupAdmins> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: widget._controller.admins.length,
+              itemCount: _controller.admins.length,
               itemBuilder: (context, index) {
-                final admin = widget._controller.admins[index];
+                final admin = _controller.admins[index];
                 final firstname = admin['firstname'];
                 final lastname = admin['lastname'];
                 final username = admin['username'];
@@ -64,15 +66,46 @@ class _GroupAdminsState extends State<GroupAdmins> {
                       onTap: () {
                         final userUsername = username;
                       },
-                      trailing: CircleAvatar(
+                      leading: CircleAvatar(
                         backgroundImage: (admin['photo'] != null &&
                                 admin['photo'] != "")
                             ? Image.network("$urlStarter/" + admin['photo']!)
                                 .image
-                            : widget._controller.defaultProfileImage,
+                            : _controller.defaultProfileImage,
                       ),
                       title: Text('$firstname $lastname '),
                       subtitle: Text('$username'),
+                      trailing: PopupMenuButton<String>(
+                        icon: const Icon(Icons.more_vert),
+                        onSelected: (String option) async {
+                          var message = await _controller.onMoreOptionSelected(option,username,widget.pageId);
+                          (message != null)
+                        ? showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CustomAlertDialog(
+                                title: 'Error',
+                                icon: Icons.error,
+                                text: message,
+                                buttonText: 'OK',
+                                
+                              );
+                            },
+                          )
+                        : null;
+                        setState(() {
+                          
+                        });
+                        },
+                        itemBuilder: (BuildContext context) {
+                            return _controller.moreOptions.map((String option) {
+                              return PopupMenuItem<String>(
+                                value: option,
+                                child: Text(option),
+                              );
+                            }).toList();
+                        },
+                      ),
                     ),
                     const Divider(
                       color: Color.fromARGB(255, 194, 193, 193),

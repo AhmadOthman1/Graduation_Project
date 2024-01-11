@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/settings_controller.dart';
+import 'package:growify/controller/home/Groups_controller/GroupSetting_controller.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/Admins/GroupAdmins.dart';
-import 'package:growify/view/screen/homescreen/myPage/Groups/CalendarGroup/calendargroup.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/Members/ShowMembers.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/editGroupSettings.dart';
-import 'package:growify/view/screen/homescreen/settings/changeemail.dart';
-import 'package:growify/view/screen/homescreen/settings/changepassword.dart';
-import 'package:growify/view/screen/homescreen/settings/myPages.dart';
+
 
 class GroupSettings extends StatelessWidget {
   final admins;
   final members;
   final groupData;
-  GroupSettings({super.key, this.admins, this.members,  this.groupData});
+
+  GroupSettings({super.key, this.admins, this.members, this.groupData});
+
+  GroupSettingsController controller =
+      Get.put(GroupSettingsController());
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +53,7 @@ class GroupSettings extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: InkWell(
                   onTap: () {
-                  Get.to(EditGroupSettingSettings(userData: [groupData],));
+                    Get.to(EditGroupSettingSettings(userData: [groupData],));
                   },
                   child: Container(
                     height: 35,
@@ -73,7 +74,6 @@ class GroupSettings extends StatelessWidget {
                   ),
                 ),
               ),
-             
               const Divider(
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 2.0,
@@ -107,11 +107,11 @@ class GroupSettings extends StatelessWidget {
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 2.0,
               ),
-               Container(
+              Container(
                 margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: InkWell(
                   onTap: () {
-             Get.to(ShowMembers(pageId:groupData['pageId'],groupId:groupData['id'],localMembers: members,));
+                    Get.to(ShowMembers(pageId:groupData['pageId'],groupId:groupData['id'],localMembers: members,));
                   },
                   child: Container(
                     height: 35,
@@ -136,13 +136,48 @@ class GroupSettings extends StatelessWidget {
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 2.0,
               ),
-              
-              
-              
             ],
           ),
         ],
       ),
+      floatingActionButton: Container(
+        width: 360,
+        child: FloatingActionButton.extended(
+          onPressed: () {
+            
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("Delete Group"),
+                  content: Text("Are you sure you want to delete this group?"),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("Cancel"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+
+                        controller.deleteGroup(groupData['id']);
+
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("Delete"),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+          label: Text("Delete Group"),
+          icon: Icon(Icons.delete),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

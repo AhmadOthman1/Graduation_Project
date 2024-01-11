@@ -20,7 +20,7 @@ class ShowMyWorkPlacePagesController {
   getWorkPlacePages(int page) async {
     
     var url =
-        "$urlStarter/user/getUserColleagues?page=$page&pageSize=$pageSize";
+        "$urlStarter/user/getUserEmployedPages?page=$page&pageSize=$pageSize";
     var response = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -51,21 +51,28 @@ class ShowMyWorkPlacePagesController {
     } else if (response.statusCode == 200) {
       
       
-      var responseBody = jsonDecode(response.body);
-      final List<dynamic>? Pages = responseBody["userConnections"];
+          var responseBody = jsonDecode(response.body);
+      print("hiiiiiiiiii");
+      print(responseBody);
+      print("hiiiiiiiiii");
+
+      final List<dynamic>? Pages = responseBody["pages"];
+ // Update this line
+
       print(Pages);
       print("userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+
       if (Pages != null) {
         final newPages = Pages.map((pages) {
           return {
-            'name': pages['connection']['name'],
-            'id': pages['connection']['id'],
-            'photo': pages['connection']['photo'],
+            'name': pages[
+                'name'], 
+            'id': pages['id'],
+            'photo': pages['photo'],
           };
         }).toList();
 
         WorkPlacePages.addAll(newPages);
-        
       }
 
       isLoading = false;

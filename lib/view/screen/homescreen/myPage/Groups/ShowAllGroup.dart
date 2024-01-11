@@ -77,7 +77,8 @@ class _GroupPageState extends State<GroupPage> {
                 };
                 groupsController.Groupmessages =
                     <Map<String, dynamic>>[userMap].obs;
-                groupsController.goToGroupChatMessage(groupData['id']);
+                groupsController.
+                getAndLoadPageEmployees(groupData['id']);
               },
               child: Text(
                 groupName,

@@ -25,14 +25,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _initController() async {
     await _controller.connectToSSE(GetStorage().read('username'));
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<HomeScreenControllerImp>(
       builder: (controller) => Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Get.to(NewPost(profileImage:GetStorage().read('photo')));
+            Get.to(NewPost(profileImage: GetStorage().read('photo')));
           },
           child: const Icon(Icons.post_add_outlined),
         ),
@@ -40,24 +40,29 @@ class _HomeScreenState extends State<HomeScreen> {
         bottomNavigationBar: BottomAppBar(
           shape: const CircularNotchedRectangle(),
           notchMargin: 10,
-          child: Row(
+          child: ListView(
+            shrinkWrap: true,
             children: [
-              ...List.generate(
-                controller.titlebottomappbar.length + 1,
-                ((index) {
-                  int i = index > 2 ? index - 1 : index;
-                  return index == 2
-                      ? const Spacer()
-                      : BottommAppBar(
-                          textbutton: controller.titlebottomappbar[i],
-                          icondata: controller.icons[i],
-                          onPressed: () {
-                            controller.changePage(i);
-                          },
-                          active: controller.currentpage == i ? true : false,
-                        );
-                }),
-              )
+              Row(
+                children: [
+                  ...List.generate(
+                    controller.titlebottomappbar.length + 1,
+                    ((index) {
+                      int i = index > 2 ? index - 1 : index;
+                      return index == 2
+                          ? const Spacer()
+                          : BottommAppBar(
+                              textbutton: controller.titlebottomappbar[i],
+                              icondata: controller.icons[i],
+                              onPressed: () {
+                                controller.changePage(i);
+                              },
+                              active: controller.currentpage == i ? true : false,
+                            );
+                    }),
+                  )
+                ],
+              ),
             ],
           ),
         ),
@@ -66,3 +71,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+

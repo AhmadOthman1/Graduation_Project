@@ -47,26 +47,35 @@ addMessage( text,  username, userPhoto,  createdAt, image,video) async {
           video: video,
         );
 
-        // Add the ChatMessage object to the list
+   
         messages.insert(0, chatMessage);
         
   }
-  getUserMessages(int page, int groupId, int pageId) async {
-    
+  getUserMessages(int page, int groupId) async {
+    var url =
+        "$urlStarter/user/getMyPageGroupMessages?groupId=$groupId&page=$page&pageSize=$pageSize";
+    var response = await http.get(Uri.parse(url), headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+      
+    });
+    print("Hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
+    print(response);
+    return response;
   }
 
-  Future<void> loadUserMessages(page, groupId, pageId) async {
+  Future<void> loadUserMessages(page, groupId) async {
     print("innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnm");
     if (isLoading) {
       return;
     }
 
     isLoading = true;
-    var response = await getUserMessages(page, groupId, pageId);
+    var response = await getUserMessages(page, groupId);
     print(response.statusCode);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      loadUserMessages(page, groupId, pageId);
+      loadUserMessages(page ,groupId);
       return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -74,21 +83,23 @@ addMessage( text,  username, userPhoto,  createdAt, image,video) async {
 
     if (response.statusCode == 409) {
       var responseBody = jsonDecode(response.body);
+      print("Awssssssssssssssssssss");
       print(responseBody['message']);
       return;
     } else if (response.statusCode == 200) {
-     // if (type == "U") {}
+ 
 
       var responseBody = jsonDecode(response.body);
+      print(responseBody);
       print("////////////////////////////////////////");
-      print(List<Map<String, dynamic>>.from(responseBody['messages']));
+     /* print(List<Map<String, dynamic>>.from(responseBody['messages']));
       List<Map<String, dynamic>> messagesData =
           List<Map<String, dynamic>>.from(responseBody['messages']);
 
-// Create a list to store ChatMessage objects
+
       List<ChatMessage> chatMessages = [];
 
-// Iterate through the messagesData and create ChatMessage objects
+
       for (var messageData in messagesData) {
         String text = messageData['text'];
         String senderUsername = messageData['senderUsername'];
@@ -112,7 +123,7 @@ addMessage( text,  username, userPhoto,  createdAt, image,video) async {
         messages.add(chatMessage);
       }
       
-      isLoading = false;
+      isLoading = false;*/
     }
 
     return;
