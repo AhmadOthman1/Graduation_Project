@@ -85,6 +85,40 @@ const getParentGroups = async (groupId, parentGroups = []) => {
 
     return parentGroups;
 };
+
+const getChildGroups = async (groupId, childGroups = []) => {
+    const groups = await pageGroup.findAll({
+        where: {
+            parentGroup: groupId,
+        },
+    });
+
+    for (const group of groups) {
+        childGroups.push(group.groupId);
+        await getChildGroups(group.groupId, childGroups);
+    }
+
+    return childGroups;
+};
+const getUserAdminGroupsAndChildren = async (userUsername) => {
+    const adminGroups = await groupAdmin.findAll({
+        where: {
+            username: userUsername,
+        },
+    });
+
+    let allGroups = [];
+
+    for (const adminGroup of adminGroups) {
+        const groupId = adminGroup.groupId;
+        const childGroups = await getChildGroups(groupId);
+        allGroups.push(groupId, ...childGroups);
+    }
+
+    return [...new Set(allGroups)]; // Remove duplicates
+};
+
+
 exports.getMyPageGroupInfo = async (req, res, next) => {
     try {
         const groupId = req.query.groupId;
@@ -97,6 +131,7 @@ exports.getMyPageGroupInfo = async (req, res, next) => {
                 username: userUsername
             },
         });
+        console.log(userUsername)
         if (existingEmail != null) {
             const group = await pageGroup.findOne({
                 where: {
@@ -151,13 +186,8 @@ exports.getMyPageGroupInfo = async (req, res, next) => {
                     groupMembers: groupMembers,
                 });
             } else {
-                const isUserAdminInGroup = await groupAdmin.findOne({
-                    where: {
-                        groupId: groupId,
-                        username: userUsername,
-                    }
-                });
-                if (isUserAdminInGroup != null) {
+                const adminGroupsAndChildren = await getUserAdminGroupsAndChildren(userUsername);
+                if (adminGroupsAndChildren.includes(parseInt(groupId))) {
                     const parentGroups = await getParentGroups(groupId);
                     parentGroups.push(groupId);
 
@@ -308,13 +338,9 @@ exports.getMyPageGroupMessages = async (req, res, next) => {
                     groupMessages: groupMessages,
                 });
             } else {
-                const isUserAdminInGroup = await groupAdmin.findOne({
-                    where: {
-                        groupId: groupId,
-                        username: userUsername,
-                    }
-                });
-                if (isUserAdminInGroup != null) {
+                const adminGroupsAndChildren = await getUserAdminGroupsAndChildren(userUsername);
+                if (adminGroupsAndChildren.includes(parseInt(groupId))) {
+
                     const groupMessages = await groupMessage.findAll({
                         where: {
                             groupId: groupId

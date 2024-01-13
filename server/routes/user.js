@@ -23,6 +23,7 @@ const pagesProfile=require('../controller/otherPages/pagesProfile')
 const userTasks =require('../controller/tasks/userTasksController')
 const userCalender =require('../controller/calender/userCalender')
 const pageGroups=require('../controller/myPages/pageGroups')
+const groupController=require('../controller/groups/groupController')
 
 
 const router=express.Router();
@@ -119,6 +120,13 @@ router.get('/getMyPageGroups',authenticateToken,pageGroups.getMyPageGroups);
 router.get('/getMyPageGroupInfo',authenticateToken,pageGroups.getMyPageGroupInfo);
 router.get('/getMyPageGroupMessages',authenticateToken,pageGroups.getMyPageGroupMessages);
 router.post('/createPageGroup',authenticateToken,pageGroups.createPageGroup);
+//groups
+router.post('/editGroupInfo',authenticateToken,groupController.editGroupInfo);
+router.post('/addGroupAdmin',authenticateToken,groupController.addGroupAdmin);
+router.post('/deleteGroupAdmin',authenticateToken,groupController.deleteGroupAdmin);
+router.post('/addGroupMember',authenticateToken,groupController.addGroupMember);
+router.post('/deleteGroupMember',authenticateToken,groupController.deleteGroupMember);
+router.post('/deleteGroup',authenticateToken,groupController.deleteGroup);
 
 // other Pages
 router.get('/getPageProfileInfo',authenticateToken,pagesProfile.getPageProfileInfo);

@@ -37,4 +37,7 @@ const pageGroup = sequelize.define('pageGroup', {
 // Define foreign key constraint
 pages.hasMany(pageGroup, { foreignKey: 'pageId', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
 pageGroup.belongsTo(pages, { foreignKey: 'pageId', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
+
+//pageGroup.hasOne(pageGroup, { foreignKey: 'groupId', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
+pageGroup.belongsTo(pageGroup, { foreignKey: 'parentGroup', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
 module.exports = pageGroup;
