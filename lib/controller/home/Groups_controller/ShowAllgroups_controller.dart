@@ -63,16 +63,16 @@ print(adminsobject);
 members.addAll(membersobject.map((member) => {
   'username': member['username'],
   'photo': member['photo'], 
-  'firstname': member['firstname'],
-  'lastname': member['lastname']
+   'firstname': member['user']['firstName'], 
+  'lastname': member['user']['lastName'], 
 }).toList());
 
 
 admins.addAll(adminsobject.map((admin) => {
       'username': admin['username'],
       'photo': admin['photo'],
-      'firstname': admin['firstname'],
-      'lastname': admin['lastname'],
+     'firstname': admin['user']['firstName'],
+      'lastname': admin['user']['lastName'],
   }).toList());
   
    

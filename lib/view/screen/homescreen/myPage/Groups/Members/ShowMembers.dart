@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Groups_controller/Members_controller/ShowMembers_controller.dart';
+import 'package:growify/controller/home/Search_Cotroller.dart';
 import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/Members/MemberType.dart';
@@ -18,6 +19,7 @@ ShowMembers({required this.pageId, this.localMembers, this.groupId});
 }
 
 class _ShowMembersState extends State<ShowMembers> {
+  final SearchControllerImp controller = Get.put(SearchControllerImp());
   late ShowMembersController _controller;
   @override
   void initState() {
@@ -66,7 +68,7 @@ class _ShowMembersState extends State<ShowMembers> {
                     ListTile(
                       onTap: () {
                         final userUsername = username;
-                        
+                         controller.goToUserPage(userUsername!);
                       },
                       leading: CircleAvatar(
                         backgroundImage: (admin['photo'] != null &&

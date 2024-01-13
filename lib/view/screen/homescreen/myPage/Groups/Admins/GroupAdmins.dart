@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Groups_controller/AdminsGroup_controller.dart/AdminsGroup_controller.dart';
+import 'package:growify/controller/home/Search_Cotroller.dart';
 import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/Admins/AddGroupAdmin.dart';
@@ -18,6 +19,7 @@ class GroupAdmins extends StatefulWidget {
 
 class _GroupAdminsState extends State<GroupAdmins> {
   late ShowGroupAdminsController _controller;
+  final SearchControllerImp controller = Get.put(SearchControllerImp());
   @override
   void initState() {
     super.initState();
@@ -65,6 +67,8 @@ class _GroupAdminsState extends State<GroupAdmins> {
                     ListTile(
                       onTap: () {
                         final userUsername = username;
+                         controller.goToUserPage(userUsername!);
+
                       },
                       leading: CircleAvatar(
                         backgroundImage: (admin['photo'] != null &&

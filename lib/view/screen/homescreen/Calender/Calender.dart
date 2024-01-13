@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/calendar_controller/calendar_controller.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
 
 class Calender extends StatefulWidget {
   const Calender({super.key});
@@ -11,44 +12,19 @@ class Calender extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<Calender> {
-  late List<Appointment> allAppointments;
   late List<Appointment> appointments;
   DateTime selectedDate = DateTime.now();
   late DateTime firstDay;
   late DateTime lastDay;
   late DateTime focusedDay;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  CalendarController controller =
-      Get.put(CalendarController());
+  CalendarController controller = Get.put(CalendarController());
 
   @override
   void initState() {
     super.initState();
-    // here get data from database
-    /*List<Appointment> newAppointments2 = [
-                    Appointment(
-                     startTime: ,
-                      subject: ,
-                      eventTime: ,
-                    )];
-    then use this function _addAppointment(newAppointments2)
-    */
-
-    allAppointments = [
-      Appointment(
-        startTime: DateTime(2023, 12, 14),
-        subject: 'Meeting 1',
-        eventTime: '5:35 AM',
-      ),
-      Appointment(
-        startTime: DateTime(2023, 12, 15),
-        subject: 'Meeting 2',
-        eventTime: '3:35 AM',
-      ),
-    ];
-
-    appointments = _getAppointmentsForDate(selectedDate);
-
+    controller.initAppointments();
+    appointments = controller.getAppointmentsForDate(selectedDate);
     firstDay = DateTime.now().subtract(const Duration(days: 365));
     lastDay = DateTime.now().add(const Duration(days: 365));
     focusedDay = DateTime.now();
@@ -64,7 +40,7 @@ class _CalendarPageState extends State<Calender> {
         children: [
           _buildCalendar(),
           Container(
-            margin: const EdgeInsets.only(top: 20), // Adjusted margin
+            margin: const EdgeInsets.only(top: 20),
             width: 370,
             child: ElevatedButton(
               onPressed: () async {
@@ -72,7 +48,12 @@ class _CalendarPageState extends State<Calender> {
                     await _showAddEventDialog(context);
 
                 if (newAppointments != null) {
-                  _addAppointment(newAppointments);
+
+              controller.addNewEvent();
+                //  controller.addAppointments(newAppointments);
+                 /* setState(() {
+                    appointments = controller.getAppointmentsForDate(selectedDate);
+                  });*/
                 }
               },
               child: const Text('Add Event'),
@@ -93,82 +74,63 @@ class _CalendarPageState extends State<Calender> {
       selectedDayPredicate: (day) {
         return isSameDay(selectedDate, day);
       },
-      eventLoader: _getEventsForDay,
+      eventLoader: controller.getEventsForDay,
       onDaySelected: (selectedDay, focusedDay) {
         if (!isSameDay(selectedDate, selectedDay)) {
           setState(() {
             selectedDate = selectedDay;
-            appointments = _getAppointmentsForDate(selectedDate);
+            appointments = controller.getAppointmentsForDate(selectedDate);
           });
         }
       },
     );
   }
 
-  List<dynamic> _getEventsForDay(DateTime day) {
-    List<dynamic> events = [];
-
-    // Check if there are events for the specified day
-    if (_getAppointmentsForDate(day).isNotEmpty) {
-      events.add(true);
-    }
-
-    return events;
-  }
-
-  List<Appointment> _getAppointmentsForDate(DateTime date) {
-    return allAppointments
-        .where((appointment) =>
-            appointment.startTime.year == date.year &&
-            appointment.startTime.month == date.month &&
-            appointment.startTime.day == date.day)
-        .toList();
-  }
-
   Widget _buildAppointmentList() {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: appointments.length,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: const EdgeInsets.all(8.0),
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Title: ${appointments[index].subject}',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  'Date: ${appointments[index].startTime} ',
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  'time: ${appointments[index].eventTime}',
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
+  return Expanded(
+    child: ListView.builder(
+      itemCount: appointments.length,
+      itemBuilder: (context, index) {
+        String formattedDate = DateFormat('yyyy-MM-dd').format(appointments[index].startTime);
 
-  void _addAppointment(List<Appointment> newAppointments) {
-    setState(() {
-      allAppointments.addAll(newAppointments);
-      appointments = _getAppointmentsForDate(selectedDate);
-    });
-  }
+        return Container(
+          margin: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Title: ${appointments[index].subject}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8.0),
+              Text(
+                'Description: ${appointments[index].description}',
+              ),
+              const SizedBox(height: 8.0),
+              Text(
+                'Date: $formattedDate', // Use the formatted date here
+              ),
+              const SizedBox(height: 8.0),
+              Text(
+                'Time: ${appointments[index].eventTime}',
+              ),
+            ],
+          ),
+        );
+      },
+    ),
+  );
+}
+
 
   Future<List<Appointment>?> _showAddEventDialog(BuildContext context) async {
     TextEditingController titleController = TextEditingController();
+    TextEditingController descriptionController = TextEditingController();
     TimeOfDay? selectedTime;
 
     return showDialog<List<Appointment>>(
@@ -202,7 +164,25 @@ class _CalendarPageState extends State<Calender> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: descriptionController,
+                  maxLines: 6,
+                  decoration: InputDecoration(
+                    hintText: "Enter Your Event Description",
+                    hintStyle: const TextStyle(
+                      fontSize: 14,
+                    ),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                    labelText: "Event Description",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
                 SizedBox(
                   width: 250,
                   child: ElevatedButton(
@@ -242,11 +222,13 @@ class _CalendarPageState extends State<Calender> {
                         startTime: combinedDateTime,
                         subject: titleController.text,
                         eventTime: selectedTime!.format(context),
+                        description: descriptionController.text,
                       ),
                     ];
 
                     print('$combinedDateTime');
                     print(titleController.text);
+                    print(descriptionController.text);
                     print('Remind Me: ${selectedTime!.format(context)}');
                     Navigator.pop(context, newAppointments);
                   } else {
@@ -261,16 +243,4 @@ class _CalendarPageState extends State<Calender> {
       },
     );
   }
-}
-
-class Appointment {
-  DateTime startTime;
-  String subject;
-  String eventTime;
-
-  Appointment({
-    required this.startTime,
-    required this.subject,
-    required this.eventTime,
-  });
 }
