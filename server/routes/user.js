@@ -18,6 +18,7 @@ const chatsMainPage=require('../controller/chats/chatsMainPage')
 const userMessages=require('../controller/chats/userMessages')
 const UserColleagues=require('../controller/mainUser/userColleagues')
 const userNetworkPages=require('../controller/mainUser/userNetworkPages')
+const userJobs=require('../controller/mainUser/userJobs')
 const pagesProfile=require('../controller/otherPages/pagesProfile')
 const userTasks =require('../controller/tasks/userTasksController')
 const userCalender =require('../controller/calender/userCalender')
@@ -51,6 +52,7 @@ router.get('/getUserRequestsReceived',authenticateToken,UserColleagues.getUserRe
 router.get('/getUserRequestsSent',authenticateToken,UserColleagues.getUserRequestsSent);
 router.get('/getUserFollowedPages',authenticateToken,userNetworkPages.getUserFollowedPages);
 router.get('/getUserEmployedPages',authenticateToken,userNetworkPages.getUserEmployedPages);
+router.get('/getUserGroups',authenticateToken,userNetworkPages.getUserGroups);
 
 //search
 router.get('/getSearchData',authenticateToken,getSearchDataController.getSearchData);
@@ -76,6 +78,8 @@ router.post('/deletePost',authenticateToken,getPostsController.deletePost);
 router.post('/deleteComment',authenticateToken,getPostsController.deleteComment);
 //user notifications
 router.get('/getUserNotifications',authenticateToken,userNotificationsController.getUserNotifications);
+//user jobs
+router.get('/getUserJobs',authenticateToken,userJobs.getUserJobs);
 //chats
 router.get('/getChats',authenticateToken,chatsMainPage.getChats);
 router.get('/getUserMessages',authenticateToken,userMessages.getUserMessages);
@@ -85,6 +89,7 @@ router.post('/ChangeUserTaskStatus',authenticateToken,userTasks.ChangeUserTaskSt
 router.post('/CreateUserTask',authenticateToken,userTasks.CreateUserTask);
 //user calender
 router.get('/getUserCalender',authenticateToken,userCalender.getUserCalender);
+
 
 //user pages
 router.get('/getMyPages',authenticateToken,myPagesController.getMyPageInfo);

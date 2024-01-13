@@ -64,7 +64,7 @@ exports.getNotifications = async (req, res) => {
       // Set the initial interval
       const intervalId = setInterval(async () => {
         // Fetch new notifications after the current timestamp
-        console.log(Notices)
+        //console.log(Notices)
         //console.log(clientsMap)
         for (const notification of Notices) {
           const { id, username, notificationType, notificationContent, notificationPointer, createdAt } = notification;

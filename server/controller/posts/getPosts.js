@@ -10,7 +10,8 @@ const like = require('../../models/like');
 const moment = require('moment');
 const Connections = require("../../models/connections");
 const { Op } = require('sequelize');
-const {notifyUser,deleteNotification} = require('../notifyUser');
+const { notifyUser, deleteNotification } = require('../notifyUser');
+const pageFollower = require("../../models/pageFollower");
 
 async function findIfUserInConnections(userUsername, findProfileUsername) {
     const userConnections = await Connections.findAll({
@@ -94,15 +95,15 @@ exports.addComment = async (req, res, next) => {
                             Date: new Date(),
                         });
                         const notification = {
-                            username: userPostComments.username,  
+                            username: userPostComments.username,
                             notificationType: 'post', // Type of notification
-                            notificationContent: "You have a new comment on your post",  
+                            notificationContent: "You have a new comment on your post",
                             notificationPointer: postId.toString(),
-                          };
-                          var isnotify= false
+                        };
+                        var isnotify = false
                         //isnotify = await notifyUser(username, notification);
-                        isnotify= await notifyUser (userPostComments.username, notification);
-                          console.log(isnotify);
+                        isnotify = await notifyUser(userPostComments.username, notification);
+                        console.log(isnotify);
                         return res.status(200).json({
                             message: 'comment created',
                             body: req.body
@@ -118,20 +119,20 @@ exports.addComment = async (req, res, next) => {
 
                             });
                             const notification = {
-                                username: userPostComments.username,  
+                                username: userPostComments.username,
                                 notificationType: 'post', // Type of notification
-                                notificationContent: "You have a new comment on your post",  
+                                notificationContent: "You have a new comment on your post",
                                 notificationPointer: postId.toString(),
-                              };
-                              var isnotify= false
+                            };
+                            var isnotify = false
                             //isnotify = await notifyUser(username, notification);
-                            isnotify= await notifyUser (userPostComments.username, notification);
-                              console.log(isnotify);
+                            isnotify = await notifyUser(userPostComments.username, notification);
+                            console.log(isnotify);
                             return res.status(200).json({
                                 message: 'comment created',
                                 body: req.body
                             });
-                        }else {
+                        } else {
                             return res.status(500).json({
                                 message: 'You are not allowed to add a comment',
                                 body: req.body
@@ -432,15 +433,15 @@ exports.addLike = async (req, res, next) => {
                             username: userUsername,
                         });
                         const notification = {
-                            username: userPostLikes.username,  
+                            username: userPostLikes.username,
                             notificationType: 'post', // Type of notification
-                            notificationContent: "You have a new like on your post",  
+                            notificationContent: "You have a new like on your post",
                             notificationPointer: postId.toString(),
-                          };
-                          var isnotify= false
+                        };
+                        var isnotify = false
                         //isnotify = await notifyUser(username, notification);
-                        isnotify= await notifyUser (userPostLikes.username, notification);
-                          console.log(isnotify);
+                        isnotify = await notifyUser(userPostLikes.username, notification);
+                        console.log(isnotify);
                         return res.status(200).json({
                             message: 'like added',
                             body: req.body
@@ -453,20 +454,20 @@ exports.addLike = async (req, res, next) => {
                                 username: userUsername,
                             });
                             const notification = {
-                                username: userPostLikes.username,  
+                                username: userPostLikes.username,
                                 notificationType: 'post', // Type of notification
-                                notificationContent: "You have a new like on your post",  
+                                notificationContent: "You have a new like on your post",
                                 notificationPointer: postId.toString(),
-                              };
-                              var isnotify= false
+                            };
+                            var isnotify = false
                             //isnotify = await notifyUser(username, notification);
-                            isnotify= await notifyUser (userPostLikes.username, notification);
-                              console.log(isnotify);
+                            isnotify = await notifyUser(userPostLikes.username, notification);
+                            console.log(isnotify);
                             return res.status(200).json({
                                 message: 'like added',
                                 body: req.body
                             });
-                        }else {
+                        } else {
                             return res.status(500).json({
                                 message: 'You are not allowed to see add like to this post',
                                 body: req.body
@@ -691,6 +692,103 @@ exports.getPosts = async (req, res, next) => {
             },
         });
         if (existingUsername != null) {
+            if (username == null) {
+                // Fetch pages that the user follows
+                const userFollowedPages = await pageFollower.findAll({
+                    where: { username: userUsername },
+                    include: [
+                        {
+                            model: Page,
+                        },
+                    ],
+                });
+
+                // Fetch user connections
+                const userConnections = await Connections.findAll({
+                    where: {
+                        [Op.or]: [
+                            { senderUsername: userUsername },
+                            { receiverUsername: userUsername },
+                        ],
+                    },
+                    include: [{
+                        model: User,
+                        as: 'senderUsername_FK',
+                    }, {
+                        model: User,
+                        as: 'receiverUsername_FK',
+                    }],
+                });
+
+                // Combine pageIds and usernames from pages and connections
+                const combinedIds = [
+                    ...userFollowedPages.map(page => page.pageId),
+                    ...userConnections.map(connection => {
+                        return connection.senderUsername_FK.username === userUsername
+                            ? connection.receiverUsername_FK.username
+                            : connection.senderUsername_FK.username;
+                    }),
+                ];
+                console.log(combinedIds);
+                // Fetch posts for the combined pageIds and usernames
+                const userPosts = await post.findAll({
+                    where: { [Op.or]: [{ username: { [Op.in]: combinedIds } }, { pageId: { [Op.in]: combinedIds } }] },
+                    order: [['postDate', 'DESC']],
+                    offset: offset,
+                    limit: pageSize,
+                    include: [
+                        {
+                            model: comment,
+                            order: [['Date', 'DESC']],
+                        },
+                        {
+                            model: like,
+                            order: [['createdAt', 'DESC']],
+                        },
+                    ],
+                });
+
+                const userDataPromises = userPosts.map(post => {
+                    if (post.username != null) {
+                        return User.findOne({
+                            where: { username: post.username },
+                            attributes: ['username', 'firstName', 'lastName', 'photo'],
+                        });
+                    } else if (post.pageId != null) {
+                        return Page.findOne({
+                            where: { id: post.pageId },
+                            attributes: ['id', 'name', 'photo'],
+                        });
+                    }
+                });
+
+                const userData = await Promise.all(userDataPromises);
+
+                // Map over the posts and attach user or page data
+                const posts = userPosts.map((post, index) => {
+                    const isLiked = post.likes.some(like => like.username === userUsername);
+                    const additionalData = userData[index];
+                    return {
+                        id: post.id,
+                        createdBy: post.username??post.pageId,
+                        name: additionalData.username ? additionalData.dataValues.firstName+" "+ additionalData.dataValues.lastName : additionalData.name,
+                        userPhoto: additionalData ? additionalData.photo : null,
+                        postContent: post.postContent,
+                        selectedPrivacy: post.selectedPrivacy,
+                        photo: post.photo,
+                        postDate: moment(post.postDate).format('YYYY-MM-DD HH:mm:ss'),
+                        commentCount: post.comments.length,
+                        likeCount: post.likes.length,
+                        isLiked: isLiked,
+                        isUser: additionalData.username ? true :false,
+                    };
+                });
+                console.log(posts);
+                return res.status(200).json({
+                    message: 'fetched',
+                    posts: posts,
+                });
+            }
             if (userUsername == username) {// if it is the user post 
                 const userPosts = await post.findAll({
                     where: { username: username },
@@ -856,7 +954,7 @@ exports.getPost = async (req, res, next) => {
         if (existingUsername != null) {
             if (userUsername == username) {// if it is the user post 
                 const userPosts = await post.findAll({
-                    where: { username: username , id: postId},
+                    where: { username: username, id: postId },
                     order: [['postDate', 'DESC']], // Order posts by date
                     include: [
                         {

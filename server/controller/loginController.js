@@ -66,6 +66,7 @@ exports.postLogin = async (req, res, next) => {
                 firstname: existingEmail.firstname,
                 lastname: existingEmail.lastname,
                 photo: existingEmail.photo,
+                Fields:existingEmail.Fields,
             });
 
         } else {

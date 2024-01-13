@@ -20,7 +20,9 @@ const pageJobs = require("../../models/pageJobs");
 const jobApplication = require("../../models/jobApplication");
 const systemFields = require("../../models/systemFields");
 const { notifyUser, deleteNotification } = require('../notifyUser');
-
+const pageGroup = require('../../models/pageGroup');
+const groupAdmin = require('../../models/groupAdmin');
+const groupMember = require('../../models/groupMember');
 exports.getUserFollowedPages = async (req, res, next) => {
     try {
         const authHeader = req.headers['authorization']
@@ -148,6 +150,94 @@ exports.getUserEmployedPages = async (req, res, next) => {
                         body: req.body
                     });
                 });
+        } else {
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+}
+const getChildGroups = async (groupId, childGroups = []) => {
+    const groups = await pageGroup.findAll({
+        where: {
+            parentGroup: groupId,
+        },
+    });
+
+    for (const group of groups) {
+        childGroups.push(group.groupId);
+        await getChildGroups(group.groupId, childGroups);
+    }
+
+    return childGroups;
+};
+
+const getUserAdminGroupsAndChildren = async (userUsername) => {
+    const adminGroups = await groupAdmin.findAll({
+        where: {
+            username: userUsername,
+        },
+    });
+
+    let allGroups = [];
+
+    for (const adminGroup of adminGroups) {
+        const groupId = adminGroup.groupId;
+        const childGroups = await getChildGroups(groupId);
+        allGroups.push(groupId, ...childGroups);
+    }
+
+    return [...new Set(allGroups)]; // Remove duplicates
+};
+const getUserMemberGroups = async (userUsername) => {
+    const memberGroups = await groupMember.findAll({
+        where: {
+            username: userUsername,
+        },
+    });
+
+    const groupIds = memberGroups.map(group => group.groupId);
+
+    return [...new Set(groupIds)]; // Remove duplicates
+};
+exports.getUserGroups = async (req, res, next) => {
+    try {
+        console.log("aaaaaaaaaaaaaaaaaaaa");
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+
+        const existingEmail = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingEmail != null) {
+            const adminGroupsAndChildren = await getUserAdminGroupsAndChildren(userUsername);
+            const memberGroups = await getUserMemberGroups(userUsername);
+        
+            const allGroups = [...new Set([...adminGroupsAndChildren, ...memberGroups])];
+        
+            // Fetch detailed information about the groups
+            const groupsDetails = await pageGroup.findAll({
+                where: {
+                    groupId: {
+                        [Op.in]: allGroups,
+                    },
+                },
+            });
+            return res.status(200).json({
+                message: 'Groups',
+                groups: groupsDetails
+            });
+
         } else {
             return res.status(500).json({
                 message: 'server Error',

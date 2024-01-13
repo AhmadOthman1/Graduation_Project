@@ -75,6 +75,16 @@ exports.getMyPageGroups = async (req, res, next) => {
         });
     }
 }
+const getParentGroups = async (groupId, parentGroups = []) => {
+    const group = await pageGroup.findByPk(groupId);
+
+    if (group && group.parentGroup) {
+        parentGroups.push(group.parentGroup);
+        await getParentGroups(group.parentGroup, parentGroups);
+    }
+
+    return parentGroups;
+};
 exports.getMyPageGroupInfo = async (req, res, next) => {
     try {
         const groupId = req.query.groupId;
@@ -108,9 +118,14 @@ exports.getMyPageGroupInfo = async (req, res, next) => {
             });
             if (isAdmin != null) {
 
+                const parentGroups = await getParentGroups(groupId);
+                parentGroups.push(groupId);
+
                 const groupAdmins = await groupAdmin.findAll({
                     where: {
-                        groupId: groupId
+                        groupId: {
+                            [Op.in]: parentGroups
+                        }
                     },
                     include: [
                         {
@@ -143,9 +158,14 @@ exports.getMyPageGroupInfo = async (req, res, next) => {
                     }
                 });
                 if (isUserAdminInGroup != null) {
+                    const parentGroups = await getParentGroups(groupId);
+                    parentGroups.push(groupId);
+
                     const groupAdmins = await groupAdmin.findAll({
                         where: {
-                            groupId: groupId
+                            groupId: {
+                                [Op.in]: parentGroups
+                            }
                         },
                         include: [
                             {
@@ -178,9 +198,14 @@ exports.getMyPageGroupInfo = async (req, res, next) => {
                         }
                     });
                     if (isUserMemberInGroup != null) {
+                        const parentGroups = await getParentGroups(groupId);
+                        parentGroups.push(groupId);
+
                         const groupAdmins = await groupAdmin.findAll({
                             where: {
-                                groupId: groupId
+                                groupId: {
+                                    [Op.in]: parentGroups
+                                }
                             },
                             include: [
                                 {
@@ -358,7 +383,7 @@ exports.getMyPageGroupMessages = async (req, res, next) => {
 }
 exports.createPageGroup = async (req, res, next) => {
     try {
-        const {pageId , name , parentNode , description}= req.body;
+        const { pageId, name, parentNode, description } = req.body;
         const authHeader = req.headers['authorization']
         const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
         var userUsername = decoded.username;
@@ -377,7 +402,7 @@ exports.createPageGroup = async (req, res, next) => {
                 }
             });
             if (isAdmin != null) {
-                if(name==null ||  description==null){
+                if (name == null || description == null) {
                     return res.status(500).json({
                         message: 'invalid values',
                         body: req.body
@@ -389,17 +414,17 @@ exports.createPageGroup = async (req, res, next) => {
                 const pageGroups = await pageGroup.findOne({
                     where: {
                         pageId: pageId,
-                        groupId:parentNode
+                        groupId: parentNode
                     }
                 });
-                if(pageGroups!= null){
+                if (pageGroups != null) {
                     parentId = parentNode;
                 }
                 await pageGroup.create({
-                    pageId:pageId,
-                    name:name,
-                    description:description,
-                    parentGroup:parentId,
+                    pageId: pageId,
+                    name: name,
+                    description: description,
+                    parentGroup: parentId,
                     memberSendMessage: true,
                 });
                 return res.status(200).json({
@@ -409,40 +434,40 @@ exports.createPageGroup = async (req, res, next) => {
                 const pageGroups = await pageGroup.findOne({
                     where: {
                         pageId: pageId,
-                        groupId:parentNode
+                        groupId: parentNode
                     }
                 });
-                if(pageGroups!= null){
+                if (pageGroups != null) {
                     parentId = parentNode;
                     const isUserAdminInParentGroup = await groupAdmin.findOne({
                         where: {
                             username: userUsername,
-                            groupId:parentNode
+                            groupId: parentNode
                         }
                     });
-                    if(isUserAdminInParentGroup!=null){
-                        var newGroup =await pageGroup.create({
-                            pageId:pageId,
-                            name:name,
-                            description:description,
-                            parentGroup:parentId,
+                    if (isUserAdminInParentGroup != null) {
+                        var newGroup = await pageGroup.create({
+                            pageId: pageId,
+                            name: name,
+                            description: description,
+                            parentGroup: parentId,
                             memberSendMessage: true,
                         });
                         await groupAdmin.create({
-                            groupId:newGroup.groupId,
-                            username:userUsername,
+                            groupId: newGroup.groupId,
+                            username: userUsername,
                         })
                         return res.status(200).json({
                             message: 'Group created',
                         });
-                    }else{
+                    } else {
                         return res.status(500).json({
                             message: 'You are not allowed to see this info',
                             body: req.body
                         });
                     }
 
-                }else{
+                } else {
                     return res.status(500).json({
                         message: 'parent group not found',
                         body: req.body
