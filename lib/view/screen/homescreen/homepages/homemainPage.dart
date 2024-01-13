@@ -127,7 +127,7 @@ class _HomepageState extends State<Homepage> {
             ),
           ];
         },
-        body: Post(username: 'AhmadOthman'),
+        body: Post(),
       ),
       drawer: Drawer(
         backgroundColor: Colors.white,

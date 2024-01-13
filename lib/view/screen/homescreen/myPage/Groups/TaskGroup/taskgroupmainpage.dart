@@ -14,9 +14,10 @@ import 'package:multi_dropdown/widgets/selection_chip.dart';
 import 'package:multi_dropdown/widgets/single_selected_item.dart';
 
 class TasksGroupHomePage extends StatefulWidget {
-  const TasksGroupHomePage({super.key, this.isAdmin, this.members});
+  const TasksGroupHomePage({super.key, this.isAdmin, this.members,this.isUserAdminInPage});
   final isAdmin;
   final members;
+  final isUserAdminInPage;
   @override
   _TasksGroupHomePageState createState() => _TasksGroupHomePageState();
 }

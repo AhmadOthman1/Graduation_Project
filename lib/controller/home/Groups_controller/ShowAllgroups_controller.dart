@@ -77,7 +77,7 @@ admins.addAll(adminsobject.map((admin) => {
   
    
    Get.to(GroupChatPageMessages(
-      data: Groupmessages[0],admins: admins,members: members,
+      data: Groupmessages[0],admins: admins,members: members,isUserAdminInPage:true
     ));
 
 

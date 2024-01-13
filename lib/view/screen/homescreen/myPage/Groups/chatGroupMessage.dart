@@ -26,12 +26,13 @@ class GroupChatPageMessages extends StatefulWidget {
   final data;
   final admins;
   final members;
-
+  final isUserAdminInPage;
   const GroupChatPageMessages({
     super.key,
     this.data,
     this.admins,
     this.members,
+    this.isUserAdminInPage,
   });
 
   @override
@@ -59,14 +60,14 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
 
   final LogOutButtonControllerImp _logoutController =
       Get.put(LogOutButtonControllerImp());
-  _initCallingListener() async {
-    var authUrl = '$urlSSEStarter/userNotifications/notificationsAuth';
+  /*_initCallingListener() async {
+    /*var authUrl = '$urlSSEStarter/userNotifications/notificationsAuth';
     var responce = await http.get(Uri.parse(authUrl), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
-    });
+    });*/
 
-    if (receivedCallAudio != null) {
+    /*if (receivedCallAudio != null) {
       receivedCallAudio.currentPosition.listen((position) {
         if (receivedCallAudio != null &&
             position != null &&
@@ -90,8 +91,8 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
           }
         }
       });
-    }
-  }
+    }*/
+  }*/
 
   @override
   void setState(fn) {
@@ -104,12 +105,12 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
   @override
   void initState() {
     super.initState();
-    receivedCallAudio = AssetsAudioPlayer();
+    /*receivedCallAudio = AssetsAudioPlayer();
     receivedCallAudioCounter = 0;
-    incomingSDPOffer = null;
+    incomingSDPOffer = null;*/
     chatController = GroupChatController();
     _socketConnect();
-    _initCallingListener();
+    //_initCallingListener();
     _loadData();
 
     // to check if the user is Admin
@@ -136,18 +137,18 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
 
   _socketConnect() async {
     try {
-      var authUrl = '$urlSSEStarter/userNotifications/notificationsAuth';
+      /*var authUrl = '$urlSSEStarter/userNotifications/notificationsAuth';
       var responce = await http.get(Uri.parse(authUrl), headers: {
         'Content-type': 'application/json; charset=UTF-8',
         'Authorization': 'bearer ' + GetStorage().read('accessToken'),
-      });
+      });*/
       socket = IO.io(urlSSEStarter, <String, dynamic>{
         "transports": ["websocket"],
         "autoConnect": false,
       });
       socket.connect();
       var accessToken = GetStorage().read("accessToken");
-      socket.emit("/login", accessToken); //authenticate the user
+      socket.emit("/joinRoom", {"token": accessToken,"groupId":widget.data['id']}); //authenticate the user
       socket.onConnect((data) => {
             // read authentication status
             socket.on("status", (status) async {
@@ -194,8 +195,8 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
               }
               chatController.addMessage(
                   msg["message"],
-                  widget.data["username"],
-                  widget.data["photo"],
+                  msg["sender"],
+                  msg["photo"],
                   msg["date"],
                   msg["image"],
                   msg["video"]);
@@ -204,7 +205,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
               chatController.sendMessage(
                   msg["message"], msg["image"], msg["video"]);
             }),
-            socket.on("newCall", (data) {
+            /*socket.on("newCall", (data) {
               print(data);
               incomingSDPOffer = data;
               playCallingSound();
@@ -217,7 +218,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
               incomingSDPOffer = null;
               stopCallingSound();
               if (mounted) setState(() {});
-            }),
+            }),*/
           });
 
       print(socket.connected);
@@ -225,7 +226,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
       print(err);
     }
   }
-
+/*
   void playCallingSound() {
     receivedCallAudio = AssetsAudioPlayer();
     if (kIsWeb) {
@@ -243,7 +244,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
     receivedCallAudio.pause();
     receivedCallAudioCounter = 0;
     //receivedCallAudio = AssetsAudioPlayer();
-  }
+  }*/
 
   _loadData() async {
     print('Loading data...');
@@ -279,7 +280,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
     _scrollController.dispose();
     socket.clearListeners();
     socket.dispose();
-    if (receivedCallAudio != null) {
+    /*if (receivedCallAudio != null) {
       receivedCallAudio.stop();
       receivedCallAudio.dispose();
     }
@@ -290,10 +291,10 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
       socket!.emit("leaveCall", {
         "user1": incomingSDPOffer["callerId"]!,
         "user2": GetStorage().read("username"),
-      });
+      });*/
     super.dispose();
   }
-
+/*
   _joinCall({
     required String callerId,
     required String calleeId,
@@ -318,7 +319,8 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
       ),
     );
   }
-
+*/
+/*
   decline() {
     socket!.emit("leaveCall", {
       "user1": incomingSDPOffer["callerId"]!,
@@ -326,15 +328,15 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
     });
     stopCallingSound();
   }
-
+*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          if (incomingSDPOffer == null) _buildAppBar(),
-          if (incomingSDPOffer != null)
+          /*if (incomingSDPOffer == null)*/ _buildAppBar(),
+          /*if (incomingSDPOffer != null)
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -408,8 +410,8 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                   ),
                 ),
               ],
-            ),
-          if (incomingSDPOffer == null)
+            ),*/
+          /*if (incomingSDPOffer == null)*/
             Expanded(
               child: Obx(() {
                 return ListView.builder(
@@ -433,7 +435,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                 );
               }),
             ),
-          if (incomingSDPOffer == null&&(doesUsernameIsAdmin==true||canSendMessage==true)) _buildMessageComposer(),
+          if (/*incomingSDPOffer == null&&*/(doesUsernameIsAdmin==true||canSendMessage==true||widget.isUserAdminInPage==true)) _buildMessageComposer(),
         ],
       ),
     );
@@ -447,12 +449,12 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
         children: [
           IconButton(
             onPressed: () {
-              if (receivedCallAudio != null) {
+              /*if (receivedCallAudio != null) {
                 receivedCallAudio.stop();
                 receivedCallAudio.dispose();
               }
 
-              receivedCallAudio = null;
+              receivedCallAudio = null;*/
               Navigator.pop(context);
             },
             icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -481,11 +483,11 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                               //createPeerConn(GetStorage().read('username'), widget.data["username"]);
 
                               //createNewMeeting();
-
+/*
                               _joinCall(
                                 callerId: GetStorage().read("username"),
                                 calleeId: widget.data["username"],
-                              );
+                              );*/
                             },
                           ),
                           IconButton(
@@ -499,10 +501,10 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                             icon: const Icon(Icons.task),
                             color: Colors.white,
                             onPressed: () {
-                                Get.to(TasksGroupHomePage(isAdmin: doesUsernameIsAdmin,members: widget.members,));
+                                Get.to(TasksGroupHomePage(isAdmin: doesUsernameIsAdmin,members: widget.members,isUserAdminInPage:widget.isUserAdminInPage));
                             },
                           ),
-                          if (doesUsernameIsAdmin)
+                          if (doesUsernameIsAdmin||widget.isUserAdminInPage)
                             IconButton(
                               icon: const Icon(Icons.settings),
                               color: Colors.white,
@@ -702,10 +704,11 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
 
                 var accessToken = GetStorage().read("accessToken");
                 //emit message to server
-                socket.emit("/chat", {
+                socket.emit("/chatGroup", {
                   "message": chatController.textController.text,
                   "token": accessToken,
-                  "username": widget.data["username"],
+                  "photo":GetStorage().read("photo"),
+                  "groupId": widget.data["id"],
                   "messageImageBytes": messageImageBytes,
                   "messageImageBytesName": messageImageBytesName,
                   "messageImageExt": messageImageExt,
@@ -729,10 +732,11 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
               } else if (messageVideoBytes != null) {
                 var accessToken = GetStorage().read("accessToken");
                 //emit message to server
-                socket.emit("/chat", {
+                socket.emit("/chatGroup", {
                   "message": chatController.textController.text,
                   "token": accessToken,
-                  "username": widget.data["username"],
+                  "photo":GetStorage().read("photo"),
+                  "groupId": widget.data["id"],
                   "messageImageBytes": messageImageBytes,
                   "messageImageBytesName": messageImageBytesName,
                   "messageImageExt": messageImageExt,

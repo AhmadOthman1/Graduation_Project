@@ -48,11 +48,11 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
   final LogOutButtonControllerImp _logoutController =
       Get.put(LogOutButtonControllerImp());
   _initCallingListener() async {
-    var authUrl = '$urlSSEStarter/userNotifications/notificationsAuth';
+    /*var authUrl = '$urlSSEStarter/userNotifications/notificationsAuth';
     var responce = await http.get(Uri.parse(authUrl), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
-    });
+    });*/
 
     if (receivedCallAudio != null) {
       receivedCallAudio.currentPosition.listen((position) {
@@ -105,11 +105,11 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
 
   _socketConnect() async {
     try {
-      var authUrl = '$urlSSEStarter/userNotifications/notificationsAuth';
+      /*var authUrl = '$urlSSEStarter/userNotifications/notificationsAuth';
       var responce = await http.get(Uri.parse(authUrl), headers: {
         'Content-type': 'application/json; charset=UTF-8',
         'Authorization': 'bearer ' + GetStorage().read('accessToken'),
-      });
+      });*/
       socket = IO.io(urlSSEStarter, <String, dynamic>{
         "transports": ["websocket"],
         "autoConnect": false,

@@ -114,8 +114,14 @@ class _PostState extends State<Post> {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      controller.goToProfileColleaguesPage(
-                                          post['createdBy']);
+                                      if(post['isUser']!= null && post['isUser']){
+
+                                          controller.goToUserPage( post['createdBy']);
+                                      }else if(post['isUser']!= null && post['isUser']==false){
+
+                                          controller.goToPage(post['createdBy']);
+                                      }
+                                      
                                     },
                                     child: CircleAvatar(
                                       backgroundImage: profileBackgroundImage,
@@ -216,7 +222,7 @@ class _PostState extends State<Post> {
                                   onTap: () {
                                     int postId = post['id'];
                                     controller.goToLikePage(
-                                        postId, widget.isPage);
+                                        postId, widget.isPage??(post['isUser']!= null ? !post['isUser'] : null));
                                   },
                                   child: Row(
                                     children: [
@@ -254,7 +260,7 @@ class _PostState extends State<Post> {
                                     int postId = post['id'];
                                     controller.gotoCommentPage(
                                         postId,
-                                        widget.isPage,
+                                        widget.isPage??(post['isUser']!= null ? !post['isUser'] : null),
                                         widget.isAdmin,                                        
                                         post['name'],
                                         post["photo"],
@@ -299,7 +305,7 @@ class _PostState extends State<Post> {
                                   onTap: () {
                                     setState(() {
                                       controller.toggleLike(
-                                          index, widget.isPage);
+                                          index, widget.isPage??(post['isUser']!= null ? !post['isUser'] : null));
                                     });
                                   },
                                   child: Container(
@@ -323,7 +329,7 @@ class _PostState extends State<Post> {
                                     int postId = post['id'];
                                     controller.gotoCommentPage(
                                         postId,
-                                        widget.isPage,
+                                        widget.isPage??(post['isUser']!= null ? !post['isUser'] : null),
                                         widget.isAdmin,
                                         post['name'],
                                         post["photo"],
