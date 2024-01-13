@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Groups_controller/GroupSetting_controller.dart';
+import 'package:growify/core/constant/routes.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/Admins/GroupAdmins.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/Members/ShowMembers.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/editGroupSettings.dart';
@@ -160,11 +161,12 @@ class GroupSettings extends StatelessWidget {
                       child: Text("Cancel"),
                     ),
                     TextButton(
-                      onPressed: () {
+                      onPressed: () async {
 
-                        controller.deleteGroup(groupData['id']);
+                        await controller.deleteGroup(groupData['id']);
 
                         Navigator.of(context).pop();
+                        Get.offNamed(AppRoute.homescreen);
                       },
                       child: Text("Delete"),
                     ),

@@ -82,13 +82,13 @@ class _ShowMembersState extends State<ShowMembers> {
                       trailing:  PopupMenuButton<String>(
                         icon: const Icon(Icons.more_vert),
                         onSelected: (String option) async {
-                          var message = await _controller.onMoreOptionSelected(option,username,widget.pageId);
+                          var message = await _controller.onMoreOptionSelected(option,username,widget.groupId);
                           (message != null)
                         ? showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return CustomAlertDialog(
-                                title: 'Error',
+                                title: 'Alert',
                                 icon: Icons.error,
                                 text: message,
                                 buttonText: 'OK',

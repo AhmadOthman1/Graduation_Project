@@ -435,7 +435,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                 );
               }),
             ),
-          if (/*incomingSDPOffer == null&&*/(doesUsernameIsAdmin==true||canSendMessage==true||widget.isUserAdminInPage==true)) _buildMessageComposer(),
+          if (/*incomingSDPOffer == null&&*/(doesUsernameIsAdmin==true||canSendMessage==true||(widget.isUserAdminInPage!=null && widget.isUserAdminInPage==true))) _buildMessageComposer(),
         ],
       ),
     );
@@ -504,7 +504,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                                 Get.to(TasksGroupHomePage(isAdmin: doesUsernameIsAdmin,members: widget.members,isUserAdminInPage:widget.isUserAdminInPage));
                             },
                           ),
-                          if (doesUsernameIsAdmin||widget.isUserAdminInPage)
+                          if (doesUsernameIsAdmin||(widget.isUserAdminInPage!=null && widget.isUserAdminInPage==true))
                             IconButton(
                               icon: const Icon(Icons.settings),
                               color: Colors.white,

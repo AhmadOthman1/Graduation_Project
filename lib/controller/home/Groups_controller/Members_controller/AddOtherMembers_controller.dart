@@ -15,12 +15,12 @@ class AddMembersController {
   final List<Map<String, dynamic>> admins = [];
   final ScrollController scrollController = ScrollController();
 
-  addMember(pageId, MemberUsername,groupId) async {
-    var url = "$urlStarter/user/addNewAdmin";
+  addMember(MemberUsername,groupId) async {
+    var url = "$urlStarter/user/addGroupMember";
     var SR;
    
     Map<String, dynamic> jsonData = {
-      "pageId": pageId,
+      "isEmployee": "false",
       "memberUsername": MemberUsername,
       "groupId": groupId,
     };
@@ -32,7 +32,7 @@ class AddMembersController {
     print(response.statusCode);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      addMember(pageId, MemberUsername,groupId);
+      addMember( MemberUsername,groupId);
       return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();

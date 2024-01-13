@@ -30,10 +30,9 @@ Future<http.Response?> getAndLoadPageEmployees(groupid) async {
     'Content-type': 'application/json; charset=UTF-8',
     'Authorization': 'bearer ' + GetStorage().read('accessToken'),
   });
-
+var responseBody = jsonDecode(response.body);
   print(response.statusCode);
-print("jjjjjjjjjjjjj");
-print('bearer ' + GetStorage().read('accessToken'));
+  print(responseBody['message']);
   if (response.statusCode == 403) {
     await getRefreshToken(GetStorage().read('refreshToken'));
     return getAndLoadPageEmployees(groupid);
@@ -77,7 +76,7 @@ admins.addAll(adminsobject.map((admin) => {
   
    
    Get.to(GroupChatPageMessages(
-      data: Groupmessages[0],admins: admins,members: members,isUserAdminInPage:true
+      data: Groupmessages[0],admins: admins,members: members,
     ));
 
 

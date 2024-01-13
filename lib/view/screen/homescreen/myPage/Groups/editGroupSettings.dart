@@ -346,7 +346,8 @@ class EditGroupSettingSettings extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             vertical: 13, horizontal: 135),
                         onPressed: () async {
-                          controller.postSaveChanges(pageId,groupId);
+                          await controller.postSaveChanges(groupId);
+                          
                         },
                         color: const Color.fromARGB(255, 85, 191, 218),
                         textColor: Colors.white,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Groups_controller/Members_controller/AddOtherMembers_controller.dart';
 import 'package:growify/controller/home/myPage_Controller/Employee_Controller/AddEmployee_controller.dart';
+import 'package:growify/core/constant/routes.dart';
 import 'package:growify/core/functions/alertbox.dart';
 
 class AddMember extends StatefulWidget {
@@ -31,7 +32,15 @@ class _AddMemberState extends State<AddMember> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            // Handle back button press here
+            Get.offNamed(AppRoute.homescreen); // This pops the current route off the stack
+          },
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -82,7 +91,6 @@ class _AddMemberState extends State<AddMember> {
                   if (formKey.currentState!.validate()) {
                     if (_usernameController.text.trim().isNotEmpty ) {
                       var message = await _controller.addMember(
-                          widget.pageId,
                           _usernameController.text.trim(),
                           widget.groupId);
                       (message != null)
@@ -90,7 +98,7 @@ class _AddMemberState extends State<AddMember> {
                               context: context,
                               builder: (BuildContext context) {
                                 return CustomAlertDialog(
-                                  title: 'Error',
+                                  title: 'Alert',
                                   icon: Icons.error,
                                   text: message,
                                   buttonText: 'OK',
