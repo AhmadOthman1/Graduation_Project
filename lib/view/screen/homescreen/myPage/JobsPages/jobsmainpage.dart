@@ -38,7 +38,7 @@ class _CompanyJobPageState extends State<JobsPage> {
   Future<void> _loadData() async {
     print('Loading data...');
     try {
-      await _controller.loadJobs(_controller.page, username);
+      await _controller.loadJobs(_controller.page);
       setState(() {
         _controller.page++;
         _controller.jobs;

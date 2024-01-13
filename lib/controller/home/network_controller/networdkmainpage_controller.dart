@@ -191,74 +191,77 @@ loadDashboard() async {
   }
 
   // show groups page
-
-List<Map<String, dynamic>> pagesData = [
-  {
-    'pageId': 1,
-    'pageName': "Page 1",
-    'groups': [
-      {
-        'name': "Main Group",
-        'id': 3,
-        'description': "im Main Group",
-        'parentNode': null,
-        'membersendmessage': false,
-      },
-      {
-        'name': "Group 1",
-        'id': 8,
-        'description': "im Group 1",
-        'parentNode': "Main Group",
-        'membersendmessage': true,
-      },
-      {
-        'name': "Sub 1.1",
-        'id': 7,
-        'description': "im Sub 1.1",
-        'parentNode': "Group 1",
-        'membersendmessage': false,
-      },
-      {
-        'name': "Sub 1.2",
-        'id': 5,
-        'description': "im Sub 1.2",
-        'parentNode': "Group 1",
-        'membersendmessage': false,
-      },
-    ],
-  },
-  {
-    'pageId': 2,
-    'pageName': "Page 2",
-    'groups': [
-      {
-        'name': "Group 2",
-        'id': 12,
-        'description': "im Group 2",
-        'parentNode': null,
-        'membersendmessage': true,
-      },
-      {
-        'name': "Sub 2.1",
-        'id': 11,
-        'description': "im Sub 2.1",
-        'parentNode': "Group 2",
-        'membersendmessage': false,
-      },
-      {
-        'name': "Sub 2.2",
-        'id': 9,
-        'description': "im Sub 2.2",
-        'parentNode': "Group 2",
-        'membersendmessage': false,
-      },
-    ],
-  },
+  List<Map<String, dynamic>> pagesData = [
+  
 ];
 
-  goToShowGroups(String username){
+
+
+
+  goToShowGroups(){
 
     Get.to( ShowGroupPage(pagesData: pagesData,));
   }
+
+  // get from database  . . . . . . . . . . . . . ..  .  .
+
+
+  getMyPageGroups() async {
+    var url = "$urlStarter/user/getUserGroups";
+    var responce = await http.get(Uri.parse(url), headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+    print(responce);
+    return responce;
+  }
+
+goToShowGroupPage() async {
+  var res = await getMyPageGroups();
+  
+  if (res == null) {
+    // Handle the case where the response is null
+    // You might want to show an error message or take appropriate action
+    return;
+  }
+
+  if (res.statusCode == 403) {
+    await getRefreshToken(GetStorage().read('refreshToken'));
+    goToShowGroupPage();
+    return;
+  } else if (res.statusCode == 401) {
+    _logoutController.goTosigninpage();
+  }
+
+  var resbody = jsonDecode(res.body);
+
+  if (res.statusCode == 409) {
+    return resbody['message'];
+  } else if (res.statusCode == 200) {
+    pagesData.clear();
+
+    if (resbody['groups'] != null) {
+      pagesData = (resbody['groups'] as List<dynamic>).map((dynamic group) {
+        print(group);
+        print("******");
+        return {
+          'pageId': group['pageId'],
+          'name': group['name'],
+          'id': group['groupId'],
+          'description': group['description'],
+          'parentNode': group['parentGroup'],
+          'membersendmessage': group['memberSendMessage'],
+        };
+      }).toList();
+    }
+
+    print("AAAAAAAAAAAAAAAAAAAAAAAALLLLLLLLLLLLLLLL");
+    print(pagesData);
+    Get.to(ShowGroupPage(pagesData: pagesData));
+  }
+}
+
+ 
+
 
 }

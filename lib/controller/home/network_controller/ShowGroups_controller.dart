@@ -1,65 +1,109 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/response/response.dart';
+import 'package:get/get_connect/http/src/response/response.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:growify/controller/home/logOutButton_controller.dart';
+import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/chatGroupMessage.dart';
+import 'package:http/http.dart' as http;
+
+LogOutButtonControllerImp _logoutController =
+    Get.put(LogOutButtonControllerImp());
 
 class ShowGroupsController {
   late RxList<Map<String, dynamic>> Groupmessages = <Map<String, dynamic>>[].obs;
 
    final List<Map<String, dynamic>> admins = [
-    {
-      'firstname': 'Ahmad',
-      'lastname': 'Othman',
-      'username': 'AhmadOthman',
-      'photo': null,
-    },
-
-    {
-      'firstname': 'Obaida',
-      'lastname': 'Aws',
-      'username': 'ObaidaAws',
-      'photo': null,
-    },
-
-    {
-      'firstname': 'Mazen',
-      'lastname': 'Fursan',
-      'username': 'MazenFursan',
-      'photo': null,
-    },
-
-
-    {
-      'firstname': 'Mohammad',
-      'lastname': 'Fadi',
-      'username': 'MohammadFadi',
-      'photo': null,
-    },
-
-    {
-      'firstname': 'Hossam',
-      'lastname': 'Moaeead',
-      'username': 'HossamMoaeead',
-      'photo': null,
-    },
+    
   ];
 
   final List<Map<String, dynamic>> members = [
-    {
-      'firstname': 'Obaida',
-      'lastname': 'Aws',
-      'username': 'obaida_aws',
-      'memberType': 'Employee',
-      'photo':null
-
-    },
-    {
-      'firstname': 'Jane',
-      'lastname': 'Doe',
-      'username': 'jane_doe',
-      'MemberType': 'Not Employee',
-      'photo':null
-    },
+   
   ];
 
+
+Future<http.Response?> getAndLoadPageEmployees(groupid) async {
+  var url = "$urlStarter/user/getMyPageGroupInfo?groupId=$groupid";
+  var response = await http.get(Uri.parse(url), headers: {
+    'Content-type': 'application/json; charset=UTF-8',
+    'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+  });
+
+  print(response.statusCode);
+print("jjjjjjjjjjjjj");
+print('bearer ' + GetStorage().read('accessToken'));
+  if (response.statusCode == 403) {
+    await getRefreshToken(GetStorage().read('refreshToken'));
+    return getAndLoadPageEmployees(groupid);
+  } else if (response.statusCode == 401) {
+    _logoutController.goTosigninpage();
+    return null; // Or handle as needed in your application
+  }
+
+  if (response.statusCode == 409) {
+    var responseBody = jsonDecode(response.body);
+    print(responseBody['message']);
+    return null; // Or handle as needed in your application
+  } else if (response.statusCode == 200) {
+    var responseBody = jsonDecode(response.body);
+   // print(responseBody);
+  
+    List<Map<String, dynamic>> members1;
+    List<Map<String, dynamic>> admins1;
+
+final List<dynamic> membersobject=responseBody['groupMembers'];
+final List<dynamic> adminsobject=responseBody['groupAdmins'];
+print("Adas");
+print(membersobject);
+print("8888888888888");
+print(adminsobject);
+
+members.addAll(membersobject.map((member) => {
+  'username': member['username'],
+  'photo': member['photo'], 
+   'firstname': member['user']['firstName'], 
+  'lastname': member['user']['lastName'], 
+}).toList());
+
+
+admins.addAll(adminsobject.map((admin) => {
+      'username': admin['username'],
+      'photo': admin['photo'],
+     'firstname': admin['user']['firstName'],
+      'lastname': admin['user']['lastName'],
+  }).toList());
+  
+   
+   Get.to(GroupChatPageMessages(
+      data: Groupmessages[0],admins: admins,members: members,isUserAdminInPage:true
+    ));
+
+
+
+   // print(pageEmployees);
+    print(";;;;;;;;;;;;;;;;;;;;;");
+
+
+  }
+
+  return response;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+///////////////////////////////
   goToGroupChatMessage(pageId) async {
 
     // here get data for all chat , members,admins,

@@ -114,7 +114,7 @@ class NetworksPage extends StatelessWidget {
                   break;
 
                     case 5:
-                  controller.goToShowGroups(username);
+                  controller.goToShowGroupPage();
                   break;
               }
             },

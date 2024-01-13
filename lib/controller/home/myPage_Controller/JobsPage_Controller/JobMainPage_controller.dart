@@ -18,10 +18,10 @@ class JobMainPageController {
   int pageSize = 10;
   int page = 1;
 
-  getJobs(page,username) async {
+  getJobs(page) async {
     
     var url =
-        "$urlStarter/user/getJobs?page=$page&pageSize=$pageSize&pageId=$username";
+        "$urlStarter/user/getUserJobs?page=$page&pageSize=$pageSize";
     var response = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -29,17 +29,17 @@ class JobMainPageController {
     return response;
   }
 
-  Future<void> loadJobs(page,username) async {
+  Future<void> loadJobs(page) async {
     if (isLoading) {
       return;
     }
     
     isLoading = true;
-    var response = await getJobs(page,username);
+    var response = await getJobs(page);
     print(response.statusCode);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      loadJobs(page,username);
+      loadJobs(page);
       return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -51,26 +51,28 @@ class JobMainPageController {
       return;
     } else if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-      final List<dynamic>? pageJobs = responseBody["pageJobs"];
+      print(responseBody);
+      final List<dynamic>? pageJobs = responseBody["jobs"];
       print(pageJobs);
       print("userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-      if (pageJobs != null) {
-        final newJob = pageJobs.map((job) {
-          return {
-            'pageJobId': job['pageJobId'],
-            'pageId': job['pageId'],
-            'title': job['title'],
-            'Fields': job['Fields'],
-            'description': job['description'],
-            'endDate': job['endDate'],
-            'photo':job['photo'],
-            
-          };
-        }).toList();
+     if (pageJobs != null) {
+  final newJob = pageJobs.map((job) {
+    return {
+      'pageJobId': job[0]['pageJobId'],
+      'pageId': job[0]['pageId'],
+      'title': job[0]['title'],
+      'Fields': job[0]['Fields'],
+      'description': job[0]['description'],
+      'endDate': job[0]['endDate'],
+      'photo': job[0]['photo'],
+    };
+  }).toList();
 
-        jobs.addAll(newJob);
-        //print(notifications);
-      }
+  jobs.addAll(newJob);
+  print(jobs);
+  print("userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+}
+
 
       isLoading = false;
     }
