@@ -19,6 +19,7 @@ const Page = require("../../models/pages");
 const pageJobs = require("../../models/pageJobs");
 const jobApplication = require("../../models/jobApplication");
 const systemFields = require("../../models/systemFields");
+const pageCalender = require("../../models/pageCalender");
 const { notifyUser, deleteNotification } = require('../notifyUser');
 
 exports.getMyPageInfo = async (req, res, next) => {
@@ -1850,6 +1851,168 @@ exports.addNewJob = async (req, res, next) => {
             } else {
                 return res.status(500).json({
                     message: 'You are not allowed to edit this information',
+                    body: req.body,
+                });
+            }
+        }
+        return res.status(500).json({
+            message: 'user not found',
+            body: req.body,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};
+exports.getPageCalender = async (req, res, next) => {
+    try {
+        var pageId = req.query.pageId;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        // Calculate the offset based on page and pageSize
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername != null) {
+            var userPageAdmin = await pageAdmin.findOne({
+                where: { username: userUsername, pageId: pageId}
+            });
+            if (userPageAdmin != null) {
+                var allPageCalender = await pageCalender.findAll({
+                    where: {
+                        pageId: pageId,
+                    },
+                });
+                console.log(allPageCalender);
+                return res.status(200).json({
+                    message: 'Calender fetched',
+                    Calender: allPageCalender
+                });
+            } else {
+                var allPageCalender = await pageCalender.findAll({
+                    where: {
+                        pageId: pageId,
+                    },
+                });
+                console.log(allPageCalender);
+                return res.status(200).json({
+                    message: 'Calender fetched',
+                    Calender: allPageCalender
+                });
+            }
+        }
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};
+exports.addNewPageEvent = async (req, res, next) => {
+    try {
+        const { pageId, subject, description, startTime } = req.body;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        // Calculate the offset based on page and pageSize
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername != null) {
+            if (subject == null || description == null || startTime == null) {
+                return res.status(500).json({
+                    message: 'invalid values',
+                    body: req.body
+                });
+            } else if (subject.length < 1 || subject.length > 255 || description.length < 1 || description.length > 2000) {
+                return res.status(500).json({
+                    message: 'values length out of the range 2000',
+                    body: req.body
+                });
+            }
+            var userPageAdmin = await pageAdmin.findOne({
+                where: { username: userUsername, pageId: pageId }
+            });
+            if (userPageAdmin != null) {
+                const eventDateTime = new Date(startTime);
+                const newEvent = await pageCalender.create({
+                    pageId: pageId,
+                    subject: subject,
+                    description: description,
+                    date: eventDateTime.toISOString().split('T')[0],
+                    time: eventDateTime.toISOString().split('T')[1].substring(0, 8),
+                });
+                return res.status(200).json({
+                    message: 'event Created',
+                });
+            } else {
+                return res.status(500).json({
+                    message: 'you are not allowed to edit this',
+                    body: req.body,
+                });
+            }
+        }
+        return res.status(500).json({
+            message: 'user not found',
+            body: req.body,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};
+exports.deletePageEvent = async (req, res, next) => {
+    try {
+        const { pageId, eventId } = req.body;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        // Calculate the offset based on page and pageSize
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername != null) {
+            var userPageAdmin = await pageAdmin.findOne({
+                where: { username: userUsername, pageId: pageId }
+            });
+            if (userPageAdmin != null) {
+                const userEvent = await pageCalender.findOne({
+                    where: {
+                        id: eventId,
+                        pageId: pageId,
+                    }
+                });
+                if (userEvent != null) {
+                    await userEvent.destroy();
+                    return res.status(200).json({
+                        message: 'event deleted',
+                    });
+                } else {
+                    return res.status(500).json({
+                        message: 'event not found',
+                    });
+                }
+            } else {
+                return res.status(500).json({
+                    message: 'you are not allowed to edit this',
                     body: req.body,
                 });
             }

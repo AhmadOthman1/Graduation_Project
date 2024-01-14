@@ -25,6 +25,7 @@ const userCalender =require('../controller/calender/userCalender')
 const pageGroups=require('../controller/myPages/pageGroups')
 const groupController=require('../controller/groups/groupController')
 const groupTasksController=require('../controller/groups/groupTasksController')
+const groupCalenderController=require('../controller/groups/groupCalenderController')
 const reportController=require('../controller/reports/reportController')
 
 
@@ -119,6 +120,10 @@ router.get('/getPageJobs',authenticateToken,myPagesController.getPageJobs);
 router.get('/getPageJobApplications',authenticateToken,myPagesController.getPageJobApplications);
 router.get('/getJobFields',authenticateToken,myPagesController.getJobFields);
 router.post('/addNewJob',authenticateToken,myPagesController.addNewJob);
+router.get('/getPageCalender',authenticateToken,myPagesController.getPageCalender);
+router.post('/addNewPageEvent',authenticateToken,myPagesController.addNewPageEvent);
+router.post('/deletePageEvent',authenticateToken,myPagesController.deletePageEvent);
+
 //user page groups
 router.get('/getMyPageGroups',authenticateToken,pageGroups.getMyPageGroups);
 router.get('/getMyPageGroupInfo',authenticateToken,pageGroups.getMyPageGroupInfo);
@@ -130,10 +135,13 @@ router.post('/addGroupAdmin',authenticateToken,groupController.addGroupAdmin);
 router.post('/deleteGroupAdmin',authenticateToken,groupController.deleteGroupAdmin);
 router.post('/addGroupMember',authenticateToken,groupController.addGroupMember);
 router.post('/deleteGroupMember',authenticateToken,groupController.deleteGroupMember);
-router.post('/deleteGroup',authenticateToken,groupController.deleteGroup);
 router.get('/getGroupTasks',authenticateToken,groupTasksController.getGroupTasks);
 router.post('/CreateGroupTask',authenticateToken,groupTasksController.CreateGroupTask);
 router.post('/ChangeGroupTaskStatus',authenticateToken,groupTasksController.ChangeGroupTaskStatus);
+router.get('/getGroupCalender',authenticateToken,groupCalenderController.getGroupCalender);
+router.post('/addNewGroupEvent',authenticateToken,groupCalenderController.addNewGroupEvent);
+router.post('/deleteGroupEvent',authenticateToken,groupCalenderController.deleteGroupEvent);
+router.post('/deleteGroup',authenticateToken,groupController.deleteGroup);
 
 // other Pages
 router.get('/getPageProfileInfo',authenticateToken,pagesProfile.getPageProfileInfo);

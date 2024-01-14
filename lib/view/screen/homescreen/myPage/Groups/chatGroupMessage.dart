@@ -476,7 +476,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.call),
+                            icon: const Icon(Icons.add_box),
                             color: Colors.white,
                             onPressed: () {
                               //createPeerConn(GetStorage().read('username'), widget.data["username"]);
