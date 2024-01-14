@@ -31,6 +31,22 @@ class LogOutButtonControllerImp extends GetxController {
         await goTosigninpage();
         return null;
       } else if (res.statusCode == 401) {
+        GetStorage().remove('loginemail');
+        GetStorage().remove('loginpassword');
+        GetStorage().remove('refreshToken');
+        GetStorage().remove('accessToken');
+        GetStorage().remove('username');
+        GetStorage().remove('firstname');
+        GetStorage().remove('lastname');
+        GetStorage().remove('photo');
+        firstName = "";
+        lastName = "";
+        userName = "";
+        email = "";
+        password = "";
+        phone = "";
+        dateOfBirth = "";
+        code = "";
         Get.toNamed(AppRoute.login);
       }
       if (res.statusCode == 409 || res.statusCode == 500) {
@@ -48,6 +64,22 @@ class LogOutButtonControllerImp extends GetxController {
           await goTosigninpage();
           return null;
         } else if (responce.statusCode == 401) {
+          GetStorage().remove('loginemail');
+          GetStorage().remove('loginpassword');
+          GetStorage().remove('refreshToken');
+          GetStorage().remove('accessToken');
+          GetStorage().remove('username');
+          GetStorage().remove('firstname');
+          GetStorage().remove('lastname');
+          GetStorage().remove('photo');
+          firstName = "";
+          lastName = "";
+          userName = "";
+          email = "";
+          password = "";
+          phone = "";
+          dateOfBirth = "";
+          code = "";
           Get.toNamed(AppRoute.login);
         }
         if (responce.statusCode == 200) {
@@ -74,7 +106,22 @@ class LogOutButtonControllerImp extends GetxController {
       print(err);
       return "server error";
     }
-
+    GetStorage().remove('loginemail');
+    GetStorage().remove('loginpassword');
+    GetStorage().remove('refreshToken');
+    GetStorage().remove('accessToken');
+    GetStorage().remove('username');
+    GetStorage().remove('firstname');
+    GetStorage().remove('lastname');
+    GetStorage().remove('photo');
+    firstName = "";
+    lastName = "";
+    userName = "";
+    email = "";
+    password = "";
+    phone = "";
+    dateOfBirth = "";
+    code = "";
     Get.offNamed(AppRoute.login);
   }
 }

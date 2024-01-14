@@ -58,13 +58,13 @@ class JobMainPageController {
      if (pageJobs != null) {
   final newJob = pageJobs.map((job) {
     return {
-      'pageJobId': job[0]['pageJobId'],
-      'pageId': job[0]['pageId'],
-      'title': job[0]['title'],
-      'Fields': job[0]['Fields'],
-      'description': job[0]['description'],
-      'endDate': job[0]['endDate'],
-      'photo': job[0]['photo'],
+      'pageJobId': job['pageJobId'],
+      'pageId': job['pageId'],
+      'title': job['title'],
+      'Fields': job['Fields'],
+      'description': job['description'],
+      'endDate': job['endDate'],
+      'photo': job['photo'],
     };
   }).toList();
 

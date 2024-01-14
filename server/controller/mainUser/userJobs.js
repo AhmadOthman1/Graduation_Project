@@ -45,16 +45,18 @@ exports.getUserJobs = async (req, res, next) => {
                     where: {
                         pageId:Page.pageId
                     },
-                    limit: parseInt(pageSize),
-                    offset: parseInt(offset),
                     order: [['endDate', 'DESC']],
                 });
-                allUserJobs.push(userJobs);
+                for(const job of userJobs){
+                    allUserJobs.push(job);
+                }
+                
             }
-            console.log(allUserJobs[0])
+            const newArray = allUserJobs.slice(parseInt(offset), parseInt(pageSize)+parseInt(offset) + 1);
+            console.log(newArray)
             return res.status(200).json({
                 message: 'jobs fetched',
-                jobs: allUserJobs
+                jobs: newArray
             });
         } else {
             return res.status(500).json({

@@ -150,7 +150,7 @@ class HomeScreenControllerImp extends HomeScreeenController {
                         "call": notificationType == "call" ? "true" : "false",
                       },
                       chronometer: Duration.zero,
-                      timeoutAfter: timeoutAfter,
+                      timeoutAfter: playSound? null: timeoutAfter,
                       actionButtons: [
                         NotificationActionButton(
                           key: 'check',

@@ -25,6 +25,9 @@ const groupAdmin = require('../../models/groupAdmin');
 const groupMember = require('../../models/groupMember');
 exports.getUserFollowedPages = async (req, res, next) => {
     try {
+        var page = req.query.page || 1;
+        var pageSize = req.query.pageSize || 10;
+        const offset = (page - 1) * pageSize;
         const authHeader = req.headers['authorization']
         const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
         var userUsername = decoded.username;
@@ -39,6 +42,9 @@ exports.getUserFollowedPages = async (req, res, next) => {
             pageFollower.findAll({
                 where: { username: existingEmail.username },
                 include: userPages,
+                limit: parseInt(pageSize),
+                offset: parseInt(offset),
+                order: [['createdAt', 'DESC']],
             }).then(async (followedPages) => {
                 const userPages = await Promise.all(followedPages.map(async (followedPage) => {
                     const pageData = followedPage.page.dataValues;
@@ -95,7 +101,9 @@ exports.getUserFollowedPages = async (req, res, next) => {
 }
 exports.getUserEmployedPages = async (req, res, next) => {
     try {
-        console.log("aaaaaaaaaaaaaaaaaaaa");
+        var page = req.query.page || 1;
+        var pageSize = req.query.pageSize || 10;
+        const offset = (page - 1) * pageSize;
         const authHeader = req.headers['authorization']
         const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
         var userUsername = decoded.username;
@@ -110,6 +118,9 @@ exports.getUserEmployedPages = async (req, res, next) => {
             pageEmployees.findAll({
                 where: { username: existingEmail.username },
                 include: userPages,
+                limit: parseInt(pageSize),
+                offset: parseInt(offset),
+                order: [['createdAt', 'DESC']],
             }).then(async (EmployedPages) => {
                 const userPages = await Promise.all(EmployedPages.map(async (EmployedPage) => {
                     const pageData = EmployedPage.page.dataValues;
