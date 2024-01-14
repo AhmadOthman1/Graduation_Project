@@ -49,7 +49,8 @@ class _CalendarPageState extends State<Calender> {
 
                 if (newAppointments != null) {
 
-              controller.addNewEvent();
+              await controller.addNewEvent(newAppointments);
+              
                 //  controller.addAppointments(newAppointments);
                  /* setState(() {
                     appointments = controller.getAppointmentsForDate(selectedDate);

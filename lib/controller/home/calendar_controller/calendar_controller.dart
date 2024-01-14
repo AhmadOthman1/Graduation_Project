@@ -43,8 +43,34 @@ class CalendarController extends GetxController {
     ];
   }
 // store in the database 
-addNewEvent(){
+addNewEvent(newAppointments) async {
+  var url = "$urlStarter/user/addNewUserEvent";
+    Map<String, dynamic> jsonData = {
+      "subject":newAppointments[0].subject,
+      "description": newAppointments[0].description,
+      "startTime": newAppointments[0].startTime.toString(),
+    };
+    String jsonString = jsonEncode(jsonData);
+    var response = await http.post(Uri.parse(url), body: jsonString, headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+     if (response.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      addNewEvent(newAppointments);
+      return;
+    } else if (response.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
 
+    if (response.statusCode == 409) {
+      var responseBody = jsonDecode(response.body);
+      print(responseBody['message']);
+      return;
+    } else if (response.statusCode == 200) {
+      Get.back();
+      return true;
+    }
 }
 
 

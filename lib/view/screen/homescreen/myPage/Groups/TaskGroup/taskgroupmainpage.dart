@@ -14,10 +14,16 @@ import 'package:multi_dropdown/widgets/selection_chip.dart';
 import 'package:multi_dropdown/widgets/single_selected_item.dart';
 
 class TasksGroupHomePage extends StatefulWidget {
-  const TasksGroupHomePage({super.key, this.isAdmin, this.members,this.isUserAdminInPage});
+  const TasksGroupHomePage(
+      {super.key,
+      this.isAdmin,
+      this.members,
+      this.isUserAdminInPage,
+      this.groupData});
   final isAdmin;
   final members;
   final isUserAdminInPage;
+  final groupData;
   @override
   _TasksGroupHomePageState createState() => _TasksGroupHomePageState();
 }
@@ -47,7 +53,6 @@ class _TasksGroupHomePageState extends State<TasksGroupHomePage> {
   }
 
   void _addTask() async {
- 
     var selectedStatus = 'ToDo';
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
     final result = await showDialog<Task>(
@@ -171,8 +176,9 @@ class _TasksGroupHomePageState extends State<TasksGroupHomePage> {
                                     searchEnabled: true,
                                     onOptionSelected:
                                         (List<ValueItem> selectedOptions) {
-                                          print("p888888888888888888888");
-                                          print("Selected options: $selectedOptions");
+                                      print("p888888888888888888888");
+                                      print(
+                                          "Selected options: $selectedOptions");
                                       selectedUsernames = selectedOptions
                                           .map((option) =>
                                               option.value.toString())
@@ -329,9 +335,6 @@ class _TasksGroupHomePageState extends State<TasksGroupHomePage> {
                     children: <Widget>[
                       TextButton(
                         onPressed: () async {
-                             print("AAAAAAAAAAAAAAAAAAAAAAA");
-    print(selectedUsernames);
-    print("AAAAAAAAAAAAAAAAAAAAAAA");
                           if (formKey.currentState!.validate()) {
                             if (endDate != null && startDate != null) {
                               if (endDate!.isBefore(startDate!)) {
@@ -403,24 +406,9 @@ class _TasksGroupHomePageState extends State<TasksGroupHomePage> {
                                 endDate ?? DateTime.now(),
                                 selectedStatus,
                               );
-                              var newTaskId =
-                                  await controller.createUserTask(task,selectedUsernames.toString());
-                              if (newTaskId != null)
-                                Navigator.pop(
-                                  context,
-                                  Task(
-                                    taskNameController.text,
-                                    descriptionController.text,
-                                    startTime ??
-                                        const TimeOfDay(hour: 0, minute: 0),
-                                    endTime ??
-                                        const TimeOfDay(hour: 0, minute: 0),
-                                    startDate ?? DateTime.now(),
-                                    endDate ?? DateTime.now(),
-                                    selectedStatus,
-                                    newTaskId,
-                                  ),
-                                );
+                              await controller.createUserTask(task,
+                                  selectedUsernames, widget.groupData['id']);
+                              Navigator.pop(context);
                             }
                           }
                         },
@@ -461,7 +449,7 @@ class _TasksGroupHomePageState extends State<TasksGroupHomePage> {
   Widget build(BuildContext context) {
     return FutureBuilder(
         // Replace this with your actual future operation
-        future: controller.initUserTasks(),
+        future: controller.initUserTasks(widget.groupData['id']),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Return a loading indicator while waiting for the future to complete
@@ -500,13 +488,19 @@ class _TasksGroupHomePageState extends State<TasksGroupHomePage> {
         });
   }
 
+  bool isBefore(TimeOfDay a, TimeOfDay b) {
+    return a.hour * 60 + a.minute < b.hour * 60 + b.minute;
+  }
+
   Widget buildTab(String status, bool isAdmin) {
     List<Task> filteredTasks =
         tasks.where((task) => task.status == status).toList();
 
     List<String> dropdownItems = ['ToDo', 'Doing', 'Done'];
 
-    if (isAdmin) {
+    if (isAdmin ||
+        (widget.isUserAdminInPage != null &&
+            widget.isUserAdminInPage == true)) {
       // Add 'Archived' and 'Delete' only if isAdmin is true
       dropdownItems.addAll(['Archived', 'Delete']);
     }
@@ -517,6 +511,21 @@ class _TasksGroupHomePageState extends State<TasksGroupHomePage> {
           : ListView.builder(
               itemCount: filteredTasks.length,
               itemBuilder: (BuildContext context, int index) {
+                DateTime now = DateTime.now();
+                DateTime endDate = DateTime(
+                  filteredTasks[index].endDate.year,
+                  filteredTasks[index].endDate.month,
+                  filteredTasks[index].endDate.day,
+                  filteredTasks[index].endTime.hour,
+                  filteredTasks[index].endTime.minute,
+                );
+
+                bool isTaskCompleted = endDate.isBefore(now) ||
+                    (endDate.isAtSameMomentAs(now) &&
+                        isBefore(
+                          TimeOfDay.fromDateTime(now),
+                          filteredTasks[index].endTime,
+                        ));
                 return ListTile(
                   title: Text(filteredTasks[index].taskName),
                   subtitle: Column(
@@ -527,12 +536,19 @@ class _TasksGroupHomePageState extends State<TasksGroupHomePage> {
                       ),
                       Text(
                         'End: ${_formatDate(filteredTasks[index].endDate)}, ${filteredTasks[index].endTime.format(context)}',
+                        style: TextStyle(
+                          color: !isTaskCompleted
+                              ? Colors.green[800]
+                              : Colors.red[800],
+                        ),
                       ),
                     ],
                   ),
                   trailing: (status != 'Archived') ||
                           isAdmin ||
-                          (isAdmin && status == 'Archived')
+                          (isAdmin && status == 'Archived') ||
+                          (widget.isUserAdminInPage != null &&
+                              widget.isUserAdminInPage == true)
                       ? DropdownButton<String>(
                           value: filteredTasks[index].status,
                           items: dropdownItems.map((String value) {
@@ -545,9 +561,9 @@ class _TasksGroupHomePageState extends State<TasksGroupHomePage> {
                             if (newValue != null) {
                               var result =
                                   await controller.changeUserTaskStatus(
-                                filteredTasks[index],
-                                newValue,
-                              );
+                                      filteredTasks[index],
+                                      newValue,
+                                      widget.groupData['id']);
                               if (result && newValue != 'Delete') {
                                 filteredTasks[index].status = newValue;
                                 setState(() {});
@@ -570,10 +586,11 @@ class _TasksGroupHomePageState extends State<TasksGroupHomePage> {
                 );
               },
             ),
-      floatingActionButton: isAdmin
+      floatingActionButton: isAdmin ||
+              (widget.isUserAdminInPage != null &&
+                  widget.isUserAdminInPage == true)
           ? FloatingActionButton(
-              onPressed:_addTask,
-              
+              onPressed: _addTask,
               child: const Icon(Icons.add),
             )
           : null,

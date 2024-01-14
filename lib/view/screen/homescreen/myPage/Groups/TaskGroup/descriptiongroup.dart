@@ -44,6 +44,9 @@ class DescriptionGroupPage extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Text(
+              'user: ${task.username}',
+            ),const SizedBox(height: 10),
+            Text(
               'Status: ${task.status}',
             ),
             const SizedBox(height: 10),

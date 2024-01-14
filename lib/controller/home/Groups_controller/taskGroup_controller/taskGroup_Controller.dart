@@ -20,8 +20,8 @@ TimeOfDay stringToTimeOfDay(String time) {
 }
 
 class TasksGroupController extends GetxController {
-  getUserTasks() async {
-    var url = "$urlStarter/user/getUserTasks";
+  getUserTasks(groupId) async {
+    var url = "$urlStarter/user/getGroupTasks?groupId=$groupId";
     var response = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -29,11 +29,11 @@ class TasksGroupController extends GetxController {
     return response;
   }
 
-  initUserTasks() async {
-    var response = await getUserTasks();
+  initUserTasks(groupId) async {
+    var response = await getUserTasks(groupId);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      initUserTasks();
+      initUserTasks(groupId);
       return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -56,7 +56,9 @@ class TasksGroupController extends GetxController {
           DateTime.parse(taskData['startDate']),
           DateTime.parse(taskData['endDate']),
           taskData['status'],
-          taskData['id'],
+          taskData['username'],
+          taskData['taskId'],
+          
         );
         tasks.add(task);
         print(task);
@@ -66,9 +68,10 @@ class TasksGroupController extends GetxController {
     }
   }
 
-  postChangeUserTaskStatus(taskId, newValue) async {
-    var url = "$urlStarter/user/ChangeUserTaskStatus";
+  postChangeUserTaskStatus(taskId, newValue,groupId) async {
+    var url = "$urlStarter/user/ChangeGroupTaskStatus";
     Map<String, dynamic> jsonData = {
+      "groupId":groupId,
       "taskId": taskId,
       "newValue": newValue,
     };
@@ -80,11 +83,11 @@ class TasksGroupController extends GetxController {
     return response;
   }
 
-  changeUserTaskStatus(task, newValue) async {
-    var response = await postChangeUserTaskStatus(task.id, newValue);
+  changeUserTaskStatus(task, newValue,groupId) async {
+    var response = await postChangeUserTaskStatus(task.id, newValue,groupId);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      changeUserTaskStatus(task, newValue);
+      changeUserTaskStatus(task, newValue,groupId);
       return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -108,11 +111,13 @@ String _formatDate(DateTime date) {
   return '${time.hour}:${time.minute}:00';
  
 }
-  postCreateUserTask(task,String selectedUsernames) async {
-    var url = "$urlStarter/user/CreateUserTask";
+  postCreateUserTask(task, selectedUsernames,groupId) async {
+    var url = "$urlStarter/user/CreateGroupTask";
     Map<String, dynamic> jsonData = {
+      "groupId":groupId,
       "taskName": task.taskName,
       "description":  task.description,
+      "users":(selectedUsernames).join(','),
       "startTime":  _formatTimeOfDay(task.startTime),
       "endTime":  _formatTimeOfDay(task.endTime),
       "startDate":  _formatDate(task.startDate),
@@ -125,13 +130,14 @@ String _formatDate(DateTime date) {
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
     });
     return response;
+    return;
   }
 
-  createUserTask(task,String selectedUsernames) async {
-    var response = await postCreateUserTask(task,selectedUsernames);
+  createUserTask(task, selectedUsernames,groupId) async {
+    var response = await postCreateUserTask(task,selectedUsernames,groupId);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      createUserTask(task,selectedUsernames);
+      createUserTask(task,selectedUsernames,groupId);
       return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();
