@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/calendar_controller/calendar_controller.dart';
+import 'package:growify/core/functions/alertbox.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 
@@ -113,9 +114,46 @@ class _CalendarPageState extends State<Calender> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Title: ${appointments[index].subject}',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                Row(
+                  children: [
+                    Text(
+                      'Title: ${appointments[index].subject}',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Spacer(),
+                    PopupMenuButton<String>(
+                      icon: const Icon(Icons.more_vert),
+                      onSelected: (String option) async {
+                        var appointmentId = appointments[index]?.id ??
+                            0; // Use a default value if id is null
+                        var message = await controller.onMoreOptionSelected(
+                            option, appointmentId);
+
+                        (message != null)
+                            ? showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return CustomAlertDialog(
+                                    title: 'Error',
+                                    icon: Icons.error,
+                                    text: message,
+                                    buttonText: 'OK',
+                                  );
+                                },
+                              )
+                            : null;
+                        setState(() {});
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return controller.moreOptions.map((String option) {
+                          return PopupMenuItem<String>(
+                            value: option,
+                            child: Text(option),
+                          );
+                        }).toList();
+                      },
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 8.0),
                 Text(

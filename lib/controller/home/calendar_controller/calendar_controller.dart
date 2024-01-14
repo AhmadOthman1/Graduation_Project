@@ -15,12 +15,14 @@ import 'package:intl/intl.dart';
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 class Appointment {
+  int? id; // Make id nullable (optional)
   DateTime startTime;
   String subject;
   String eventTime;
   String description;
 
   Appointment({
+    this.id,
     required this.startTime,
     required this.subject,
     required this.eventTime,
@@ -28,8 +30,26 @@ class Appointment {
   });
 }
 
+
 class CalendarController extends GetxController {
   late List<Appointment> allAppointments;
+
+
+  final RxList<String> moreOptions = <String>[
+    'Delete',
+  ].obs;
+onMoreOptionSelected(
+      String option  , int id ) async {
+      switch (option) {
+        case 'Delete':
+          return await deleteEvent(id);
+          break;
+      }
+  }
+
+deleteEvent(id){
+
+}
 
   @override
   void onInit() {
@@ -116,6 +136,7 @@ Future<void> getEvents() async {
           subject: calendarItem['subject'],
           eventTime: calendarItem['time'],
           description: calendarItem['description'],
+          id:calendarItem['id'],
         );
 
         allAppointments.add(appointment);
