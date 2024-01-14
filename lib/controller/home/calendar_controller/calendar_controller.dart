@@ -8,8 +8,7 @@ import 'package:growify/global.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
-LogOutButtonControllerImp _logoutController =
-    Get.put(LogOutButtonControllerImp());
+LogOutButtonControllerImp _logoutController = Get.put(LogOutButtonControllerImp());
 
 class Appointment {
   int? id; // Make id nullable (optional)
@@ -28,11 +27,12 @@ class Appointment {
 }
 
 class CalendarController extends GetxController {
-  late List<Appointment> allAppointments;
+  late List<Appointment> allAppointments = [];
 
   final RxList<String> moreOptions = <String>[
     'Delete',
   ].obs;
+
   onMoreOptionSelected(String option, int id) async {
     switch (option) {
       case 'Delete':
@@ -64,7 +64,7 @@ class CalendarController extends GetxController {
       print(responseBody['message']);
       return responseBody['message'];
     } else if (response.statusCode == 200) {
-            var responseBody = jsonDecode(response.body);
+      var responseBody = jsonDecode(response.body);
 
       allAppointments.removeWhere((Appointment) => Appointment.id == id);
       return responseBody['message'];
@@ -81,7 +81,7 @@ class CalendarController extends GetxController {
     allAppointments = [];
   }
 
-// store in the database
+  // store in the database
   addNewEvent(newAppointments) async {
     var url = "$urlStarter/user/addNewUserEvent";
     Map<String, dynamic> jsonData = {
@@ -112,8 +112,7 @@ class CalendarController extends GetxController {
     }
   }
 
-  // get data from database
-
+  // get data from the database
   Future<void> getEvents() async {
     var url = "$urlStarter/user/getUserCalender";
     var response = await http.get(Uri.parse(url), headers: {
@@ -160,8 +159,6 @@ class CalendarController extends GetxController {
       }
     }
   }
-
-  ///
 
   List<dynamic> getEventsForDay(DateTime day) {
     List<dynamic> events = [];

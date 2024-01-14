@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/Post_controller.dart';
+import 'package:growify/controller/home/Search_Cotroller.dart';
 import 'package:growify/global.dart';
 
 class CommentsMainPage extends StatefulWidget {
@@ -15,6 +16,7 @@ class CommentsMainPage extends StatefulWidget {
 
 class _CommentsMainPageState extends State<CommentsMainPage> {
   PostControllerImp controller = Get.put(PostControllerImp());
+  final SearchControllerImp searchcontroller = Get.put(SearchControllerImp());
   final TextEditingController commentController = TextEditingController();
 
   final AssetImage defultprofileImage =
@@ -35,6 +37,7 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
     int postId = args?['postId'] ?? 0;
      String name = args?['name'] ?? (GetStorage().read("firstname") + " " +GetStorage().read("lastname"));
     bool? isPage = args?['isPage'] ?? false;
+    
     bool? isAdmin = args?['isAdmin'] ?? false;
     var photo;
 
@@ -97,7 +100,9 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                                   option,
                                   comment.createdBy,
                                   comment.id,
-                                  isPage); // comment.createdBy: the username of the comment creator, we can find  the post creator via comment id
+                                  isPage,
+                                  
+                                  ); // comment.createdBy: the username of the comment creator, we can find  the post creator via comment id
                               if (status == 200) {
                                 var thisCommentId = comment.id;
                                 comments.removeWhere(
@@ -143,7 +148,13 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                           ),
                           leading: InkWell(
                             onTap: () {
-                              controller.goToUserPage(comment.createdBy);
+                              if (isPage != null && isPage == true) {
+                                searchcontroller.goToPage(comment.createdBy);
+                                
+                              }
+                             
+                                controller.goToUserPage(comment.createdBy);
+
                             },
                             child: CircleAvatar(
                               backgroundImage:

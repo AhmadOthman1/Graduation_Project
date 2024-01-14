@@ -4,6 +4,7 @@ import 'package:growify/controller/home/Groups_controller/GroupSetting_controlle
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/Admins/GroupAdmins.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/Members/ShowMembers.dart';
+import 'package:growify/view/screen/homescreen/myPage/Groups/createGroup_inGroup.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/editGroupSettings.dart';
 
 
@@ -131,6 +132,38 @@ class GroupSettings extends StatelessWidget {
                       ],
                     ),
                   ),
+                ),
+              ),
+              const Divider(
+                color: Color.fromARGB(255, 194, 193, 193),
+                thickness: 2.0,
+              ),
+
+              Container(
+                margin: const EdgeInsets.only(top: 10, bottom: 10),
+                child: InkWell(
+                  onTap: () {
+                  
+                  Get.to(CreateGroupinGroupPage(groupsData: groupData,pageId: groupData['pageId'],));
+                  },
+                  child: Container(
+                    height: 35,
+                    padding: const EdgeInsets.only(left: 10),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.add),
+                        SizedBox(width: 10),
+                        Text(
+                          "Create New Group",
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        Spacer(),
+                        Icon(Icons.arrow_forward, size: 30),
+                      ],
+                    ),
+                  ),
+                  
                 ),
               ),
               const Divider(

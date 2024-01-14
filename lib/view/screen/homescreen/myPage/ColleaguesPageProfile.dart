@@ -122,6 +122,7 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
           ),
           const SizedBox(height: 16),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 '$firstName',

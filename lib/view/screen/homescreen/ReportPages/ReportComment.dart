@@ -5,6 +5,7 @@ import 'package:growify/core/functions/alertbox.dart';
 
 class ReportCommentPage extends StatefulWidget {
   final commentId;
+ 
 
   ReportCommentPage({this.commentId});
 
@@ -66,7 +67,8 @@ class _ReportCommentPageState extends State<ReportCommentPage> {
                       print('Comment ID: ${widget.commentId}');
                       print('Report: ${reportController.text}');
                       var message = await controller.ReportComment(widget.commentId, reportController.text);
-                      Get.back();
+
+                   //   Get.back();
                       (message != null)
                           ? showDialog(
                               context: context,
@@ -80,6 +82,7 @@ class _ReportCommentPageState extends State<ReportCommentPage> {
                               },
                             )
                           : null;
+                          reportController.clear();
                     }
                   },
                   color: const Color.fromARGB(255, 85, 191, 218),

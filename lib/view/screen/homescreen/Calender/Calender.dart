@@ -24,8 +24,7 @@ class _CalendarPageState extends State<Calender> {
   @override
   void initState() {
     super.initState();
-    controller.initAppointments();
-    appointments = controller.getAppointmentsForDate(selectedDate);
+    // Initialize non-dependent state here
     firstDay = DateTime.now().subtract(const Duration(days: 365));
     lastDay = DateTime.now().add(const Duration(days: 365));
     focusedDay = DateTime.now();
@@ -41,31 +40,45 @@ class _CalendarPageState extends State<Calender> {
       appBar: AppBar(
         title: const Text('My Events'),
       ),
-      body: Column(
-        children: [
-          _buildCalendar(),
-          Container(
-            margin: const EdgeInsets.only(top: 20),
-            width: 370,
-            child: ElevatedButton(
-              onPressed: () async {
-                List<Appointment>? newAppointments =
-                    await _showAddEventDialog(context);
+      body: FutureBuilder(
+        future: controller.getEvents(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            // Initialize dependent state here after fetching events
+            appointments = controller.getAppointmentsForDate(selectedDate);
 
-                if (newAppointments != null) {
-                  await controller.addNewEvent(newAppointments);
+            return Column(
+              children: [
+                _buildCalendar(),
+                Container(
+                  margin: const EdgeInsets.only(top: 20),
+                  width: 370,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      List<Appointment>? newAppointments =
+                          await _showAddEventDialog(context);
 
-                  setState(() {
-                    appointments =
-                        controller.getAppointmentsForDate(selectedDate);
-                  });
-                }
-              },
-              child: const Text('Add Event'),
-            ),
-          ),
-          _buildAppointmentList(),
-        ],
+                      if (newAppointments != null) {
+                        await controller.addNewEvent(newAppointments);
+
+                        setState(() {
+                          appointments =
+                              controller.getAppointmentsForDate(selectedDate);
+                        });
+                      }
+                    },
+                    child: const Text('Add Event'),
+                  ),
+                ),
+                _buildAppointmentList(),
+              ],
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
       ),
     );
   }
@@ -144,7 +157,10 @@ class _CalendarPageState extends State<Calender> {
                                 },
                               )
                             : null;
-                        setState(() {});
+                        setState(() {
+                          appointments.removeWhere((appointment) =>
+                              appointment.id == appointmentId);
+                        });
                       },
                       itemBuilder: (BuildContext context) {
                         return controller.moreOptions.map((String option) {
