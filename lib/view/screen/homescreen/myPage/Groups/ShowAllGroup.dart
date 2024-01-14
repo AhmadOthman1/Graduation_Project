@@ -120,7 +120,7 @@ class _GroupPageState extends State<GroupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Group Page'),
+        title: Text('Groups Page'),
         actions: [
           TextButton(
             onPressed: () {

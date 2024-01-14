@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:growify/controller/home/myPage_Controller/PageColleaguesProfile_controller.dart';
+import 'package:growify/core/functions/alertbox.dart';
 
 import 'package:growify/global.dart';
 
@@ -120,9 +121,46 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
             backgroundImage: profileBackgroundImage ?? defaultProfileImage,
           ),
           const SizedBox(height: 16),
-          Text(
-            '$firstName',
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          Row(
+            children: [
+              Text(
+                '$firstName',
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(width: 4,),
+
+               PopupMenuButton<String>(
+                        icon: const Icon(Icons.more_vert),
+                        onSelected: (String option) async {
+                          var message = await controller.onMoreOptionSelected(option,widget.userData.id,);
+                          (message != null)
+                        ? showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CustomAlertDialog(
+                                title: 'Alert',
+                                icon: Icons.error,
+                                text: message,
+                                buttonText: 'OK',
+                                
+                              );
+                            },
+                          )
+                        : null;
+                        setState(() {
+                          
+                        });
+                        },
+                        itemBuilder: (BuildContext context) {
+                            return controller.moreOptions.map((String option) {
+                              return PopupMenuItem<String>(
+                                value: option,
+                                child: Text(option),
+                              );
+                            }).toList();
+                        },
+                      ),
+            ],
           ),
           Text(
             '@${widget.userData.id}', // Replace with the actual username

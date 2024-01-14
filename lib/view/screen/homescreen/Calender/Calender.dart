@@ -30,6 +30,10 @@ class _CalendarPageState extends State<Calender> {
     focusedDay = DateTime.now();
   }
 
+  bool isSameMonth(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,13 +52,11 @@ class _CalendarPageState extends State<Calender> {
                     await _showAddEventDialog(context);
 
                 if (newAppointments != null) {
+                  await controller.addNewEvent(newAppointments);
 
-              await controller.addNewEvent(newAppointments);
-              
-                //  controller.addAppointments(newAppointments);
-                 /* setState(() {
+                  setState(() {
                     appointments = controller.getAppointmentsForDate(selectedDate);
-                  });*/
+                  });
                 }
               },
               child: const Text('Add Event'),
@@ -80,7 +82,14 @@ class _CalendarPageState extends State<Calender> {
         if (!isSameDay(selectedDate, selectedDay)) {
           setState(() {
             selectedDate = selectedDay;
+
+            // Check if the selected day is in the current month
+            if (!isSameMonth(selectedDate, focusedDay)) {
+              focusedDay = DateTime(focusedDay.year, focusedDay.month, 1);
+            }
+
             appointments = controller.getAppointmentsForDate(selectedDate);
+            this.focusedDay = focusedDay;
           });
         }
       },
@@ -88,46 +97,45 @@ class _CalendarPageState extends State<Calender> {
   }
 
   Widget _buildAppointmentList() {
-  return Expanded(
-    child: ListView.builder(
-      itemCount: appointments.length,
-      itemBuilder: (context, index) {
-        String formattedDate = DateFormat('yyyy-MM-dd').format(appointments[index].startTime);
+    return Expanded(
+      child: ListView.builder(
+        itemCount: appointments.length,
+        itemBuilder: (context, index) {
+          String formattedDate = DateFormat('yyyy-MM-dd').format(appointments[index].startTime);
 
-        return Container(
-          margin: const EdgeInsets.all(8.0),
-          padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Title: ${appointments[index].subject}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8.0),
-              Text(
-                'Description: ${appointments[index].description}',
-              ),
-              const SizedBox(height: 8.0),
-              Text(
-                'Date: $formattedDate', // Use the formatted date here
-              ),
-              const SizedBox(height: 8.0),
-              Text(
-                'Time: ${appointments[index].eventTime}',
-              ),
-            ],
-          ),
-        );
-      },
-    ),
-  );
-}
-
+          return Container(
+            margin: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Title: ${appointments[index].subject}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8.0),
+                Text(
+                  'Description: ${appointments[index].description}',
+                ),
+                const SizedBox(height: 8.0),
+                Text(
+                  'Date: $formattedDate',
+                ),
+                const SizedBox(height: 8.0),
+                Text(
+                  'Time: ${appointments[index].eventTime}',
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
 
   Future<List<Appointment>?> _showAddEventDialog(BuildContext context) async {
     TextEditingController titleController = TextEditingController();

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/network_controller/ShowGroups_controller.dart';
+import 'package:growify/view/screen/homescreen/myPage/Groups/creategroup.dart';
 
 class ShowGroupPage extends StatefulWidget {
-  final List<Map<String, dynamic>> pagesData;
-
+  final pagesData;
   const ShowGroupPage({Key? key, required this.pagesData}) : super(key: key);
 
   @override
@@ -13,18 +13,19 @@ class ShowGroupPage extends StatefulWidget {
 
 class _ShowGroupPageState extends State<ShowGroupPage> {
   final ShowGroupsController groupsController = ShowGroupsController();
+  late List<Map<String, dynamic>> groupsDatalocal;
   late Map<String, bool> isExpandedMap;
 
   @override
   void initState() {
     super.initState();
 
+    groupsDatalocal = List<Map<String, dynamic>>.from(widget.pagesData);
+
     isExpandedMap = {};
 
-    for (var pageData in widget.pagesData) {
-      for (var groupData in pageData['groups'] ?? []) {
-        isExpandedMap[groupData['name'] ?? ""] = false;
-      }
+    for (var groupData in groupsDatalocal) {
+      isExpandedMap[groupData['name']!] = false;
     }
   }
 
@@ -39,17 +40,56 @@ class _ShowGroupPageState extends State<ShowGroupPage> {
     isExpandedMap[groupName] = isExpanded;
   }
 
-  findGroupById(int groupId) {
-    for (var groupData in widget.pagesData) {
+  findGroupByName(int groupId) {
+    for (var groupData in groupsDatalocal) {
       if (groupData['id'] == groupId) {
         return groupData['name'];
       }
     }
-    return '';
+    return;
+  }
+
+  Widget buildPageSection(String pageId) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            'Page $pageId',
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 20.0,
+            ),
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 4),
+          child: ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: groupsDatalocal
+                .where((groupData) =>
+                    groupData['parentNode'] == null &&
+                    groupData['pageId'] == pageId)
+                .length,
+            itemBuilder: (context, index) {
+              var parentGroupData = groupsDatalocal
+                  .where((groupData) =>
+                      groupData['parentNode'] == null &&
+                      groupData['pageId'] == pageId)
+                  .toList()[index];
+              return buildGroupTile(parentGroupData, 0);
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   Widget buildGroupTile(Map<String, dynamic> groupData, int level) {
-    String groupName = groupData['name'] ?? "";
+    String groupName = groupData['name']!;
     bool isGroupExpanded = isExpandedMap[groupName] ?? false;
     Color backgroundColor = isGroupExpanded ? lightColor : darkColor;
 
@@ -66,9 +106,10 @@ class _ShowGroupPageState extends State<ShowGroupPage> {
                   'description': groupData['description'],
                   'parentNode': groupData['parentNode'],
                   'membersendmessage': groupData['membersendmessage'],
-                  'pageId': groupData['pageId'],
+                  'pageId':groupData['pageId']
                 };
-                groupsController.Groupmessages = <Map<String, dynamic>>[userMap].obs;
+                groupsController.Groupmessages =
+                    <Map<String, dynamic>>[userMap].obs;
                 groupsController.getAndLoadPageEmployees(groupData['id']);
               },
               child: Text(
@@ -77,7 +118,8 @@ class _ShowGroupPageState extends State<ShowGroupPage> {
               ),
             ),
             subtitle: groupData['parentNode'] != null
-                ? Text("Parent Group: ${findGroupById(groupData['parentNode']!)}")
+                ? Text(
+                    "Parent Group: ${findGroupByName(groupData['parentNode']!)}")
                 : null,
             trailing: InkWell(
               onTap: () {
@@ -94,11 +136,14 @@ class _ShowGroupPageState extends State<ShowGroupPage> {
         ),
         if (isGroupExpanded)
           Column(
-            children: (groupData['groups'] as List<Map<String, dynamic>>?)
-                    ?.map((subgroupData) {
-                  return buildGroupTile(subgroupData, level + 1);
-                })?.toList() ??
-                [],
+            children: groupsDatalocal
+                .where((subgroupData) =>
+                    subgroupData['parentNode'] ==
+                        groupData['id'] &&
+                    subgroupData['pageId'] == groupData['pageId'])
+                .map((subgroupData) {
+              return buildGroupTile(subgroupData, level + 1);
+            }).toList(),
           ),
       ],
     );
@@ -106,36 +151,22 @@ class _ShowGroupPageState extends State<ShowGroupPage> {
 
   @override
   Widget build(BuildContext context) {
-    var pageIds = widget.pagesData.map((pageData) => pageData['pageId']).toSet().toList();
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Group Page'),
       ),
-      body: Container(
-        margin: EdgeInsets.symmetric(horizontal: 4),
-        child: ListView.builder(
-          itemCount: pageIds.length,
-          itemBuilder: (context, pageIndex) {
-            var pageId = pageIds[pageIndex];
-            var topLevelGroups = widget.pagesData.where((pageData) => pageData['pageId'] == pageId).toList();
-
-            return Column(
-              children: [
-                // Display the pageId without ExpansionTile
-                ListTile(
-                  title: Text(
-                    pageId ?? "",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                // Display the top-level groups with parentNode = null using ExpansionTile
-                for (var groupData in topLevelGroups)
-                  buildGroupTile(groupData, 0),
-              ],
-            );
-          },
-        ),
+      body: ListView.builder(
+        itemCount: widget.pagesData
+            .map((page) => page['pageId'])
+            .toSet()
+            .length, // Count unique page IDs
+        itemBuilder: (context, index) {
+          var pageId = widget.pagesData
+              .map((page) => page['pageId'])
+              .toSet()
+              .toList()[index];
+          return buildPageSection(pageId);
+        },
       ),
     );
   }

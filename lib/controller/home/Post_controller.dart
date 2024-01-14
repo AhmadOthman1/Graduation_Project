@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/ReportPages.dart/ReportComment.dart';
+import 'package:growify/view/screen/homescreen/ReportPages.dart/ReportPost.dart';
 import 'package:growify/view/screen/homescreen/myPage/ColleaguesPageProfile.dart';
 import 'package:growify/view/screen/homescreen/myPage/Pageprofile.dart';
 import 'package:growify/view/screen/homescreen/profilepages/colleaguesprofile.dart';
@@ -323,7 +325,7 @@ class PostControllerImp extends PostController {
           await deletePagePost(createdBy, postId);
           break;
         case 'Report':
-          // Implement hide post functionality
+        await  Get.to(ReportPostPage(postId: postId,));
           break;
       }
     } else {
@@ -332,7 +334,7 @@ class PostControllerImp extends PostController {
           await deletePost(createdBy, postId);
           break;
         case 'Report':
-          // Implement hide post functionality
+           await  Get.to(ReportPostPage(postId: postId,));
           break;
       }
     }
@@ -406,7 +408,7 @@ class PostControllerImp extends PostController {
           return await deletePageComment(createdBy, commentId);
           break;
         case 'Report':
-          // Implement report functionality
+        return await  Get.to(ReportCommentPage(commentId: commentId,));
           break;
       }
     } else {
@@ -415,7 +417,7 @@ class PostControllerImp extends PostController {
           return await deleteComment(createdBy, commentId);
           break;
         case 'Report':
-          // Implement report functionality
+         return await  Get.to(ReportCommentPage(commentId: commentId,));
           break;
       }
     }

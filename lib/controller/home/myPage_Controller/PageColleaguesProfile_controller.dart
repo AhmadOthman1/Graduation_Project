@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/ReportPages.dart/ReportPage.dart';
 import 'package:growify/view/screen/homescreen/myPage/seeAboutinfoPageColleagues.dart';
 import 'package:http/http.dart' as http;
 
@@ -11,6 +12,30 @@ LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
 class ColleaguesPageProfile_Controller extends GetxController {
+
+///////////////////////////
+  List<String> moreOptions = ['Report',];
+onMoreOptionSelected(String option, pageId) async {
+ 
+      switch (option) {
+ 
+        case 'Report':
+        return await  Get.to(ReportPage(pageId: pageId,));
+          break;
+      }
+    } 
+  
+
+
+
+
+
+
+
+
+
+
+  /////////////////////////////////
   RxBool isFollowing = false.obs;
 
   // for profile

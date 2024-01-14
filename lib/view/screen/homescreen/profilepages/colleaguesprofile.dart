@@ -163,6 +163,38 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
                         ),
                       ),
                     ),
+
+                    PopupMenuButton<String>(
+                        icon: const Icon(Icons.more_vert),
+                        onSelected: (String option) async {
+                          var message = await controller.onMoreOptionSelected(option,widget.userData[0]["username"],);
+                          (message != null)
+                        ? showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CustomAlertDialog(
+                                title: 'Alert',
+                                icon: Icons.error,
+                                text: message,
+                                buttonText: 'OK',
+                                
+                              );
+                            },
+                          )
+                        : null;
+                        setState(() {
+                          
+                        });
+                        },
+                        itemBuilder: (BuildContext context) {
+                            return controller.moreOptions.map((String option) {
+                              return PopupMenuItem<String>(
+                                value: option,
+                                child: Text(option),
+                              );
+                            }).toList();
+                        },
+                      ),
             ],
           ),
           Text(
