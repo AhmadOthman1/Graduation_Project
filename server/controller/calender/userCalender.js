@@ -76,7 +76,7 @@ exports.addNewUserEvent = async (req, res, next) => {
                 username: userUsername,
                 subject: subject,
                 description: description,
-                date: eventDateTime.toISOString().split('T')[0], 
+                date: eventDateTime.toISOString().split('T')[0],
                 time: eventDateTime.toISOString().split('T')[1].substring(0, 8),
             });
             return res.status(200).json({
@@ -84,6 +84,49 @@ exports.addNewUserEvent = async (req, res, next) => {
             });
 
 
+        } else {
+            return res.status(500).json({
+                message: 'user not found',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+
+}
+
+exports.deleteUserEvent = async (req, res, next) => {
+    try {
+        const { eventId } = req.body;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername != null) {
+            const userEvent = await userCalender.findOne({
+                where: {
+                    id: eventId,
+                }
+            });
+            if (userEvent != null) {
+                await userEvent.destroy();
+                return res.status(200).json({
+                    message: 'event deleted',
+                });
+            } else {
+                return res.status(500).json({
+                    message: 'event not found',
+                });
+            }
         } else {
             return res.status(500).json({
                 message: 'user not found',

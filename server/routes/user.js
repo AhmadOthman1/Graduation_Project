@@ -25,6 +25,7 @@ const userCalender =require('../controller/calender/userCalender')
 const pageGroups=require('../controller/myPages/pageGroups')
 const groupController=require('../controller/groups/groupController')
 const groupTasksController=require('../controller/groups/groupTasksController')
+const reportController=require('../controller/reports/reportController')
 
 
 const router=express.Router();
@@ -92,6 +93,7 @@ router.post('/CreateUserTask',authenticateToken,userTasks.CreateUserTask);
 //user calender
 router.get('/getUserCalender',authenticateToken,userCalender.getUserCalender);
 router.post('/addNewUserEvent',authenticateToken,userCalender.addNewUserEvent);
+router.post('/deleteUserEvent',authenticateToken,userCalender.deleteUserEvent);
 
 
 //user pages
@@ -141,6 +143,11 @@ router.get('/getJobs',authenticateToken,pagesProfile.getJobs);
 router.post('/saveJobApplication',authenticateToken,pagesProfile.saveJobApplication);
 router.get('/getOneJob',authenticateToken,pagesProfile.getOneJob);
 
+//reports
+router.post('/createPostReport',authenticateToken,reportController.createPostReport);
+router.post('/createCommentReport',authenticateToken,reportController.createCommentReport);
+router.post('/createUserReport',authenticateToken,reportController.createUserReport);
+router.post('/createPageReport',authenticateToken,reportController.createPageReport);
 
 
 

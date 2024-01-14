@@ -1,8 +1,4 @@
 const User = require("../../models/user");
-const Connections = require("../../models/connections");
-const sentConnection = require("../../models/sentConnection");
-const WorkExperience = require("../../models/workExperience");
-const EducationLevel = require("../../models/educationLevel");
 const { notifyUser, deleteNotificaion } = require("../notifications");
 const post = require('../../models/post');
 const Page = require("../../models/pages");
@@ -342,7 +338,7 @@ exports.getJobs = async (req, res, next) => {
                     offset: parseInt(offset),
                     order: [['endDate', 'DESC']],
                 });
-
+                
                 return res.status(200).json({
                     pageJobs: allPageJobs,
                 });

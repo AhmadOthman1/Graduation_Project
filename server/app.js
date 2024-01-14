@@ -63,6 +63,12 @@ const groupAdmin =require('./models/groupAdmin')
 const groupMessage =require('./models/groupMessage')
 const groupTask =require('./models/groupTask')
 const userCalender = require('./models/userCalender')
+const reportedPost = require('./models/reportedPost')
+const reportedComment = require('./models/reportedComment')
+const reportedUsers = require('./models/reportedUsers')
+const reportedPages = require('./models/reportedPages')
+const groupCalender = require('./models/groupCalender')
+const pageCalender = require('./models/pageCalender')
 //const queries =require('./models/queries.js');
 
 

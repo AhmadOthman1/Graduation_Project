@@ -51,6 +51,7 @@ exports.getUserJobs = async (req, res, next) => {
                 });
                 allUserJobs.push(userJobs);
             }
+            console.log(allUserJobs[0])
             return res.status(200).json({
                 message: 'jobs fetched',
                 jobs: allUserJobs
