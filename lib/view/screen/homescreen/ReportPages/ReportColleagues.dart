@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growify/controller/home/Report_Controller.dart/ReportPost_controller.dart';
+import 'package:growify/controller/home/Report_Controller.dart/ReportColleagues_controller.dart';
+import 'package:growify/core/functions/alertbox.dart';
 
-class ReportPostPage extends StatefulWidget {
-  final postId;
+class ReportProfilePage extends StatefulWidget {
+  final username;
 
-  ReportPostPage({this.postId});
+  ReportProfilePage({this.username});
 
   @override
-  _ReportPostPageState createState() => _ReportPostPageState();
+  _ReportProfilePageState createState() => _ReportProfilePageState();
 }
 
-class _ReportPostPageState extends State<ReportPostPage> {
+class _ReportProfilePageState extends State<ReportProfilePage> {
   final TextEditingController reportController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-   ReportPostController controller = Get.put(ReportPostController());
+   ReportColleaguesController controller = Get.put(ReportColleaguesController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Report The Post"),
+        title: Text("Report The Profile"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -30,6 +31,9 @@ class _ReportPostPageState extends State<ReportPostPage> {
             children: [
               TextFormField(
                 controller: reportController, // Add this line
+                onChanged: (value) {
+                  // Do something with the onChanged value
+                },
                 maxLines: 6,
                 decoration: InputDecoration(
                   hintText: 'Enter your report',
@@ -59,11 +63,23 @@ class _ReportPostPageState extends State<ReportPostPage> {
                 child: MaterialButton(
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      print('Post ID: ${widget.postId}');
+                      print('Username: ${widget.username}');
                       print('Report: ${reportController.text}');
-                      controller.reportThePost(widget.postId, reportController.text);
-                      // Add the logic to post the report here
-                      // Get.back();
+                      var message = await controller.ReportColleagues(widget.username, reportController.text);
+                      Get.back();
+                      (message != null)
+                          ? showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CustomAlertDialog(
+                                  title: 'Aret',
+                                  icon: Icons.error,
+                                  text: message,
+                                  buttonText: 'OK',
+                                );
+                              },
+                            )
+                          : null;
                     }
                   },
                   color: const Color.fromARGB(255, 85, 191, 218),

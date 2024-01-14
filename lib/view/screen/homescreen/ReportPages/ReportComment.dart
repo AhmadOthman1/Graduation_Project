@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Report_Controller.dart/ReportComment_controller.dart';
+import 'package:growify/core/functions/alertbox.dart';
 
 class ReportCommentPage extends StatefulWidget {
   final commentId;
@@ -64,9 +65,21 @@ class _ReportCommentPageState extends State<ReportCommentPage> {
                     if (formKey.currentState!.validate()) {
                       print('Comment ID: ${widget.commentId}');
                       print('Report: ${reportController.text}');
-                      controller.ReportComment(widget.commentId, reportController.text);
-                      // Add the logic to post the report here
-                      // Get.back();
+                      var message = await controller.ReportComment(widget.commentId, reportController.text);
+                      Get.back();
+                      (message != null)
+                          ? showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CustomAlertDialog(
+                                  title: 'Aret',
+                                  icon: Icons.error,
+                                  text: message,
+                                  buttonText: 'OK',
+                                );
+                              },
+                            )
+                          : null;
                     }
                   },
                   color: const Color.fromARGB(255, 85, 191, 218),

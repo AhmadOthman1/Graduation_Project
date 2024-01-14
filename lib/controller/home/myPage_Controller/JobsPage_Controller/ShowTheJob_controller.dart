@@ -46,9 +46,9 @@ var res = await postSaveApplication(cvBytes,cvName,cvExt,notice,jobId);
     print(resbody['message']);
     print(res.statusCode);
     if (res.statusCode == 409 || res.statusCode == 500) {
-      return res.statusCode.toString() + ":" + resbody['message'];
+      return resbody['message'];
     } else if (res.statusCode == 200) {
-      
+      return resbody['message'];
     }
   }
   

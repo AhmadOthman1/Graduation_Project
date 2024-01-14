@@ -56,7 +56,8 @@ class _CalendarPageState extends State<Calender> {
                   await controller.addNewEvent(newAppointments);
 
                   setState(() {
-                    appointments = controller.getAppointmentsForDate(selectedDate);
+                    appointments =
+                        controller.getAppointmentsForDate(selectedDate);
                   });
                 }
               },
@@ -102,7 +103,8 @@ class _CalendarPageState extends State<Calender> {
       child: ListView.builder(
         itemCount: appointments.length,
         itemBuilder: (context, index) {
-          String formattedDate = DateFormat('yyyy-MM-dd').format(appointments[index].startTime);
+          String formattedDate =
+              DateFormat('yyyy-MM-dd').format(appointments[index].startTime);
 
           return Container(
             margin: const EdgeInsets.all(8.0),
@@ -134,7 +136,7 @@ class _CalendarPageState extends State<Calender> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return CustomAlertDialog(
-                                    title: 'Error',
+                                    title: 'Aret',
                                     icon: Icons.error,
                                     text: message,
                                     buttonText: 'OK',
@@ -197,8 +199,8 @@ class _CalendarPageState extends State<Calender> {
                       fontSize: 14,
                     ),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 30),
                     labelText: "Event Title",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
@@ -221,8 +223,8 @@ class _CalendarPageState extends State<Calender> {
                       fontSize: 14,
                     ),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 30),
                     labelText: "Event Description",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),

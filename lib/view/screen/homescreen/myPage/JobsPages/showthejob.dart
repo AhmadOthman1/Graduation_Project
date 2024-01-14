@@ -204,6 +204,7 @@ class JobPostCard extends StatelessWidget {
                                   print('Selected CV: $cvName');
                                   var message = await Controller22.SaveApplication(
                                       cvBytes, cvName, cvExt, notice,jobPost.jobId);
+                                      Get.back();
                                       (message != null)
                               ? showDialog(
                                   context: context,
@@ -217,7 +218,7 @@ class JobPostCard extends StatelessWidget {
                                   },
                                 )
                               : null;
-                              Get.back();
+                              
                                 }
                               },
                               child: Text('Apply'),

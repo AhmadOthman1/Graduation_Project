@@ -1,6 +1,3 @@
-
-
-
 import 'dart:convert';
 
 import 'package:get/get.dart';
@@ -11,9 +8,9 @@ import 'package:growify/global.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
-
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
+
 class Appointment {
   int? id; // Make id nullable (optional)
   DateTime startTime;
@@ -30,26 +27,49 @@ class Appointment {
   });
 }
 
-
 class CalendarController extends GetxController {
   late List<Appointment> allAppointments;
-
 
   final RxList<String> moreOptions = <String>[
     'Delete',
   ].obs;
-onMoreOptionSelected(
-      String option  , int id ) async {
-      switch (option) {
-        case 'Delete':
-          return await deleteEvent(id);
-          break;
-      }
+  onMoreOptionSelected(String option, int id) async {
+    switch (option) {
+      case 'Delete':
+        return await deleteEvent(id);
+        break;
+    }
   }
 
-deleteEvent(id){
+  deleteEvent(id) async {
+    var url = "$urlStarter/user/deleteUserEvent";
+    Map<String, dynamic> jsonData = {
+      "eventId": id,
+    };
+    String jsonString = jsonEncode(jsonData);
+    var response = await http.post(Uri.parse(url), body: jsonString, headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+    if (response.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      deleteEvent(id);
+      return ;
+    } else if (response.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
 
-}
+    if (response.statusCode == 409) {
+      var responseBody = jsonDecode(response.body);
+      print(responseBody['message']);
+      return responseBody['message'];
+    } else if (response.statusCode == 200) {
+            var responseBody = jsonDecode(response.body);
+
+      allAppointments.removeWhere((Appointment) => Appointment.id == id);
+      return responseBody['message'];
+    }
+  }
 
   @override
   void onInit() {
@@ -58,15 +78,14 @@ deleteEvent(id){
   }
 
   void initAppointments() {
-    allAppointments = [
-     
-    ];
+    allAppointments = [];
   }
-// store in the database 
-addNewEvent(newAppointments) async {
-  var url = "$urlStarter/user/addNewUserEvent";
+
+// store in the database
+  addNewEvent(newAppointments) async {
+    var url = "$urlStarter/user/addNewUserEvent";
     Map<String, dynamic> jsonData = {
-      "subject":newAppointments[0].subject,
+      "subject": newAppointments[0].subject,
       "description": newAppointments[0].description,
       "startTime": newAppointments[0].startTime.toString(),
     };
@@ -75,7 +94,7 @@ addNewEvent(newAppointments) async {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
     });
-     if (response.statusCode == 403) {
+    if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
       addNewEvent(newAppointments);
       return;
@@ -91,61 +110,58 @@ addNewEvent(newAppointments) async {
       Get.back();
       return true;
     }
-}
+  }
 
+  // get data from database
 
+  Future<void> getEvents() async {
+    var url = "$urlStarter/user/getUserCalender";
+    var response = await http.get(Uri.parse(url), headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
 
+    print(response.statusCode);
+    print('bearer ' + GetStorage().read('accessToken'));
 
-  // get data from database 
-  
+    if (response.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      await getEvents();
+    } else if (response.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    } else if (response.statusCode == 409) {
+      var responseBody = jsonDecode(response.body);
+      print(responseBody['message']);
+    } else if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      print("kkkkkkkkkkkkkkkkkkk");
+      print(responseBody);
+      print("kkkkkkkkkkkkkkkkkkk");
 
-Future<void> getEvents() async {
-  var url = "$urlStarter/user/getUserCalender";
-  var response = await http.get(Uri.parse(url), headers: {
-    'Content-type': 'application/json; charset=UTF-8',
-    'Authorization': 'bearer ' + GetStorage().read('accessToken'),
-  });
+      // Assuming your response structure is similar to the provided example
+      if (responseBody['message'] == 'Calender fetched') {
+        var calendarList = responseBody['Calender'] as List<dynamic>;
 
-  print(response.statusCode);
-  print('bearer ' + GetStorage().read('accessToken'));
+        // Clear existing appointments before adding new ones
+        allAppointments.clear();
 
-  if (response.statusCode == 403) {
-    await getRefreshToken(GetStorage().read('refreshToken'));
-    await getEvents();
-  } else if (response.statusCode == 401) {
-    _logoutController.goTosigninpage();
-  } else if (response.statusCode == 409) {
-    var responseBody = jsonDecode(response.body);
-    print(responseBody['message']);
-  } else if (response.statusCode == 200) {
-    var responseBody = jsonDecode(response.body);
-    print("kkkkkkkkkkkkkkkkkkk");
-    print(responseBody);
-    print("kkkkkkkkkkkkkkkkkkk");
+        calendarList.forEach((calendarItem) {
+          var appointment = Appointment(
+            startTime: DateTime.parse(
+                calendarItem['date'] + ' ' + calendarItem['time']),
+            subject: calendarItem['subject'],
+            eventTime: calendarItem['time'],
+            description: calendarItem['description'],
+            id: calendarItem['id'],
+          );
 
-    // Assuming your response structure is similar to the provided example
-    if (responseBody['message'] == 'Calender fetched') {
-      var calendarList = responseBody['Calender'] as List<dynamic>;
-
-      // Clear existing appointments before adding new ones
-      allAppointments.clear();
-
-      calendarList.forEach((calendarItem) {
-        var appointment = Appointment(
-          startTime: DateTime.parse(calendarItem['date'] + ' ' + calendarItem['time']),
-          subject: calendarItem['subject'],
-          eventTime: calendarItem['time'],
-          description: calendarItem['description'],
-          id:calendarItem['id'],
-        );
-
-        allAppointments.add(appointment);
-      });
+          allAppointments.add(appointment);
+        });
+      }
     }
   }
-}
 
-///
+  ///
 
   List<dynamic> getEventsForDay(DateTime day) {
     List<dynamic> events = [];

@@ -71,7 +71,7 @@ class _PostState extends State<Post> {
           controller: _scrollController,
           itemCount:
               controller.posts.length + 1, // +1 for the loading indicator
-          separatorBuilder: (context, index) => const Divider(),
+          separatorBuilder: (context, index) => const SizedBox(height: 0,),
           itemBuilder: (context, index) {
             if (index < controller.posts.length) {
               final post = controller.posts[index];
