@@ -24,6 +24,7 @@ const userTasks =require('../controller/tasks/userTasksController')
 const userCalender =require('../controller/calender/userCalender')
 const pageGroups=require('../controller/myPages/pageGroups')
 const groupController=require('../controller/groups/groupController')
+const groupTasksController=require('../controller/groups/groupTasksController')
 
 
 const router=express.Router();
@@ -90,6 +91,7 @@ router.post('/ChangeUserTaskStatus',authenticateToken,userTasks.ChangeUserTaskSt
 router.post('/CreateUserTask',authenticateToken,userTasks.CreateUserTask);
 //user calender
 router.get('/getUserCalender',authenticateToken,userCalender.getUserCalender);
+router.post('/addNewUserEvent',authenticateToken,userCalender.addNewUserEvent);
 
 
 //user pages
@@ -127,6 +129,9 @@ router.post('/deleteGroupAdmin',authenticateToken,groupController.deleteGroupAdm
 router.post('/addGroupMember',authenticateToken,groupController.addGroupMember);
 router.post('/deleteGroupMember',authenticateToken,groupController.deleteGroupMember);
 router.post('/deleteGroup',authenticateToken,groupController.deleteGroup);
+router.get('/getGroupTasks',authenticateToken,groupTasksController.getGroupTasks);
+router.post('/CreateGroupTask',authenticateToken,groupTasksController.CreateGroupTask);
+router.post('/ChangeGroupTaskStatus',authenticateToken,groupTasksController.ChangeGroupTaskStatus);
 
 // other Pages
 router.get('/getPageProfileInfo',authenticateToken,pagesProfile.getPageProfileInfo);

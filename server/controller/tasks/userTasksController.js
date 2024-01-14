@@ -135,7 +135,7 @@ exports.CreateUserTask = async (req, res, next) => {
                     message: 'invalid values',
                     body: req.body
                 });
-            } else if (taskName.length < 1 || taskName.length > 2000 || description.length < 1 || description.length > 2000 || description.length < 1 || description.length > 255) {
+            } else if (taskName.length < 1 || taskName.length > 2000 || description.length < 1 || description.length > 2000 || status.length < 1 || status.length > 255) {
                 return res.status(500).json({
                     message: 'values length out of the range 2000',
                     body: req.body

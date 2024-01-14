@@ -62,7 +62,6 @@ const groupMember =require('./models/groupMember')
 const groupAdmin =require('./models/groupAdmin')
 const groupMessage =require('./models/groupMessage')
 const groupTask =require('./models/groupTask')
-const groupTaskUser =require('./models/groupTaskUser')
 const userCalender = require('./models/userCalender')
 //const queries =require('./models/queries.js');
 

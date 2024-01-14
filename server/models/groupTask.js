@@ -14,6 +14,10 @@ const groupTask = sequelize.define('groupTask', {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
+  username: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
   taskName: {
     type: Sequelize.STRING(2000),
     allowNull: false,
@@ -22,7 +26,7 @@ const groupTask = sequelize.define('groupTask', {
     type: Sequelize.STRING(2000),
     allowNull: false,
   },
-  status:{
+  status: {
     type: Sequelize.STRING,
     allowNull: false,
   },
@@ -44,7 +48,10 @@ const groupTask = sequelize.define('groupTask', {
   },
 });
 
-pageGroup.hasMany(groupTask, { foreignKey: 'groupId', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
-groupTask.belongsTo(pageGroup, { foreignKey: 'groupId', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
+pageGroup.hasMany(groupTask, { foreignKey: 'groupId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+groupTask.belongsTo(pageGroup, { foreignKey: 'groupId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+User.hasMany(groupTask, { foreignKey: 'username', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
+groupTask.belongsTo(User, { foreignKey: 'username', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
+
 // Define foreign key constraint
 module.exports = groupTask;
