@@ -8,6 +8,7 @@ import 'package:growify/controller/home/chats_controller/chatspage_cnotroller.da
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/resources/jitsi_meet.dart';
+import 'package:growify/view/screen/homescreen/myPage/Groups/CalendarGroup.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/TaskGroup/taskgroupmainpage.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/settingGroupPage.dart';
 import 'package:growify/view/screen/homescreen/chat/CallScreen.dart';
@@ -493,7 +494,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                             icon: const Icon(Icons.calendar_today_rounded),
                             color: Colors.white,
                             onPressed: () {
-                              //Get.to(GroupCalender());
+                              Get.to(CalenderGroup(isAdmin: doesUsernameIsAdmin,members: widget.members,isUserAdminInPage:widget.isUserAdminInPage,groupData:widget.data));
                             },
                           ),
                           IconButton(

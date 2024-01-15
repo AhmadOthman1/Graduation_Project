@@ -6,6 +6,7 @@ import 'package:growify/global.dart';
 
 import 'package:get/get.dart';
 import 'package:growify/view/screen/homescreen/myPage/JobsPages/ShowCompanyJobs.dart';
+import 'package:growify/view/screen/homescreen/myPage/colleaguesPageCalendar.dart';
 import 'package:growify/view/screen/homescreen/myPage/seeAboutinfoPageColleagues.dart';
 import 'dart:convert';
 
@@ -251,6 +252,29 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
                 SizedBox(width: 10),
                 Text(
                   "See About info",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                Spacer(),
+                Icon(Icons.arrow_forward, size: 30),
+              ],
+            ),
+          ),
+        ),
+         _buildDivider(10),
+        InkWell(
+          onTap: () {
+            //controller.goToSeeAboutInfo();
+           Get.to(ColleaguesPageCalender(pageId: widget.userData.id,));
+          },
+          child: Container(
+            height: 35,
+            padding: const EdgeInsets.only(left: 10),
+            child: const Row(
+              children: [
+                Icon(Icons.calendar_today_rounded),
+                SizedBox(width: 10),
+                Text(
+                  "View Calendar",
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),

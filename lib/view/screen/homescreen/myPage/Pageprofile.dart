@@ -8,6 +8,7 @@ import 'package:growify/view/screen/homescreen/NewPost/newpost.dart';
 import 'package:growify/view/screen/homescreen/myPage/Admins/ShowAllAdmins.dart';
 import 'package:growify/view/screen/homescreen/myPage/Employees/ShowAllEmployees.dart';
 import 'package:growify/view/screen/homescreen/myPage/Employees/addEmployee.dart';
+import 'package:growify/view/screen/homescreen/myPage/myPageCalendar.dart';
 import 'package:growify/view/screen/homescreen/myPage/seeAboutInfoMyPage.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 import 'package:get/get.dart';
@@ -303,6 +304,29 @@ class _PageProfileState extends State<PageProfile> {
                 SizedBox(width: 10),
                 Text(
                   "See About info",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                Spacer(),
+                Icon(Icons.arrow_forward, size: 30),
+              ],
+            ),
+          ),
+        ),
+        _buildDivider(10),
+        InkWell(
+          onTap: () {
+            //controller.goToSeeAboutInfo();
+            Get.to(MyPageCalender(pageId: widget.userData.id,));
+          },
+          child: Container(
+            height: 35,
+            padding: const EdgeInsets.only(left: 10),
+            child: const Row(
+              children: [
+                Icon(Icons.calendar_today_rounded),
+                SizedBox(width: 10),
+                Text(
+                  "View Calendar",
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),
