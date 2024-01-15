@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -51,6 +52,73 @@ addMessage( text,  username, userPhoto,  createdAt, image,video) async {
         messages.insert(0, chatMessage);
         
   }
+
+
+
+
+  var _chars = 'abcdefghijklmnopqrstuvwxyz1234567890';
+  Random _rnd = Random();
+
+  String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+
+  createMeeting(groupId) async {
+    var meetingId = getRandomString(5);
+    var url = "$urlStarter/user/createGroupMeeting";
+    Map<String, dynamic> jsonData = {
+      "meetingId": meetingId,
+      "groupId": groupId,
+    };
+    String jsonString = jsonEncode(jsonData);
+    var response = await http.post(Uri.parse(url), body: jsonString, headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+    print(response.statusCode);
+    if (response.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      createMeeting(groupId);
+      return;
+    } else if (response.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }else if(response.statusCode == 406){
+      return createMeeting(groupId);
+    }
+     else {
+      var responseBody = jsonDecode(response.body);
+      print(responseBody['message']);
+      return meetingId;
+    }
+  }
+
+joinMeeting(meetingId, groupId) async {
+    var url = "$urlStarter/user/joinGroupMeeting";
+    Map<String, dynamic> jsonData = {
+      "meetingId": meetingId,
+      "groupId": groupId,
+    };
+    String jsonString = jsonEncode(jsonData);
+    var response = await http.post(Uri.parse(url), body: jsonString, headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+    print(response.statusCode);
+    if (response.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      joinMeeting(meetingId, groupId) ;
+      return;
+    } else if (response.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+     else {
+      var responseBody = jsonDecode(response.body);
+      print(responseBody['message']);
+      return responseBody['message'];
+    }
+  
+}
+
+
   getUserMessages(int page, int groupId) async {
     var url =
         "$urlStarter/user/getMyPageGroupMessages?groupId=$groupId&page=$page&pageSize=$pageSize";

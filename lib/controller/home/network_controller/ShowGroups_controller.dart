@@ -58,7 +58,7 @@ print("Adas");
 print(membersobject);
 print("8888888888888");
 print(adminsobject);
-
+members.clear();
 members.addAll(membersobject.map((member) => {
   'username': member['username'],
   'photo': member['photo'], 
@@ -66,7 +66,7 @@ members.addAll(membersobject.map((member) => {
   'lastname': member['user']['lastName'], 
 }).toList());
 
-
+admins.clear();
 admins.addAll(adminsobject.map((admin) => {
       'username': admin['username'],
       'photo': admin['photo'],
