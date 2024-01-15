@@ -69,6 +69,7 @@ const reportedUsers = require('./models/reportedUsers')
 const reportedPages = require('./models/reportedPages')
 const groupCalender = require('./models/groupCalender')
 const pageCalender = require('./models/pageCalender')
+const groupMeeting = require('./models/groupMeeting')
 //const queries =require('./models/queries.js');
 
 

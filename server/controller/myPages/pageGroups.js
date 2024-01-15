@@ -180,9 +180,20 @@ exports.getMyPageGroupInfo = async (req, res, next) => {
                         },
                     ],
                 });
+                const uniqueGroupAdmins = groupAdmins.reduce((unique, currentGroupAdmin) => {
+                    const isUsernameExists = unique.some((admin) => admin.username === currentGroupAdmin.username);
+                  
+                    if (!isUsernameExists) {
+                      unique.push(currentGroupAdmin);
+                    }
+                  
+                    return unique;
+                  }, []);
+                  
+                  console.log(uniqueGroupAdmins);
                 return res.status(200).json({
                     message: 'Group',
-                    groupAdmins: groupAdmins,
+                    groupAdmins: uniqueGroupAdmins,
                     groupMembers: groupMembers,
                 });
             } else {
@@ -215,9 +226,21 @@ exports.getMyPageGroupInfo = async (req, res, next) => {
                             },
                         ],
                     });
+                    console.log(groupAdmins)
+                    const uniqueGroupAdmins = groupAdmins.reduce((unique, currentGroupAdmin) => {
+                        const isUsernameExists = unique.some((admin) => admin.username === currentGroupAdmin.username);
+                      
+                        if (!isUsernameExists) {
+                          unique.push(currentGroupAdmin);
+                        }
+                      
+                        return unique;
+                      }, []);
+                      
+                      console.log(uniqueGroupAdmins);
                     return res.status(200).json({
                         message: 'Group',
-                        groupAdmins: groupAdmins,
+                        groupAdmins: uniqueGroupAdmins,
                         groupMembers: groupMembers,
                     });
                 } else {
@@ -255,9 +278,20 @@ exports.getMyPageGroupInfo = async (req, res, next) => {
                                 },
                             ],
                         });
+                        const uniqueGroupAdmins = groupAdmins.reduce((unique, currentGroupAdmin) => {
+                            const isUsernameExists = unique.some((admin) => admin.username === currentGroupAdmin.username);
+                          
+                            if (!isUsernameExists) {
+                              unique.push(currentGroupAdmin);
+                            }
+                          
+                            return unique;
+                          }, []);
+                          
+                          console.log(uniqueGroupAdmins);
                         return res.status(200).json({
                             message: 'Group',
-                            groupAdmins: groupAdmins,
+                            groupAdmins: uniqueGroupAdmins,
                             groupMembers: groupMembers,
                         });
                     } else {

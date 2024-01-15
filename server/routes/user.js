@@ -26,6 +26,7 @@ const pageGroups=require('../controller/myPages/pageGroups')
 const groupController=require('../controller/groups/groupController')
 const groupTasksController=require('../controller/groups/groupTasksController')
 const groupCalenderController=require('../controller/groups/groupCalenderController')
+const groupMeetingController=require('../controller/groups/groupMeetingController')
 const reportController=require('../controller/reports/reportController')
 
 
@@ -142,6 +143,9 @@ router.get('/getGroupCalender',authenticateToken,groupCalenderController.getGrou
 router.post('/addNewGroupEvent',authenticateToken,groupCalenderController.addNewGroupEvent);
 router.post('/deleteGroupEvent',authenticateToken,groupCalenderController.deleteGroupEvent);
 router.post('/deleteGroup',authenticateToken,groupController.deleteGroup);
+router.post('/createGroupMeeting',authenticateToken,groupMeetingController.createGroupMeeting);
+router.post('/joinGroupMeeting',authenticateToken,groupMeetingController.joinGroupMeeting);
+router.post('/leaveGroupMeeting',authenticateToken,groupMeetingController.leaveGroupMeeting);
 
 // other Pages
 router.get('/getPageProfileInfo',authenticateToken,pagesProfile.getPageProfileInfo);
