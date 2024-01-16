@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -34,6 +35,7 @@ class _HomepageState extends State<Homepage> {
     }
     controller = Get.put(HomePageControllerImp());
     updateAvatarImage();
+    
   }
 
   void updateAvatarImage() {
@@ -47,159 +49,324 @@ class _HomepageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context) {
-    Builder avatarBuilder = Builder(builder: (context) {
-      return Padding(
-        padding: const EdgeInsets.only(right: 2),
-        child: InkWell(
-          onTap: () {
-            Scaffold.of(context).openDrawer();
-          },
-          child: CircleAvatar(
-            backgroundImage: avatarImage,
-            radius: 30,
-          ),
-        ),
-      );
-    });
-
-    return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return [
-            SliverToBoxAdapter(
+    if (kIsWeb) {
+      return Scaffold(
+        body: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              flex: 1,
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Container(
-                  margin: const EdgeInsets.only(top: 30),
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 50,
-                        margin: const EdgeInsets.symmetric(horizontal: 5),
-                        child: Row(
-                          children: [
-                            avatarBuilder,
-                            Expanded(
-                              child: TextFormField(
-                                onTap: () {
-                                  Get.to(const Search());
-                                },
-                                readOnly: true,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  fillColor: Colors.grey[200],
-                                  filled: true,
-                                  prefixIcon: const Icon(Icons.search),
-                                  hintText: "Search",
-                                ),
+                child: InkWell(
+                  onTap: () {
+                    controller.goToprofilepage();
+                  },
+                  child: Container(
+                    color: Colors.white,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        UserAccountsDrawerHeader(
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Colors.white,
+                                width: 1.0,
                               ),
                             ),
-                            InkWell(
-                              onTap: () {
-                                controller.goToChatPage();
-                              },
-                              child: Container(
-                                margin: const EdgeInsets.only(top: 5, left: 3),
-                                child: const Icon(
-                                  Icons.message_rounded,
-                                  size: 45,
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
+                          currentAccountPicture: CircleAvatar(
+                            backgroundImage: avatarImage,
+                          ),
+                          accountName: Text(
+                            name ?? "",
+                            style: const TextStyle(color: Colors.black),
+                          ),
+                          accountEmail: const Text(
+                            "View profile",
+                            style: TextStyle(color: Colors.grey),
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Divider(
-                        color: Color.fromARGB(255, 194, 193, 193),
-                        thickness: 4.0,
-                      ),
-                      //  Post(),
-                    ],
+                        ListTile(
+                          title: const Text("Settings"),
+                          leading: const Icon(Icons.settings),
+                          onTap: () {
+                            controller.goToSettingsPgae();
+                          },
+                        ),
+                        ListTile(
+                          title: const Text("Calender"),
+                          leading: const Icon(Icons.calendar_today_rounded),
+                          onTap: () {
+                            controller.goToCalenderPage();
+                          },
+                        ),
+                        ListTile(
+                          title: const Text("Tasks"),
+                          leading: const Icon(Icons.task),
+                          onTap: () {
+                            Get.to(const TasksHomePage());
+                          },
+                        ),
+                        ListTile(
+                          title: const Text("My Pages"),
+                          leading: const Icon(Icons.contact_page),
+                          onTap: () {
+                            controller.goToMyPages();
+                          },
+                        ),
+                        ListTile(
+                          title: const Text("Log Out"),
+                          leading: const Icon(Icons.logout_outlined),
+                          onTap: () async {
+                            await logoutController.goTosigninpage();
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ];
-        },
-        body: Post(),
-      ),
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        child: InkWell(
-          onTap: () {
-            controller.goToprofilepage();
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              UserAccountsDrawerHeader(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  border: Border(
-                    bottom: BorderSide(
-                      color: Colors.grey,
-                      width: 1.0,
+            Expanded(
+              flex: 3,
+              child: Scaffold(
+                body: NestedScrollView(
+                  headerSliverBuilder:
+                      (BuildContext context, bool innerBoxIsScrolled) {
+                    return [
+                      SliverToBoxAdapter(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 30),
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: 50,
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 5),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextFormField(
+                                          onTap: () {
+                                            Get.to(const Search());
+                                          },
+                                          readOnly: true,
+                                          decoration: InputDecoration(
+                                            border: OutlineInputBorder(
+                                              borderSide: BorderSide.none,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            fillColor: Colors.grey[200],
+                                            filled: true,
+                                            prefixIcon:
+                                                const Icon(Icons.search),
+                                            hintText: "Search",
+                                          ),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          controller.goToChatPage();
+                                        },
+                                        child: Container(
+                                          margin: const EdgeInsets.only(
+                                              top: 5, left: 3),
+                                          child: const Icon(
+                                            Icons.message_rounded,
+                                            size: 45,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Divider(
+                                  color: Color.fromARGB(255, 194, 193, 193),
+                                  thickness: 4.0,
+                                ),
+                                //  Post(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ];
+                  },
+                  body: Post(),
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(),
+            ),
+          ],
+        ),
+      );
+    } else {
+      Builder avatarBuilder = Builder(builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.only(right: 2),
+          child: InkWell(
+            onTap: () {
+              Scaffold.of(context).openDrawer();
+            },
+            child: CircleAvatar(
+              backgroundImage: avatarImage,
+              radius: 30,
+            ),
+          ),
+        );
+      });
+      return Scaffold(
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return [
+              SliverToBoxAdapter(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 30),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 50,
+                          margin: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Row(
+                            children: [
+                              avatarBuilder,
+                              Expanded(
+                                child: TextFormField(
+                                  onTap: () {
+                                    Get.to(const Search());
+                                  },
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide.none,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    fillColor: Colors.grey[200],
+                                    filled: true,
+                                    prefixIcon: const Icon(Icons.search),
+                                    hintText: "Search",
+                                  ),
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  controller.goToChatPage();
+                                },
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.only(top: 5, left: 3),
+                                  child: const Icon(
+                                    Icons.message_rounded,
+                                    size: 45,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Divider(
+                          color: Color.fromARGB(255, 194, 193, 193),
+                          thickness: 4.0,
+                        ),
+                        //  Post(),
+                      ],
                     ),
                   ),
                 ),
-                currentAccountPicture: CircleAvatar(
-                  backgroundImage: avatarImage,
+              ),
+            ];
+          },
+          body: Post(),
+        ),
+        drawer: Drawer(
+          backgroundColor: Colors.white,
+          child: InkWell(
+            onTap: () {
+              controller.goToprofilepage();
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                UserAccountsDrawerHeader(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Colors.grey,
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
+                  currentAccountPicture: CircleAvatar(
+                    backgroundImage: avatarImage,
+                  ),
+                  accountName: Text(
+                    name ?? "",
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                  accountEmail: const Text(
+                    "View profile",
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
-                accountName: Text(
-                  name ?? "",
-                  style: const TextStyle(color: Colors.black),
+                ListTile(
+                  title: const Text("Settings"),
+                  leading: const Icon(Icons.settings),
+                  onTap: () {
+                    controller.goToSettingsPgae();
+                  },
                 ),
-                accountEmail: const Text(
-                  "View profile",
-                  style: TextStyle(color: Colors.grey),
+                ListTile(
+                  title: const Text("Calender"),
+                  leading: const Icon(Icons.calendar_today_rounded),
+                  onTap: () {
+                    controller.goToCalenderPage();
+                  },
                 ),
-              ),
-              ListTile(
-                title: const Text("Settings"),
-                leading: const Icon(Icons.settings),
-                onTap: () {
-                  controller.goToSettingsPgae();
-                },
-              ),
-              ListTile(
-                title: const Text("Calender"),
-                leading: const Icon(Icons.calendar_today_rounded),
-                onTap: () {
-                  controller.goToCalenderPage();
-                },
-              ),
-              ListTile(
-                title: const Text("Tasks"),
-                leading: const Icon(Icons.task),
-                onTap: () {
-                  Get.to(const TasksHomePage());
-                },
-              ),
-              ListTile(
-                title: const Text("My Pages"),
-                leading: const Icon(Icons.contact_page),
-                onTap: () {
-                  controller.goToMyPages();
-                },
-              ),
-              ListTile(
-                title: const Text("Log Out"),
-                leading: const Icon(Icons.logout_outlined),
-                onTap: () async {
-                  await logoutController.goTosigninpage();
-                },
-              ),
-            ],
+                ListTile(
+                  title: const Text("Tasks"),
+                  leading: const Icon(Icons.task),
+                  onTap: () {
+                    Get.to(const TasksHomePage());
+                  },
+                ),
+                ListTile(
+                  title: const Text("My Pages"),
+                  leading: const Icon(Icons.contact_page),
+                  onTap: () {
+                    controller.goToMyPages();
+                  },
+                ),
+                ListTile(
+                  title: const Text("Log Out"),
+                  leading: const Icon(Icons.logout_outlined),
+                  onTap: () async {
+                    await logoutController.goTosigninpage();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    }
   }
 }
