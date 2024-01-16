@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
-import 'package:growify/controller/home/myPages_controller.dart';
+//import 'package:growify/controller/home/myPages_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/myPage/ColleaguesPageProfile.dart';
 import 'package:growify/view/screen/homescreen/myPage/Pageprofile.dart';
@@ -11,6 +11,23 @@ import 'package:http/http.dart' as http;
 
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
+
+    class PageInfo {
+  final String id;
+  final String name;
+  final String? description;
+  final String? country;
+  final String? address;
+  final String? contactInfo;
+  final String? specialty;
+  final String? pageType;
+  final String? photo;
+  final String? coverImage;
+  final String? postCount;
+  final String? followCount;
+
+  PageInfo(this.id, this.name, this.description, this.country, this.address, this.contactInfo, this.specialty, this.pageType, this.photo, this.coverImage, this.postCount , this.followCount);
+}
 
 class SeeAboutInfoColleaguesController extends GetxController {
 
@@ -65,7 +82,7 @@ Future getProfilePage(String pageId) async {
     } else if (res.statusCode == 200) {
       var page = resbody['Page'];
       if(page['isAdmin']== true){
-        Get.to(PageProfile(isAdmin: page['isAdmin'] , userData: PageInfo(page['id'], page['name'], page['description'], page['country'], page['address'], page['contactInfo'], page['specialty'], page['pageType'], page['photo'], page['coverImage'],page['postCount'],page['followCount'])));
+        Get.to(PageProfile(isAdmin: page['isAdmin'] , userData: PageInfo(page['id'], page['name'], page['description'], page['country'], page['address'], page['contactInfo'], page['specialty'], page['pageType'], page['photo'], page['coverImage'],page['postCount'],page['followCount'],)));
       }else{
         Get.to(ColleaguesPageProfile(following: page['following'],userData: PageInfo(page['id'], page['name'], page['description'], page['country'], page['address'], page['contactInfo'], page['specialty'], page['pageType'], page['photo'], page['coverImage'],page['postCount'],page['followCount'])));
       }

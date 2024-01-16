@@ -771,6 +771,8 @@ class PostControllerImp extends PostController {
   }
 
   goToUserPage(String userUsername) async {
+    print(userUsername);
+    print("Hiiiiii");
     if (userUsername == GetStorage().read('username')) {
       await goToprofilepage();
       return;

@@ -27,8 +27,9 @@ class PageInfo {
   final String? coverImage;
   final String? postCount;
   final String? followCount;
+  final String? adminType;
 
-  PageInfo(this.id, this.name, this.description, this.country, this.address, this.contactInfo, this.specialty, this.pageType, this.photo, this.coverImage, this.postCount , this.followCount);
+  PageInfo(this.id, this.name, this.description, this.country, this.address, this.contactInfo, this.specialty, this.pageType, this.photo, this.coverImage, this.postCount , this.followCount,this.adminType);
 }
 
 
@@ -41,6 +42,8 @@ class SearchControllerImp extends GetxController {
   int pageSize = 10;
   // Define a dynamic list to store page data
   RxList<Map<String, String>> pageList = <Map<String, String>>[].obs;
+   // Define a dynamic list to store job data
+  RxList<Map<String, String>> jobeList = <Map<String, String>>[].obs;
   // for user and page chek null
   final RxString profileImageBytes = ''.obs;
   final RxString profileImageBytesName = ''.obs;
@@ -49,11 +52,14 @@ class SearchControllerImp extends GetxController {
   RxBool checkTheSearch = false.obs;
   late int userPostCount;
   late int userConnectionsCount;
+///////////////////////////////////////////////////
+  // to get jobs when i search 
 
 
 
 
 
+///////////////////////
   searchInDataBase(searchValue, page, pageSize, searchType) async {
     var url =
         "$urlStarter/user/getSearchData?email=${GetStorage().read("loginemail")}&type=$searchType&search=$searchValue&page=$page&pageSize=$pageSize";
@@ -104,6 +110,25 @@ class SearchControllerImp extends GetxController {
               [],
         );
         print(resbody["pages"]);
+        return resbody["users"];
+      }
+      // to get jobs when i serahc  
+      else if (searchType == "J") {
+        print("jooobbbb");
+        print(resbody);
+        print("okkk joobsss");
+        final List<dynamic>? jobs = resbody["jobs"];
+        jobeList.addAll(
+          (jobs)
+                  ?.map<Map<String, String>>(
+                    (job) => (job as Map<String, dynamic>)
+                        .map<String, String>(
+                            (key, value) => MapEntry(key, value.toString())),
+                  )
+                  .toList() ??
+              [],
+        );
+        print(resbody["jobs"]);
         return resbody["users"];
       }
     }
@@ -245,9 +270,9 @@ class SearchControllerImp extends GetxController {
     } else if (res.statusCode == 200) {
       var page = resbody['Page'];
       if(page['isAdmin']== true){
-        Get.to(PageProfile(isAdmin: page['isAdmin'] , userData: PageInfo(page['id'], page['name'], page['description'], page['country'], page['address'], page['contactInfo'], page['specialty'], page['pageType'], page['photo'], page['coverImage'],page['postCount'],page['followCount'])));
+        Get.to(PageProfile(isAdmin: page['isAdmin'] , userData: PageInfo(page['id'], page['name'], page['description'], page['country'], page['address'], page['contactInfo'], page['specialty'], page['pageType'], page['photo'], page['coverImage'],page['postCount'],page['followCount'],page['adminType'])));
       }else{
-        Get.to(ColleaguesPageProfile(following: page['following'],userData: PageInfo(page['id'], page['name'], page['description'], page['country'], page['address'], page['contactInfo'], page['specialty'], page['pageType'], page['photo'], page['coverImage'],page['postCount'],page['followCount'])));
+        Get.to(ColleaguesPageProfile(following: page['following'],userData: PageInfo(page['id'], page['name'], page['description'], page['country'], page['address'], page['contactInfo'], page['specialty'], page['pageType'], page['photo'], page['coverImage'],page['postCount'],page['followCount'],page['adminType'])));
       }
       print(page);
       print(page["isAdmin"]);

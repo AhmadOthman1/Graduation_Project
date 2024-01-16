@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:get/get.dart';
+import 'package:growify/controller/home/Post_controller.dart';
 import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/ShowTheJob_controller.dart';
 import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/global.dart';
@@ -85,6 +86,7 @@ class JobPostCard extends StatelessWidget {
   String? cvExt;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final ShowTheJobImp Controller22 = Get.put(ShowTheJobImp());
+ 
   final AssetImage defaultProfileImage =
       const AssetImage("images/profileImage.jpg");
 
@@ -102,10 +104,16 @@ class JobPostCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ListTile(
-            leading: CircleAvatar(
-              backgroundImage: (jobPost.image != null && jobPost.image != "")
-                  ? Image.network("$urlStarter/${jobPost.image}").image
-                  : defaultProfileImage,
+            leading: InkWell(
+              onTap: (){
+                Controller22.goToPage(jobPost.company);
+
+              },
+              child: CircleAvatar(
+                backgroundImage: (jobPost.image != null && jobPost.image != "")
+                    ? Image.network("$urlStarter/${jobPost.image}").image
+                    : defaultProfileImage,
+              ),
             ),
             title: Text(jobPost.company),
             subtitle: Text(jobPost.title),

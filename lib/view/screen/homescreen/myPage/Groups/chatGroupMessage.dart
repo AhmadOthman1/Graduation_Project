@@ -10,6 +10,7 @@ import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/global.dart';
 import 'package:growify/resources/jitsi_meet.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/CalendarGroup.dart';
+import 'package:growify/view/screen/homescreen/myPage/Groups/MeetingsHistory.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/TaskGroup/taskgroupmainpage.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/conference.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/settingGroupPage.dart';
@@ -378,6 +379,23 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                     },
                   ),
                   const SizedBox(height: 10),
+                  Container(
+                  width: 380,
+                  child: MaterialButton(
+                    color: const Color.fromARGB(255, 85, 191, 218),
+                    onPressed: (){
+                      Get.to(ShowMeetingsHistory(groupData: widget.data,));
+                    },
+                    child: Text(
+                      'Show Meetings History',
+                      style: TextStyle(color: Colors.white, fontSize: 17),
+                    ),
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                ),
                 ],
               ),
             ),

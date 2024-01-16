@@ -6,12 +6,29 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
-import 'package:growify/controller/home/myPages_controller.dart';
+//import 'package:growify/controller/home/myPages_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/myPage/ColleaguesPageProfile.dart';
 
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
+
+    class PageInfo {
+  final String id;
+  final String name;
+  final String? description;
+  final String? country;
+  final String? address;
+  final String? contactInfo;
+  final String? specialty;
+  final String? pageType;
+  final String? photo;
+  final String? coverImage;
+  final String? postCount;
+  final String? followCount;
+
+  PageInfo(this.id, this.name, this.description, this.country, this.address, this.contactInfo, this.specialty, this.pageType, this.photo, this.coverImage, this.postCount , this.followCount);
+}
 
 class SeeAboutInfoController extends GetxController {
 

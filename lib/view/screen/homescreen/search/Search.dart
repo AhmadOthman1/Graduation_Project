@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:growify/controller/home/ColleaguesProfile_controller.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/myPage/JobsPages/showthejob.dart';
 
 class Search extends StatefulWidget {
   const Search({Key? key}) : super(key: key);
@@ -68,6 +69,7 @@ class _SearchState extends State<Search> {
                               controller.Upage = 1;
                               controller.userList.clear();
                               controller.pageList.clear();
+                              controller.jobeList.clear();
                             });
                             print(searchType);
                             controller.goTosearchPage(controller.searchValue,
@@ -96,7 +98,7 @@ class _SearchState extends State<Search> {
         ),
       ),
       body: DefaultTabController(
-        length: 2,
+        length: 3,
         child: Column(
           children: [
             Material(
@@ -120,6 +122,9 @@ class _SearchState extends State<Search> {
                     } else if (index == 1) {
                       searchType = "P";
                       print('Pages Tab clicked!');
+                    } else if (index == 2) {
+                      searchType = "J";
+                      print('Jobs Tab clicked!');
                     }
                   },
                   tabs: [
@@ -152,6 +157,24 @@ class _SearchState extends State<Search> {
                         child: const Align(
                           alignment: Alignment.center,
                           child: Text("Pages"),
+                        ),
+                      ),
+                    ),
+                    // for jobs
+
+                    Tab(
+                      child: Container(
+                        height: 35,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 85, 191, 218),
+                            width: 1,
+                          ),
+                        ),
+                        child: const Align(
+                          alignment: Alignment.center,
+                          child: Text("Jobs"),
                         ),
                       ),
                     ),
@@ -219,9 +242,8 @@ class _SearchState extends State<Search> {
                               final userPhoto = photo;
 
                               Map<String, dynamic> userMap = {
-                                'name':
-                                    '$userFirstname $userLastname', 
-                                    'username': userUsername,
+                                'name': '$userFirstname $userLastname',
+                                'username': userUsername,
                                 'photo': userPhoto,
                                 'type': 'U'
                               };
@@ -300,6 +322,72 @@ class _SearchState extends State<Search> {
                             trailing: CircleAvatar(
                               backgroundImage: profileBackgroundImage,
                             ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  // jobbbbbsssssss
+                  // for jobssssss
+                  NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      var currentPos = scrollInfo.metrics.pixels;
+                      var maxPos = scrollInfo.metrics.maxScrollExtent;
+                      //print(currentPos);
+                      //print(maxPos);
+                      if (!isLoading && currentPos == maxPos) {
+                        setState(() {
+                          isLoading =
+                              true; // Set loading to true to avoid multiple requests
+                          controller.Upage++;
+                        });
+
+                        controller
+                            .goTosearchPage(
+                                controller.searchValue, controller.Upage, "J")
+                            .then((result) async {
+                          if (result != null && result.isNotEmpty) {
+                            await Future.delayed(const Duration(
+                                seconds:
+                                    1)); // to solve the problem when the user reach the bottom of the page1, it fetch page 3,4,5...etc.
+                            setState(() {
+                              isLoading =
+                                  false; // Reset loading when the data is fetched
+                            });
+                            print(isLoading);
+                          }
+                        });
+                      }
+                      return false;
+                    },
+                    child: Obx(
+                      () => ListView.builder(
+                        // for user
+
+                        padding: const EdgeInsets.all(15),
+                        itemCount: controller.jobeList.length,
+                        itemBuilder: (context, index) {
+                          final title = controller.jobeList[index]['title'];
+                          final Fields = controller.jobeList[index]['Fields'];
+                          final pageId = controller.jobeList[index]['pageId'];
+                          final jobId = controller.jobeList[index]['pageJobId'];
+
+                          return ListTile(
+                            onTap: () {
+                              Get.to(ShowTheJob(
+                                jopId: jobId,
+                                title: title!,
+                                company: pageId!,
+                                Fields: Fields!,
+                                image: controller.jobeList[index]['photo'],
+                                deadline: controller.jobeList[index]['endDate']!,
+                                content: controller.jobeList[index]
+                                    ['description']!,
+                              ));
+                            },
+                            title: Text('$title'),
+                            subtitle: Text('$Fields'),
+                            trailing: Text('$pageId'),
                           );
                         },
                       ),

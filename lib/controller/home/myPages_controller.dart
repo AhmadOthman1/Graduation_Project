@@ -21,8 +21,9 @@ class PageInfo {
   final String? coverImage;
   final String? postCount;
   final String? followCount;
+  final String? adminType;
 
-  PageInfo(this.id, this.name, this.description, this.country, this.address, this.contactInfo, this.specialty, this.pageType, this.photo, this.coverImage, this.postCount , this.followCount);
+  PageInfo(this.id, this.name, this.description, this.country, this.address, this.contactInfo, this.specialty, this.pageType, this.photo, this.coverImage, this.postCount , this.followCount,this.adminType);
 }
 
 
@@ -46,10 +47,11 @@ class MyPagesController {
       List<PageInfo> pages = [];
 
       for (var page in responseBody['pages']) {
-        pages.add(PageInfo(page['id'], page['name'], page['description'], page['country'], page['address'], page['contactInfo'], page['specialty'], page['pageType'], page['photo'], page['coverImage'],page['postCount'],page['followCount']));
+        pages.add(PageInfo(page['id'], page['name'], page['description'], page['country'], page['address'], page['contactInfo'], page['specialty'], page['pageType'], page['photo'], page['coverImage'],page['postCount'],page['followCount'],page['adminType']));
         print('Page ID: ${page['id']}');
         print('Page Name: ${page['name']}');
         print('Page Image: ${page['photo']}');
+        print('Admin Type: ${page['adminType']}');
       }
       print(pages);
       return pages;
