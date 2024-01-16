@@ -7,6 +7,8 @@ const nodemailer = require('nodemailer')
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const pageEmployees = require("../../models/pageEmployees");
+const pageAdmin = require("../../models/pageAdmin");
 
 
 exports.getWorkExperience = async (req, res, next) => {
@@ -20,6 +22,38 @@ exports.getWorkExperience = async (req, res, next) => {
         });
 
         if (existingEmail !=null) {
+            const workExperiences = await Promise.all(existingEmail.workExperiences.map(async (experience) => {
+                const isEmployee = await pageEmployees.findOne({
+                    where: {
+                        pageId: experience.company,
+                        username: req.user.username,
+                        field: experience.specialty,
+                    }
+                });
+                const isAdmin = await pageAdmin.findOne({
+                    where: {
+                        pageId: experience.company,
+                        username: req.user.username,
+                        adminType: "A",
+                    }
+                });
+                console.log(isAdmin)
+                return {
+                    'id': experience.id.toString(),
+                    'Specialty': experience.specialty,
+                    'Company': experience.company,
+                    'Description': experience.description,
+                    'Start Date': experience.startDate.toISOString().split("T")[0],
+                    'End Date': (experience.endDate) ? experience.endDate.toISOString().split("T")[0] : 'Present',
+                    'isEmployee': isEmployee == null ? (isAdmin==null? "false" : "true" ): "true",
+                };
+            }));
+            console.log(workExperiences)
+            return res.status(200).json({
+                message: 'User found',
+                workExperiences: workExperiences,
+            });
+            /*
             console.log(existingEmail);
             const workExperiences = existingEmail.workExperiences.map((experience) => ({
 
@@ -34,7 +68,7 @@ exports.getWorkExperience = async (req, res, next) => {
             return res.status(200).json({
                 message: 'User found',
                 workExperiences: workExperiences,
-            });
+            });*/
         } else {
             return res.status(500).json({
                 message: 'server Error',

@@ -146,6 +146,7 @@ router.post('/deleteGroup',authenticateToken,groupController.deleteGroup);
 router.post('/createGroupMeeting',authenticateToken,groupMeetingController.createGroupMeeting);
 router.post('/joinGroupMeeting',authenticateToken,groupMeetingController.joinGroupMeeting);
 router.post('/leaveGroupMeeting',authenticateToken,groupMeetingController.leaveGroupMeeting);
+router.get('/meetingHistory',authenticateToken,groupMeetingController.meetingHistory);
 
 // other Pages
 router.get('/getPageProfileInfo',authenticateToken,pagesProfile.getPageProfileInfo);

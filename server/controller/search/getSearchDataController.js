@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const Sequelize = require('sequelize');
 const Page = require("../../models/pages");
+const pageJobs = require("../../models/pageJobs");
 
 exports.getSearchData = async (req, res, next) => {
     try {
@@ -23,16 +24,95 @@ exports.getSearchData = async (req, res, next) => {
             const result = await searchForPage(req.user.email, search, pageSize, offset);
             return res.status(result.statusCode).json(result.body);
         }
+        else if(searchType == "J"){
+            const result = await searchForJob(req.user.email, search, pageSize, offset);
+            return res.status(result.statusCode).json(result.body);
+        }
         return res.status(500).json({
             message: 'Server Error',
-            body: req.body,
         });
     } catch (err) {
         console.log(err);
         return res.status(500).json({
             message: 'Server Error',
-            body: req.body,
         });
+    }
+};
+async function searchForJob(email, search, pageSize, offset) {
+    try {
+        const existingEmail = await User.findOne({
+            where: {
+                email: email,
+            },
+        });
+
+        if (existingEmail != null) {
+            const pageJob = await pageJobs.findAll({
+                attributes: [
+                    'pageJobId',
+                    'pageId',
+                    'title',
+                    'Fields',
+                    'description',
+                    'endDate',
+                ],
+                where: {
+                    [Op.or]: [
+                        { pageId: { [Op.like]: `%${search}%` } },
+                        { title: { [Op.like]: `%${search}%` } },
+                        { Fields: { [Op.like]: `%${search}%` } },
+                        { description: { [Op.like]: `%${search}%` } },
+                    ],
+                },
+                include: [{
+                    model: Page,
+                    attributes: ['country'], // Include the 'country' attribute from the 'pages' table
+                }],
+                order: [
+                    // Order by user country match (descending endDate)
+                    [Sequelize.literal(`CASE WHEN Page.country = '${existingEmail.country}' THEN 0 ELSE 1 END`)],
+                    ['endDate', 'DESC'],
+                ],
+                limit: parseInt(pageSize),
+                offset: parseInt(offset),
+            });
+
+            if (pageJob.length > 0) {
+                return {
+                    statusCode: 200,
+                    body: {
+                        message: 'jobs found',
+                        jobs: pageJob,
+                        totalCount: pageJob.length,
+                    },
+                };
+            } else {
+                // Handle case where no results are found
+                return {
+                    statusCode: 409,
+                    body: {
+                        message: 'No jobs found',
+                        jobs: [],
+                        totalCount: 0,
+                    },
+                };
+            }
+        } else {
+            return {
+                statusCode: 500,
+                body: {
+                    message: 'user not found',
+                },
+            };
+        }
+    } catch (err) {
+        console.log(err)
+        return {
+            statusCode: 500,
+            body: {
+                message: 'Server Error',
+            },
+        };
     }
 };
 async function searchForPage(email, search, pageSize, offset) {
@@ -105,7 +185,6 @@ async function searchForPage(email, search, pageSize, offset) {
                     [Op.or]: [
                         { id: { [Op.like]: `%${search}%` } },
                         { name: { [Op.like]: `%${search}%` } },
-                        { photo: { [Op.like]: `%${search}%` } },
                     ],
                     pageType: "public",
                 },
@@ -137,7 +216,6 @@ async function searchForPage(email, search, pageSize, offset) {
                 statusCode: 500,
                 body: {
                     message: 'Server Error',
-                    body: req.body,
                 },
             };
         }
@@ -146,7 +224,6 @@ async function searchForPage(email, search, pageSize, offset) {
             statusCode: 500,
             body: {
                 message: 'Server Error',
-                body: req.body,
             },
         };
     }
@@ -226,9 +303,9 @@ async function searchForUser(email, search, pageSize, offset) {
                 ],
                 where: {
                     [Op.or]: [
-                        { firstname: { [Op.like]: `%${search}%` } },
-                        { lastname: { [Op.like]: `%${search}%` } },
-                        { username: { [Op.like]: `%${search}%` } },
+                        { firstname: { [Op.like]: `%${search.split(' ')[0]}%` } },
+                        { lastname: { [Op.like]: `%${search.split(' ')[1]}%` } },
+                        { username: { [Op.like]: `%${search.split(' ')[0]}%` } },
                     ],
                 },
                 limit: parseInt(pageSize),
@@ -259,7 +336,6 @@ async function searchForUser(email, search, pageSize, offset) {
                 statusCode: 500,
                 body: {
                     message: 'Server Error',
-                    body: req.body,
                 },
             };
         }
@@ -268,7 +344,6 @@ async function searchForUser(email, search, pageSize, offset) {
             statusCode: 500,
             body: {
                 message: 'Server Error',
-                body: req.body,
             },
         };
     }

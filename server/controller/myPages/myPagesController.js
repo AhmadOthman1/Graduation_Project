@@ -60,6 +60,7 @@ exports.getMyPageInfo = async (req, res, next) => {
                         coverImage: pageData.coverImage,
                         postCount: postCount.toString(),
                         followCount: followCount.toString(),
+                        adminType:pageAdmin.adminType,
                     };
                 }));
 

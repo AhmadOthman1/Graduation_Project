@@ -435,3 +435,190 @@ exports.leaveGroupMeeting = async (req, res, next) => {
     }
 
 }
+function calculateDuration(startDateTime, endDateTime) {
+    const start = moment(startDateTime);
+    const end = moment(endDateTime);
+  
+    const duration = moment.duration(end.diff(start));
+  
+    const days = duration.days();
+    const hours = duration.hours();
+    const minutes = duration.minutes();
+    const seconds = duration.seconds();
+  
+    const parts = [];
+  
+    if (days > 0) {
+      parts.push(`${days}d`);
+    }
+  
+    if (hours > 0) {
+      parts.push(`${hours}h`);
+    }
+  
+    if (minutes > 0) {
+      parts.push(`${minutes}m`);
+    }
+  
+    if (seconds > 0) {
+      parts.push(`${seconds}s`);
+    }
+  
+    return parts.join(' ');
+  }
+  
+exports.meetingHistory = async (req, res, next) => {
+    try {
+        const  groupId  = req.query.groupId;
+        var page = req.query.page || 1;
+        var pageSize = req.query.pageSize || 10;
+        const offset = (page - 1) * pageSize;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        if (existingUsername != null) {
+            const group = await pageGroup.findOne({
+                where: {
+                    groupId: groupId,
+                }
+            });
+            if (group == null) {
+                return res.status(500).json({
+                    message: 'group not found',
+                    body: req.body
+                });
+            }
+            const isAdmin = await pageAdmin.findOne({
+                where: {
+                    username: userUsername,
+                    pageId: group.pageId,
+                    adminType: "A"
+                }
+            });
+            if (isAdmin != null) {
+                var Meetings= await groupMeeting.findAll({
+                    where: {
+                        groupId: groupId,
+                    },
+                    limit: parseInt(pageSize),
+                    offset: parseInt(offset),
+                    order: [['updatedAt', 'DESC']],
+                });
+                if (Meetings != null) {
+                    var allMeetings = await Promise.all(Meetings.map(async (meeting) => {
+                        var period;
+                        if(meeting.users <=0){
+                            period = calculateDuration(meeting.createdAt, meeting.updatedAt);
+                            
+                        }else{
+                            period= "Meeting is taking place now"
+                        }
+                        
+                        return {
+                            'groupId': groupId.toString(),
+                            'meetingId': meeting.meetingId,
+                            'period': period,
+                        };
+                    }));
+                    console.log(allMeetings)
+                    return res.status(500).json({
+                        message: 'meetings history',
+                        meetings:allMeetings
+                    });
+                } else {
+                    return res.status(500).json({
+                        message: 'no meetings found',
+                    });
+                }
+            } else {
+                const adminGroupsAndChildren = await getUserAdminGroupsAndChildren(userUsername);
+                if (adminGroupsAndChildren.includes(parseInt(groupId))) {
+                    var isMeetingExist = await groupMeeting.findOne({
+                        where: {
+                            groupId: groupId,
+                            meetingId: meetingId,
+                        }
+                    });
+                    if (isMeetingExist != null) {
+                        if (isMeetingExist.users <= 0) {
+                            return res.status(500).json({
+                                message: 'meeting ended',
+                            });
+                        }
+                        var meetingUsers = isMeetingExist.users + 1;
+                        await groupMeeting.update({ users: meetingUsers }, {
+                            where: {
+                                groupId: groupId,
+                                meetingId: meetingId,
+                            }
+                        })
+                        return res.status(200).json({
+                            message: 'joined',
+                        });
+                    } else {
+                        return res.status(500).json({
+                            message: 'invalid meeting id',
+                        });
+                    }
+                } else {
+                    var groupMembers = await groupMember.findOne({
+                        where: {
+                            username: userUsername
+                        }
+                    })
+                    if (groupMembers == null) {
+                        return res.status(500).json({
+                            message: 'you are not allowed to join this meeting ',
+                            body: req.body
+                        });
+                    }
+                    var isMeetingExist = await groupMeeting.findOne({
+                        where: {
+                            groupId: groupId,
+                            meetingId: meetingId,
+                        }
+                    });
+                    if (isMeetingExist != null) {
+                        if (isMeetingExist.users <= 0) {
+                            return res.status(500).json({
+                                message: 'meeting ended',
+                            });
+                        }
+                        var meetingUsers = isMeetingExist.users + 1;
+                        await groupMeeting.update({ users: meetingUsers }, {
+                            where: {
+                                groupId: groupId,
+                                meetingId: meetingId,
+                            }
+                        })
+                        return res.status(200).json({
+                            message: 'joined',
+                        });
+                    } else {
+                        return res.status(500).json({
+                            message: 'invalid meeting id',
+                        });
+                    }
+                }
+            }
+        } else {
+            return res.status(500).json({
+                message: 'user not found',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+
+    
+}

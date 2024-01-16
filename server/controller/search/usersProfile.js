@@ -13,6 +13,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const Sequelize = require('sequelize');
+const pageEmployees = require("../../models/pageEmployees");
 
 
 
@@ -26,17 +27,33 @@ exports.getWorkExperience = async (req, res, next) => {
             include: WorkExperience,
         });
 
-        if (userUsername !=null) {
-            const workExperiences = userUsername.workExperiences.map((experience) => ({
-
-                'id': experience.id.toString(),
-                'Specialty': experience.specialty,
-                'Company': experience.company,
-                'Description': experience.description,
-                'Start Date': experience.startDate.toISOString().split("T")[0],
-                'End Date': (experience.endDate) ? experience.endDate.toISOString().split("T")[0] : 'Present', // Handle the case where endDate is null
+        if (userUsername != null) {
+            const workExperiences = await Promise.all(userUsername.workExperiences.map(async (experience) => {
+                const isEmployee = await pageEmployees.findOne({
+                    where: {
+                        pageId: experience.company,
+                        username: ProfileUsername,
+                        field: experience.specialty,
+                    }
+                });
+                const isAdmin = await pageAdmin.findOne({
+                    where: {
+                        pageId: experience.company,
+                        username: ProfileUsername,
+                        adminType: "A",
+                    }
+                });
+                return {
+                    'id': experience.id.toString(),
+                    'Specialty': experience.specialty,
+                    'Company': experience.company,
+                    'Description': experience.description,
+                    'Start Date': experience.startDate.toISOString().split("T")[0],
+                    'End Date': (experience.endDate) ? experience.endDate.toISOString().split("T")[0] : 'Present',
+                    'isEmployee': isEmployee == null ? (isAdmin==null? "false" : "true" ) : "true",
+                };
             }));
-
+            console.log(workExperiences)
             return res.status(200).json({
                 message: 'User found',
                 workExperiences: workExperiences,
@@ -55,6 +72,7 @@ exports.getWorkExperience = async (req, res, next) => {
         });
     }
 }
+
 exports.getEducationLevel= async (req, res, next) => {
     try {
         var ProfileUsername = req.query.ProfileUsername;
