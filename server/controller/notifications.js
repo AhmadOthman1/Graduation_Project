@@ -31,12 +31,16 @@ exports.getevents = async (req, res) => {
 //open sse connection and handel notifications
 exports.getNotifications = async (req, res) => {
   const username = req.user.username;
-  const isClosedHeaderIndex = req.rawHeaders.indexOf('isclosed');
+  console.log(username)
+  const isClosedHeaderIndex = req.rawHeaders.indexOf('isclosed') == -1 ? req.rawHeaders.indexOf('isClosed') :  req.rawHeaders.indexOf('isclosed');
+  console.log(isClosedHeaderIndex)
   if (isClosedHeaderIndex !== -1) {
 
     const isClosedValue = req.rawHeaders[isClosedHeaderIndex + 1];
+    console.log(isClosedValue)
     if (isClosedValue == 'true') {
       clientsMap.delete(username);
+      
       return res.status(200).json({
         message: 'Closed',
       });

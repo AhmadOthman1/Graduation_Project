@@ -83,6 +83,7 @@ class LogOutButtonControllerImp extends GetxController {
           Get.toNamed(AppRoute.login);
         }
         if (responce.statusCode == 200) {
+          print(";;;;;;;;;;;;;;;;;;;;;;;;;");
           GetStorage().remove('loginemail');
           GetStorage().remove('loginpassword');
           GetStorage().remove('refreshToken');

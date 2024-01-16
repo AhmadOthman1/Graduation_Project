@@ -478,7 +478,7 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.call),
+                            icon: const Icon(Icons.video_call),
                             color: Colors.white,
                             onPressed: () {
                               //createPeerConn(GetStorage().read('username'), widget.data["username"]);
