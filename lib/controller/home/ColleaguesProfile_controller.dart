@@ -367,7 +367,7 @@ postSendAcceptConnectReq(username) async {
     var WorkExperienceInfo = await goToWorkExperiencePgae(username);
     var EducationLevelInfo = await goToEducationLevel(username);
     var ProfileMainInfo = await goToProfileMainInfo(username);
-    if (WorkExperienceInfo && EducationLevelInfo && ProfileMainInfo) {
+    if (WorkExperienceInfo!=null && EducationLevelInfo!=null && ProfileMainInfo!=null) {
       Get.to(
         SeeAboutInfoColleagues(),
         arguments: {

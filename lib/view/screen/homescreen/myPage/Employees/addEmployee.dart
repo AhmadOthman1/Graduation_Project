@@ -115,7 +115,7 @@ class _AddEmployeeState extends State<AddEmployee> {
                               context: context,
                               builder: (BuildContext context) {
                                 return CustomAlertDialog(
-                                  title: 'Error',
+                                  title: 'Aret',
                                   icon: Icons.error,
                                   text: message,
                                   buttonText: 'OK',

@@ -8,10 +8,10 @@ import 'package:growify/global.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SeeAboutInfo extends StatelessWidget {
-  SeeAboutInfo({super.key}) {
-  }
+  SeeAboutInfo({super.key}) {}
   final SeeAboutInfoController controller = Get.put(SeeAboutInfoController());
-  final AssetImage defultprofileImage = const AssetImage("images/profileImage.jpg");
+  final AssetImage defultprofileImage =
+      const AssetImage("images/profileImage.jpg");
   String? profileImage;
   String? profileImageBytes;
   String? profileImageBytesName;
@@ -34,7 +34,6 @@ class SeeAboutInfo extends StatelessWidget {
     controller.setpersonalData(personalDetails);
     print(personalDetails);
 
-  
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -116,95 +115,96 @@ Future<void> downloadFromWeb(String url, String filename) async {
 
   ///
   Widget _buildPersonalDetails(SeeAboutInfoController controller) {
-  return Container(
-    margin: const EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 10),
-    child: Obx(() {
-      final personalData = controller.personalData.value;
+    return Container(
+      margin: const EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 10),
+      child: Obx(() {
+        final personalData = controller.personalData.value;
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 10, bottom: 5),
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Personal Details",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Color.fromRGBO(14, 89, 108, 1),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 10, bottom: 5),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Personal Details",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Color.fromRGBO(14, 89, 108, 1),
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Divider(
-                  color: Color.fromARGB(255, 194, 193, 193),
-                  thickness: 2.0,
-                ),
-              ],
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Divider(
+                    color: Color.fromARGB(255, 194, 193, 193),
+                    thickness: 2.0,
+                  ),
+                ],
+              ),
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(left: 10, bottom: 10),
-            child: Column(
-              children: [
-                ...personalData.entries.map((entry) {
-                  final String key = entry.key;
-                  final dynamic value = entry.value;
+            Container(
+              margin: const EdgeInsets.only(left: 10, bottom: 10),
+              child: Column(
+                children: [
+                  ...personalData.entries.map((entry) {
+                    final String key = entry.key;
+                    final dynamic value = entry.value;
 
-                  return Column(children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (key != "photo" && key != "coverImage" && key != "cv") ...[
-                          Text(
-                            '$key: ',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w500, fontSize: 16.0),
-                          ),
-                          Flexible(
-                            child: Container(
-                              width: double.infinity,
-                              child: Text(
-                                value ?? "",
+                    return Column(children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (key != "photo" &&
+                              key != "coverImage" &&
+                              key != "cv") ...[
+                            Text(
+                              '$key: ',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w500, fontSize: 16.0),
+                            ),
+                            Flexible(
+                              child: Container(
+                                width: double.infinity,
+                                child: Text(
+                                  value ?? "",
+                                ),
                               ),
                             ),
-                          ),
-                        ] else if (key == "cv") ...[
-                          Text(
-                            '$key: ',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w500, fontSize: 16.0),
-                          ),
-                          if (value != null && value != "") ...{
-                            MaterialButton(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              onPressed: () async {
-                                // Rest of your code
-                              },
-                              textColor: Colors.blue,
-                              child: const Text("Download"),
+                          ] else if (key == "cv") ...[
+                            Text(
+                              '$key: ',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w500, fontSize: 16.0),
                             ),
-                          }
-                        ]
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                  ]);
-                }).toList(),
-              ],
+                            if (value != null && value != "") ...{
+                              MaterialButton(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                onPressed: () async {
+                                  // Rest of your code
+                                },
+                                textColor: Colors.blue,
+                                child: const Text("Download"),
+                              ),
+                            }
+                          ]
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                    ]);
+                  }).toList(),
+                ],
+              ),
             ),
-          ),
-        ],
-      );
-    }),
-  );
-}
-
+          ],
+        );
+      }),
+    );
+  }
 
 //
   Widget _buildEducationList(SeeAboutInfoController controller) {
@@ -354,12 +354,34 @@ Future<void> downloadFromWeb(String url, String filename) async {
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            '${experience['Company']}',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
-                            ),
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  if (experience['isEmployee'] == "true") {
+                                    controller.goToPage(experience['Company']!);
+                                  }
+                                },
+                                child: Text(
+                                  'At ${experience['Company']}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: (experience['isEmployee'] == "true")
+                                        ? Colors.blue
+                                        : Colors.black,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              if (experience['isEmployee'] == "true")
+                                Icon(
+                                  Icons.verified,
+                                  size: 20,
+                                  color: Colors.blue,
+                                )
+                            ],
                           ),
                           Container(
                             decoration: const BoxDecoration(

@@ -1,6 +1,5 @@
 // final SeeAboutInfoColleaguesController controller = Get.put(SeeAboutInfoColleaguesController());
 
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/seeaboutInfoColleagues_controller.dart';
@@ -13,8 +12,10 @@ import 'package:flutter/foundation.dart';
 class SeeAboutInfoColleagues extends StatelessWidget {
   SeeAboutInfoColleagues({super.key});
 
-  final SeeAboutInfoColleaguesController controller = Get.put(SeeAboutInfoColleaguesController());
-  final AssetImage defultprofileImage = const AssetImage("images/profileImage.jpg");
+  final SeeAboutInfoColleaguesController controller =
+      Get.put(SeeAboutInfoColleaguesController());
+  final AssetImage defultprofileImage =
+      const AssetImage("images/profileImage.jpg");
   String? profileImage;
   String? profileImageBytes;
   String? profileImageBytesName;
@@ -129,112 +130,111 @@ Future<void> downloadFromWeb(String url, String filename) async {
   */
 
   ///
- Widget _buildPersonalDetails(SeeAboutInfoColleaguesController controller) {
-  return Container(
-    margin: const EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 10),
-    child: Obx(() {
-      final personalData = controller.personalData.value;
+  Widget _buildPersonalDetails(SeeAboutInfoColleaguesController controller) {
+    return Container(
+      margin: const EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 10),
+      child: Obx(() {
+        final personalData = controller.personalData.value;
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 10, bottom: 5),
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Personal Details",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Color.fromRGBO(14, 89, 108, 1),
-                  ),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Divider(
-                  color: Color.fromARGB(255, 194, 193, 193),
-                  thickness: 2.0,
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(left: 10, bottom: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ...personalData.entries.map((entry) {
-                  final String key = entry.key;
-                  final dynamic value = entry.value;
-
-                  return Column(children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (key != "photo" &&
-                            key != "coverImage" &&
-                            key != "cv") ...[
-                          Text(
-                            '$key: ',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w500, fontSize: 16.0),
-                          ),
-                          Flexible(
-                            child: Text((value ?? "").toString()),
-                          ),
-                        ] else if (key == "cv") ...[
-                          Text(
-                            '$key: ',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w500, fontSize: 16.0),
-                          ),
-                          if (value != null && value != "") ...{
-                            MaterialButton(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              onPressed: () async {
-                                if (kIsWeb) {
-                                  var url = "$urlStarter/" + value;
-                                  if (await canLaunch(url)) {
-                                    await launch(
-                                      url,
-                                      headers: {
-                                        "Content-Type": "application/pdf",
-                                        "Content-Disposition": "inline"
-                                      },
-                                    );
-                                    print("browser url");
-                                    print(url);
-                                  } else {
-                                    // can't launch url, there is some error
-                                    throw "Could not launch $url";
-                                  }
-                                } else {
-                                  download("$urlStarter/" + value, value);
-                                }
-                              },
-                              textColor: Colors.blue,
-                              child: const Text("Download"),
-                            ),
-                          }
-                        ]
-                      ],
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 10, bottom: 5),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Personal Details",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Color.fromRGBO(14, 89, 108, 1),
                     ),
-                    const SizedBox(height: 5),
-                  ]);
-                }).toList(),
-              ],
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Divider(
+                    color: Color.fromARGB(255, 194, 193, 193),
+                    thickness: 2.0,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      );
-    }),
-  );
-}
+            Container(
+              margin: const EdgeInsets.only(left: 10, bottom: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ...personalData.entries.map((entry) {
+                    final String key = entry.key;
+                    final dynamic value = entry.value;
 
+                    return Column(children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (key != "photo" &&
+                              key != "coverImage" &&
+                              key != "cv") ...[
+                            Text(
+                              '$key: ',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w500, fontSize: 16.0),
+                            ),
+                            Flexible(
+                              child: Text((value ?? "").toString()),
+                            ),
+                          ] else if (key == "cv") ...[
+                            Text(
+                              '$key: ',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w500, fontSize: 16.0),
+                            ),
+                            if (value != null && value != "") ...{
+                              MaterialButton(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                onPressed: () async {
+                                  if (kIsWeb) {
+                                    var url = "$urlStarter/" + value;
+                                    if (await canLaunch(url)) {
+                                      await launch(
+                                        url,
+                                        headers: {
+                                          "Content-Type": "application/pdf",
+                                          "Content-Disposition": "inline"
+                                        },
+                                      );
+                                      print("browser url");
+                                      print(url);
+                                    } else {
+                                      // can't launch url, there is some error
+                                      throw "Could not launch $url";
+                                    }
+                                  } else {
+                                    download("$urlStarter/" + value, value);
+                                  }
+                                },
+                                textColor: Colors.blue,
+                                child: const Text("Download"),
+                              ),
+                            }
+                          ]
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                    ]);
+                  }).toList(),
+                ],
+              ),
+            ),
+          ],
+        );
+      }),
+    );
+  }
 
 //
   Widget _buildEducationList(SeeAboutInfoColleaguesController controller) {
@@ -384,12 +384,32 @@ Future<void> downloadFromWeb(String url, String filename) async {
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            '${experience['Company']}',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
-                            ),
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  if (experience['isEmployee'] == "true") {
+                                    controller.goToPage(experience['Company']!);
+                                  }
+                                },
+                                child: Text(
+                                  'At ${experience['Company']}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: (experience['isEmployee'] == "true") ? Colors.blue : Colors.black,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              if (experience['isEmployee'] == "true")
+                                Icon(
+                                  Icons.verified,
+                                  size: 20,
+                                  color: Colors.blue,
+                                )
+                            ],
                           ),
                           Container(
                             decoration: const BoxDecoration(
@@ -423,6 +443,4 @@ Future<void> downloadFromWeb(String url, String filename) async {
       ),
     );
   }
-
-
 }

@@ -139,7 +139,7 @@ goToProfileMainInfo() async {
     var WorkExperienceInfo = await goToWorkExperiencePgae();
     var EducationLevelInfo = await goToEducationLevel();
     var ProfileMainInfo = await goToProfileMainInfo();
-    if (WorkExperienceInfo && EducationLevelInfo && ProfileMainInfo) {
+    if (WorkExperienceInfo!= null && EducationLevelInfo!=null && ProfileMainInfo!=null) {
       Get.to(
         SeeAboutInfo(),
         arguments: {

@@ -68,6 +68,8 @@ class _CompanyJobPageState extends State<JobsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('All Jops'),
+        automaticallyImplyLeading: false,
+
       ),
       body: Column(
         children: [

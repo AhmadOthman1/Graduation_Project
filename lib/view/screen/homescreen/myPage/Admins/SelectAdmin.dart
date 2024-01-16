@@ -107,7 +107,7 @@ class _AddAdminState extends State<AddAdmin> {
                             context: context,
                             builder: (BuildContext context) {
                               return CustomAlertDialog(
-                                title: 'Error',
+                                title: 'Aret',
                                 icon: Icons.error,
                                 text: message,
                                 buttonText: 'OK',

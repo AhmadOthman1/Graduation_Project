@@ -64,7 +64,6 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
 
   final LogOutButtonControllerImp _logoutController =
       Get.put(LogOutButtonControllerImp());
- 
 
   @override
   void setState(fn) {
@@ -104,7 +103,6 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
 
   _socketConnect() async {
     try {
-      
       socket = IO.io(urlSSEStarter, <String, dynamic>{
         "transports": ["websocket"],
         "autoConnect": false,
@@ -166,7 +164,6 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
               chatController.sendMessage(
                   msg["message"], msg["image"], msg["video"]);
             }),
-            
           });
 
       print(socket.connected);
@@ -212,15 +209,13 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
-           _buildAppBar(),
-         
+          _buildAppBar(),
           Expanded(
             child: Obx(() {
               return ListView.builder(
@@ -262,7 +257,6 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
         children: [
           IconButton(
             onPressed: () {
-              
               Navigator.pop(context);
             },
             icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -274,10 +268,18 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                 Row(
                   children: [
                     Container(
-                      child: Text(
-                        widget.data['name'],
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 20),
+                      width: 120, // Set your desired static width
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            Text(
+                              widget.data['name'],
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 20),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     Expanded(
@@ -347,34 +349,37 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Meeting'),
-          content: Form(
-            key: formKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: meetingIDController,
-                  decoration: InputDecoration(
-                    hintText: "Enter Meeting ID to join",
-                    hintStyle: const TextStyle(
-                      fontSize: 14,
+          content: Container(
+            height: 200,
+            child: Form(
+              key: formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: meetingIDController,
+                    decoration: InputDecoration(
+                      hintText: "Enter Meeting ID to join",
+                      hintStyle: const TextStyle(
+                        fontSize: 14,
+                      ),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 30),
+                      labelText: "Meeting ID",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
                     ),
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 30),
-                    labelText: "Meeting ID",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter Meeting ID';
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter Meeting ID';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 10),
-              ],
+                  const SizedBox(height: 10),
+                ],
+              ),
             ),
           ),
           actions: [
