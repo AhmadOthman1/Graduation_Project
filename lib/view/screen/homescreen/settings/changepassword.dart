@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/changepasswordbySetting_controller.dart';
@@ -16,6 +17,7 @@ class ChangePassword extends StatelessWidget {
   Widget build(BuildContext context) {
     ChangePasswordControllerImp controller =
         Get.put(ChangePasswordControllerImp());
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -29,144 +31,182 @@ class ChangePassword extends StatelessWidget {
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 50),
-        child: Form(
-          key: formstate,
-          child: ListView(
-            children: [
-              const TextTitleAuth(
-                text: "New Password",
-              ),
-              const SizedBox(
-                height: 60,
-              ),
-              Obx(() => TextFormField(
-                  obscureText: controller.obscureOldPassword.value,
-                  decoration: InputDecoration(
-                    hintText: 'Enter Your Old Password',
-                    hintStyle: const TextStyle(
-                      fontSize: 14,
-                    ),
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 30),
-                    label: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 9),
-                        child: const Text("Password")),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        controller.obscureOldPassword.value
-                            ? Icons.visibility
-                            : Icons.visibility_off,
+        child: Row(
+          children: [
+            Expanded(
+              flex: kIsWeb ? 5 : 0,
+              child: kIsWeb
+                  ? SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AspectRatio(
+                            aspectRatio: 1.0,
+                            child: Image(
+                              image: AssetImage('images/login.png'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ],
                       ),
-                      onPressed: controller.toggleOldPasswordVisibility,
+                    )
+                  : Container(),
+            ),
+            Expanded(
+              flex: kIsWeb ? 5 : 10,
+              child: Form(
+                key: formstate,
+                child: ListView(
+                  children: [
+                    const TextTitleAuth(
+                      text: "New Password",
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
+                    const SizedBox(
+                      height: 60,
                     ),
-                  ),
-                  onChanged: (value) {
-                    controller.oldPassword.value = value;
-                  },
-                  validator: (value) {
-                    _oldPassword=value;
-                    return validInput(value!, 30, 8, "password");
-                  })),
-
-              ///
-              const SizedBox(
-                height: 16,
-              ),
-              Obx(() => TextFormField(
-                  obscureText: controller.obscureNewPassword.value,
-                  decoration: InputDecoration(
-                    hintText: 'Enter Your New Password',
-                    hintStyle: const TextStyle(
-                      fontSize: 14,
-                    ),
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 30),
-                    label: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 9),
-                        child: const Text("Password")),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        controller.obscureNewPassword.value
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                      ),
-                      onPressed: controller.toggleNewPasswordVisibility,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  onChanged: (value) {
-                    controller.newPassword.value = value;
-                  },
-                  validator: (value) {
-                    return validInput(value!, 30, 8, "password");
-                  })),
-              const SizedBox(height: 16),
-              Obx(() => TextFormField(
-                  obscureText: controller.obscureRewritePassword.value,
-                  decoration: InputDecoration(
-                    hintText: 'Rewrite Your New Password',
-                    hintStyle: const TextStyle(
-                      fontSize: 14,
-                    ),
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 30),
-                    label: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 9),
-                        child: const Text("Password")),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        controller.obscureRewritePassword.value
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                      ),
-                      onPressed: controller.toggleRewritePasswordVisibility,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  onChanged: (value) {
-                    controller.rewritePassword.value = value;
-                  },
-                  validator: (value) {
-                    _newPassword = value;
-
-                    return controller.passwordsMatch(value);
-                  })),
-
-              ButtonAuth(
-                text: "Save",
-                onPressed: () async {
-                  if (formstate.currentState!.validate()) {
-                    print("Vaild");
-                    var message = await controller.SaveChanges(_oldPassword,_newPassword);
-                    (message != null) ? showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return CustomAlertDialog(
-                              title: 'Error',
-                              icon: Icons.error,
-                              text: message,
-                              buttonText: 'OK',
-                            );
+                    Obx(() => TextFormField(
+                          obscureText: controller.obscureOldPassword.value,
+                          decoration: InputDecoration(
+                            hintText: 'Enter Your Old Password',
+                            hintStyle: const TextStyle(
+                              fontSize: 14,
+                            ),
+                            floatingLabelBehavior:
+                                FloatingLabelBehavior.always,
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 30),
+                            label: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 9),
+                                child: const Text("Password")),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                controller.obscureOldPassword.value
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed:
+                                  controller.toggleOldPasswordVisibility,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            controller.oldPassword.value = value;
                           },
-                        ) : null ;
- 
-                  } else {
-                    print("Not Valid");
-                  }
-                },
+                          validator: (value) {
+                            _oldPassword = value;
+                            return validInput(value!, 30, 8, "password");
+                          },
+                        )),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    Obx(() => TextFormField(
+                          obscureText: controller.obscureNewPassword.value,
+                          decoration: InputDecoration(
+                            hintText: 'Enter Your New Password',
+                            hintStyle: const TextStyle(
+                              fontSize: 14,
+                            ),
+                            floatingLabelBehavior:
+                                FloatingLabelBehavior.always,
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 30),
+                            label: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 9),
+                                child: const Text("Password")),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                controller.obscureNewPassword.value
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed:
+                                  controller.toggleNewPasswordVisibility,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            controller.newPassword.value = value;
+                          },
+                          validator: (value) {
+                            return validInput(value!, 30, 8, "password");
+                          },
+                        )),
+                    const SizedBox(height: 16),
+                    Obx(() => TextFormField(
+                          obscureText:
+                              controller.obscureRewritePassword.value,
+                          decoration: InputDecoration(
+                            hintText: 'Rewrite Your New Password',
+                            hintStyle: const TextStyle(
+                              fontSize: 14,
+                            ),
+                            floatingLabelBehavior:
+                                FloatingLabelBehavior.always,
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 30),
+                            label: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 9),
+                                child: const Text("Password")),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                controller.obscureRewritePassword.value
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed:
+                                  controller.toggleRewritePasswordVisibility,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            controller.rewritePassword.value = value;
+                          },
+                          validator: (value) {
+                            _newPassword = value;
+
+                            return controller.passwordsMatch(value);
+                          },
+                        )),
+                    ButtonAuth(
+                      text: "Save",
+                      onPressed: () async {
+                        if (formstate.currentState!.validate()) {
+                          print("Valid");
+                          var message = await controller.SaveChanges(
+                              _oldPassword, _newPassword);
+                          (message != null)
+                              ? showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomAlertDialog(
+                                      title: 'Error',
+                                      icon: Icons.error,
+                                      text: message,
+                                      buttonText: 'OK',
+                                    );
+                                  },
+                                )
+                              : null;
+                        } else {
+                          print("Not Valid");
+                        }
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

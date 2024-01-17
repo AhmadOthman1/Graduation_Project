@@ -386,9 +386,12 @@ class HomePageControllerImp extends HomePageController {
     } else if (res.statusCode == 200) {
       Mycolleagues.clear();
       for (var conversation in resbody['activeConnectionsInfo']) {
+        print("WWWWWWWW");
+        print(resbody['activeConnectionsInfo']);
         var name = conversation["firstname"] + " " + conversation["lastname"];
         var username = conversation["username"];
         var photo = conversation["photo"];
+        print(name);
         final Map<String, dynamic> extractedInfo = {
           'name': name,
           'username': username,

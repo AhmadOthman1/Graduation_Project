@@ -5,9 +5,13 @@ import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/homepage_controller.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/chat/chatForWeb/chatWebmainpage.dart';
+import 'package:growify/view/screen/homescreen/chat/chatmainpage.dart';
 import 'package:growify/view/screen/homescreen/search/Search.dart';
 import 'package:growify/view/screen/homescreen/taskes/tasksmainpage.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
+import 'package:growify/controller/home/chats_controller/chatmainpage_controller.dart';
+import 'package:growify/view/screen/homescreen/chat/chatpagemessages.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
@@ -170,7 +174,7 @@ class _HomepageState extends State<Homepage> {
                                           ),
                                         ),
                                       ),
-                                      InkWell(
+                                     /* InkWell(
                                         onTap: () {
                                           controller.goToChatPage();
                                         },
@@ -182,7 +186,7 @@ class _HomepageState extends State<Homepage> {
                                             size: 45,
                                           ),
                                         ),
-                                      ),
+                                      ),*/
                                     ],
                                   ),
                                 ),
@@ -206,8 +210,11 @@ class _HomepageState extends State<Homepage> {
               ),
             ),
             Expanded(
-              flex: 1,
-              child: Container(),
+              flex: 2,
+              child: Container(
+                child: ChatWebMainPage(),
+                
+              ),
             ),
           ],
         ),
