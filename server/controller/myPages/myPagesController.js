@@ -572,6 +572,9 @@ exports.deletePageComment = async (req, res, next) => {
             var userPageAdmin = await pageAdmin.findOne({
                 where: { username: userUsername, pageId: pageId }
             });
+            console.log(userPageAdmin);
+            console.log(pageId);
+            console.log(userUsername);
             if (userPageAdmin != null) {// if user is admin in the page
                 const pageComment = await comment.findOne({
                     where: { id: commentId },
@@ -598,6 +601,8 @@ exports.deletePageComment = async (req, res, next) => {
                             message: 'Comment deleted',
                         });
                     } else {
+                        console.log(pagePost.pageId)
+                        console.log(pageId)
                         return res.status(500).json({
                             message: 'You are not allowed to delete this comment',
                             body: req.body

@@ -12,6 +12,7 @@ const Connections = require("../../models/connections");
 const { Op } = require('sequelize');
 const { notifyUser, deleteNotification } = require('../notifyUser');
 const pageFollower = require("../../models/pageFollower");
+const pageAdmin = require("../../models/pageAdmin");
 
 async function findIfUserInConnections(userUsername, findProfileUsername) {
     const userConnections = await Connections.findAll({
@@ -700,9 +701,18 @@ exports.getPosts = async (req, res, next) => {
                         {
                             model: Page,
                         },
+                       
                     ],
                 });
-
+                const adminPages = await pageAdmin.findAll({
+                    where: { username: userUsername },
+                    include: [
+                        {
+                            model: Page,
+                        },
+                       
+                    ],
+                  });
                 // Fetch user connections
                 const userConnections = await Connections.findAll({
                     where: {
@@ -719,16 +729,21 @@ exports.getPosts = async (req, res, next) => {
                         as: 'receiverUsername_FK',
                     }],
                 });
-
+                const adminPageIds = adminPages.map(adminPage => adminPage.pageId);
+                console.log(adminPageIds)
+                const filteredPages = userFollowedPages.map(page => page.pageId).filter(pageId => !adminPageIds.includes(pageId));
+                console.log(filteredPages);
+                console.log("rrrrrrrrrrrrrrrrrrrrrrrrrrr")
                 // Combine pageIds and usernames from pages and connections
                 const combinedIds = [
-                    ...userFollowedPages.map(page => page.pageId),
+                    ...filteredPages,
                     ...userConnections.map(connection => {
                         return connection.senderUsername_FK.username === userUsername
                             ? connection.receiverUsername_FK.username
                             : connection.senderUsername_FK.username;
-                    }),
+                    })
                 ];
+
                 console.log(combinedIds);
                 // Fetch posts for the combined pageIds and usernames
                 const userPosts = await post.findAll({

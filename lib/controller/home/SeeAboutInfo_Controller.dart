@@ -13,7 +13,7 @@ import 'package:growify/view/screen/homescreen/myPage/ColleaguesPageProfile.dart
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
-    class PageInfo {
+class PageInfo {
   final String id;
   final String name;
   final String? description;
@@ -26,9 +26,11 @@ LogOutButtonControllerImp _logoutController =
   final String? coverImage;
   final String? postCount;
   final String? followCount;
+  final String? adminType;
 
-  PageInfo(this.id, this.name, this.description, this.country, this.address, this.contactInfo, this.specialty, this.pageType, this.photo, this.coverImage, this.postCount , this.followCount);
+  PageInfo(this.id, this.name, this.description, this.country, this.address, this.contactInfo, this.specialty, this.pageType, this.photo, this.coverImage, this.postCount , this.followCount,[this.adminType]);
 }
+
 
 class SeeAboutInfoController extends GetxController {
 
@@ -84,7 +86,7 @@ Future getProfilePage(String pageId) async {
     } else if (res.statusCode == 200) {
       var page = resbody['Page'];
       if(page['isAdmin']== true){
-        Get.to(PageProfile(isAdmin: page['isAdmin'] , userData: PageInfo(page['id'], page['name'], page['description'], page['country'], page['address'], page['contactInfo'], page['specialty'], page['pageType'], page['photo'], page['coverImage'],page['postCount'],page['followCount'])));
+        Get.to(PageProfile(isAdmin: page['isAdmin'] , userData: PageInfo(page['id'], page['name'], page['description'], page['country'], page['address'], page['contactInfo'], page['specialty'], page['pageType'], page['photo'], page['coverImage'],page['postCount'],page['followCount'],page['adminType'])));
       }else{
         Get.to(ColleaguesPageProfile(following: page['following'],userData: PageInfo(page['id'], page['name'], page['description'], page['country'], page['address'], page['contactInfo'], page['specialty'], page['pageType'], page['photo'], page['coverImage'],page['postCount'],page['followCount'])));
       }

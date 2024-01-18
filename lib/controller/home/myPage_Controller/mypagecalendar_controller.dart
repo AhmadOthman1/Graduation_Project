@@ -45,6 +45,7 @@ class MyPageCalendarController extends GetxController {
     var url = "$urlStarter/user/deletePageEvent";
     Map<String, dynamic> jsonData = {
       "eventId": id,
+      "pageId":pageId,
     };
     String jsonString = jsonEncode(jsonData);
     var response = await http.post(Uri.parse(url), body: jsonString, headers: {

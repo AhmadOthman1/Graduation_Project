@@ -40,20 +40,7 @@ class _ChatWebMainPageState extends State<ChatWebMainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: const Drawer(),
-      appBar: AppBar(
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              " Chats ",
-              style: TextStyle(color: Colors.black),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.grey[200],
-        elevation: 0.0,
-      ),
+      
       body: isLoading
           ? Center(
               child: CircularProgressIndicator(),
@@ -172,21 +159,7 @@ class _ChatWebMainPageState extends State<ChatWebMainPage> {
                               .colleaguesPreviousmessages[index]['name']),
                           subtitle: Text(
                               "@${controller.colleaguesPreviousmessages[index]['username']}"),
-                          trailing: PopupMenuButton<String>(
-                            icon: const Icon(Icons.more_vert),
-                            onSelected: (String option) {
-                              controller.onMoreOptionSelected(option);
-                            },
-                            itemBuilder: (BuildContext context) {
-                              return controller.moreOptions
-                                  .map((String option) {
-                                return PopupMenuItem<String>(
-                                  value: option,
-                                  child: Text(option),
-                                );
-                              }).toList();
-                            },
-                          ),
+                          
                         ),
                       );
                     },

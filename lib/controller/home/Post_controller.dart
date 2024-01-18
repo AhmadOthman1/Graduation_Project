@@ -414,7 +414,7 @@ class PostControllerImp extends PostController {
     } else {
       switch (option) {
         case 'Delete':
-          return await deleteComment(createdBy, commentId);
+          return await deleteComment(commentId);
           break;
         case 'Report':
          return await  Get.to(ReportCommentPage(commentId: commentId,));
@@ -423,7 +423,7 @@ class PostControllerImp extends PostController {
     }
   }
 
-  deleteComment(username, commentId) async {
+  deleteComment(commentId) async {
     var url = "$urlStarter/user/deleteComment";
 
     var responce = await http.post(
@@ -440,7 +440,7 @@ class PostControllerImp extends PostController {
     print("===================================");
     if (responce.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      deletePost(username, commentId);
+      deleteComment(commentId);
       return;
     } else if (responce.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -455,7 +455,7 @@ class PostControllerImp extends PostController {
 
   deletePageComment(pageId, commentId) async {
     var url = "$urlStarter/user/deletePageComment";
-
+    print(commentId);
     var responce = await http.post(
       Uri.parse(url),
       body: jsonEncode({
@@ -468,15 +468,17 @@ class PostControllerImp extends PostController {
       },
     );
     print(responce.statusCode);
+
     print("===================================");
     if (responce.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      deletePost(pageId, commentId);
+      deletePageComment(pageId, commentId);
       return;
     } else if (responce.statusCode == 401) {
       _logoutController.goTosigninpage();
     }
     var resbody = jsonDecode(responce.body);
+    print(resbody['message']);
     if (responce.statusCode == 409) {
       return resbody['message'];
     } else if (responce.statusCode == 200) {

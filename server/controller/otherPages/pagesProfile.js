@@ -92,12 +92,13 @@ exports.getPageProfileInfo = async (req, res, next) => {
                         username: userUsername
                     }
                 });
+                console.log(pageUserAdmin);
                 if (pageUserAdmin != null) {
                     const [postCount, followCount] = await Promise.all([
                         post.count({ where: { pageId: pageProfile.id } }),
                         pageFollower.count({ where: { pageId: pageProfile.id } }),
                     ]);
-                    console.log(pageProfile)
+                    console.log(pageUserAdmin.adminType)
                     return res.status(200).json({
                         message: 'Page found',
                         Page: {
@@ -114,6 +115,7 @@ exports.getPageProfileInfo = async (req, res, next) => {
                             coverImage: coverimage,
                             postCount: postCount.toString(),
                             followCount: followCount.toString(),
+                            adminType:pageUserAdmin.adminType,
                         }
                     });
                 } else {

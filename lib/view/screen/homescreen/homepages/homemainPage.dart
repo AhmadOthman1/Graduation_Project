@@ -39,7 +39,6 @@ class _HomepageState extends State<Homepage> {
     }
     controller = Get.put(HomePageControllerImp());
     updateAvatarImage();
-    
   }
 
   void updateAvatarImage() {
@@ -61,81 +60,80 @@ class _HomepageState extends State<Homepage> {
             Expanded(
               flex: 1,
               child: Container(
+                color: Color.fromARGB(0,255,251,254), 
                 child: InkWell(
                   onTap: () {
                     controller.goToprofilepage();
                   },
-                  child: Container(
-                    color: Colors.white,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        UserAccountsDrawerHeader(
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            border: Border(
-                              bottom: BorderSide(
-                                color: Colors.white,
-                                width: 1.0,
-                              ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      UserAccountsDrawerHeader(
+                        decoration: const BoxDecoration(
+                          color: Colors
+                              .transparent,
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.white,
+                              width: 1.0,
                             ),
                           ),
-                          currentAccountPicture: CircleAvatar(
-                            backgroundImage: avatarImage,
-                          ),
-                          accountName: Text(
-                            name ?? "",
-                            style: const TextStyle(color: Colors.black),
-                          ),
-                          accountEmail: const Text(
-                            "View profile",
-                            style: TextStyle(color: Colors.grey),
-                          ),
                         ),
-                        ListTile(
-                          title: const Text("Settings"),
-                          leading: const Icon(Icons.settings),
-                          onTap: () {
-                            controller.goToSettingsPgae();
-                          },
+                        currentAccountPicture: CircleAvatar(
+                          backgroundImage: avatarImage,
                         ),
-                        ListTile(
-                          title: const Text("Calender"),
-                          leading: const Icon(Icons.calendar_today_rounded),
-                          onTap: () {
-                            controller.goToCalenderPage();
-                          },
+                        accountName: Text(
+                          name ?? "",
+                          style: const TextStyle(color: Colors.black),
                         ),
-                        ListTile(
-                          title: const Text("Tasks"),
-                          leading: const Icon(Icons.task),
-                          onTap: () {
-                            Get.to(const TasksHomePage());
-                          },
+                        accountEmail: const Text(
+                          "View profile",
+                          style: TextStyle(color: Colors.grey),
                         ),
-                        ListTile(
-                          title: const Text("My Pages"),
-                          leading: const Icon(Icons.contact_page),
-                          onTap: () {
-                            controller.goToMyPages();
-                          },
-                        ),
-                        ListTile(
-                          title: const Text("Log Out"),
-                          leading: const Icon(Icons.logout_outlined),
-                          onTap: () async {
-                            await logoutController.goTosigninpage();
-                          },
-                        ),
-                      ],
-                    ),
+                      ),
+                      ListTile(
+                        title: const Text("Settings"),
+                        leading: const Icon(Icons.settings),
+                        onTap: () {
+                          controller.goToSettingsPgae();
+                        },
+                      ),
+                      ListTile(
+                        title: const Text("Calender"),
+                        leading: const Icon(Icons.calendar_today_rounded),
+                        onTap: () {
+                          controller.goToCalenderPage();
+                        },
+                      ),
+                      ListTile(
+                        title: const Text("Tasks"),
+                        leading: const Icon(Icons.task),
+                        onTap: () {
+                          Get.to(const TasksHomePage());
+                        },
+                      ),
+                      ListTile(
+                        title: const Text("My Pages"),
+                        leading: const Icon(Icons.contact_page),
+                        onTap: () {
+                          controller.goToMyPages();
+                        },
+                      ),
+                      ListTile(
+                        title: const Text("Log Out"),
+                        leading: const Icon(Icons.logout_outlined),
+                        onTap: () async {
+                          await logoutController.goTosigninpage();
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
             Expanded(
-              flex: 3,
+              flex: 5,
               child: Scaffold(
                 body: NestedScrollView(
                   headerSliverBuilder:
@@ -143,9 +141,10 @@ class _HomepageState extends State<Homepage> {
                     return [
                       SliverToBoxAdapter(
                         child: Container(
+                          color: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           child: Container(
-                            margin: const EdgeInsets.only(top: 30),
+                            margin: const EdgeInsets.only(top: 5),
                             child: Column(
                               children: [
                                 Container(
@@ -174,7 +173,7 @@ class _HomepageState extends State<Homepage> {
                                           ),
                                         ),
                                       ),
-                                     /* InkWell(
+                                      /* InkWell(
                                         onTap: () {
                                           controller.goToChatPage();
                                         },
@@ -190,13 +189,7 @@ class _HomepageState extends State<Homepage> {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                const Divider(
-                                  color: Color.fromARGB(255, 194, 193, 193),
-                                  thickness: 4.0,
-                                ),
+
                                 //  Post(),
                               ],
                             ),
@@ -205,7 +198,20 @@ class _HomepageState extends State<Homepage> {
                       ),
                     ];
                   },
-                  body: Post(),
+                  body: Row(children: [
+                    Expanded(
+                      flex: 1,
+                      child: Container(),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Post(),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Container(),
+                    ),
+                  ]),
                 ),
               ),
             ),
@@ -213,7 +219,6 @@ class _HomepageState extends State<Homepage> {
               flex: 2,
               child: Container(
                 child: ChatWebMainPage(),
-                
               ),
             ),
           ],

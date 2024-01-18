@@ -50,7 +50,7 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
     profileBackgroundImage = (photo != null && photo.isNotEmpty)
         ? Image.network("$urlStarter/$photo").image
         : defultprofileImage;
-    String createdBy = args?['createdBy'] ?? GetStorage().read("username") ?? 'defaultCreatedBy';
+    String createdBy = args?['createdBy'] ?? GetStorage().read("username") ;
     controller.comments.assignAll(comments);
 
     print("////////////////////");
@@ -98,7 +98,7 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                             onSelected: (String option) async {
                               var status = await controller.onCommentOptionSelected(
                                   option,
-                                  comment.createdBy,
+                                  createdBy,
                                   comment.id,
                                   isPage,
                                   
@@ -147,13 +147,13 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                             },
                           ),
                           leading: InkWell(
-                            onTap: () {
+                            onTap: () async {
                               if (isPage != null && isPage == true) {
-                                searchcontroller.goToPage(comment.createdBy);
+                                await searchcontroller.goToPage(comment.createdBy);
                                 
                               }
                              
-                                controller.goToUserPage(comment.createdBy);
+                                await controller.goToUserPage(comment.createdBy);
 
                             },
                             child: CircleAvatar(
