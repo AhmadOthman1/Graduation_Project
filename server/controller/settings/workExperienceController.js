@@ -17,6 +17,7 @@ exports.getWorkExperience = async (req, res, next) => {
         const existingEmail = await User.findOne({
             where: {
                 email: email,
+                status:null,
             },
             include: WorkExperience,
         });
@@ -94,7 +95,8 @@ exports.postAddworkExperience = async (req, res, next) => {
         var validEndDate = false;
         const existingEmail = await User.findOne({
             where: {
-                email: req.user.email
+                email: req.user.email,
+                status:null,
             },
         });
         if (existingEmail !=null) {
@@ -199,7 +201,8 @@ exports.postEditworkExperience = async (req, res, next) => {
         var validEndDate = false;
         const existingEmail = await User.findOne({
             where: {
-                email: req.user.email
+                email: req.user.email,
+                status:null,
             },
         });
         if (existingEmail !=null) {
@@ -306,7 +309,8 @@ exports.postDeleteworkExperience = async (req, res, next) => {
         const { email, id } = req.body;
         const existingEmail = await User.findOne({
             where: {
-                email: req.user.email
+                email: req.user.email,
+                status:null,
             },
         });
         if (existingEmail !=null) {

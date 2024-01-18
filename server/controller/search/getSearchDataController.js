@@ -24,7 +24,7 @@ exports.getSearchData = async (req, res, next) => {
             const result = await searchForPage(req.user.email, search, pageSize, offset);
             return res.status(result.statusCode).json(result.body);
         }
-        else if(searchType == "J"){
+        else if (searchType == "J") {
             const result = await searchForJob(req.user.email, search, pageSize, offset);
             return res.status(result.statusCode).json(result.body);
         }
@@ -43,6 +43,7 @@ async function searchForJob(email, search, pageSize, offset) {
         const existingEmail = await User.findOne({
             where: {
                 email: email,
+                status: null,
             },
         });
 
@@ -120,6 +121,7 @@ async function searchForPage(email, search, pageSize, offset) {
         const existingEmail = await User.findOne({
             where: {
                 email: email,
+                status: null,
             },
         });
 
@@ -233,6 +235,7 @@ async function searchForUser(email, search, pageSize, offset) {
         const existingEmail = await User.findOne({
             where: {
                 email: email,
+                status: null,
             },
         });
 
@@ -261,6 +264,9 @@ async function searchForUser(email, search, pageSize, offset) {
                                     [Op.ne]: email, // Exclude the user himself
                                 },
                             },
+                            {
+                                status: null,
+                            }
                         ],
                     },
                     limit: parseInt(pageSize),
@@ -302,10 +308,17 @@ async function searchForUser(email, search, pageSize, offset) {
                     'photo',
                 ],
                 where: {
-                    [Op.or]: [
-                        { firstname: { [Op.like]: `%${search.split(' ')[0]}%` } },
-                        { lastname: { [Op.like]: `%${search.split(' ')[1]}%` } },
-                        { username: { [Op.like]: `%${search.split(' ')[0]}%` } },
+                    [Op.and]: [
+                        {
+                            [Op.or]: [
+                                { firstname: { [Op.like]: `%${search.split(' ')[0]}%` } },
+                                { lastname: { [Op.like]: `%${search.split(' ')[1]}%` } },
+                                { username: { [Op.like]: `%${search.split(' ')[0]}%` } },
+                            ],
+                        },
+                        {
+                            status: null,
+                        }
                     ],
                 },
                 limit: parseInt(pageSize),

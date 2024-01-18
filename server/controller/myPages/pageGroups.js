@@ -34,7 +34,8 @@ exports.getMyPageGroups = async (req, res, next) => {
 
         const existingEmail = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingEmail != null) {
@@ -128,7 +129,8 @@ exports.getMyPageGroupInfo = async (req, res, next) => {
 
         const existingEmail = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         console.log(userUsername)
@@ -329,7 +331,8 @@ exports.getMyPageGroupMessages = async (req, res, next) => {
 
         const existingEmail = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingEmail != null) {
@@ -450,7 +453,8 @@ exports.createPageGroup = async (req, res, next) => {
 
         const existingEmail = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingEmail != null) {

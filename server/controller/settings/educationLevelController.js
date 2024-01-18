@@ -15,6 +15,7 @@ exports.getEducationLevel= async (req, res, next) => {
         const existingEmail = await User.findOne({
             where: {
                 email: req.user.email,
+                status:null,
             },
             include: EducationLevel,
         });
@@ -58,7 +59,8 @@ exports.postAddEducationLevel = async (req, res, next) => {
         var validEndDate = false;
         const existingEmail = await User.findOne({
             where: {
-                email: req.user.email
+                email: req.user.email,
+                status:null,
             },
         });
         if (existingEmail !=null) {
@@ -163,7 +165,8 @@ exports.postEditEducationLevel = async (req, res, next) => {
         var validEndDate = false;
         const existingEmail = await User.findOne({
             where: {
-                email: req.user.email
+                email: req.user.email,
+                status:null,
             },
         });
         if (existingEmail !=null) {
@@ -271,7 +274,8 @@ exports.postDeleteEducationLevel = async (req, res, next) => {
         const { email, id } = req.body;
         const existingEmail = await User.findOne({
             where: {
-                email: req.user.email
+                email: req.user.email,
+                status:null,
             },
         });
         if (existingEmail !=null) {

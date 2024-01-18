@@ -1,6 +1,5 @@
 const User = require("../../models/user");
 const tempUser = require("../../models/tempUser");
-const changeEmail = require("../../models/changeEmail");
 const { Op } = require('sequelize');
 const validator = require('../validator');
 const bcrypt = require('bcrypt');
@@ -9,9 +8,27 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
-const connections = require("../../models/connections");
-const post = require("../../models/post");
 const systemFields = require("../../models/systemFields");
+const activeUsers = require("../../models/activeUsers");
+const notifications = require("../../models/notifications");
+const connections = require("../../models/connections");
+const sentConnection = require("../../models/sentConnection");
+const workExperience = require("../../models/workExperience");
+const educationLevel = require("../../models/educationLevel");
+const userTasks = require("../../models/userTasks");
+const changeEmail = require("../../models/changeEmail");
+const forgetPasswordCode = require("../../models/forgetPasswordCode");
+const userCalender = require("../../models/userCalender");
+const jobApplication = require("../../models/jobApplication");
+const pageFollower = require("../../models/pageFollower");
+const pageEmployees = require("../../models/pageEmployees");
+const pageAdmin = require("../../models/pageAdmin");
+const comment = require("../../models/comment");
+const like = require("../../models/like");
+const post = require("../../models/post");
+const groupMember = require("../../models/groupMember");
+const groupAdmin = require("../../models/groupAdmin");
+const groupTask = require("../../models/groupTask");
 require('dotenv').config();
 
 exports.getUserProfileDashboard = async (req, res, next) => {
@@ -23,6 +40,7 @@ exports.getUserProfileDashboard = async (req, res, next) => {
         var userExists = await User.findOne({
             where: {
                 username: userUsername,
+                status:null,
             },
         });
         if (userExists != null) {
@@ -71,7 +89,8 @@ exports.getMainInfo = async (req, res, next) => {
         var email = req.user.email;
         const existingEmail = await User.findOne({
             where: {
-                email: email
+                email: email,
+                status:null,
             },
         });
         if (existingEmail != null) {
@@ -187,7 +206,8 @@ exports.changeMainInfo = async (req, res, next) => {
         var validcv = false;
         const existingEmail = await User.findOne({
             where: {
-                email: req.user.email
+                email: req.user.email,
+                status:null,
             },
         });
         if (existingEmail != null) {
@@ -242,7 +262,7 @@ exports.changeMainInfo = async (req, res, next) => {
                         message: 'Not Valid Gender',
                         body: req.body
                     });
-                }else {//change
+                } else {//change
                     validGender = true;
                 }
             }
@@ -392,7 +412,7 @@ exports.changeMainInfo = async (req, res, next) => {
                 fs.writeFileSync(uploadPath, photoBuffer);
                 console.log("fff" + newphotoname);
                 // Update the user record in the database with the new photo name
-                const result = await User.update({ photo: newphotoname }, { where: { email:req.user.email } });
+                const result = await User.update({ photo: newphotoname }, { where: { email: req.user.email } });
                 if (oldPhoto != null) {
                     //delete the old photo from the  server image folder
                     const oldPhotoPath = path.join('images', oldPhoto);
@@ -413,7 +433,7 @@ exports.changeMainInfo = async (req, res, next) => {
                 fs.writeFileSync(uploadPath, photoBuffer);
 
                 // Update the user record in the database with the new photo name
-                const result = await User.update({ coverImage: newphotoname }, { where: { email:req.user.email } });
+                const result = await User.update({ coverImage: newphotoname }, { where: { email: req.user.email } });
                 if (oldCover != null) {
                     //delete the old photo from the  server image folder
                     const oldCoverPath = path.join('images', oldCover);
@@ -435,7 +455,7 @@ exports.changeMainInfo = async (req, res, next) => {
                 fs.writeFileSync(uploadPath, pdfBuffer);
 
                 // Update the user record in the database with the new PDF name
-                const result = await User.update({ cv: newPdfName }, { where: { email:req.user.email } });
+                const result = await User.update({ cv: newPdfName }, { where: { email: req.user.email } });
                 if (oldCv != null) {
                     // Delete the old PDF file from the server folder
                     const oldPdfPath = path.join('cvs', oldCv); // Update the folder path as needed
@@ -493,7 +513,8 @@ exports.changePassword = async (req, res, next) => {
         }
         const existingEmail = await User.findOne({
             where: {
-                email: req.user.email
+                email: req.user.email,
+                status:null,
             },
         });
         if (existingEmail != null) {
@@ -569,7 +590,8 @@ exports.changeEmail = async (req, res, next) => {
         console.log(Password);
         const existingEmail = await User.findOne({
             where: {
-                email: req.user.email
+                email: req.user.email,
+                status:null,
             },
         });
 
@@ -683,7 +705,8 @@ exports.postVerificationCode = async (req, res, next) => {
         console.log(email);
         const existingUserInChangeEamil = await changeEmail.findOne({
             where: {
-                email: email
+                email: email,
+                status:null,
             }
         });
         //if exists 
@@ -717,6 +740,202 @@ exports.postVerificationCode = async (req, res, next) => {
         console.log(err);
         return res.status(409).json({
             message: 'server error',
+            body: req.body
+        });
+    }
+}
+exports.deleteUserAccount = async (req, res, next) => {
+    try{
+    const { password } = req.body;
+    const existingEmail = await User.findOne({
+        where: {
+            email: req.user.email,
+            status:null,
+        },
+    });
+    if (!password) {
+        return res.status(409).json({
+            message: 'password is empty',
+            body: req.body
+        });
+    }
+    if (password.length < 8 || password.length > 30) {
+        return res.status(409).json({
+            message: 'Not Valid password',
+            body: req.body
+        });
+    }
+    if (existingEmail != null) {
+        // mail  exists
+        console.log(password);
+        const isMatch = await bcrypt.compare(password, existingEmail.password);
+        if (isMatch) {
+            var oldPhoto = existingEmail.photo;
+            var oldCover = existingEmail.coverImage;
+
+            if (oldPhoto != null) {
+                //delete the old photo from the  server image folder
+                const oldPhotoPath = path.join('images', oldPhoto);
+
+                fs.unlinkSync(oldPhotoPath);
+            }
+            if (oldCover != null) {
+                //delete the old photo from the  server image folder
+                const oldCoverPath = path.join('images', oldCover);
+
+                fs.unlinkSync(oldCoverPath);
+            }
+            await User.update(
+                { status: false, photo: null, coverImage: null },
+                {
+                    where: {
+                        username: existingEmail.username,
+                    },
+                });
+
+            await activeUsers.destroy({
+                where: {
+                    username: existingEmail.username,
+                },
+            });
+            await notifications.destroy({
+                where: {
+                    [Op.or]: [
+                        {
+                            username: existingEmail.username,
+                        },
+                        {
+                            notificationPointer: existingEmail.username,
+                        }
+                    ]
+                    
+                },
+            });
+            await connections.destroy({
+                where: {
+                    [Op.or]: [
+                        {
+                            senderUsername: existingEmail.username,
+                        },
+                        {
+                            receiverUsername: existingEmail.username,
+                        }
+                    ]
+                },
+            });
+            await sentConnection.destroy({
+                where: {
+                    [Op.or]: [
+                        {
+                            senderUsername: existingEmail.username,
+                        },
+                        {
+                            receiverUsername: existingEmail.username,
+                        }
+                    ]
+                },
+            });
+            await workExperience.destroy({
+                where: {
+                    username: existingEmail.username,
+                },
+            });
+            await educationLevel.destroy({
+                where: {
+                    username: existingEmail.username,
+                },
+            });
+            await userTasks.destroy({
+                where: {
+                    username: existingEmail.username,
+                },
+            });
+            await changeEmail.destroy({
+                where: {
+                    username: existingEmail.username,
+                },
+            });
+            await forgetPasswordCode.destroy({
+                where: {
+                    username: existingEmail.username,
+                },
+            });
+            await userCalender.destroy({
+                where: {
+                    username: existingEmail.username,
+                },
+            });
+            await jobApplication.destroy({
+                where: {
+                    username: existingEmail.username,
+                },
+            });
+            await pageFollower.destroy({
+                where: {
+                    username: existingEmail.username,
+                },
+            });
+            await pageEmployees.destroy({
+                where: {
+                    username: existingEmail.username,
+                },
+            });
+            await pageAdmin.destroy({
+                where: {
+                    username: existingEmail.username,
+                },
+            });
+            await comment.destroy({
+                where: {
+                    username: existingEmail.username,
+                },
+            });
+            await like.destroy({
+                where: {
+                    username: existingEmail.username,
+                },
+            });
+            await post.destroy({
+                where: {
+                    username: existingEmail.username,
+                },
+            });
+            await groupTask.destroy({
+                where: {
+                    username: existingEmail.username,
+                },
+            });
+            await groupAdmin.destroy({
+                where: {
+                    username: existingEmail.username,
+                },
+            });
+            await groupMember.destroy({
+                where: {
+                    username: existingEmail.username,
+                },
+            });
+            return res.status(200).json({
+                message: 'Account deleted',
+            });
+
+        } else {
+            return res.status(409).json({
+                message: 'Wrong Password',
+                body: req.body
+            });
+        }
+
+    } else {
+        return res.status(404).json({
+            message: 'user not exist',
+            body: req.body
+        });
+    }
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({
+            message: 'user not exist',
             body: req.body
         });
     }

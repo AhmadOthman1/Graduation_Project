@@ -54,10 +54,10 @@ exports.addComment = async (req, res, next) => {
         }
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
-        // اذا كان الشخص بده يعلق ع بوست بنفحص اذا الشخص موجود اذا مش موجود بكون صفحة بدها تعلق ع بوست
         if (existingUsername != null) {
             const userPostComments = await post.findOne({
                 where: { id: postId },
@@ -72,7 +72,6 @@ exports.addComment = async (req, res, next) => {
             if (userPostComments == null) {
                 return res.status(404).json({ error: 'Post not found' });
             }
-            // لازم نفحص اذا اليوزر نيم للبوست موجود بعدها بنطبق كل الي تحت واذا لا بكون بده يعلق ع بوست صفحة
             if (userPostComments.username == userUsername) {
                 // Extract comments from the userPostcommentsobject
                 await comment.create({
@@ -167,7 +166,8 @@ exports.getPostComments = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -356,7 +356,8 @@ exports.removeLike = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         console.log(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
@@ -397,7 +398,8 @@ exports.addLike = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -503,7 +505,8 @@ exports.getPostLikes = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -690,7 +693,8 @@ exports.getPosts = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -849,7 +853,8 @@ exports.getPosts = async (req, res, next) => {
             } else {// if its other user post
                 const existingOtherUsername = await User.findOne({
                     where: {
-                        username: username
+                        username: username,
+                        status: null,
                     },
                 });
                 if (existingOtherUsername != null) {// if the other user exist 
@@ -968,7 +973,8 @@ exports.getPost = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -1037,7 +1043,8 @@ exports.updatePost = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         const userPost = await post.findOne({
@@ -1106,7 +1113,8 @@ exports.getPostHistory = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         const userPost = await post.findOne({
@@ -1195,7 +1203,8 @@ exports.deletePost = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -1242,7 +1251,8 @@ exports.deleteComment = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {

@@ -24,7 +24,8 @@ exports.getUserMessages = async (req, res, next) => {
         const offset = (page - 1) * pageSize;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername==null) {

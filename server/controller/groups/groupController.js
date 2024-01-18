@@ -71,7 +71,8 @@ exports.editGroupInfo = async (req, res, next) => {
 
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -183,13 +184,15 @@ exports.addGroupAdmin = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
             const existingAdminUsername = await User.findOne({
                 where: {
-                    username: adminUsername
+                    username: adminUsername,
+                    status: null,
                 },
             });
             if (existingAdminUsername == null) {
@@ -310,7 +313,8 @@ exports.deleteGroupAdmin = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -407,13 +411,15 @@ exports.addGroupMember = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
             const existingMemberUsername = await User.findOne({
                 where: {
-                    username: memberUsername
+                    username: memberUsername,
+                    status: null,
                 },
             });
             if (existingMemberUsername == null) {
@@ -565,7 +571,8 @@ exports.deleteGroupMember = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -662,7 +669,8 @@ exports.deleteGroup = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {

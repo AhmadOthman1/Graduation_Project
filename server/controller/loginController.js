@@ -34,7 +34,8 @@ exports.postLogin = async (req, res, next) => {
     }
     const existingEmail = await User.findOne({
         where: {
-            email: email
+            email: email,
+            status: null,
         },
     });
     if (existingEmail!=null) {
@@ -78,7 +79,7 @@ exports.postLogin = async (req, res, next) => {
 
     } else {
         return res.status(409).json({
-            message: 'Email not exists',
+            message: 'Email doest exists',
             body: req.body
         });
     }

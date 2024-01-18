@@ -34,7 +34,8 @@ exports.getUserFollowedPages = async (req, res, next) => {
 
         const existingEmail = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status:null,
             },
         });
         if (existingEmail != null) {
@@ -110,7 +111,8 @@ exports.getUserEmployedPages = async (req, res, next) => {
 
         const existingEmail = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status:null,
             },
         });
         if (existingEmail != null) {
@@ -227,7 +229,8 @@ exports.getUserGroups = async (req, res, next) => {
 
         const existingEmail = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status:null,
             },
         });
         if (existingEmail != null) {

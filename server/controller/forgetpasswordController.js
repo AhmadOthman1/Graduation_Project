@@ -109,7 +109,8 @@ exports.postForgetPassword=async (req,res,next)=>{
     try{
         const existingEmail = await User.findOne({
             where: {
-                    email: email 
+                    email: email,
+                    status:null,
                 },
             });
         if (existingEmail !=null) {

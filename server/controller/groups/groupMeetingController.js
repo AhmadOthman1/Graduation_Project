@@ -58,7 +58,8 @@ exports.createGroupMeeting = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -154,7 +155,8 @@ exports.joinGroupMeeting = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -478,7 +480,8 @@ exports.meetingHistory = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -522,7 +525,7 @@ exports.meetingHistory = async (req, res, next) => {
                         return {
                             'groupId': groupId.toString(),
                             'meetingId': meeting.meetingId,
-                            "startedAt":meeting.createdAt,
+                            "startedAt": meeting.createdAt,
                             'period': period,
                         };
                     }));
@@ -574,6 +577,18 @@ exports.meetingHistory = async (req, res, next) => {
                         });
                     }
                 } else {
+                    var groupMembers = await groupMember.findOne({
+                        where: {
+                            username: userUsername
+                        }
+                    })
+                    if (groupMembers == null) {
+                        return res.status(500).json({
+                            message: 'you are not allowed to join this meeting ',
+                            body: req.body
+                        });
+                    }
+
                     var Meetings = await groupMeeting.findAll({
                         where: {
                             groupId: groupId,

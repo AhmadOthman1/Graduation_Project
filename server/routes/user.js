@@ -58,6 +58,7 @@ router.get('/getUserRequestsSent',authenticateToken,UserColleagues.getUserReques
 router.get('/getUserFollowedPages',authenticateToken,userNetworkPages.getUserFollowedPages);
 router.get('/getUserEmployedPages',authenticateToken,userNetworkPages.getUserEmployedPages);
 router.get('/getUserGroups',authenticateToken,userNetworkPages.getUserGroups);
+router.post('/deleteUserAccount',authenticateToken,settingsController.deleteUserAccount);
 
 //search
 router.get('/getSearchData',authenticateToken,getSearchDataController.getSearchData);

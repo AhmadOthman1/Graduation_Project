@@ -23,6 +23,7 @@ exports.getWorkExperience = async (req, res, next) => {
         const userUsername = await User.findOne({
             where: {
                 username: ProfileUsername,
+                status: null,
             },
             include: WorkExperience,
         });
@@ -60,7 +61,7 @@ exports.getWorkExperience = async (req, res, next) => {
             });
         } else {
             return res.status(500).json({
-                message: 'server Error',
+                message: 'user not found',
                 body: req.body
             });
         }
@@ -79,10 +80,10 @@ exports.getEducationLevel= async (req, res, next) => {
         const userUsername = await User.findOne({
             where: {
                 username: ProfileUsername,
+                status: null,
             },
             include: EducationLevel,
         });
-
         if (userUsername !=null) {
             const educationLevel = userUsername.educationLevels.map((Level) => ({
                 'id': Level.id.toString(),
@@ -98,7 +99,7 @@ exports.getEducationLevel= async (req, res, next) => {
             });
         } else {
             return res.status(500).json({
-                message: 'server Error',
+                message: 'user not found',
                 body: req.body
             });
         }
@@ -118,7 +119,8 @@ exports.postSendDeleteReq = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: username
+                username: username,
+                status: null,
             },
         });
         if(existingUsername == null){
@@ -127,6 +129,18 @@ exports.postSendDeleteReq = async (req, res, next) => {
                 body: req.body
             });
         } 
+        const existinguserUsername = await User.findOne({
+            where: {
+                username: userUsername,
+                status: null,
+            },
+        });
+        if(existinguserUsername == null){
+            return res.status(409).json({
+                message: 'user not found',
+                body: req.body
+            });
+        }  
         var userInConnections = await findIfUserInConnections(userUsername, username);
         if (userInConnections[0]) {// check if this user  connected with other user 
             return res.status(409).json({
@@ -175,7 +189,8 @@ exports.postSendAcceptConnectReq = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: username
+                username: username,
+                status: null,
             },
         });
         if(existingUsername == null){
@@ -184,6 +199,18 @@ exports.postSendAcceptConnectReq = async (req, res, next) => {
                 body: req.body
             });
         } 
+        const existinguserUsername = await User.findOne({
+            where: {
+                username: userUsername,
+                status: null,
+            },
+        });
+        if(existinguserUsername == null){
+            return res.status(409).json({
+                message: 'user not found',
+                body: req.body
+            });
+        }   
         var userInConnections = await findIfUserInConnections(userUsername, username);
         if (userInConnections[0]) {// check if this user  connected with other user 
             return res.status(409).json({
@@ -245,7 +272,8 @@ exports.postSendRemoveConnection = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: username
+                username: username,
+                status: null,
             },
         });
         if(existingUsername == null){
@@ -254,7 +282,18 @@ exports.postSendRemoveConnection = async (req, res, next) => {
                 body: req.body
             });
         }
-               
+        const existinguserUsername = await User.findOne({
+            where: {
+                username: userUsername,
+                status: null,
+            },
+        });
+        if(existinguserUsername == null){
+            return res.status(409).json({
+                message: 'user not found',
+                body: req.body
+            });
+        }       
         var userInSenderConnections = await findIfUserInSentConnectionsSender(userUsername, username);
         console.log(userInSenderConnections);
         if (userInSenderConnections[0]) {// check if this user has a connection req from other user 
@@ -301,12 +340,25 @@ exports.postSendRemoveReq = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: username
+                username: username,
+                status: null,
             },
         });
         if(existingUsername == null){
             return res.status(409).json({
                 message: 'there is no user exists',
+                body: req.body
+            });
+        }
+        const existinguserUsername = await User.findOne({
+            where: {
+                username: userUsername,
+                status: null,
+            },
+        });
+        if(existinguserUsername == null){
+            return res.status(409).json({
+                message: 'user not found',
                 body: req.body
             });
         }
@@ -365,12 +417,25 @@ exports.postSendConnectReq = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: username
+                username: username,
+                status: null,
             },
         });
         if(existingUsername == null){
             return res.status(409).json({
                 message: 'there is no user exists',
+                body: req.body
+            });
+        }
+        const existinguserUsername = await User.findOne({
+            where: {
+                username: userUsername,
+                status: null,
+            },
+        });
+        if(existinguserUsername == null){
+            return res.status(409).json({
+                message: 'user not found',
                 body: req.body
             });
         }
@@ -432,9 +497,22 @@ exports.getUserProfileInfo = async (req, res, next) => {
         // 'decoded' now contains the user information (e.g., email, password)
         const ProfileUsername = await User.findOne({
             where: {
-                username: findProfileUsername
+                username: findProfileUsername,
+                status: null,
             },
         });
+        const ProfileuserUsername = await User.findOne({
+            where: {
+                username: userUsername,
+                status: null,
+            },
+        });
+        if(ProfileuserUsername==null){
+            return res.status(409).json({
+                message: 'user not found',
+                body: req.body
+            });
+        }
         if (ProfileUsername !=null) {
             var connection = "N";
             var photo;

@@ -23,7 +23,8 @@ exports.createPostReport = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -77,7 +78,8 @@ exports.createCommentReport = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -131,7 +133,8 @@ exports.createUserReport = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -185,7 +188,8 @@ exports.createPageReport = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {

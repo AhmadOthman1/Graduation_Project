@@ -37,7 +37,8 @@ exports.getPageProfileInfo = async (req, res, next) => {
         // 'decoded' now contains the user information (e.g., email, password)
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -193,7 +194,8 @@ exports.followPage = async (req, res, next) => {
         // 'decoded' now contains the user information (e.g., email, password)
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {//find if user exist
@@ -322,7 +324,8 @@ exports.getJobs = async (req, res, next) => {
         const offset = (page - 1) * pageSize;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -374,7 +377,8 @@ exports.saveJobApplication = async (req, res, next) => {
         // Calculate the offset based on page and pageSize
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         console.log(jobId)
@@ -491,7 +495,8 @@ exports.getOneJob = async (req, res, next) => {
         // Calculate the offset based on page and pageSize
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {

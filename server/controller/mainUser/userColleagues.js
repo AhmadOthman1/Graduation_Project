@@ -25,6 +25,7 @@ exports.getUserColleagues = async (req, res, next) => {
         var userExists = await User.findOne({
             where: {
                 username: userUsername,
+                status:null,
             },
         });
         if (userExists != null) {
@@ -103,6 +104,7 @@ exports.getUserRequestsReceived = async (req, res, next) => {
         var userExists = await User.findOne({
             where: {
                 username: userUsername,
+                status:null,
             },
         });
         if (userExists != null) {
@@ -173,6 +175,7 @@ exports.getUserRequestsSent = async (req, res, next) => {
         var userExists = await User.findOne({
             where: {
                 username: userUsername,
+                status:null,
             },
         });
         if (userExists != null) {

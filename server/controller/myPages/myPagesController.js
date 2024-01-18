@@ -31,7 +31,8 @@ exports.getMyPageInfo = async (req, res, next) => {
 
         const existingEmail = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingEmail != null) {
@@ -104,7 +105,8 @@ exports.postCreatePage = async (req, res, next) => {
 
         const existingEmail = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingEmail != null) {
@@ -203,7 +205,8 @@ exports.deletePagePost = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -261,7 +264,8 @@ exports.getPagePosts = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -397,7 +401,8 @@ exports.getPageHistoryPosts = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         const pagePost = await post.findOne({
@@ -477,7 +482,8 @@ exports.getPagePostLikes = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -560,7 +566,8 @@ exports.getPagePostComments = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -645,7 +652,8 @@ exports.deletePageComment = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -731,7 +739,8 @@ exports.pageAddLike = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -798,7 +807,8 @@ exports.pageRemoveLike = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -867,7 +877,8 @@ exports.pageAddComment = async (req, res, next) => {
         }
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -947,7 +958,8 @@ exports.postNewPagePost = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -1038,7 +1050,8 @@ exports.postUpdatePagePost = async (req, res, next) => {
         var userUsername = decoded.username;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         const pagePost = await post.findOne({
@@ -1109,7 +1122,8 @@ exports.editPageInfo = async (req, res, next) => {
         var validcoverImage = false;
         const existingEmail = await User.findOne({
             where: {
-                email: req.user.email
+                email: req.user.email,
+                status: null,
             },
         });
         if (existingEmail != null) {
@@ -1317,7 +1331,8 @@ exports.getPageAdmins = async (req, res, next) => {
         const offset = (page - 1) * pageSize;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -1400,7 +1415,8 @@ exports.addNewAdmin = async (req, res, next) => {
         }
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -1410,7 +1426,8 @@ exports.addNewAdmin = async (req, res, next) => {
             if (userPageAdmin != null) {
                 const existingAdminUsername = await User.findOne({
                     where: {
-                        username: adminUsername
+                        username: adminUsername,
+                        status: null,
                     },
                 });
                 if (existingAdminUsername != null) {
@@ -1489,7 +1506,8 @@ exports.deleteAdmin = async (req, res, next) => {
         }
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -1556,7 +1574,8 @@ exports.getPageEmployees = async (req, res, next) => {
         const offset = (page - 1) * pageSize;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -1629,7 +1648,8 @@ exports.addNewEmployee = async (req, res, next) => {
         }
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -1639,7 +1659,8 @@ exports.addNewEmployee = async (req, res, next) => {
             if (userPageAdmin != null) {
                 const existingEmployeeUsername = await User.findOne({
                     where: {
-                        username: employeeUsername
+                        username: employeeUsername,
+                        status: null,
                     },
                 });
                 if (existingEmployeeUsername != null) {
@@ -1718,7 +1739,8 @@ exports.deleteEmployee = async (req, res, next) => {
         }
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -1785,7 +1807,8 @@ exports.getPageJobs = async (req, res, next) => {
         const offset = (page - 1) * pageSize;
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -1834,7 +1857,8 @@ exports.getPageJobApplications = async (req, res, next) => {
         // Calculate the offset based on page and pageSize
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -1895,7 +1919,8 @@ exports.getJobFields = async (req, res, next) => {
         // Calculate the offset based on page and pageSize
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -1947,7 +1972,8 @@ exports.addNewJob = async (req, res, next) => {
         }
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -2046,7 +2072,8 @@ exports.getPageCalender = async (req, res, next) => {
         // Calculate the offset based on page and pageSize
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -2098,7 +2125,8 @@ exports.addNewPageEvent = async (req, res, next) => {
         // Calculate the offset based on page and pageSize
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {
@@ -2156,7 +2184,8 @@ exports.deletePageEvent = async (req, res, next) => {
         // Calculate the offset based on page and pageSize
         const existingUsername = await User.findOne({
             where: {
-                username: userUsername
+                username: userUsername,
+                status: null,
             },
         });
         if (existingUsername != null) {

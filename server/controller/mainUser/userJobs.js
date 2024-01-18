@@ -27,6 +27,7 @@ exports.getUserJobs = async (req, res, next) => {
         var userExists = await User.findOne({
             where: {
                 username: userUsername,
+                status: null,
             },
         });
         if (userExists != null) {
