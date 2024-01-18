@@ -305,6 +305,7 @@ exports.getPagePosts = async (req, res, next) => {
                         postContent: post.postContent,
                         selectedPrivacy: post.selectedPrivacy,
                         photo: post.photo,
+                        video: post.video,
                         postDate: moment(post.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
                         commentCount: post.comments.length,
                         likeCount: post.likes.length,
@@ -355,6 +356,7 @@ exports.getPagePosts = async (req, res, next) => {
                         postContent: post.postContent,
                         selectedPrivacy: post.selectedPrivacy,
                         photo: post.photo,
+                        video: post.video,
                         postDate: moment(post.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
                         commentCount: post.comments.length,
                         likeCount: post.likes.length,
@@ -934,9 +936,12 @@ exports.pageAddComment = async (req, res, next) => {
 }
 exports.postNewPagePost = async (req, res, next) => {
     try {
-        const { postContent, postImageBytes, postImageBytesName, postImageExt, pageId } = req.body;
+        const { postContent, postImageBytes, postImageBytesName, postImageExt,postVideoBytes ,postVideoBytesName , postVideoExt ,pageId } = req.body;
         var validphoto = false;
         var newphotoname = null;
+        var validvideo = false;
+        var newvideoname = null;
+
         const authHeader = req.headers['authorization']
         const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
         var userUsername = decoded.username;
@@ -960,6 +965,10 @@ exports.postNewPagePost = async (req, res, next) => {
                 if (postImageBytes != null && postImageBytesName != null && postImageExt != null) {//if feild change enables (!=null)
                     validphoto = true;
                 }
+                if (postVideoBytes != null && postVideoBytesName != null && postVideoExt != null) {//if feild change enables (!=null)
+                    validvideo = true;
+                }
+    
                 if (validphoto) {
                     const photoBuffer = Buffer.from(postImageBytes, 'base64');
                     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -971,11 +980,23 @@ exports.postNewPagePost = async (req, res, next) => {
                     console.log("fff" + newphotoname);
                     // Update the user record in the database with the new photo name
                 }
+                if (validvideo) {
+                    const videoBuffer = Buffer.from(postVideoBytes, 'base64');
+                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+                    newvideoname = userUsername + +"-" + uniqueSuffix + "." + postVideoExt; // You can adjust the file extension based on the actual image type
+                    const uploadPath = path.join('videos', newvideoname);
+    
+                    // Save the image to the server
+                    fs.writeFileSync(uploadPath, videoBuffer);
+                    console.log("fff" + newvideoname);
+                    // Update the user record in the database with the new photo name
+                }
                 const result = await post.create({
                     "pageId": pageId,
                     "postContent": postContent,
                     "selectedPrivacy": "Any One",
                     "photo": newphotoname,
+                    "video":newvideoname,
                     "postDate": new Date(),
 
                 }).then(() => {

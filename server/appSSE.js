@@ -20,7 +20,7 @@ var io = require('socket.io')(server, {
 app.use(cors());
 app.use(express.json());
 app.use(express.static('messageVideos'));
-
+app.use(express.static('videos'));
 app.use(express.static('messageImages'));
 app.use(express.static('images'));
 app.use(express.static('cvs'));

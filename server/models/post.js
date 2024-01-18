@@ -22,6 +22,10 @@ const post = sequelize.define('post', {
         type: Sequelize.STRING(2000),
         allowNull: true
     },
+    video: {
+        type: Sequelize.STRING(2000),
+        allowNull: true
+    },
     postDate: {
         type: Sequelize.DATE,
         allowNull: false,

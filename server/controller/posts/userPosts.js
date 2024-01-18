@@ -9,10 +9,12 @@ const posts = require('../../models/post');
 
 exports.postNewUserPost = async (req, res, next) => {
     try {
-        const { postContent, selectedPrivacy, postImageBytes, postImageBytesName, postImageExt } = req.body;
+        const { postContent, selectedPrivacy, postImageBytes, postImageBytesName, postImageExt,postVideoBytes ,postVideoBytesName , postVideoExt } = req.body;
         var validselectedPrivacy = false;
         var validphoto = false;
         var newphotoname = null;
+        var validvideo = false;
+        var newvideoname = null;
         const authHeader = req.headers['authorization']
         const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
         var userUsername = decoded.username;
@@ -30,6 +32,9 @@ exports.postNewUserPost = async (req, res, next) => {
             }
             if (postImageBytes != null && postImageBytesName != null && postImageExt != null) {//if feild change enables (!=null)
                 validphoto = true;
+            }
+            if (postVideoBytes != null && postVideoBytesName != null && postVideoExt != null) {//if feild change enables (!=null)
+                validvideo = true;
             }
             if (!selectedPrivacy && (selectedPrivacy == "Any One" || selectedPrivacy == "Connections")) {
                 validselectedPrivacy = true;
@@ -49,11 +54,23 @@ exports.postNewUserPost = async (req, res, next) => {
                 console.log("fff" + newphotoname);
                 // Update the user record in the database with the new photo name
             }
+            if (validvideo) {
+                const videoBuffer = Buffer.from(postVideoBytes, 'base64');
+                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+                newvideoname = userUsername + +"-" + uniqueSuffix + "." + postVideoExt; // You can adjust the file extension based on the actual image type
+                const uploadPath = path.join('videos', newvideoname);
+
+                // Save the image to the server
+                fs.writeFileSync(uploadPath, videoBuffer);
+                console.log("fff" + newvideoname);
+                // Update the user record in the database with the new photo name
+            }
             const result = await posts.create({
                 "username": userUsername,
                 "postContent": postContent,
                 "selectedPrivacy": selectedPrivacy,
                 "photo":newphotoname,
+                "video":newvideoname,
                 "postDate":new Date(),
 
             }).then(() => {
