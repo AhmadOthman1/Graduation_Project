@@ -522,6 +522,7 @@ exports.meetingHistory = async (req, res, next) => {
                         return {
                             'groupId': groupId.toString(),
                             'meetingId': meeting.meetingId,
+                            "startedAt":meeting.createdAt,
                             'period': period,
                         };
                     }));

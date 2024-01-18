@@ -63,8 +63,11 @@ const User=sequelize.define('user',{
     token:{
         type:Sequelize.STRING(2000),
         allowNull:true
-    }
-
+    },
+    status:{
+        type:Sequelize.BOOLEAN,
+        allowNull:true
+    },
 
 });
 

@@ -73,7 +73,9 @@ router.get('/usersGetworkExperience',authenticateToken,usersProfile.getWorkExper
 //user posts
 router.post('/postNewUserPost',authenticateToken,userPostsController.postNewUserPost);
 router.post('/getPosts',authenticateToken,getPostsController.getPosts);
+router.post('/getPostHistory',authenticateToken,getPostsController.getPostHistory);
 router.post('/getPost',authenticateToken,getPostsController.getPost);
+router.post('/updatePost',authenticateToken,getPostsController.updatePost);
 router.post('/getPostLikes',authenticateToken,getPostsController.getPostLikes);
 router.post('/addLike',authenticateToken,getPostsController.addLike);
 router.post('/removeLike',authenticateToken,getPostsController.removeLike);
@@ -102,12 +104,14 @@ router.post('/deleteUserEvent',authenticateToken,userCalender.deleteUserEvent);
 router.get('/getMyPages',authenticateToken,myPagesController.getMyPageInfo);
 router.post('/postCreatePage',authenticateToken,myPagesController.postCreatePage);
 router.post('/getPagePosts',authenticateToken,myPagesController.getPagePosts);
+router.post('/getPageHistoryPosts',authenticateToken,myPagesController.getPageHistoryPosts);
 router.post('/getPagePostLikes',authenticateToken,myPagesController.getPagePostLikes);
 router.post('/getPagePostComments',authenticateToken,myPagesController.getPagePostComments);
 router.post('/pageAddLike',authenticateToken,myPagesController.pageAddLike);
 router.post('/pageRemoveLike',authenticateToken,myPagesController.pageRemoveLike);
 router.post('/pageAddComment',authenticateToken,myPagesController.pageAddComment);
 router.post('/postNewPagePost',authenticateToken,myPagesController.postNewPagePost);
+router.post('/postUpdatePagePost',authenticateToken,myPagesController.postUpdatePagePost);
 router.post('/deletePagePost',authenticateToken,myPagesController.deletePagePost);
 router.post('/deletePageComment',authenticateToken,myPagesController.deletePageComment);
 router.post('/editPageInfo',authenticateToken,myPagesController.editPageInfo);

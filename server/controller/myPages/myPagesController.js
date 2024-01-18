@@ -21,6 +21,7 @@ const jobApplication = require("../../models/jobApplication");
 const systemFields = require("../../models/systemFields");
 const pageCalender = require("../../models/pageCalender");
 const { notifyUser, deleteNotification } = require('../notifyUser');
+const postHistory = require('../../models/postHistory');
 
 exports.getMyPageInfo = async (req, res, next) => {
     try {
@@ -60,7 +61,7 @@ exports.getMyPageInfo = async (req, res, next) => {
                         coverImage: pageData.coverImage,
                         postCount: postCount.toString(),
                         followCount: followCount.toString(),
-                        adminType:pageAdmin.adminType,
+                        adminType: pageAdmin.adminType,
                     };
                 }));
 
@@ -275,7 +276,7 @@ exports.getPagePosts = async (req, res, next) => {
             if (userAdmin != null) {
                 const pagePosts = await post.findAll({
                     where: { pageId: pageId },
-                    order: [['postDate', 'DESC']], // Order posts by date
+                    order: [['updatedAt', 'DESC']], // Order posts by date
                     offset: offset, // Calculate the offset
                     limit: pageSize, // Number of records to retrieve
                     include: [
@@ -304,7 +305,7 @@ exports.getPagePosts = async (req, res, next) => {
                         postContent: post.postContent,
                         selectedPrivacy: post.selectedPrivacy,
                         photo: post.photo,
-                        postDate: moment(post.postDate).format('YYYY-MM-DD HH:mm:ss'),
+                        postDate: moment(post.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
                         commentCount: post.comments.length,
                         likeCount: post.likes.length,
                         isLiked: isLiked,
@@ -329,7 +330,7 @@ exports.getPagePosts = async (req, res, next) => {
                 }
                 const pagePosts = await post.findAll({
                     where: { pageId: pageId },
-                    order: [['postDate', 'DESC']], // Order posts by date
+                    order: [['updatedAt', 'DESC']], // Order posts by date
                     offset: offset, // Calculate the offset
                     limit: pageSize, // Number of records to retrieve
                     include: [
@@ -354,7 +355,7 @@ exports.getPagePosts = async (req, res, next) => {
                         postContent: post.postContent,
                         selectedPrivacy: post.selectedPrivacy,
                         photo: post.photo,
-                        postDate: moment(post.postDate).format('YYYY-MM-DD HH:mm:ss'),
+                        postDate: moment(post.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
                         commentCount: post.comments.length,
                         likeCount: post.likes.length,
                         isLiked: isLiked,
@@ -386,6 +387,83 @@ exports.getPagePosts = async (req, res, next) => {
     });
 }
 
+exports.getPageHistoryPosts = async (req, res, next) => {
+    try {
+        const { postId } = req.body;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        const pagePost = await post.findOne({
+            where: {
+                id: postId,
+            }
+        });
+        if (pagePost == null) {
+            return res.status(500).json({
+                message: 'post not found',
+            });
+        }
+        if (existingUsername != null) {
+            //find if the user is admin in the page
+            var userAdmin = await pageAdmin.findOne({
+                where: {
+                    username: userUsername,
+                    pageId: pagePost.pageId
+                },
+                include: userPages,
+            });
+            if (userAdmin != null) {
+                const pagePostHistory = await postHistory.findAll({
+                    where: { postId: postId },
+                    order: [['createdAt', 'DESC']], // Order posts by date
+                });
+                return res.status(200).json({
+                    message: 'fetched',
+                    PostHistory: pagePostHistory,
+                });
+            } else {//user is not admin
+                var existingPage = await Page.findOne({
+                    where: {
+                        id: pagePost.pageId,
+                    }
+                });
+                if (existingPage == null) {
+                    return res.status(404).json({
+                        message: 'Page not found',
+                        body: req.body
+                    });
+                }
+                const pagePostHistory = await postHistory.findAll({
+                    where: { postId: postId },
+                    order: [['createdAt', 'DESC']], // Order posts by date
+                });
+                return res.status(200).json({
+                    message: 'fetched',
+                    PostHistory: pagePostHistory,
+                });
+                
+            }
+
+        } else {
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+   
+}
 
 exports.getPagePostLikes = async (req, res, next) => {
     try {
@@ -931,7 +1009,72 @@ exports.postNewPagePost = async (req, res, next) => {
         });
     }
 }
+exports.postUpdatePagePost = async (req, res, next) => {
+    try {
+        const { postId, newText } = req.body;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        const pagePost = await post.findOne({
+            where: {
+                id: postId,
+            }
+        });
+        if (pagePost == null) {
+            return res.status(500).json({
+                message: 'post not found',
+            });
+        }
+        if (existingUsername != null) {
+            var userPageAdmin = await pageAdmin.findOne({
+                where: { username: userUsername, pageId: pagePost.pageId }
+            });
+            if (userPageAdmin != null) {
 
+                await postHistory.create({
+                    postId: postId,
+                    PreviousText: pagePost.postContent,
+                    createdAt: pagePost.updatedAt,
+
+                })
+                const pagePosts = await post.update({
+                    postContent: newText,
+                },
+                    {
+                        where: {
+                            id: postId,
+                        }
+                    }
+                )
+                return res.status(200).json({
+                    message: 'post updated',
+                });
+
+            } else {
+                return res.status(500).json({
+                    message: 'You are not Admin',
+                    body: req.body
+                });
+            }
+        } else {
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+}
 exports.editPageInfo = async (req, res, next) => {
     try {
         const { pageId, name, specialty, address, country, contactInfo, description, profileImageBytes, profileImageBytesName, profileImageExt, coverImageBytes, coverImageBytesName, coverImageExt } = req.body;
@@ -1887,7 +2030,7 @@ exports.getPageCalender = async (req, res, next) => {
         });
         if (existingUsername != null) {
             var userPageAdmin = await pageAdmin.findOne({
-                where: { username: userUsername, pageId: pageId}
+                where: { username: userUsername, pageId: pageId }
             });
             if (userPageAdmin != null) {
                 var allPageCalender = await pageCalender.findAll({

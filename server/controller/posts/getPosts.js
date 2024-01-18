@@ -5,6 +5,7 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const post = require('../../models/post');
+const postHistory = require('../../models/postHistory');
 const comment = require('../../models/comment');
 const like = require('../../models/like');
 const moment = require('moment');
@@ -701,7 +702,7 @@ exports.getPosts = async (req, res, next) => {
                         {
                             model: Page,
                         },
-                       
+
                     ],
                 });
                 const adminPages = await pageAdmin.findAll({
@@ -710,9 +711,9 @@ exports.getPosts = async (req, res, next) => {
                         {
                             model: Page,
                         },
-                       
+
                     ],
-                  });
+                });
                 // Fetch user connections
                 const userConnections = await Connections.findAll({
                     where: {
@@ -748,7 +749,7 @@ exports.getPosts = async (req, res, next) => {
                 // Fetch posts for the combined pageIds and usernames
                 const userPosts = await post.findAll({
                     where: { [Op.or]: [{ username: { [Op.in]: combinedIds } }, { pageId: { [Op.in]: combinedIds } }] },
-                    order: [['postDate', 'DESC']],
+                    order: [['updatedAt', 'DESC']],
                     offset: offset,
                     limit: pageSize,
                     include: [
@@ -785,17 +786,17 @@ exports.getPosts = async (req, res, next) => {
                     const additionalData = userData[index];
                     return {
                         id: post.id,
-                        createdBy: post.username??post.pageId,
-                        name: additionalData.username ? additionalData.dataValues.firstName+" "+ additionalData.dataValues.lastName : additionalData.name,
+                        createdBy: post.username ?? post.pageId,
+                        name: additionalData.username ? additionalData.dataValues.firstName + " " + additionalData.dataValues.lastName : additionalData.name,
                         userPhoto: additionalData ? additionalData.photo : null,
                         postContent: post.postContent,
                         selectedPrivacy: post.selectedPrivacy,
                         photo: post.photo,
-                        postDate: moment(post.postDate).format('YYYY-MM-DD HH:mm:ss'),
+                        postDate: moment(post.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
                         commentCount: post.comments.length,
                         likeCount: post.likes.length,
                         isLiked: isLiked,
-                        isUser: additionalData.username ? true :false,
+                        isUser: additionalData.username ? true : false,
                     };
                 });
                 console.log(posts);
@@ -807,7 +808,7 @@ exports.getPosts = async (req, res, next) => {
             if (userUsername == username) {// if it is the user post 
                 const userPosts = await post.findAll({
                     where: { username: username },
-                    order: [['postDate', 'DESC']], // Order posts by date
+                    order: [['updatedAt', 'DESC']], // Order posts by date
                     offset: offset, // Calculate the offset
                     limit: pageSize, // Number of records to retrieve
                     include: [
@@ -832,7 +833,7 @@ exports.getPosts = async (req, res, next) => {
                         postContent: post.postContent,
                         selectedPrivacy: post.selectedPrivacy,
                         photo: post.photo,
-                        postDate: moment(post.postDate).format('YYYY-MM-DD HH:mm:ss'),
+                        postDate: moment(post.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
                         commentCount: post.comments.length,
                         likeCount: post.likes.length,
                         isLiked: isLiked,
@@ -854,7 +855,7 @@ exports.getPosts = async (req, res, next) => {
                     if (userInConnections[0]) { // check if user is connected to other user
                         const userPosts = await post.findAll({
                             where: { username: username },
-                            order: [['postDate', 'DESC']], // Order posts by date
+                            order: [['updatedAt', 'DESC']], // Order posts by date
                             offset: offset, // Calculate the offset
                             limit: pageSize, // Number of records to retrieve
                             include: [
@@ -879,7 +880,7 @@ exports.getPosts = async (req, res, next) => {
                                 postContent: post.postContent,
                                 selectedPrivacy: post.selectedPrivacy,
                                 photo: post.photo,
-                                postDate: moment(post.postDate).format('YYYY-MM-DD HH:mm:ss'),
+                                postDate: moment(post.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
                                 commentCount: post.comments.length,
                                 likeCount: post.likes.length,
                                 isLiked: isLiked,
@@ -893,7 +894,7 @@ exports.getPosts = async (req, res, next) => {
                     } else {// if the user is not connected to the other user, return the public posts only
                         const userPosts = await post.findAll({
                             where: { username: username, selectedPrivacy: 'Any One' },
-                            order: [['postDate', 'DESC']], // Order posts by date
+                            order: [['updatedAt', 'DESC']], // Order posts by date
                             offset: offset, // Calculate the offset
                             limit: pageSize, // Number of records to retrieve
                             include: [
@@ -918,7 +919,7 @@ exports.getPosts = async (req, res, next) => {
                                 postContent: post.postContent,
                                 selectedPrivacy: post.selectedPrivacy,
                                 photo: post.photo,
-                                postDate: moment(post.postDate).format('YYYY-MM-DD HH:mm:ss'),
+                                postDate: moment(post.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
                                 commentCount: post.comments.length,
                                 likeCount: post.likes.length,
                                 isLiked: isLiked,
@@ -970,7 +971,7 @@ exports.getPost = async (req, res, next) => {
             if (userUsername == username) {// if it is the user post 
                 const userPosts = await post.findAll({
                     where: { username: username, id: postId },
-                    order: [['postDate', 'DESC']], // Order posts by date
+                    order: [['updatedAt', 'DESC']], // Order posts by date
                     include: [
                         {
                             model: comment,
@@ -993,7 +994,7 @@ exports.getPost = async (req, res, next) => {
                         postContent: post.postContent,
                         selectedPrivacy: post.selectedPrivacy,
                         photo: post.photo,
-                        postDate: moment(post.postDate).format('YYYY-MM-DD HH:mm:ss'),
+                        postDate: moment(post.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
                         commentCount: post.comments.length,
                         likeCount: post.likes.length,
                         isLiked: isLiked,
@@ -1023,8 +1024,165 @@ exports.getPost = async (req, res, next) => {
         body: req.body
     });;
 }
+exports.updatePost = async (req, res, next) => {
+    try {
+        const { postId, newText ,newSelectedPrivacy} = req.body;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        const userPost = await post.findOne({
+            where: {
+                username: userUsername,
+                id: postId,
+            }
+        });
+        if (userPost == null) {
+            return res.status(500).json({
+                message: 'post not found',
+            });
+        }
+        if(newSelectedPrivacy!='Any One' && newSelectedPrivacy!='Connections'){
+            return res.status(500).json({
+                message: 'Invalid Selected Privacy',
+            });
+        }
+        if (existingUsername != null) {
+            if (userUsername == userPost.username) {// if it is the user post 
+
+
+                await postHistory.create({
+                    postId: postId,
+                    PreviousText: userPost.postContent,
+                    createdAt: userPost.updatedAt,
+
+                })
+                const userPosts = await post.update({
+                    postContent: newText,
+                    selectedPrivacy:newSelectedPrivacy,
+                },
+                    {
+                        where: {
+                            id: postId,
+                        }
+                    }
+                )
+                return res.status(200).json({
+                    message: 'post updated',
+                });
+            }
+        } else {
+            return res.status(500).json({
+                message: 'user not found',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+    return res.status(404).json({
+        message: 'server Error',
+        body: req.body
+    });;
+}
+exports.getPostHistory = async (req, res, next) => {
+    try {
+        const { postId } = req.body;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername
+            },
+        });
+        const userPost = await post.findOne({
+            where: {
+                id: postId,
+            }
+        });
+        if (userPost == null) {
+            return res.status(500).json({
+                message: 'post not found',
+            });
+        }
+        if (existingUsername != null) {
+            if (userUsername == userPost.username) {// if it is the user post 
+                const userPostHistory = await postHistory.findAll({
+                    where: { postId: postId },
+                    order: [['createdAt', 'DESC']], // Order posts by date
+                });
+                
+                return res.status(200).json({
+                    message: 'fetched',
+                    PostHistory: userPostHistory,
+                });
+            } else {// if its other user post
+                const existingOtherUsername = await User.findOne({
+                    where: {
+                        username: userPost.username
+                    },
+                });
+                if (existingOtherUsername != null) {// if the other user exist 
+                    var userInConnections = await findIfUserInConnections(userUsername, userPost.username);
+                    if (userInConnections[0]) { // check if user is connected to other user
+                        const userPostHistory = await postHistory.findAll({
+                            where: { postId: postId },
+                            order: [['createdAt', 'DESC']], // Order posts by date
+                        });
+                        
+                        return res.status(200).json({
+                            message: 'fetched',
+                            PostHistory: userPostHistory,
+                        });
+                    } else if(userPost.selectedPrivacy == 'Any One'){// if the user is not connected to the other user, return the public posts only
+                        const userPostHistory = await postHistory.findAll({
+                            where: { postId: postId },
+                            order: [['createdAt', 'DESC']], // Order posts by date
+                        });
+                        
+                        return res.status(200).json({
+                            message: 'fetched',
+                            PostHistory: userPostHistory,
+                        });
+                    }else{
+                        return res.status(500).json({
+                            message: 'you are not allowed to see this info',
+                            body: req.body
+                        });
+                    }
+                } else {
+                    return res.status(500).json({
+                        message: 'user not found',
+                        body: req.body
+                    });
+                }
+            }
+            
+        } else {
+            return res.status(500).json({
+                message: 'user not found',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+    
+}
 exports.deletePost = async (req, res, next) => {
-    console.log("innnnnnnnnnnnnnnnnnnn");
     try {
         const { postId } = req.body;
         const authHeader = req.headers['authorization']
