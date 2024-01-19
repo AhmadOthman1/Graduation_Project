@@ -236,7 +236,7 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
         _buildDivider(10),
         InkWell(
           onTap: () {
-            Get.to(NewPost(profileImage:widget.userData[0]["photo"]));
+            Get.to(NewPost(profileImage:widget.userData[0]["photo"],));
           },
           child: Container(
             height: 35,

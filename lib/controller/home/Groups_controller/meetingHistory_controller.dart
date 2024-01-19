@@ -67,6 +67,7 @@ class ShowMeetingHistoryController {
           return {
             'meetingId': history['meetingId'],
             'period': history['period'],
+            'startedAt':history['startedAt'],
 
           };
         }).toList();

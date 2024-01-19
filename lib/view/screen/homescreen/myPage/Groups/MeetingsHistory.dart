@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Groups_controller/meetingHistory_controller.dart';
 import 'package:growify/controller/home/network_controller/networdkmainpage_controller.dart';
@@ -19,6 +20,15 @@ class _ShowMeetingsHistoryState extends State<ShowMeetingsHistory> {
   final ScrollController _scrollController = ScrollController();
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
+
+    String formatDate(String dateTimeString) {
+  DateTime dateTime = DateTime.parse(dateTimeString);
+
+  String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
+
+  return formattedDate;
+}
+
 
   @override
   void initState() {
@@ -75,22 +85,41 @@ class _ShowMeetingsHistoryState extends State<ShowMeetingsHistory> {
               itemCount: _controller.meetinghistory.length,
               itemBuilder: (context, index) {
                 final history = _controller.meetinghistory[index];
+                print("OKKKKKKKKKKKKKKKKKKKKKK");
+                print(history);
                 final meetingId = history['meetingId'];
                 final period = history['period'];
+                final startedAt=history['startedAt'];
+      
 
                 return Column(
+                
                   children: [
                     ListTile(
                       title: Text('A meeting was held with id: $meetingId'),
-                      subtitle: Text(
-                        'At: $period',
-                        style: TextStyle(
-                          color: period == 'Meeting is taking place now'
-                              ? Colors.green
-                              : Colors.red,
+                      subtitle:   Column(
+                        children: [
+                          Container(
+        alignment: Alignment.centerLeft,
+        child: Text('At: ${formatDate(startedAt)}'),
+      ),
+                                 Container(
+                   
+                       alignment: Alignment.centerLeft,
+                      child: Text(
+                          'Period: $period',
+                          style: TextStyle(
+                            color: period == 'Meeting is taking place now'
+                                ? Colors.green
+                                : Colors.red,
+                          ),
                         ),
-                      ),
                     ),
+                        ],
+                      ),
+                      
+                    ),
+                   
                     const Divider(
                       color: Color.fromARGB(255, 194, 193, 193),
                       thickness: 2.0,

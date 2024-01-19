@@ -14,7 +14,7 @@ class NewPostControllerImp extends GetxController {
   RxString postContent = ''.obs;
   RxString selectedPrivacy = 'Any One'.obs;
 
-  postNewPost(postImageBytes, postImageBytesName, postImageExt,
+  postNewPost(postImageBytes, postImageBytesName, postImageExt,messageVideoBytes,messageVideoBytesName,messageVideoExt,
       [bool? isPage, String? pageId]) async {
     if (isPage != null && isPage) {
       var url = "$urlStarter/user/postNewPagePost";
@@ -24,6 +24,9 @@ class NewPostControllerImp extends GetxController {
         "postImageBytes": postImageBytes,
         "postImageBytesName": postImageBytesName,
         "postImageExt": postImageExt,
+        "postVideoBytes": messageVideoBytes,
+        "postVideoBytesName": messageVideoBytesName,
+        "postVideoExt": messageVideoExt,
         "pageId":pageId,
       };
       String jsonString = jsonEncode(jsonData);
@@ -43,6 +46,9 @@ class NewPostControllerImp extends GetxController {
         "postImageBytes": postImageBytes,
         "postImageBytesName": postImageBytesName,
         "postImageExt": postImageExt,
+        "postVideoBytes": messageVideoBytes,
+        "postVideoBytesName": messageVideoBytesName,
+        "postVideoExt": messageVideoExt,
       };
       String jsonString = jsonEncode(jsonData);
       int contentLength = utf8.encode(jsonString).length;
@@ -55,13 +61,13 @@ class NewPostControllerImp extends GetxController {
     }
   }
 
-  post(postImageBytes, postImageBytesName, postImageExt,
+  post(postImageBytes, postImageBytesName, postImageExt,messageVideoBytes,messageVideoBytesName,messageVideoExt,
       [bool? isPage, String? pageId]) async {
     var res = await postNewPost(
-        postImageBytes, postImageBytesName, postImageExt, isPage, pageId);
+        postImageBytes, postImageBytesName, postImageExt,messageVideoBytes,messageVideoBytesName,messageVideoExt, isPage, pageId);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      post(postImageBytes, postImageBytesName, postImageExt, isPage, pageId);
+      post(postImageBytes, postImageBytesName, postImageExt,messageVideoBytes,messageVideoBytesName,messageVideoExt, isPage, pageId);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -81,6 +87,29 @@ class NewPostControllerImp extends GetxController {
     selectedPrivacy.value = newValue;
     update();
   }
+
+  // for video 
+
+
+  final RxString messageVideoBytes = ''.obs;
+  final RxString messageVideoBytesName = ''.obs;
+  final RxString messageVideoExt = ''.obs;
+
+    void updateVideo(
+    String base64String,
+    String imageName,
+    String imageExt,
+  ) {
+    messageVideoBytes.value = base64String;
+    messageVideoBytesName.value = imageName;
+    messageVideoExt.value = imageExt;
+    update(); // This triggers a rebuild of the widget tree
+  }
+
+
+
+
+  ////////////
 
   final RxString postImageBytes = ''.obs;
   final RxString postImageBytesName = ''.obs;

@@ -6,16 +6,18 @@ import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/Post_controller.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/widget/homePage/posts.dart';
 
 class CommentsMainPage extends StatefulWidget {
-  const CommentsMainPage({super.key});
+  const CommentsMainPage({super.key, this.index});
+  final index;
 
   @override
   _CommentsMainPageState createState() => _CommentsMainPageState();
 }
 
 class _CommentsMainPageState extends State<CommentsMainPage> {
-  PostControllerImp controller = Get.put(PostControllerImp());
+  PostControllerImp controller = Get.put(PostControllerImp(rebuildCallback: () {  }));
   final SearchControllerImp searchcontroller = Get.put(SearchControllerImp());
   final TextEditingController commentController = TextEditingController();
 
@@ -26,18 +28,21 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
   String? profileImageExt;
   String? profileImage;
   ImageProvider<Object>? profileBackgroundImage;
+  int sendButtonPressCount = 0;
 
   @override
   Widget build(BuildContext context) {
     var args = Get.arguments;
-        RxList<CommentModel> comments =
-        args != null ? (args['comments'] as List<CommentModel>).obs : <CommentModel>[].obs;
+    RxList<CommentModel> comments = args != null
+        ? (args['comments'] as List<CommentModel>).obs
+        : <CommentModel>[].obs;
     print("*******=======");
     print(comments);
     int postId = args?['postId'] ?? 0;
-     String name = args?['name'] ?? (GetStorage().read("firstname") + " " +GetStorage().read("lastname"));
+    String name = args?['name'] ??
+        (GetStorage().read("firstname") + " " + GetStorage().read("lastname"));
     bool? isPage = args?['isPage'] ?? false;
-    
+
     bool? isAdmin = args?['isAdmin'] ?? false;
     var photo;
 
@@ -50,7 +55,7 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
     profileBackgroundImage = (photo != null && photo.isNotEmpty)
         ? Image.network("$urlStarter/$photo").image
         : defultprofileImage;
-    String createdBy = args?['createdBy'] ?? GetStorage().read("username") ;
+    String createdBy = args?['createdBy'] ?? GetStorage().read("username");
     controller.comments.assignAll(comments);
 
     print("////////////////////");
@@ -58,13 +63,20 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
     print("********");
 
     return Scaffold(
-      appBar: AppBar(
+       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text(
           "Comments",
           style: TextStyle(color: Colors.black),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            // Pass counter value back when navigating back
+            Get.back(result: {'sendButtonPressCount': sendButtonPressCount});
+          },
+        ),
       ),
       body: GetX<PostControllerImp>(
         builder: (controller) {
@@ -96,20 +108,19 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                           trailing: PopupMenuButton<String>(
                             icon: const Icon(Icons.more_vert),
                             onSelected: (String option) async {
-                              var status = await controller.onCommentOptionSelected(
-                                  option,
-                                  createdBy,
-                                  comment.id,
-                                  isPage,
-                                  
-                                  ); // comment.createdBy: the username of the comment creator, we can find  the post creator via comment id
+                              var status =
+                                  await controller.onCommentOptionSelected(
+                                option,
+                                createdBy,
+                                comment.id,
+                                isPage,
+                              ); // comment.createdBy: the username of the comment creator, we can find  the post creator via comment id
                               if (status == 200) {
                                 var thisCommentId = comment.id;
                                 comments.removeWhere(
                                     (comment) => comment.id == thisCommentId);
-                                    status = null;
+                                status = null;
                                 controller.update();
-                                
                               }
                             },
                             itemBuilder: (BuildContext context) {
@@ -125,7 +136,10 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                                     child: Text(option),
                                   );
                                 }).toList();
-                              } else if (isPage != null && isAdmin != null && isPage==true && isAdmin==true) {
+                              } else if (isPage != null &&
+                                  isAdmin != null &&
+                                  isPage == true &&
+                                  isAdmin == true) {
                                 controller.moreOptions.assignAll(["Delete"]);
                                 return controller.moreOptions
                                     .map((String option) {
@@ -149,12 +163,11 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                           leading: InkWell(
                             onTap: () async {
                               if (isPage != null && isPage == true) {
-                                await searchcontroller.goToPage(comment.createdBy);
-                                
+                                await searchcontroller
+                                    .goToPage(comment.createdBy);
                               }
-                             
-                                await controller.goToUserPage(comment.createdBy);
 
+                              await controller.goToUserPage(comment.createdBy);
                             },
                             child: CircleAvatar(
                               backgroundImage:
@@ -188,7 +201,7 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                     child: Row(
                       children: [
                         Expanded(
-                          child:  TextFormField(
+                          child: TextFormField(
                             controller: commentController,
                             onFieldSubmitted: (value) {
                               commentController.text += '\n';
@@ -200,7 +213,8 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                               hintStyle: TextStyle(
                                 fontSize: 14,
                               ),
-                              floatingLabelBehavior: FloatingLabelBehavior.always,
+                              floatingLabelBehavior:
+                                  FloatingLabelBehavior.always,
                               contentPadding: EdgeInsets.symmetric(
                                 vertical: 15,
                                 horizontal: 30,
@@ -211,17 +225,25 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                         IconButton(
                           icon: const Icon(Icons.send),
                           onPressed: () async {
+                            
+                        
                             final newComment = commentController.text;
-                            var newCommentCreatedBy; 
-                            var newCommentName; 
-                            var newCommentPhoto; 
-                            if(isPage != null && isAdmin != null && isPage == true && isAdmin == true){
+                            var newCommentCreatedBy;
+                            var newCommentName;
+                            var newCommentPhoto;
+                            if (isPage != null &&
+                                isAdmin != null &&
+                                isPage == true &&
+                                isAdmin == true) {
                               newCommentCreatedBy = createdBy;
                               newCommentName = name;
                               newCommentPhoto = photo;
-                            }else{
-                              newCommentCreatedBy=GetStorage().read("username");
-                              newCommentName = GetStorage().read("firstname") + " " +GetStorage().read("lastname");
+                            } else {
+                              newCommentCreatedBy =
+                                  GetStorage().read("username");
+                              newCommentName = GetStorage().read("firstname") +
+                                  " " +
+                                  GetStorage().read("lastname");
                               newCommentPhoto = GetStorage().read("photo");
                             }
                             final time = DateTime.now();
@@ -239,6 +261,11 @@ class _CommentsMainPageState extends State<CommentsMainPage> {
                             controller.update();
                             await controller.addComment(
                                 newCommentModel, isPage);
+                              
+                              sendButtonPressCount++;
+                           
+                            
+                          
                             //  Get.find<PostControllerImp>().addComment(newCommentModel);
                             //controller.update();
 

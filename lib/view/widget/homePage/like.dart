@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Post_controller.dart';
+import 'package:growify/controller/home/Search_Cotroller.dart';
 import 'package:growify/global.dart';
 
 class Like extends StatefulWidget {
@@ -13,7 +14,8 @@ class Like extends StatefulWidget {
 }
 
 class _LikeState extends State<Like> {
-  final PostControllerImp likeController = Get.put(PostControllerImp());
+  final PostControllerImp likeController = Get.put(PostControllerImp(rebuildCallback: () {  }));
+  final SearchControllerImp searchcontroller = Get.put(SearchControllerImp());
   final AssetImage defultprofileImage1 =
       const AssetImage("images/profileImage.jpg");
   String? profileImageBytes1;
@@ -37,7 +39,7 @@ RxList<Map<String, dynamic>> likes;
     }*/
     var args = Get.arguments;
     RxList<Map<String, dynamic>> likes = args != null ? args['likes'] : [];
-
+    print("HiiiiiiiiiiiiiiiHowi");
     print(likes);
 
     return Scaffold(
@@ -78,7 +80,7 @@ RxList<Map<String, dynamic>> likes;
                 return ListView.builder(
                   itemCount: likes[0]['data'].length,
                   itemBuilder: (context, index) {
-                  //  print(likes.length);
+                    //  print(likes.length);
                     final colleague = likes[0]['data'][index];
                     profileImage1 =
                         (colleague['photo'] == null) ? "" : colleague['photo'];
@@ -86,24 +88,26 @@ RxList<Map<String, dynamic>> likes;
                             profileImage1 != "")
                         ? Image.network("$urlStarter/${profileImage1!}").image
                         : defultprofileImage1;
-                       
-                       final createdBy=colleague['createdBy'];
-                       print("//////////////////////////////////////");
-                       print(createdBy);
-                       print("//////////////////////////////////////");
+
+                    final createdBy = colleague['createdBy'];
+                    print("//////////////////////////////////////");
+                    print(createdBy);
+                    print("//////////////////////////////////////");
 
                     return Column(
                       children: [
                         ListTile(
                           leading: InkWell(
                             onTap: () {
-                               final userUsername = createdBy;
-                              likeController.goToUserPage(userUsername!);
-                              // Navigate to colleague's profile
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //   builder: (context) => ColleaguesProfile(),
-                              // ));
-
+                              if (colleague['isUser'] != null &&
+                                  colleague['isUser']) {
+                                likeController
+                                    .goToUserPage(colleague['createdBy']);
+                              } else if (colleague['isUser'] != null &&
+                                  colleague['isUser'] == false) {
+                                searchcontroller
+                                    .goToPage(colleague['createdBy']);
+                              }
                             },
                             child: CircleAvatar(
                               backgroundImage: likeController

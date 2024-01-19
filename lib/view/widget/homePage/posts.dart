@@ -3,13 +3,15 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/Post_controller.dart';
 import 'package:growify/global.dart';
+import 'package:video_player/video_player.dart';
 
 class Post extends StatefulWidget {
   String? username;
   bool? isPage;
-  bool?isAdmin;
+  bool? isAdmin;
   String? postId;
-  Post({this.username, Key? key, this.isPage, this.isAdmin,this.postId}) : super(key: key);
+  Post({this.username, Key? key, this.isPage, this.isAdmin, this.postId})
+      : super(key: key);
 
   @override
   _PostState createState() => _PostState();
@@ -22,17 +24,24 @@ class _PostState extends State<Post> {
   late ImageProvider<Object> postBackgroundImage;
   String? profileImage;
   String? postImage;
-  final AssetImage defultprofileImage =
+  final AssetImage defaultProfileImage =
       const AssetImage("images/profileImage.jpg");
-  final AssetImage trImage = const AssetImage("images/transparent.png");
+  final AssetImage transparentImage = const AssetImage("images/transparent.png");
 
   final ScrollController _scrollController = ScrollController();
   bool isLoading = false;
 
+  // List to store VideoPlayerControllers for each post
+  List<VideoPlayerController?> _videoControllers = [];
+
   @override
   void initState() {
     super.initState();
-    controller = PostControllerImp();
+
+     controller = PostControllerImp(rebuildCallback: () {
+      // Empty function since we just need to trigger a rebuild
+      setState(() {});
+    });
     loadData();
     _scrollController.addListener(_scrollListener);
   }
@@ -41,7 +50,14 @@ class _PostState extends State<Post> {
     print('Loading data...');
     try {
       await controller.getPostfromDataBase(
-          widget.username, controller.page, widget.isPage,widget.postId);
+          widget.username, controller.page, widget.isPage, widget.postId);
+
+      // Initialize VideoPlayerControllers for each post
+      _videoControllers.addAll(List.generate(
+        controller.posts.length,
+        (index) => null,
+      ));
+
       setState(() {
         controller.page++;
         controller.posts;
@@ -63,6 +79,72 @@ class _PostState extends State<Post> {
     }
   }
 
+  // for video  l l ll
+  Future<void> initializeVideoPlayer(int index) async {
+    final post = controller.posts[index];
+
+    // Check if the controller is already initialized
+    if (_videoControllers[index] == null) {
+      try {
+        _videoControllers[index] = VideoPlayerController.networkUrl(
+          Uri.parse("$urlStarter/${post["video"]}"),
+        );
+
+        await _videoControllers[index]!.initialize();
+
+        _videoControllers[index]!.addListener(() {
+          if (!_videoControllers[index]!.value.isInitialized) {
+            print("Video initialization failed");
+          }
+        });
+        setState(() {});
+      } catch (e) {
+        print("Exception during video initialization: $e");
+      }
+    }
+  }
+
+  // the other one 
+   Widget _buildVideoPlayer(int index) {
+    return Builder(
+      builder: (context) {
+        if (_videoControllers[index] != null &&
+            _videoControllers[index]!.value.isInitialized) {
+          return Column(
+            children: [
+              AspectRatio(
+                aspectRatio: _videoControllers[index]!.value.aspectRatio,
+                child: VideoPlayer(_videoControllers[index]!),
+              ),
+              VideoProgressIndicator(
+                _videoControllers[index]!,
+                allowScrubbing: true,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      _videoControllers[index]!.value.isPlaying
+                          ? _videoControllers[index]!.pause()
+                          : _videoControllers[index]!.play();
+                    },
+                    icon: _videoControllers[index]!.value.isPlaying
+                        ? const Icon(Icons.pause)
+                        : const Icon(Icons.play_arrow),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
+          );
+        } else {
+          return Container();
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -71,20 +153,25 @@ class _PostState extends State<Post> {
           controller: _scrollController,
           itemCount:
               controller.posts.length + 1, // +1 for the loading indicator
-          separatorBuilder: (context, index) => const SizedBox(height: 0,),
+          separatorBuilder: (context, index) => const SizedBox(
+            height: 0,
+          ),
           itemBuilder: (context, index) {
             if (index < controller.posts.length) {
               final post = controller.posts[index];
+              if (post["video"] != null) {
+                initializeVideoPlayer(index);
+              }
               profileImage =
                   (post["userPhoto"] == null) ? "" : post["userPhoto"];
               profileBackgroundImage =
                   (profileImage != null && profileImage != "")
                       ? Image.network("$urlStarter/${profileImage!}").image
-                      : defultprofileImage;
+                      : defaultProfileImage;
               postImage = (post["photo"] == null) ? "" : post["photo"];
               postBackgroundImage = (postImage != null && postImage != "")
                   ? Image.network("$urlStarter/${postImage!}").image
-                  : trImage;
+                  : transparentImage;
 
               return Container(
                 key: ValueKey(index),
@@ -114,14 +201,14 @@ class _PostState extends State<Post> {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      if(post['isUser']!= null && post['isUser']){
-
-                                          controller.goToUserPage( post['createdBy']);
-                                      }else if(post['isUser']!= null && post['isUser']==false){
-
-                                          controller.goToPage(post['createdBy']);
+                                      if (post['isUser'] != null &&
+                                          post['isUser']) {
+                                        controller
+                                            .goToUserPage(post['createdBy']);
+                                      } else if (post['isUser'] != null &&
+                                          post['isUser'] == false) {
+                                        controller.goToPage(post['createdBy']);
                                       }
-                                      
                                     },
                                     child: CircleAvatar(
                                       backgroundImage: profileBackgroundImage,
@@ -158,12 +245,22 @@ class _PostState extends State<Post> {
                                 icon: const Icon(Icons.more_vert),
                                 onSelected: (String option) async {
                                   await controller.onMoreOptionSelected(
-                                      option, post['createdBy'] ,post['id'],widget.isPage);
+                                      option,
+                                      post['createdBy'],
+                                      post['id'],
+                                      widget.isPage,
+                                      post['postContent'],
+                                      post['selectedPrivacy'],
+                                      post["userPhoto"]);
                                 },
                                 itemBuilder: (BuildContext context) {
-                                  if (post['createdBy'] == GetStorage().read('username')) {
-                                    controller.moreOptions
-                                        .assignAll(["Delete"]);
+                                  if (post['createdBy'] ==
+                                      GetStorage().read('username')) {
+                                    controller.moreOptions.assignAll([
+                                      "Delete",
+                                      "Edit post",
+                                      "Show edit history"
+                                    ]);
                                     return controller.moreOptions
                                         .map((String option) {
                                       return PopupMenuItem<String>(
@@ -171,9 +268,15 @@ class _PostState extends State<Post> {
                                         child: Text(option),
                                       );
                                     }).toList();
-                                  } else if (widget.isPage != null && widget.isAdmin != null && widget.isPage==true && widget.isAdmin==true) {
-                                    controller.moreOptions
-                                        .assignAll(["Delete"]);
+                                  } else if (widget.isPage != null &&
+                                      widget.isAdmin != null &&
+                                      widget.isPage == true &&
+                                      widget.isAdmin == true) {
+                                    controller.moreOptions.assignAll([
+                                      "Delete",
+                                      "Edit post",
+                                      "Show edit history"
+                                    ]);
                                     return controller.moreOptions
                                         .map((String option) {
                                       return PopupMenuItem<String>(
@@ -182,8 +285,8 @@ class _PostState extends State<Post> {
                                       );
                                     }).toList();
                                   } else {
-                                    controller.moreOptions
-                                        .assignAll(["Report"]);
+                                    controller.moreOptions.assignAll(
+                                        ["Report", "Show edit history"]);
                                     return controller.moreOptions
                                         .map((String option) {
                                       return PopupMenuItem<String>(
@@ -205,6 +308,8 @@ class _PostState extends State<Post> {
                               textAlign: TextAlign.start,
                             ),
                           ),
+                          if (post["video"] != null)
+                            _buildVideoPlayer(index), // Pass index to the method
                           const SizedBox(height: 10),
                           Container(
                             height: postImage != "" ? 400 : 0,
@@ -222,7 +327,11 @@ class _PostState extends State<Post> {
                                   onTap: () {
                                     int postId = post['id'];
                                     controller.goToLikePage(
-                                        postId, widget.isPage??(post['isUser']!= null ? !post['isUser'] : null));
+                                        postId,
+                                        widget.isPage ??
+                                            (post['isUser'] != null
+                                                ? !post['isUser']
+                                                : null));
                                   },
                                   child: Row(
                                     children: [
@@ -257,14 +366,22 @@ class _PostState extends State<Post> {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    int postId = post['id'];
-                                    controller.gotoCommentPage(
+                                    setState(() {
+                                      int postIndex = index;
+                                      int postId = post['id'];
+                                      controller.gotoCommentPage(
+                                        postIndex,
                                         postId,
-                                        widget.isPage??(post['isUser']!= null ? !post['isUser'] : null),
-                                        widget.isAdmin,                                        
+                                        widget.isPage ??
+                                            (post['isUser'] != null
+                                                ? !post['isUser']
+                                                : null),
+                                        widget.isAdmin,
                                         post['name'],
                                         post["photo"],
-                                        post['createdBy']);
+                                        post['createdBy'],
+                                      );
+                                    });
                                   },
                                   child: Row(
                                     children: [
@@ -305,7 +422,11 @@ class _PostState extends State<Post> {
                                   onTap: () {
                                     setState(() {
                                       controller.toggleLike(
-                                          index, widget.isPage??(post['isUser']!= null ? !post['isUser'] : null));
+                                          index,
+                                          widget.isPage ??
+                                              (post['isUser'] != null
+                                                  ? !post['isUser']
+                                                  : null));
                                     });
                                   },
                                   child: Container(
@@ -326,14 +447,22 @@ class _PostState extends State<Post> {
                                 const SizedBox(width: 135),
                                 InkWell(
                                   onTap: () {
-                                    int postId = post['id'];
-                                    controller.gotoCommentPage(
+                                    setState(() {
+                                      int postIndex = index;
+                                      int postId = post['id'];
+                                      controller.gotoCommentPage(
+                                        postIndex,
                                         postId,
-                                        widget.isPage??(post['isUser']!= null ? !post['isUser'] : null),
+                                        widget.isPage ??
+                                            (post['isUser'] != null
+                                                ? !post['isUser']
+                                                : null),
                                         widget.isAdmin,
                                         post['name'],
                                         post["photo"],
-                                        post['createdBy']);
+                                        post['createdBy'],
+                                      );
+                                    });
                                   },
                                   child: const Column(
                                     children: [
@@ -355,14 +484,22 @@ class _PostState extends State<Post> {
                 ),
               );
             } else {
-              // Loading indicator at the end of the list
               return isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : Container(); // An empty container when loading is complete
+                  : Container();
             }
           },
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // Dispose VideoPlayerControllers when the widget is disposed
+    for (var controller in _videoControllers) {
+      controller?.dispose();
+    }
+    super.dispose();
   }
 }

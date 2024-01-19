@@ -8,6 +8,10 @@ import 'package:growify/view/screen/homescreen/ReportPages/ReportComment.dart';
 import 'package:growify/view/screen/homescreen/ReportPages/ReportPost.dart';
 import 'package:growify/view/screen/homescreen/myPage/ColleaguesPageProfile.dart';
 import 'package:growify/view/screen/homescreen/myPage/Pageprofile.dart';
+import 'package:growify/view/screen/homescreen/optionAboutPost/editPostPage.dart';
+import 'package:growify/view/screen/homescreen/optionAboutPost/editPostUser.dart';
+import 'package:growify/view/screen/homescreen/optionAboutPost/showeditHistoryPage.dart';
+import 'package:growify/view/screen/homescreen/optionAboutPost/showeditHistoryUser.dart';
 import 'package:growify/view/screen/homescreen/profilepages/colleaguesprofile.dart';
 import 'package:growify/view/screen/homescreen/profilepages/profilemainpage.dart';
 import 'package:growify/view/widget/homePage/commentsMainpage.dart';
@@ -57,12 +61,26 @@ class CommentModel {
 abstract class PostController extends GetxController {
   bool isLoading = false;
 
+
+  
+
+
   //// for comment
   getprofilefromcomment(String email);
   gotoprofileFromcomment(String email);
 }
 
 class PostControllerImp extends PostController {
+
+
+    void Function() rebuildCallback;
+
+  // Constructor to initialize the callback
+  PostControllerImp({required this.rebuildCallback});
+
+
+
+
 // for photo on the comment
   final RxString profileImageBytes = ''.obs;
   final RxString profileImageBytesName = ''.obs;
@@ -192,6 +210,9 @@ class PostControllerImp extends PostController {
     return posts[index]['comment'];
   }
 
+ 
+  
+
   void toggleLike(int index, [bool? isPage]) async {
     final post = posts[index];
     post['isLiked'] = !post['isLiked'];
@@ -204,7 +225,11 @@ class PostControllerImp extends PostController {
     }
 
     update(); // Notify GetBuilder to rebuild
+    
   }
+
+ 
+  
 
   PostAddLike(postId, [bool? isPage]) async {
     if (isPage != null && isPage) {
@@ -315,10 +340,12 @@ class PostControllerImp extends PostController {
   final RxList<String> moreOptions = <String>[
     'Delete',
     'Report',
+    'Edit post',
+    'Show edit history',
   ].obs;
 
   Future<void> onMoreOptionSelected(
-      String option, createdBy, postId, isPage) async {
+      String option, createdBy, postId, isPage,postContent,selectedPrivacy,profileImage) async {
     if (isPage != null && isPage == true) {
       switch (option) {
         case 'Delete':
@@ -326,6 +353,12 @@ class PostControllerImp extends PostController {
           break;
         case 'Report':
         await  Get.to(ReportPostPage(postId: postId,));
+          break;
+        case 'Edit post':
+          await  Get.to(EditPostPage(postId: postId,postContent: postContent,selectedPrivacy: selectedPrivacy,profileImage: profileImage,));
+          break;
+           case 'Show edit history':
+           await  Get.to(ShowEditPageHistory(postId: postId,));
           break;
       }
     } else {
@@ -335,6 +368,12 @@ class PostControllerImp extends PostController {
           break;
         case 'Report':
            await  Get.to(ReportPostPage(postId: postId,));
+          break;
+        case 'Edit post':
+           await  Get.to(EditPost(postId: postId,postContent: postContent,selectedPrivacy: selectedPrivacy,profileImage: profileImage,));
+          break;
+         case 'Show edit history':
+           await  Get.to(ShowEditUserHistory(postId: postId,));
           break;
       }
     }
@@ -487,6 +526,7 @@ class PostControllerImp extends PostController {
   }
 
   PostAddComment(int postId, String commentContent, [bool? isPage]) async {
+    
     if (isPage != null && isPage) {
       var url = "$urlStarter/user/pageAddComment";
       var responce = await http.post(
@@ -523,13 +563,17 @@ class PostControllerImp extends PostController {
       return;
     }
 
+   
+   
+   
+
     var res =
         await PostAddComment(comment.postId, comment.commentContent, isPage);
     print(";;;;;;;;;;;;;;;;;;;;;;;;;;;;");
     print(res.statusCode);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      addComment(comment, isPage);
+      addComment(comment,isPage);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -580,31 +624,42 @@ class PostControllerImp extends PostController {
     }
   }
 
-  gotoCommentPage(int postId,
-      [bool? isPage,
-      bool? isAdmin,
-      String? name,
-      String? photo,
-      String? createdBy]) async {
+ gotoCommentPage(
+  int index,
+  int postId,
+  [bool? isPage,
+  bool? isAdmin,
+  String? name,
+  String? photo,
+  String? createdBy]
+) async {
+
+  try {
     var res = await getCommentPage(postId, isPage);
     print(res.statusCode);
+
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      gotoCommentPage(postId, isPage, isAdmin, name, photo, createdBy);
+      // Use await to make sure the recursive call completes before continuing
+      await gotoCommentPage(index, postId, isPage, isAdmin, name, photo, createdBy);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
+      return;
     }
+
     var resbody = jsonDecode(res.body);
+
     if (res.statusCode == 409) {
+      print(resbody['message']);
       return resbody['message'];
     } else if (res.statusCode == 200) {
       var data = jsonDecode(res.body);
       print("llllllllllllllllllllllllllllll");
       print(data);
+
       if (data != null) {
-        List<CommentModel> newComments =
-            (data['data'] as List).map((commentData) {
+        List<CommentModel> newComments = (data['data'] as List).map((commentData) {
           return CommentModel(
             id: commentData['id'],
             postId: commentData['postId'],
@@ -616,33 +671,48 @@ class PostControllerImp extends PostController {
             photo: commentData['photo'],
           );
         }).toList();
+
         comments1.clear();
         comments1.assignAll(newComments);
 
         print("llllllllllllllllllllllllllllll");
         print(data['data']);
-        if (isPage != null && isPage) {
-          Get.to(const CommentsMainPage(), arguments: {
-            'comments': comments1,
-            'postId': postId,
-            'isPage': isPage,
-            'isAdmin': isAdmin,
-            'name': name,
-            'photo': photo,
-            'createdBy': createdBy,
-          });
-        } else {
-          Get.to(const CommentsMainPage(), arguments: {
-            'comments': comments1,
-            'postId': postId,
-            'createdBy': createdBy,
-          });
+
+        // Pass an additional parameter 'sendButtonPressCount' with initial value 0
+        var result = await Get.to(CommentsMainPage(index: index,), arguments: {
+          'comments': comments1,
+          'postId': postId,
+          'isPage': isPage,
+          'isAdmin': isAdmin,
+          'name': name,
+          'photo': photo,
+          'createdBy': createdBy,
+          'sendButtonPressCount': 0, // Initialize counter value
+        });
+        var post;
+        // Retrieve the counter value from the result
+        if (result != null && result['sendButtonPressCount'] != null) {
+          int receivedCount = result['sendButtonPressCount'];
+            post = posts[index];
+        post['commentCount']=post['commentCount']+receivedCount;
+        rebuildCallback();
+          print('Received sendButtonPressCount from CommentsMainPage: $receivedCount');  
         }
+        
+         int receivedCount1 = result['sendButtonPressCount'];
+
+        // Move the increment outside of the if condition
+     
       } else {
         print("Invalid or missing 'data' property in response.");
       }
     }
+  } catch (error) {
+    print('Error in gotoCommentPage: $error');
   }
+}
+
+
 
   @override
   Future getprofilefromcomment(String email) async {
