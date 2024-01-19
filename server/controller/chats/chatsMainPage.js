@@ -165,7 +165,6 @@ exports.getChats = async (req, res, next) => {
         //console.log("==========================================")
         //console.log(uniqueConversationsId)
         //console.log("==========================================")
-        //console.log(uniqueConversations)
         return res.status(200).json({
             message: 'active users fetched',
             activeConnectionsInfo: activeConnectionsInfo,

@@ -5,7 +5,7 @@ const { socketAuthenticateToken } = require('./controller/authController');
 const { notifyUser, deleteNotificaion } = require("./controller/notifications");
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const { messagesControl, messageSaveImage, messageSaveVideo ,groupMessagesControl} = require("./controller/chats/userChat");
+const { messagesControl, messageSaveImage, messageSaveVideo, groupMessagesControl } = require("./controller/chats/userChat");
 var cors = require('cors');
 const { populateClientsMap } = require('./controller/notifications');
 const userChat = require('./controller/chats/userChat')
@@ -29,7 +29,7 @@ app.use('/userNotifications', userRoutes);
 
 populateClientsMap();
 
-let groupUsers=[];
+let groupUsers = [];
 const socketUsernameMap = {};//map the usernames to their sockets
 const callsUsernameMap = {};
 io.on("connection", (socket) => {// first time socket connection
@@ -78,6 +78,7 @@ io.on("connection", (socket) => {// first time socket connection
             "messageImageBytesName": msg.messageImageBytesName,
             "messageImageExt": msg.messageImageExt,
           });
+          return;
         }
         var userUsername = decoded.username;
         var messageImageName;
@@ -89,12 +90,12 @@ io.on("connection", (socket) => {// first time socket connection
         // if there is a video save it and send it back to the user
         if (msg.messageVideoBytes != null && msg.messageVideoBytesName != null && msg.messageVideoExt != null) {
           messageVideoName = await messageSaveVideo(userUsername, msg.messageVideoBytes, msg.messageVideoBytesName, msg.messageVideoExt)
-            socket.to(userUsername).emit("/chatMyVideo", { message: msg.message, image: messageImageName, video: messageVideoName });
+          socket.to(userUsername).emit("/chatMyVideo", { message: msg.message, image: messageImageName, video: messageVideoName });
         }
         //if target user is in message page send it via his socket
-          console.log(msg.message);
-          socket.broadcast.to(msg.groupId).emit("/chat", {sender: userUsername,photo: msg.photo,  message: msg.message, image: messageImageName, video: messageVideoName, date: new Date() });
-       
+        console.log(msg.message);
+        socket.broadcast.to(msg.groupId).emit("/chat", { sender: userUsername, photo: msg.photo, message: msg.message, image: messageImageName, video: messageVideoName, date: new Date() });
+
         //save the message in db after sending it via socket
         await groupMessagesControl(userUsername, msg.groupId, msg.message, messageImageName, messageVideoName)//store it in the database
       }
@@ -107,6 +108,7 @@ io.on("connection", (socket) => {// first time socket connection
         "messageImageBytesName": msg.messageImageBytesName,
         "messageImageExt": msg.messageImageExt,
       });
+      return;
     } else if (status == 409) {//not authenticated to send messages using this token
       socket.emit("/chatStatus", {
         "status": status,
@@ -116,10 +118,11 @@ io.on("connection", (socket) => {// first time socket connection
         "messageImageBytesName": msg.messageImageBytesName,
         "messageImageExt": msg.messageImageExt,
       });
+      return;
     }
   });
-  socket.on("/login", (msg) => {//socketAuthenticate logain and save the user socket and map it to his username
-
+  socket.on("/login", async (msg) => {//socketAuthenticate logain and save the user socket and map it to his username
+    if(msg!= null)
     var status = socketAuthenticateToken(msg);// check token
     console.log(status)
     if (status == 200) {// if user authenticated 
@@ -135,6 +138,8 @@ io.on("connection", (socket) => {// first time socket connection
           targetSocket.emit("newCall", {
             callerId: callsUsernameMap[userUsername].userUsername,
             sdpOffer: callsUsernameMap[userUsername].sdpOffer,
+            photo: callsUsernameMap[userUsername].photo,
+            isVideo: callsUsernameMap[userUsername].isVideo,
           });
         }
       }
@@ -167,6 +172,7 @@ io.on("connection", (socket) => {// first time socket connection
             "messageImageBytesName": msg.messageImageBytesName,
             "messageImageExt": msg.messageImageExt,
           });
+          return;
         }
         var userUsername = decoded.username;
         var messageImageName;
@@ -186,7 +192,7 @@ io.on("connection", (socket) => {// first time socket connection
         //if target user is in message page send it via his socket
         if (targetSocket) {
           console.log(msg.message);
-          targetSocket.emit("/chat", {sender: userUsername,  message: msg.message, image: messageImageName, video: messageVideoName, date: new Date() });
+          targetSocket.emit("/chat", { sender: userUsername, message: msg.message, image: messageImageName, video: messageVideoName, date: new Date() });
         } else {// if not, send him a notification
           console.log(username)
           const notification = {
@@ -211,6 +217,7 @@ io.on("connection", (socket) => {// first time socket connection
         "messageImageBytesName": msg.messageImageBytesName,
         "messageImageExt": msg.messageImageExt,
       });
+      return;
     } else if (status == 409) {//not authenticated to send messages using this token
       socket.emit("/chatStatus", {
         "status": status,
@@ -221,6 +228,7 @@ io.on("connection", (socket) => {// first time socket connection
         "messageImageBytesName": msg.messageImageBytesName,
         "messageImageExt": msg.messageImageExt,
       });
+      return;
     }
 
   });
@@ -230,15 +238,19 @@ io.on("connection", (socket) => {// first time socket connection
     let sdpOffer = data.sdpOffer;
     let photo = data.photo;
     var userUsername = data.callerId;
+    let isVideo = data.isVideo;
+    console.log(isVideo);
+    console.log(":;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
     const targetSocket = socketUsernameMap[calleeId];
     if (targetSocket) {//if other user's socket is open
       targetSocket.emit("newCall", {
         callerId: userUsername,
         sdpOffer: sdpOffer,
-        photo:photo,
+        photo: photo,
+        isVideo: isVideo,
       });
     } else {//send a notification
-      callsUsernameMap[calleeId] = { userUsername, sdpOffer };
+      callsUsernameMap[calleeId] = { userUsername, sdpOffer, photo, isVideo };
       console.log(callsUsernameMap[calleeId])
       console.log(calleeId)
       console.log("---------------------------------")
@@ -304,7 +316,7 @@ io.on("connection", (socket) => {// first time socket connection
     }
   });
   socket.on("disconnect", () => {
-    groupUsers = groupUsers.filter(u =>u.id != socket.id)
+    groupUsers = groupUsers.filter(u => u.id != socket.id)
     const username = Object.keys(socketUsernameMap).find(
       (key) => socketUsernameMap[key] === socket
     );

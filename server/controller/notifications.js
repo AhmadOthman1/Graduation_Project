@@ -139,6 +139,7 @@ exports.notify = async (req, res) => {
   console.log(notification)
   var user = await User.findOne({
     username: username,
+    status:null
   });
   if (user) {
     await notifications.create({
@@ -161,6 +162,7 @@ exports.notify = async (req, res) => {
 exports.notifyUser = async (username, notification) => {
   var user = await User.findOne({
     username: username,
+    status:null
   });
   if (user) {
     await notifications.create({

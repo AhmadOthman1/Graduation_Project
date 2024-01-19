@@ -423,7 +423,7 @@ class HomePageControllerImp extends HomePageController {
                 GetStorage().read('username')) {
           name = conversation['receiverUsername_FK']['firstName'] +
               " " +
-              conversation['senderUsername_FK']['lastName'];
+              conversation['receiverUsername_FK']['lastName'];
           username = conversation['receiverUsername_FK']['username'];
           photo = conversation['receiverUsername_FK']['photo'];
           type = "U";

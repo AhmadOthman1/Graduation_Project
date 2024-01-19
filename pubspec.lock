@@ -776,6 +776,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
+  quick_notify:
+    dependency: "direct main"
+    description:
+      name: quick_notify
+      sha256: a4d9867b9652ea392ca09d853f7ebaa95529b9f4ca8d9cc51b0722ad342e8c33
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.1"
   rxdart:
     dependency: transitive
     description:

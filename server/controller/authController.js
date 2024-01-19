@@ -25,13 +25,11 @@ function authenticateToken(req, res, next) {
 function socketAuthenticateToken(msg) {
   try {
     const authHeader = msg
+    console.log(msg)
     const token = authHeader
     if (token == null) return 401
 
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-      if (err) return 403
-
-    })
+    var dec = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
     return 200
   } catch (err) {
     return 403

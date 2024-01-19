@@ -11,6 +11,7 @@ class CallScreen extends StatefulWidget {
   final dynamic offer;
   final socket;
   final Function onCallEnded;
+  final bool? isVideo;
   const CallScreen({
     super.key,
     this.offer,
@@ -18,6 +19,7 @@ class CallScreen extends StatefulWidget {
     required this.callerId,
     required this.calleeId,
     required this.socket,
+    this.isVideo,
     required this.onCallEnded,
   });
 
@@ -65,22 +67,23 @@ class _CallScreenState extends State<CallScreen> {
       super.setState(fn);
     }
   }
-*/ 
-void startCallTimeout() {
+*/
+  void startCallTimeout() {
     // Set a timer for 25 seconds
     callTimeout = Timer(Duration(seconds: 25), () {
-      if(!isCallAccepted){
+      if (!isCallAccepted) {
         _leaveCall();
       }
-      
     });
   }
+
   void cancelCallTimeout() {
     // Cancel the call timeout if it's still active
     if (callTimeout.isActive) {
       callTimeout.cancel();
     }
   }
+
   _setupPeerConnection() async {
     // create peer connection
     _rtcPeerConnection = await createPeerConnection({
@@ -108,14 +111,12 @@ void startCallTimeout() {
 
     // listen for remotePeer mediaTrack event
     _rtcPeerConnection!.onTrack = (event) {
-      print(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;");
-      print(event.streams[0]);
       _remoteRTCVideoRenderer.srcObject = event.streams[0];
       setState(() {
         _remoteRTCVideoRenderer.srcObject = event.streams[0];
       });
     };
-
+    isVideoOn = widget.isVideo!=null && widget.isVideo == false ? false : true;
     // get localStream
     _localStream = await navigator.mediaDevices.getUserMedia({
       'audio': isAudioOn,
@@ -135,9 +136,11 @@ void startCallTimeout() {
     widget.socket!.on("callEnded", (data) async {
       incomingSDPOffer = null;
       if (mounted) {
-        setState(() {widget.onCallEnded();});
+        setState(() {
+          widget.onCallEnded();
+        });
       }
-      
+
       Navigator.pop(context);
     });
     setState(() {});
@@ -234,11 +237,13 @@ void startCallTimeout() {
       await _rtcPeerConnection!.setLocalDescription(offer);
 
       // make a call to remote peer over signalling
+
       widget.socket!.emit('makeCall', {
         "callerId": GetStorage().read("username"),
         "calleeId": widget.calleeId,
-        "photo" : widget.photo,
+        "photo": widget.photo,
         "sdpOffer": offer.toMap(),
+        "isVideo":widget.isVideo,
       });
     }
   }
@@ -254,7 +259,6 @@ void startCallTimeout() {
       widget.socket!.off("callAnswered");
       incomingSDPOffer = null;
       if (mounted) {
-        
         setState(() {
           widget.onCallEnded();
         });

@@ -18,6 +18,7 @@ import 'package:growify/multiplatform.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:quick_notify/quick_notify.dart';
 
 abstract class HomeScreeenController extends GetxController {
   changePage(int currentpage);
@@ -86,8 +87,49 @@ class HomeScreenControllerImp extends HomeScreeenController {
           final responseStream = connect(url, 'GET', headers);
           responseStream.listen(
             (data) {
-              print('Received data: $data');
-              // Handle the received data
+              try {
+                if (data != null && data != [] && data.trim() != "") {
+                  print('Received data: $data');
+                  String d = data.trim().substring(7);
+                  String dd = d.substring(0, d.length - 1);
+                  // Handle the received data
+                  List<String> lines = dd.split(',');
+                  Map<String, dynamic> jsonData = {};
+
+                  for (String line in lines) {
+                    line = line.trim();
+                    if (line.isNotEmpty) {
+                      List<String> parts = line.split(':');
+                      if (parts.length > 1) {
+                        String key =
+                            parts[0].trim().substring(1, parts[0].length - 1);
+                        String value =
+                            parts[1].trim().substring(1, parts[1].length - 1);
+                        print(key);
+                        print(value);
+                        jsonData[key] = value;
+                      }
+                    }
+                  }
+
+                  print(jsonData);
+                  String username = jsonData['username'];
+                  String notificationType = jsonData['notificationType'];
+                  String notificationContent = jsonData['notificationContent'];
+                  String notificationPointer = jsonData['notificationPointer'];
+                  //String createdAt = jsonData['createdat'];
+                  DateTime now = DateTime.now();
+                  String createdAt =
+                      DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
+                  QuickNotify.notify(
+                    title: "Growify . " + createdAt,
+                    content:
+                        notificationType != "post" && notificationType != "job"
+                            ? "$notificationPointer $notificationContent"
+                            : "$notificationContent",
+                  );
+                }
+              } catch (err) {}
             },
             onDone: () {
               print('Request completed');
@@ -117,49 +159,45 @@ class HomeScreenControllerImp extends HomeScreeenController {
               var data = event.data;
               if (data != null && data != [] && data != "") {
                 Map<String, dynamic> jsonData = json.decode(data);
-                //to solve duplicated notification problem
-                var lastNotificationId =
-                    GetStorage().read("lastNotificationId");
-                if (lastNotificationId == null ||
-                    jsonData['id'] != lastNotificationId) {
-                  GetStorage().write("lastNotificationId", jsonData['id']);
-                  // Access individual properties
-                  String username = jsonData['username'];
-                  String notificationType = jsonData['notificationType'];
-                  String notificationContent = jsonData['notificationContent'];
-                  String notificationPointer = jsonData['notificationPointer'];
-                  //String createdAt = jsonData['createdat'];
-                  DateTime now = DateTime.now();
-                  String createdAt =
-                      DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
+                // Access individual properties
+                String username = jsonData['username'];
+                String notificationType = jsonData['notificationType'];
+                String notificationContent = jsonData['notificationContent'];
+                String notificationPointer = jsonData['notificationPointer'];
+                //String createdAt = jsonData['createdat'];
+                DateTime now = DateTime.now();
+                String createdAt =
+                    DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
 
-                  var playSound = true;
-                  Duration timeoutAfter = Duration(seconds: 5);
-                  if (notificationType == "call") {
-                    playSound = false;
-                    timeoutAfter = Duration(seconds: 25);
-                    playCallingSound();
-                  }
-                  await NotificationService.initializeNotification(playSound);
-                  await NotificationService.showNotification(
-                      title: "Growify",
-                      body: notificationType != "post" && notificationType != "job" ? "$notificationPointer $notificationContent" : "$notificationContent",
-                      summary: createdAt,
-                      payload: {
-                        "navigate": "true",
-                        "call": notificationType == "call" ? "true" : "false",
-                      },
-                      chronometer: Duration.zero,
-                      timeoutAfter: playSound? null: timeoutAfter,
-                      actionButtons: [
-                        NotificationActionButton(
-                          key: 'check',
-                          label: 'Check it out',
-                          actionType: ActionType.SilentAction,
-                          color: Colors.green,
-                        )
-                      ]);
+                var playSound = true;
+                Duration timeoutAfter = Duration(seconds: 5);
+                if (notificationType == "call") {
+                  playSound = false;
+                  timeoutAfter = Duration(seconds: 25);
+                  playCallingSound();
                 }
+                await NotificationService.initializeNotification(playSound);
+                await NotificationService.showNotification(
+                    title: "Growify",
+                    body:
+                        notificationType != "post" && notificationType != "job"
+                            ? "$notificationPointer $notificationContent"
+                            : "$notificationContent",
+                    summary: createdAt,
+                    payload: {
+                      "navigate": "true",
+                      "call": notificationType == "call" ? "true" : "false",
+                    },
+                    chronometer: Duration.zero,
+                    timeoutAfter: playSound ? null : timeoutAfter,
+                    actionButtons: [
+                      NotificationActionButton(
+                        key: 'check',
+                        label: 'Check it out',
+                        actionType: ActionType.SilentAction,
+                        color: Colors.green,
+                      )
+                    ]);
 
                 print("New event:");
                 print("  data: ${event.data}");

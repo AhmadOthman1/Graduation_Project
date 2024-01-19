@@ -161,23 +161,24 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
                   chatController.messages;
                 });
               }
-              if(msg["sender"] == widget.data['username']){// handel of user A,B,C has socket, A send to B message, but B is in C conversation (Dont show A message is B conversation)
+              if (msg["sender"] == widget.data['username']) {
+                // handel of user A,B,C has socket, A send to B message, but B is in C conversation (Dont show A message is B conversation)
                 chatController.addMessage(
-                  msg["message"],
-                  msg["sender"],
-                  widget.data["photo"],
-                  msg["date"],
-                  msg["image"],
-                  msg["video"]);
+                    msg["message"],
+                    msg["sender"],
+                    widget.data["photo"],
+                    msg["date"],
+                    msg["image"],
+                    msg["video"]);
               }
-              
             }),
             socket.on("/chatMyVideo", (msg) {
               chatController.sendMessage(
                   msg["message"], msg["image"], msg["video"]);
             }),
             socket.on("newCall", (data) {
-              print(data);
+              print(data['isVideo']);
+              print(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;");
               incomingSDPOffer = data;
               playCallingSound();
               print(mounted);
@@ -266,13 +267,12 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
     super.dispose();
   }
 
-  _joinCall({
-    required String callerId,
-    required String calleeId,
-   
-    dynamic offer,
-     String? photo,
-  }) {
+  _joinCall(
+      {required String callerId,
+      required String calleeId,
+      dynamic offer,
+      String? photo,
+      bool? isVideo}) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -280,12 +280,16 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
           callerId: callerId,
           calleeId: calleeId,
           offer: offer,
-          photo : photo,
+          photo: photo,
           socket: socket,
+          isVideo: isVideo,
           onCallEnded: () {
             // rebuild the parent screen
             final chatPageState = widget.key;
-            if (chatPageState != null && mounted) {
+            print(incomingSDPOffer);
+            if (mounted) {
+                          print("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+
               setState(() {});
             }
           },
@@ -356,7 +360,8 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
                     child: CircleAvatar(
                       radius: 60,
                       backgroundImage: incomingSDPOffer["photo"] != null
-                          ? Image.network("$urlStarter/${incomingSDPOffer["photo"]}")
+                          ? Image.network(
+                                  "$urlStarter/${incomingSDPOffer["photo"]}")
                               .image
                           : profileBackgroundImage,
                     ),
@@ -396,7 +401,10 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
                       ),
                       IconButton(
                         iconSize: 50,
-                        icon: const Icon(Icons.call),
+                        icon: (incomingSDPOffer["isVideo"] != null &&
+                                incomingSDPOffer["isVideo"] != "true")
+                            ? const Icon(Icons.call)
+                            : const Icon(Icons.videocam),
                         color: Colors.greenAccent,
                         onPressed: () {
                           stopCallingSound();
@@ -404,6 +412,8 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
                             callerId: incomingSDPOffer["callerId"]!,
                             calleeId: GetStorage().read("username"),
                             offer: incomingSDPOffer["sdpOffer"],
+                            isVideo:(incomingSDPOffer["isVideo"] != null &&
+                                incomingSDPOffer["isVideo"] != "true") ? false : true,
                           );
                         },
                       ),
@@ -467,13 +477,22 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
                 Row(
                   children: [
                     Container(
-                      child: Text(
-                        widget.data['name'],
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 20),
+                      width: 210,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            Text(
+                              widget.data['name'],
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 20),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     Expanded(
+                      flex: 1,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -489,6 +508,30 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
                                 callerId: GetStorage().read("username"),
                                 calleeId: widget.data["username"],
                                 photo: GetStorage().read("photo"),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.call),
+                            color: Colors.white,
+                            onPressed: () {
+                              //createPeerConn(GetStorage().read('username'), widget.data["username"]);
+
+                              //createNewMeeting();
+
+                              _joinCall(
+                                callerId: GetStorage().read("username"),
+                                calleeId: widget.data["username"],
+                                photo: GetStorage().read("photo"),
+                                isVideo: false,
                               );
                             },
                           ),

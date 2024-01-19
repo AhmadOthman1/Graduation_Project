@@ -269,7 +269,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                 Row(
                   children: [
                     Container(
-                      width: 120, // Set your desired static width
+                      width: 120, 
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
