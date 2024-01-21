@@ -41,7 +41,7 @@ class HomeScreenControllerImp extends HomeScreeenController {
     "Home",
     "Notices",
     "Jobs",
-    "Networks",
+    "Network",
   ];
 
   List<IconData> icons = [

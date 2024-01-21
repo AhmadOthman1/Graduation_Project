@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background/flutter_background.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/chat/screen_select_dialog.dart';
 
 class CallScreen extends StatefulWidget {
   final String callerId, calleeId;
@@ -12,6 +15,7 @@ class CallScreen extends StatefulWidget {
   final socket;
   final Function onCallEnded;
   final bool? isVideo;
+  final String? type;
   const CallScreen({
     super.key,
     this.offer,
@@ -20,6 +24,7 @@ class CallScreen extends StatefulWidget {
     required this.calleeId,
     required this.socket,
     this.isVideo,
+    this.type,
     required this.onCallEnded,
   });
 
@@ -28,7 +33,10 @@ class CallScreen extends StatefulWidget {
 }
 
 class _CallScreenState extends State<CallScreen> {
+  DesktopCapturerSource? selected_source_;
+  List<RTCRtpSender> _senders = <RTCRtpSender>[];
   bool isCallAccepted = false;
+  Function(MediaStream stream)? onLocalStream;
   // videoRenderer for localPeer
   final _localRTCVideoRenderer = RTCVideoRenderer();
 
@@ -36,8 +44,10 @@ class _CallScreenState extends State<CallScreen> {
   final _remoteRTCVideoRenderer = RTCVideoRenderer();
 
   // mediaStream for localPeer
+  bool isScreenSharing = false;
   MediaStream? _localStream;
-
+  MediaStream? _screenStream;
+  MediaStream? _prevStream;
   // RTC peer connection
   RTCPeerConnection? _rtcPeerConnection;
 
@@ -116,7 +126,8 @@ class _CallScreenState extends State<CallScreen> {
         _remoteRTCVideoRenderer.srcObject = event.streams[0];
       });
     };
-    isVideoOn = widget.isVideo!=null && widget.isVideo == false ? false : true;
+    isVideoOn =
+        widget.isVideo != null && widget.isVideo == false ? false : true;
     // get localStream
     _localStream = await navigator.mediaDevices.getUserMedia({
       'audio': isAudioOn,
@@ -126,8 +137,8 @@ class _CallScreenState extends State<CallScreen> {
     });
 
     // add mediaTrack to peerConnection
-    _localStream!.getTracks().forEach((track) {
-      _rtcPeerConnection!.addTrack(track, _localStream!);
+    _localStream!.getTracks().forEach((track) async {
+      _senders.add(await _rtcPeerConnection!.addTrack(track, _localStream!));
     });
 
     // set source for local video renderer
@@ -181,11 +192,19 @@ class _CallScreenState extends State<CallScreen> {
       _rtcPeerConnection!.setLocalDescription(answer);
 
       // send SDP answer to remote peer over signalling
-      widget.socket!.emit("answerCall", {
-        "calleeId": GetStorage().read("username"),
-        "callerId": widget.callerId,
-        "sdpAnswer": answer.toMap(),
-      });
+      if (widget.type != null && widget.type == "P") {
+        widget.socket!.emit("answerPageCall", {
+          "calleeId": widget.calleeId,
+          "callerId": widget.callerId,
+          "sdpAnswer": answer.toMap(),
+        });
+      } else {
+        widget.socket!.emit("answerCall", {
+          "calleeId": widget.calleeId,
+          "callerId": widget.callerId,
+          "sdpAnswer": answer.toMap(),
+        });
+      }
     }
     // for Outgoing Call
     else {
@@ -218,7 +237,7 @@ class _CallScreenState extends State<CallScreen> {
           print(candidate);
           print("/////////////////////////////////////////");
           widget.socket!.emit("IceCandidate", {
-            "callerId": GetStorage().read("username"),
+            "callerId": widget.callerId,
             "calleeId": widget.calleeId,
             "iceCandidate": {
               "id": candidate.sdpMid,
@@ -237,27 +256,46 @@ class _CallScreenState extends State<CallScreen> {
       await _rtcPeerConnection!.setLocalDescription(offer);
 
       // make a call to remote peer over signalling
-
-      widget.socket!.emit('makeCall', {
-        "callerId": GetStorage().read("username"),
+      if (widget.type != null && widget.type == "P") {
+        widget.socket!.emit('makePageCall', {
+        "callerId": widget.callerId,
         "calleeId": widget.calleeId,
         "photo": widget.photo,
         "sdpOffer": offer.toMap(),
-        "isVideo":widget.isVideo,
+        "isVideo": widget.isVideo,
       });
+      } else {
+        widget.socket!.emit('makeCall', {
+        "callerId": widget.callerId,
+        "calleeId": widget.calleeId,
+        "photo": widget.photo,
+        "sdpOffer": offer.toMap(),
+        "isVideo": widget.isVideo,
+      });
+      }
+      
     }
   }
 
-  _leaveCall() {
+  _leaveCall() async {
     if (mounted) {
-      widget.socket!.emit("leaveCall", {
+      if (widget.type != null && widget.type == "P") {
+        widget.socket!.emit("leavePageCall", {
         "user1": widget.calleeId,
         "user2": widget.callerId,
       });
+      } else {
+       widget.socket!.emit("leaveCall", {
+        "user1": widget.calleeId,
+        "user2": widget.callerId,
+      });
+      }
+      
       widget.socket!.off("callEnded");
       widget.socket!.off("IceCandidate");
       widget.socket!.off("callAnswered");
       incomingSDPOffer = null;
+
       if (mounted) {
         setState(() {
           widget.onCallEnded();
@@ -302,10 +340,147 @@ class _CallScreenState extends State<CallScreen> {
     setState(() {});
   }
 
+  Future<void> selectScreenSourceDialog(BuildContext context) async {
+    try {
+      if (WebRTC.platformIsDesktop) {
+        print("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiind");
+        final source = await showDialog<DesktopCapturerSource>(
+          context: context,
+          builder: (context) => ScreenSelectDialog(),
+        );
+        if (source != null) {
+          await _shareScreen(source);
+        }
+      } else {
+        if (WebRTC.platformIsAndroid) {
+          // Android specific
+          Future<void> requestBackgroundPermission(
+              [bool isRetry = false]) async {
+            // Required for android screenshare.
+            try {
+              var hasPermissions = await FlutterBackground.hasPermissions;
+              if (!isRetry) {
+                const androidConfig = FlutterBackgroundAndroidConfig(
+                  notificationTitle: 'Screen Sharing',
+                  notificationText: 'LiveKit Example is sharing the screen.',
+                  notificationImportance: AndroidNotificationImportance.Default,
+                  notificationIcon: AndroidResource(
+                      name: 'livekit_ic_launcher', defType: 'mipmap'),
+                );
+                hasPermissions = await FlutterBackground.initialize(
+                    androidConfig: androidConfig);
+              }
+              if (hasPermissions &&
+                  !FlutterBackground.isBackgroundExecutionEnabled) {
+                await FlutterBackground.enableBackgroundExecution();
+              }
+            } catch (e) {
+              if (!isRetry) {
+                return await Future<void>.delayed(const Duration(seconds: 1),
+                    () => requestBackgroundPermission(true));
+              }
+              print('could not publish video: $e');
+            }
+          }
+
+          await requestBackgroundPermission();
+        }
+        await _shareScreen(null);
+      }
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  Future<void> _shareScreen(DesktopCapturerSource? source) async {
+    print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    setState(() {
+      selected_source_ = source;
+    });
+
+    try {
+      var stream =
+          await navigator.mediaDevices.getDisplayMedia(<String, dynamic>{
+        'video': selected_source_ == null
+            ? {
+                'mandatory': {
+                  'frameRate': 15.0,
+                  'minWidth': 640,
+                  'minHeight': 480,
+                },
+              }
+            : {
+                'deviceId': {'exact': selected_source_!.id},
+                'mandatory': {
+                  'frameRate': 15.0,
+                  'minWidth': 640,
+                  'minHeight': 480,
+                },
+              }
+      });
+      stream.getVideoTracks()[0].onEnded = () {
+        _stop();
+      };
+      _prevStream = _localStream;
+      _screenStream = stream;
+      _localRTCVideoRenderer.srcObject = _screenStream;
+      /*for (var oldTrack in _localStream!.getTracks()) {
+        _localStream!.removeTrack(oldTrack);
+        oldTrack.dispose();
+      }
+
+      for (var newTrack in stream.getTracks()) {
+        _localStream!.addTrack(newTrack);
+      }*/
+      switchToScreenSharing(stream);
+      // Add the new stream to the peer connection
+      //_rtcPeerConnection!.addStream(_localStream!);
+
+      //_localStream = _screenStream;
+      setState(() {});
+    } catch (e) {
+      print(e.toString());
+    }
+    if (!mounted) return;
+    isScreenSharing = true;
+    setState(() {});
+  }
+
+  void switchToScreenSharing(MediaStream stream) {
+    if (_localStream != null) {
+      _senders.forEach((sender) {
+        if (sender.track!.kind == 'video') {
+          sender.replaceTrack(stream.getVideoTracks()[0]);
+        }
+      });
+      //onLocalStream?.call(stream);
+    }
+  }
+
+  Future<void> _stop() async {
+    try {
+      switchToScreenSharing(_prevStream!);
+      if (_screenStream != null) {
+        for (var track in _screenStream!.getTracks()) {
+          track.stop();
+        }
+        _screenStream?.dispose();
+      }
+      _screenStream = null;
+      _localRTCVideoRenderer.srcObject = _localStream;
+
+      setState(() {
+        isScreenSharing = false;
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(221, 15, 15, 15),
       body: SafeArea(
         child: Column(
           children: [
@@ -315,7 +490,7 @@ class _CallScreenState extends State<CallScreen> {
                     ? RTCVideoView(
                         _remoteRTCVideoRenderer,
                         objectFit:
-                            RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                            RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
                       )
                     : Center(
                         child: Text(
@@ -343,28 +518,47 @@ class _CallScreenState extends State<CallScreen> {
               ]),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  IconButton(
-                    icon: Icon(isAudioOn ? Icons.mic : Icons.mic_off),
-                    onPressed: _toggleMic,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.call_end),
-                    iconSize: 30,
-                    onPressed: _leaveCall,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.cameraswitch),
-                    onPressed: _switchCamera,
-                  ),
-                  IconButton(
-                    icon: Icon(isVideoOn ? Icons.videocam : Icons.videocam_off),
-                    onPressed: _toggleCamera,
-                  ),
-                ],
+              padding: const EdgeInsets.symmetric(vertical: 1),
+              child: Container(
+                color: Color.fromARGB(
+                    255, 232, 230, 230), // Set the background color for Padding
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    IconButton(
+                      icon: Icon(isAudioOn ? Icons.mic : Icons.mic_off),
+                      onPressed: _toggleMic,
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.call_end),
+                      iconSize: 30,
+                      onPressed: _leaveCall,
+                    ),
+                    if (widget.isVideo == null || widget.isVideo == true)
+                      IconButton(
+                        icon: const Icon(Icons.cameraswitch),
+                        onPressed: _switchCamera,
+                      ),
+                    if (widget.isVideo == null || widget.isVideo == true)
+                      IconButton(
+                        icon: Icon(
+                            isVideoOn ? Icons.videocam : Icons.videocam_off),
+                        onPressed: _toggleCamera,
+                      ),
+                    if (widget.isVideo == null || widget.isVideo == true)
+                      IconButton(
+                        onPressed: () async {
+                          print(isScreenSharing);
+                          if (!isScreenSharing) {
+                            await selectScreenSourceDialog(context);
+                          } else {
+                            await _stop();
+                          }
+                        },
+                        icon: Icon(isScreenSharing ? Icons.tv : Icons.tv_off),
+                      )
+                  ],
+                ),
               ),
             ),
           ],
@@ -382,7 +576,16 @@ class _CallScreenState extends State<CallScreen> {
       _remoteRTCVideoRenderer.dispose();
     }
     if (_localStream != null) {
+      for (var track in _localStream!.getTracks()) {
+        track.stop();
+      }
       _localStream?.dispose();
+    }
+    if (_screenStream != null) {
+      for (var track in _screenStream!.getTracks()) {
+        track.stop();
+      }
+      _screenStream?.dispose();
     }
     if (_rtcPeerConnection != null) {
       _rtcPeerConnection?.dispose();

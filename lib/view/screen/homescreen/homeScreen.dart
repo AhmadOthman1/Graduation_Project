@@ -46,19 +46,19 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 children: [
                   ...List.generate(
-                    controller.titlebottomappbar.length + 1,
+                    controller.titlebottomappbar.length ,
                     ((index) {
                       int i = index > 2 ? index - 1 : index;
-                      return index == 2
-                          ? const Spacer()
-                          : BottommAppBar(
-                              textbutton: controller.titlebottomappbar[i],
-                              icondata: controller.icons[i],
-                              onPressed: () {
-                                controller.changePage(i);
-                              },
-                              active: controller.currentpage == i ? true : false,
-                            );
+                      return Expanded(
+                        child: BottommAppBar(
+                          textbutton: controller.titlebottomappbar[index],
+                          icondata: controller.icons[index],
+                          onPressed: () {
+                            controller.changePage(index);
+                          },
+                          active: controller.currentpage == index ? true : false,
+                        ),
+                      );
                     }),
                   )
                 ],
@@ -71,4 +71,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

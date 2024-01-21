@@ -62,7 +62,7 @@ addMessage( text,  username, userPhoto,  createdAt, image,video) async {
     return response;
   }
 
-  Future<void> loadUserMessages(page, username, type) async {
+  Future<void> loadUserMessages(page, username, type,[String ? pageId]) async {
     print("innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnm");
     if (isLoading) {
       return;
@@ -73,7 +73,7 @@ addMessage( text,  username, userPhoto,  createdAt, image,video) async {
     print(response.statusCode);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      loadUserMessages(page, username, type);
+      loadUserMessages(page, username, type,pageId);
       return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -97,20 +97,35 @@ addMessage( text,  username, userPhoto,  createdAt, image,video) async {
 
 // Iterate through the messagesData and create ChatMessage objects
       for (var messageData in messagesData) {
+        print(messageData);
+        print("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
         String text = messageData['text'];
-        String senderUsername = messageData['senderUsername'];
-        String receiverUsername = messageData['receiverUsername'];
-        String? userPhoto = senderUsername != GetStorage().read("username")
-            ? messageData['senderUsername_FK']['photo']
-            : messageData['receiverUsername_FK']['photo'];
+        String senderUsername = messageData['senderUsername'] ?? messageData['senderPageId'];
+        String receiverUsername = messageData['receiverUsername'] ??  messageData['receiverPageId'] ;
+        String? userPhoto = 
+        type == "U" ?// if the conversation between user and other user
+        senderUsername != GetStorage().read("username")?//get the other user/page photo
+            messageData['senderUsername_FK']['photo'] 
+            : messageData['receiverUsername_FK']['photo'] 
+            ://if the conversation between page and other user get page photo
+            messageData['senderPageId_FK'] != null ? messageData['senderPageId_FK']['photo']:messageData['receiverPageId_FK']['photo']
+            
+            ;
 
         // Create a ChatMessage object based on the conditions
         ChatMessage chatMessage = ChatMessage(
           text: text?? '',
-          isUser: senderUsername == GetStorage().read("username"),
-          userName: senderUsername != GetStorage().read("username")
-              ? messageData['senderUsername_FK']['username'] 
-              : messageData['receiverUsername_FK']['username'],
+          isUser: type=="U" ? 
+          senderUsername == GetStorage().read("username") 
+          : messageData['senderPageId_FK'] != null ? false: true,
+          userName: type == "U" ?// if the conversation between user and other user
+          senderUsername != GetStorage().read("username")? 
+              messageData['senderUsername_FK']['username'] 
+              : messageData['receiverUsername_FK']['username'] 
+              :
+              messageData['senderPageId_FK'] != null ? messageData['senderPageId_FK']['id']:messageData['receiverPageId_FK']['id']
+            
+              ,
           userPhoto: (userPhoto==null) ? '': userPhoto,
           createdAt: messageData['createdAt'],
           image: messageData['image'],

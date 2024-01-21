@@ -5,6 +5,7 @@ import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/global.dart';
 
 import 'package:get/get.dart';
+import 'package:growify/view/screen/homescreen/chat/chatpagemessages.dart';
 import 'package:growify/view/screen/homescreen/myPage/JobsPages/ShowCompanyJobs.dart';
 import 'package:growify/view/screen/homescreen/myPage/colleaguesPageCalendar.dart';
 import 'package:growify/view/screen/homescreen/myPage/seeAboutinfoPageColleagues.dart';
@@ -15,7 +16,8 @@ import 'package:growify/view/widget/homePage/posts.dart';
 class ColleaguesPageProfile extends StatefulWidget {
   final userData;
   final following;
-  const ColleaguesPageProfile({super.key, required this.following ,required this.userData});
+  const ColleaguesPageProfile(
+      {super.key, required this.following, required this.userData});
 
   @override
   _ColleaguesPageProfileState createState() => _ColleaguesPageProfileState();
@@ -127,41 +129,56 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
             children: [
               Text(
                 '$firstName',
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              SizedBox(width: 4,),
-
-               PopupMenuButton<String>(
-                        icon: const Icon(Icons.more_vert),
-                        onSelected: (String option) async {
-                          var message = await controller.onMoreOptionSelected(option,widget.userData.id,);
-                          (message != null)
-                        ? showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return CustomAlertDialog(
-                                title: 'Alert',
-                                icon: Icons.error,
-                                text: message,
-                                buttonText: 'OK',
-                                
-                              );
-                            },
-                          )
-                        : null;
-                        setState(() {
-                          
-                        });
-                        },
-                        itemBuilder: (BuildContext context) {
-                            return controller.moreOptions.map((String option) {
-                              return PopupMenuItem<String>(
-                                value: option,
-                                child: Text(option),
-                              );
-                            }).toList();
-                        },
-                      ),
+              SizedBox(
+                width: 4,
+              ),
+              IconButton(
+                  onPressed: () {
+                    final Map<String, dynamic> pageInfo = {
+                      'name': widget.userData.name,
+                      'username': widget.userData.id,
+                      'photo': widget.userData.photo,
+                      'type': "P",
+                    };
+                    Get.to(ChatPageMessages(
+                      data: pageInfo,
+                    ));
+                  },
+                  icon: Icon(Icons.message)),
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert),
+                onSelected: (String option) async {
+                  var message = await controller.onMoreOptionSelected(
+                    option,
+                    widget.userData.id,
+                  );
+                  (message != null)
+                      ? showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CustomAlertDialog(
+                              title: 'Alert',
+                              icon: Icons.error,
+                              text: message,
+                              buttonText: 'OK',
+                            );
+                          },
+                        )
+                      : null;
+                  setState(() {});
+                },
+                itemBuilder: (BuildContext context) {
+                  return controller.moreOptions.map((String option) {
+                    return PopupMenuItem<String>(
+                      value: option,
+                      child: Text(option),
+                    );
+                  }).toList();
+                },
+              ),
             ],
           ),
           Text(
@@ -241,7 +258,9 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
                 'pageType': widget.userData.pageType,
               },
             ];
-            Get.to(CollaguesPageSeeAboutInfo(userData: userDataList,));
+            Get.to(CollaguesPageSeeAboutInfo(
+              userData: userDataList,
+            ));
           },
           child: Container(
             height: 35,
@@ -260,11 +279,13 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
             ),
           ),
         ),
-         _buildDivider(10),
+        _buildDivider(10),
         InkWell(
           onTap: () {
             //controller.goToSeeAboutInfo();
-           Get.to(ColleaguesPageCalender(pageId: widget.userData.id,));
+            Get.to(ColleaguesPageCalender(
+              pageId: widget.userData.id,
+            ));
           },
           child: Container(
             height: 35,
@@ -287,7 +308,8 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
         InkWell(
           onTap: () {
             //controller.goToSeeAboutInfo();
-            Get.to(CompanyJobPage(pageId:widget.userData.id,image:widget.userData.photo));
+            Get.to(CompanyJobPage(
+                pageId: widget.userData.id, image: widget.userData.photo));
           },
           child: Container(
             height: 35,

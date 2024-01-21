@@ -39,7 +39,29 @@ class ShowJobApplicantsController {
   bool isLoading = false;
   int pageSize = 10;
   int page = 1;
-
+generatePageAccessToken(pageId) async {
+  var url = "$urlStarter/user/generatePageAccessToken?pageId=${pageId}";
+    var responce = await http.get(Uri.parse(url), headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+    if (responce.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      generatePageAccessToken(pageId);
+      return;
+    } else if (responce.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+    
+    if (responce.statusCode == 409) {
+      var resbody = jsonDecode(responce.body);
+      return resbody['message'];
+    } else if (responce.statusCode == 200) {
+      var resbody = jsonDecode(responce.body);
+      return resbody['accessToken'];
+      
+    }
+}
   getPageJobs(pageJobId) async {
     var url = "$urlStarter/user/getPageJobApplications?pageJobId=$pageJobId";
     var response = await http.get(Uri.parse(url), headers: {

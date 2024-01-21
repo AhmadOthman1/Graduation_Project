@@ -8,12 +8,21 @@ import 'package:get/get.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
 import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/ShowJobApplicants_controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/myPage/chat/pageChatpagemessages.dart';
 import 'package:growify/view/screen/homescreen/taskes/tasksmainpage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ShowJobApplicants extends StatefulWidget {
   final pageJobId;
-  const ShowJobApplicants({Key? key, required this.pageJobId})
+  final pageId;
+  final pageName;
+  final pagePhoto;
+  const ShowJobApplicants(
+      {Key? key,
+      required this.pageJobId,
+      required this.pageId,
+      required this.pageName,
+      required this.pagePhoto})
       : super(key: key);
 
   @override
@@ -42,7 +51,7 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
       setState(() {
         _controller.page++;
       });
-     // print('Data loaded: ${_controller.jobs.length} jobs');
+      // print('Data loaded: ${_controller.jobs.length} jobs');
     } catch (error) {
       print('Error loading data: $error');
     }
@@ -108,34 +117,51 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
             SizedBox(height: 8),
             ..._controller.Aqraba.map((applicant) {
               return ListTile(
-                leading: InkWell(
-                  onTap: (){
-                     _controller.goToUserPage(applicant['user']['username']);
-                  },
-                  child: CircleAvatar(
-                    backgroundImage: (applicant['user']['photo'] != null)
-                        ? Image.network(
-                                "${urlStarter}/${applicant['user']['photo']}")
-                            .image
-                        : defaultProfileImage,
+                  leading: InkWell(
+                    onTap: () {
+                      _controller.goToUserPage(applicant['user']['username']);
+                    },
+                    child: CircleAvatar(
+                      backgroundImage: (applicant['user']['photo'] != null)
+                          ? Image.network(
+                                  "${urlStarter}/${applicant['user']['photo']}")
+                              .image
+                          : defaultProfileImage,
+                    ),
                   ),
-                ),
-                title: Text(
-                    "${applicant['user']['firstname']} ${applicant['user']['lastname']}"),
-                subtitle: Text("@${applicant['user']['username']}"),
-                trailing: InkWell(
-                  onTap: () {
-                    _showApplicantDetails(context, applicant);
-                  },
-                  child: Text(
-                    "More Details",
-                    style: TextStyle(fontSize: 14),
-                  ),
-                ),
-                onTap: () {
-                  // go to his profile
-                },
-              );
+                  title: Text(
+                      "${applicant['user']['firstname']} ${applicant['user']['lastname']}"),
+                  subtitle: Text("@${applicant['user']['username']}"),
+                  trailing: Column(
+                    children: [
+                      InkWell(
+                        onTap: () async {
+                          var pageAccessToken = await _controller
+                              .generatePageAccessToken(widget.pageId);
+                          final Map<String, dynamic> userInfo = {
+                            'name':
+                                "${applicant['user']['firstname']} ${applicant['user']['lastname']}",
+                            'username': "${applicant['user']['username']}",
+                            'photo': "${applicant['user']['photo']}",
+                            'type': "U",
+                          };
+                          Get.to(pageChatpagemessages(
+                              data: userInfo,
+                              pageId: widget.pageId,
+                              pageName: widget.pageName,
+                              pagePhoto: widget.pagePhoto,
+                              pageAccessToken: pageAccessToken));
+                        },
+                        child: Icon(Icons.message),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          _showApplicantDetails(context, applicant);
+                        },
+                        child: Icon(Icons.assignment_outlined),
+                      ),
+                    ],
+                  ));
             }).toList(),
           ],
         ),
@@ -144,86 +170,85 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
   }
 
   _showApplicantDetails(BuildContext context, dynamic applicant) {
-  showModalBottomSheet(
-    context: context,
-    builder: (BuildContext context) {
-      return SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(16),
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              ListTile(
-                leading: InkWell(
-                  onTap: (){
-                    _controller.goToUserPage(applicant['user']['username']);
-                  },
-                  child: CircleAvatar(
-                    backgroundImage: (applicant['user']['photo'] != null)
-                        ? Image.network("${urlStarter}/${applicant['user']['photo']}")
-                            .image
-                        : defaultProfileImage,
-                  ),
-                ),
-                title: Text(
-                  "${applicant['user']['firstname']} ${applicant['user']['lastname']}",
-                ),
-                subtitle: Text("@${applicant['user']['username']}"),
-              ),
-              SizedBox(height: 16),
-              Text('Notes:', style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              ExpansionTile(
-                title: Text('Expand to view notes'),
-                children: [
-                  SingleChildScrollView(
-                    child: Container(
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        applicant['note'] ?? 'No notes available',
-                        style: TextStyle(fontSize: 16),
-                      ),
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                ListTile(
+                  leading: InkWell(
+                    onTap: () {
+                      _controller.goToUserPage(applicant['user']['username']);
+                    },
+                    child: CircleAvatar(
+                      backgroundImage: (applicant['user']['photo'] != null)
+                          ? Image.network(
+                                  "${urlStarter}/${applicant['user']['photo']}")
+                              .image
+                          : defaultProfileImage,
                     ),
                   ),
-                ],
-              ),
-              SizedBox(height: 16),
-              
-              Visibility(
-  visible: applicant['cv'] != null,
-  child: ElevatedButton(
-    onPressed: () async {
-      var cvUrl = "$urlStarter/${applicant['cv']}";
+                  title: Text(
+                    "${applicant['user']['firstname']} ${applicant['user']['lastname']}",
+                  ),
+                  subtitle: Text("@${applicant['user']['username']}"),
+                ),
+                SizedBox(height: 16),
+                Text('Notes:', style: TextStyle(fontWeight: FontWeight.bold)),
+                SizedBox(height: 8),
+                ExpansionTile(
+                  title: Text('Expand to view notes'),
+                  children: [
+                    SingleChildScrollView(
+                      child: Container(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          applicant['note'] ?? 'No notes available',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 16),
+                Visibility(
+                  visible: applicant['cv'] != null,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      var cvUrl = "$urlStarter/${applicant['cv']}";
 
-      if (kIsWeb) {
-        if (await canLaunch(cvUrl)) {
-          await launch(
-            cvUrl,
-            headers: {
-              "Content-Type": "application/pdf",
-              "Content-Disposition": "inline"
-            },
-          );
-        } else {
-          throw "Could not launch $cvUrl";
-        }
-      } else {
-        download(cvUrl, applicant['cv']);
-      }
+                      if (kIsWeb) {
+                        if (await canLaunch(cvUrl)) {
+                          await launch(
+                            cvUrl,
+                            headers: {
+                              "Content-Type": "application/pdf",
+                              "Content-Disposition": "inline"
+                            },
+                          );
+                        } else {
+                          throw "Could not launch $cvUrl";
+                        }
+                      } else {
+                        download(cvUrl, applicant['cv']);
+                      }
 
-      Navigator.pop(context); 
-    },
-    child: Text('Download CV'),
-  ),
-),
-            ],
+                      Navigator.pop(context);
+                    },
+                    child: Text('Download CV'),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      );
-    },
-  );
-}
-
+        );
+      },
+    );
+  }
 }
 
 class JobPostCard extends StatelessWidget {

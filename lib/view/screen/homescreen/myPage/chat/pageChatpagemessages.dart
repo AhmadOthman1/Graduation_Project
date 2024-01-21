@@ -3,8 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:growify/controller/home/chats_controller/chatspage_cnotroller.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
+import 'package:growify/controller/home/myPage_Controller/chat_controller/pageChatmainpage_controller.dart';
+import 'package:growify/controller/home/myPage_Controller/chat_controller/pageChatspage_cnotroller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/resources/jitsi_meet.dart';
 import 'package:growify/view/screen/homescreen/chat/CallScreen.dart';
@@ -18,18 +19,31 @@ import 'dart:io';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:http/http.dart' as http;
 
-class ChatPageMessages extends StatefulWidget {
+class pageChatpagemessages extends StatefulWidget {
   final data;
-  const ChatPageMessages({super.key, this.data});
+  final pageId;
+  final pageName;
+  final pagePhoto;
+  final pageAccessToken;
+  const pageChatpagemessages(
+      {super.key,
+      this.data,
+      required this.pageId,
+      required this.pageName,
+      required this.pagePhoto,
+      required this.pageAccessToken});
 
   @override
-  ChatPageMessagesState createState() => ChatPageMessagesState();
+  pageChatpagemessagesState createState() => pageChatpagemessagesState();
 }
 
 final ScrollController scrollController = ScrollController();
 
-class ChatPageMessagesState extends State<ChatPageMessages> {
-  late ChatController chatController;
+class pageChatpagemessagesState extends State<pageChatpagemessages> {
+  final PageChatMainPageController controller =
+      Get.put(PageChatMainPageController());
+  var accessToken;
+  late PageChatController chatController;
   final ScrollController _scrollController = ScrollController();
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
@@ -92,10 +106,11 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
   @override
   void initState() {
     super.initState();
+    accessToken = widget.pageAccessToken;
     receivedCallAudio = AssetsAudioPlayer();
     receivedCallAudioCounter = 0;
     incomingSDPOffer = null;
-    chatController = ChatController();
+    chatController = PageChatController();
     _socketConnect();
     _initCallingListener();
     _loadData();
@@ -115,20 +130,21 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
         "autoConnect": false,
       });
       socket.connect();
-      var accessToken = GetStorage().read("accessToken");
-      socket.emit("/login", accessToken); //authenticate the user
+      socket.emit("/PageLogin", accessToken); //authenticate the user
       socket.onConnect((data) => {
             // read authentication status
             socket.on("status", (status) async {
               if (status == 403) {
                 //accessToken expired
-                await getRefreshToken(GetStorage().read('refreshToken'));
-                accessToken = GetStorage().read("accessToken");
+                accessToken = controller.generatePageAccessToken(widget.pageId);
+
                 _socketConnect();
                 return;
               } else if (status == 401) {
-                //not valid refreshToken
-                _logoutController.goTosigninpage();
+                //not valid accessToken
+                accessToken = controller.generatePageAccessToken(widget.pageId);
+
+                _socketConnect();
               } else if (status == 200) {
                 //authenticated
               }
@@ -136,40 +152,29 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
             socket.on("/chatStatus", (msg) async {
               //chat message token expired handle
               if (msg["status"] == 403) {
-                await getRefreshToken(GetStorage().read('refreshToken'));
+                accessToken = controller.generatePageAccessToken(widget.pageId);
                 //reSend the message
-                accessToken = GetStorage().read("accessToken");
-                if (widget.data["type"] == "U") {
-                  socket.emit("/chat", {
-                    "message": chatController.textController.text,
-                    "token": accessToken,
-                    "username": widget.data["username"],
-                    "messageImageBytes": messageImageBytes,
-                    "messageImageBytesName": messageImageBytesName,
-                    "messageImageExt": messageImageExt,
-                    "messageVideoBytes": messageVideoBytes,
-                    "messageVideoBytesName": messageVideoBytesName,
-                    "messageVideoExt": messageVideoExt,
-                  });
-                } else if (widget.data["type"] == "P") {
-                  socket.emit("/chatToPage", {
-                    "message": chatController.textController.text,
-                    "token": accessToken,
-                    "pageId": widget.data["username"],
-                    "messageImageBytes": messageImageBytes,
-                    "messageImageBytesName": messageImageBytesName,
-                    "messageImageExt": messageImageExt,
-                    "messageVideoBytes": messageVideoBytes,
-                    "messageVideoBytesName": messageVideoBytesName,
-                    "messageVideoExt": messageVideoExt,
-                  });
-                }
+                socket.emit("/pageChat", {
+                  "message": msg["message"],
+                  "token": accessToken,
+                  "username": widget.data["username"],
+                  "messageImageBytes": msg["messageImageBytes"],
+                  "messageImageBytesName": msg["messageImageBytesName"],
+                  "messageImageExt": msg["messageImageExt"],
+                  "messageVideoBytes": msg["messageVideoBytes"],
+                  "messageVideoBytesName": msg["messageVideoBytesName"],
+                  "messageVideoExt": msg["messageVideoExt"],
+                });
                 return;
               } else if (msg["status"] == 401) {
-                _logoutController.goTosigninpage();
+                accessToken = controller.generatePageAccessToken(widget.pageId);
               }
             }),
             socket.on("/chat", (msg) {
+              print(msg["video"]);
+              print(
+                  "ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
+
               if (mounted) {
                 setState(() {
                   chatController.messages;
@@ -189,15 +194,6 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
             socket.on("/chatMyVideo", (msg) {
               chatController.sendMessage(
                   msg["message"], msg["image"], msg["video"]);
-            }),
-            socket.on("newCall", (data) {
-              print(data['isVideo']);
-              incomingSDPOffer = data;
-              playCallingSound();
-              print(mounted);
-              if (mounted) {
-                setState(() {});
-              }
             }),
             socket!.on("callEnded", (data) async {
               incomingSDPOffer = null;
@@ -234,8 +230,8 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
   _loadData() async {
     print('Loading data...');
     try {
-      await chatController.loadUserMessages(
-          chatController.page, widget.data['username'], widget.data['type']);
+      await chatController.loadUserMessages(chatController.page,
+          widget.data['username'], widget.data['type'], widget.pageId);
       print(mounted);
       print("bbbbbbbbbbbbbbbbbbbbbbbb");
       if (mounted)
@@ -272,31 +268,22 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
 
     receivedCallAudio = null;
     print("aaaa");
-    if (incomingSDPOffer != null) {
-      if (widget.data['type'] == "P") {
-        socket!.emit("leavePageCall", {
-          "user1": GetStorage().read("username"),
-          "user2": incomingSDPOffer["callerId"]!,
-        });
-      } else {
-        socket!.emit("leaveCall", {
-          "user1": incomingSDPOffer["callerId"]!,
-          "user2": GetStorage().read("username"),
-        });
-      }
-    }
-
+    if (incomingSDPOffer != null)
+      socket!.emit("leavePageCall", {
+        "user1": incomingSDPOffer["callerId"]!,
+        "user2": widget.pageId,
+      });
     super.dispose();
   }
 
-  _joinCall({
-    required String callerId,
-    required String calleeId,
-    dynamic offer,
-    String? photo,
-    bool? isVideo,
-    String? type,
-  }) {
+  _joinCall(
+      {required String callerId,
+      required String calleeId,
+      dynamic offer,
+      String? photo,
+      bool? isVideo,
+      String? type,
+      }) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -311,6 +298,7 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
           onCallEnded: () {
             // rebuild the parent screen
             final chatPageState = widget.key;
+            print(incomingSDPOffer);
             if (mounted) {
               setState(() {});
             }
@@ -321,18 +309,10 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
   }
 
   decline() {
-    if (widget.data['type'] == "P") {
-      socket!.emit("leavePageCall", {
-        "user1": GetStorage().read("username"),
-        "user2": incomingSDPOffer["callerId"]!,
-      });
-    } else {
-      socket!.emit("leaveCall", {
-        "user1": incomingSDPOffer["callerId"]!,
-        "user2": GetStorage().read("username"),
-      });
-    }
-
+    socket!.emit("leavePageCall", {
+      "user1": incomingSDPOffer["callerId"]!,
+      "user2": widget.pageId,
+    });
     stopCallingSound();
   }
 
@@ -342,129 +322,31 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          if (incomingSDPOffer == null) _buildAppBar(),
-          if (incomingSDPOffer != null)
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: Container(),
-                  ),
-                  // Circular photo in the middle
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.blue,
-                      ),
-                      child: Center(
-                        child: CircleAvatar(
-                          radius: 60,
-                          backgroundImage: incomingSDPOffer["photo"] != null
-                              ? Image.network(
-                                      "$urlStarter/${incomingSDPOffer["photo"]}")
-                                  .image
-                              : profileBackgroundImage,
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Text below the circular photo
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: Center(
-                          child: Text(
-                            "Incoming Call from ${incomingSDPOffer["callerId"]}",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: Container(),
-                  ),
-                  // Row of buttons at the bottom
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          IconButton(
-                            iconSize: 50,
-                            icon: const Icon(Icons.call_end),
-                            color: Colors.redAccent,
-                            onPressed: () {
-                              decline();
-                              if (mounted)
-                                setState(() => incomingSDPOffer = null);
-                            },
-                          ),
-                          IconButton(
-                            iconSize: 50,
-                            icon: (incomingSDPOffer["isVideo"] != null &&
-                                    incomingSDPOffer["isVideo"] != "true")
-                                ? const Icon(Icons.call)
-                                : const Icon(Icons.videocam),
-                            color: Colors.greenAccent,
-                            onPressed: () {
-                              stopCallingSound();
-                              _joinCall(
-                                callerId: incomingSDPOffer["callerId"]!,
-                                calleeId: GetStorage().read("username"),
-                                offer: incomingSDPOffer["sdpOffer"],
-                                isVideo: (incomingSDPOffer["isVideo"] != null &&
-                                        incomingSDPOffer["isVideo"] != "true")
-                                    ? false
-                                    : true,
-                                type: widget.data['type'],
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          if (incomingSDPOffer == null)
-            Expanded(
-              child: Obx(() {
-                return ListView.builder(
-                  reverse: true, // Display messages in reverse order
-                  controller: _scrollController,
-                  itemCount: chatController.messages.length,
-                  itemBuilder: (context, index) {
-                    //return chatController.messages[index];
-                    return ChatMessage(
-                      text: chatController.messages[index].text,
-                      isUser: chatController.messages[index].isUser,
-                      userName: chatController.messages[index].userName,
-                      userPhoto: chatController.messages[index].userPhoto,
-                      createdAt: chatController.messages[index].createdAt,
-                      image: chatController.messages[index].image,
-                      video: chatController.messages[index].video,
-                      existingVideoController: chatController
-                          .messages[index].existingVideoController,
-                    );
-                  },
-                );
-              }),
-            ),
-          if (incomingSDPOffer == null) _buildMessageComposer(),
+          _buildAppBar(),
+          Expanded(
+            child: Obx(() {
+              return ListView.builder(
+                reverse: true, // Display messages in reverse order
+                controller: _scrollController,
+                itemCount: chatController.messages.length,
+                itemBuilder: (context, index) {
+                  //return chatController.messages[index];
+                  return ChatMessage(
+                    text: chatController.messages[index].text,
+                    isUser: chatController.messages[index].isUser,
+                    userName: chatController.messages[index].userName,
+                    userPhoto: chatController.messages[index].userPhoto,
+                    createdAt: chatController.messages[index].createdAt,
+                    image: chatController.messages[index].image,
+                    video: chatController.messages[index].video,
+                    existingVideoController:
+                        chatController.messages[index].existingVideoController,
+                  );
+                },
+              );
+            }),
+          ),
+          _buildMessageComposer(),
         ],
       ),
     );
@@ -500,7 +382,7 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
                   children: [
                     Expanded(
                       flex: 3,
-                      child: SingleChildScrollView(
+                      child:  SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: [
@@ -513,55 +395,55 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
                         ),
                       ),
                     ),
-                    if (widget.data['type'] == "U")
-                      Expanded(
-                        flex: 1,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.video_call),
-                              color: Colors.white,
-                              onPressed: () {
-                                //createPeerConn(GetStorage().read('username'), widget.data["username"]);
+                    Expanded(
+                      flex: 1,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.video_call),
+                            color: Colors.white,
+                            onPressed: () {
+                              //createPeerConn(GetStorage().read('username'), widget.data["username"]);
 
-                                //createNewMeeting();
+                              //createNewMeeting();
 
-                                _joinCall(
-                                  callerId: GetStorage().read("username"),
-                                  calleeId: widget.data["username"],
-                                  photo: GetStorage().read("photo"),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
+                              _joinCall(
+                                callerId: widget.pageId,
+                                calleeId: widget.data["username"],
+                                photo: widget.pagePhoto,
+                                type: "P",
+                              );
+                            },
+                          ),
+                        ],
                       ),
-                    if (widget.data['type'] == "U")
-                      Expanded(
-                        flex: 1,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.call),
-                              color: Colors.white,
-                              onPressed: () {
-                                //createPeerConn(GetStorage().read('username'), widget.data["username"]);
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.call),
+                            color: Colors.white,
+                            onPressed: () {
+                              //createPeerConn(GetStorage().read('username'), widget.data["username"]);
 
-                                //createNewMeeting();
+                              //createNewMeeting();
 
-                                _joinCall(
-                                  callerId: GetStorage().read("username"),
-                                  calleeId: widget.data["username"],
-                                  photo: GetStorage().read("photo"),
-                                  isVideo: false,
-                                );
-                              },
-                            ),
-                          ],
-                        ),
+                              _joinCall(
+                                callerId: widget.pageId,
+                                calleeId: widget.data["username"],
+                                photo: widget.pagePhoto,
+                                isVideo: false,
+                                type: "P",
+                              );
+                            },
+                          ),
+                        ],
                       ),
+                    ),
                   ],
                 ),
               ],
@@ -746,34 +628,18 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
                     messageImageBytes, messageVideoBytes);
                 //show message to this user
 
-                var accessToken = GetStorage().read("accessToken");
                 //emit message to server
-                if (widget.data["type"] == "U") {
-                  socket.emit("/chat", {
-                    "message": chatController.textController.text,
-                    "token": accessToken,
-                    "username": widget.data["username"],
-                    "messageImageBytes": messageImageBytes,
-                    "messageImageBytesName": messageImageBytesName,
-                    "messageImageExt": messageImageExt,
-                    "messageVideoBytes": messageVideoBytes,
-                    "messageVideoBytesName": messageVideoBytesName,
-                    "messageVideoExt": messageVideoExt,
-                  });
-                } else if (widget.data["type"] == "P") {
-                  socket.emit("/chatToPage", {
-                    "message": chatController.textController.text,
-                    "token": accessToken,
-                    "pageId": widget.data["username"],
-                    "messageImageBytes": messageImageBytes,
-                    "messageImageBytesName": messageImageBytesName,
-                    "messageImageExt": messageImageExt,
-                    "messageVideoBytes": messageVideoBytes,
-                    "messageVideoBytesName": messageVideoBytesName,
-                    "messageVideoExt": messageVideoExt,
-                  });
-                }
-
+                socket.emit("/pageChat", {
+                  "message": chatController.textController.text,
+                  "token": accessToken,
+                  "username": widget.data["username"],
+                  "messageImageBytes": messageImageBytes,
+                  "messageImageBytesName": messageImageBytesName,
+                  "messageImageExt": messageImageExt,
+                  "messageVideoBytes": messageVideoBytes,
+                  "messageVideoBytesName": messageVideoBytesName,
+                  "messageVideoExt": messageVideoExt,
+                });
                 if (mounted) {
                   setState(() {
                     chatController.messages;
@@ -788,33 +654,18 @@ class ChatPageMessagesState extends State<ChatPageMessages> {
                 }
                 chatController.textController.clear();
               } else if (messageVideoBytes != null) {
-                var accessToken = GetStorage().read("accessToken");
                 //emit message to server
-                if (widget.data["type"] == "U") {
-                  socket.emit("/chat", {
-                    "message": chatController.textController.text,
-                    "token": accessToken,
-                    "username": widget.data["username"],
-                    "messageImageBytes": messageImageBytes,
-                    "messageImageBytesName": messageImageBytesName,
-                    "messageImageExt": messageImageExt,
-                    "messageVideoBytes": messageVideoBytes,
-                    "messageVideoBytesName": messageVideoBytesName,
-                    "messageVideoExt": messageVideoExt,
-                  });
-                } else if (widget.data["type"] == "P") {
-                  socket.emit("/chatToPage", {
-                    "message": chatController.textController.text,
-                    "token": accessToken,
-                    "pageId": widget.data["username"],
-                    "messageImageBytes": messageImageBytes,
-                    "messageImageBytesName": messageImageBytesName,
-                    "messageImageExt": messageImageExt,
-                    "messageVideoBytes": messageVideoBytes,
-                    "messageVideoBytesName": messageVideoBytesName,
-                    "messageVideoExt": messageVideoExt,
-                  });
-                }
+                socket.emit("/pageChat", {
+                  "message": chatController.textController.text,
+                  "token": accessToken,
+                  "username": widget.data["username"],
+                  "messageImageBytes": messageImageBytes,
+                  "messageImageBytesName": messageImageBytesName,
+                  "messageImageExt": messageImageExt,
+                  "messageVideoBytes": messageVideoBytes,
+                  "messageVideoBytesName": messageVideoBytesName,
+                  "messageVideoExt": messageVideoExt,
+                });
                 if (mounted) {
                   setState(() {
                     messageImageBytes = null;

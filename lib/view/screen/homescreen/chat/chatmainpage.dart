@@ -153,9 +153,6 @@ class _ChatMainPageState extends State<ChatMainPage> {
                       data: controller.colleaguesPreviousmessages[index],
                       
                     ));
-                    print("gggggggggggggggggggg55");
-                    print(controller.colleaguesPreviousmessages[index]);
-                    print("gggggggggggggggggggg55");
                   },
                   child: ListTile(
                     leading: CircleAvatar(
@@ -172,20 +169,7 @@ class _ChatMainPageState extends State<ChatMainPage> {
                         controller.colleaguesPreviousmessages[index]['name']),
                     subtitle: Text("@${controller.colleaguesPreviousmessages[index]
                         ['username']}"),
-                    trailing: PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert),
-                      onSelected: (String option) {
-                        controller.onMoreOptionSelected(option);
-                      },
-                      itemBuilder: (BuildContext context) {
-                        return controller.moreOptions.map((String option) {
-                          return PopupMenuItem<String>(
-                            value: option,
-                            child: Text(option),
-                          );
-                        }).toList();
-                      },
-                    ),
+                    
                   ),
                 );
               },

@@ -56,12 +56,12 @@ class _PageProfileState extends State<PageProfile> {
     Description = widget.userData.description ?? "";
     firstName = widget.userData.name;
     pageType = widget.userData.pageType;
-    adminType=widget.userData.adminType;
+    adminType = widget.userData.adminType;
     print("iiiiiiiiiiiiiiiiiiiiiiiiiiiii");
     print("the page type is ");
     print(pageType);
     print("kkkkkkkkkkkkkkkkkkkkkkkk");
-      print(adminType);
+    print(adminType);
     print("iiiiiiiiiiiiiiiiiiiiiiiiiiiii");
 
     GetStorage().write("photopage", widget.userData.photo);
@@ -207,133 +207,135 @@ class _PageProfileState extends State<PageProfile> {
   Widget _buildButtonsRow() {
     return Column(
       children: [
-       Visibility(
-  visible: adminType != "P",
-  child: Column(
-    children: [
-      InkWell(
-        onTap: () {
-          Get.to(ShowAdmins(pageId: widget.userData.id));
-        },
-        child: Container(
-          height: 35,
-          padding: const EdgeInsets.only(left: 10),
-          child: const Row(
+        Visibility(
+          visible: adminType != "P",
+          child: Column(
             children: [
-              Icon(Icons.person),
-              SizedBox(width: 10),
-              Text(
-                "Show Admins",
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              InkWell(
+                onTap: () {
+                  Get.to(ShowAdmins(pageId: widget.userData.id));
+                },
+                child: Container(
+                  height: 35,
+                  padding: const EdgeInsets.only(left: 10),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.person),
+                      SizedBox(width: 10),
+                      Text(
+                        "Show Admins",
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      Spacer(),
+                      Icon(Icons.arrow_forward, size: 30),
+                    ],
+                  ),
+                ),
               ),
-              Spacer(),
-              Icon(Icons.arrow_forward, size: 30),
-            ],
-          ),
-        ),
-      ),
-      _buildDivider(10),
-      InkWell(
-        onTap: () {
-          Get.to(ShowEmployees(pageId: widget.userData.id));
-        },
-        child: Container(
-          height: 35,
-          padding: const EdgeInsets.only(left: 10),
-          child: const Row(
-            children: [
-              Icon(Icons.person),
-              SizedBox(width: 10),
-              Text(
-                "Show Employees",
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              _buildDivider(10),
+              InkWell(
+                onTap: () {
+                  Get.to(ShowEmployees(pageId: widget.userData.id));
+                },
+                child: Container(
+                  height: 35,
+                  padding: const EdgeInsets.only(left: 10),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.person),
+                      SizedBox(width: 10),
+                      Text(
+                        "Show Employees",
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      Spacer(),
+                      Icon(Icons.arrow_forward, size: 30),
+                    ],
+                  ),
+                ),
               ),
-              Spacer(),
-              Icon(Icons.arrow_forward, size: 30),
-            ],
-          ),
-        ),
-      ),
-      _buildDivider(10),
-      InkWell(
-        onTap: () {
-          controller.goToShowGroupPage(widget.userData.id);
-        },
-        child: Container(
-          height: 35,
-          padding: const EdgeInsets.only(left: 10),
-          child: const Row(
-            children: [
-              Icon(Icons.diversity_3),
-              SizedBox(width: 10),
-              Text(
-                "Show Groups",
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              _buildDivider(10),
+              InkWell(
+                onTap: () {
+                  controller.goToShowGroupPage(widget.userData.id);
+                },
+                child: Container(
+                  height: 35,
+                  padding: const EdgeInsets.only(left: 10),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.diversity_3),
+                      SizedBox(width: 10),
+                      Text(
+                        "Show Groups",
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      Spacer(),
+                      Icon(Icons.arrow_forward, size: 30),
+                    ],
+                  ),
+                ),
               ),
-              Spacer(),
-              Icon(Icons.arrow_forward, size: 30),
-            ],
-          ),
-        ),
-      ),
-      _buildDivider(10),
-      InkWell(
-        onTap: () {
-          controller.goToEditPageProfile(widget.userData);
-        },
-        child: Container(
-          height: 35,
-          padding: const EdgeInsets.only(left: 10),
-          child: const Row(
-            children: [
-              Icon(Icons.edit),
-              SizedBox(width: 10),
-              Text(
-                "Edit Profile",
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              _buildDivider(10),
+              InkWell(
+                onTap: () {
+                  controller.goToEditPageProfile(widget.userData);
+                },
+                child: Container(
+                  height: 35,
+                  padding: const EdgeInsets.only(left: 10),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.edit),
+                      SizedBox(width: 10),
+                      Text(
+                        "Edit Profile",
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      Spacer(),
+                      Icon(Icons.arrow_forward, size: 30),
+                    ],
+                  ),
+                ),
               ),
-              Spacer(),
-              Icon(Icons.arrow_forward, size: 30),
-            ],
-          ),
-        ),
-      ),
-      _buildDivider(10),
-      Visibility(
-        visible: pageType != "private",
-        child: Column(
-          children: [
-            InkWell(
-              onTap: () {
-                Get.to(MyJobPage(pageId: widget.userData.id));
-              },
-              child: Container(
-                height: 35,
-                padding: const EdgeInsets.only(left: 10),
-                child: Row(
+              _buildDivider(10),
+              Visibility(
+                visible: pageType != "private",
+                child: Column(
                   children: [
-                    Icon(Icons.more_horiz),
-                    SizedBox(width: 10),
-                    Text(
-                      "View All Jobs",
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    InkWell(
+                      onTap: () {
+                        Get.to(MyJobPage(pageId: widget.userData.id,pageName:widget.userData.name,pagePhoto:widget.userData.photo));
+                      },
+                      child: Container(
+                        height: 35,
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Row(
+                          children: [
+                            Icon(Icons.more_horiz),
+                            SizedBox(width: 10),
+                            Text(
+                              "View All Jobs",
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),
+                            ),
+                            Spacer(),
+                            Icon(Icons.arrow_forward, size: 30),
+                          ],
+                        ),
+                      ),
                     ),
-                    Spacer(),
-                    Icon(Icons.arrow_forward, size: 30),
+                    _buildDivider(10),
                   ],
                 ),
               ),
-            ),
-            _buildDivider(10),
-          ],
+            ],
+          ),
         ),
-      ),
-            
-    ],
-  ),
-),
-
-  
         InkWell(
           onTap: () {
             List userDataList = [
@@ -392,7 +394,6 @@ class _PageProfileState extends State<PageProfile> {
             ),
           ),
         ),
-        
         _buildDivider(10),
         InkWell(
           onTap: () {
@@ -410,6 +411,28 @@ class _PageProfileState extends State<PageProfile> {
                 SizedBox(width: 10),
                 Text(
                   "Add New Post",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                Spacer(),
+                Icon(Icons.arrow_forward, size: 30),
+              ],
+            ),
+          ),
+        ),
+        _buildDivider(10),
+        InkWell(
+          onTap: () {
+            controller.goToChatPage(widget.userData.id,widget.userData.name,widget.userData.photo );
+          },
+          child: Container(
+            height: 35,
+            padding: const EdgeInsets.only(left: 10),
+            child: const Row(
+              children: [
+                Icon(Icons.post_add_outlined),
+                SizedBox(width: 10),
+                Text(
+                  "Chat",
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),

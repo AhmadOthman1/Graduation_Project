@@ -8,7 +8,10 @@ import 'package:growify/view/screen/homescreen/myPage/JobsPages/addnewjob.dart';
 
 class MyJobPage extends StatefulWidget {
   final pageId;
-  const MyJobPage({Key? key, required this.pageId}) : super(key: key);
+    final pageName;
+  final pagePhoto;
+
+  const MyJobPage({Key? key, required this.pageId, required this.pageName, required this.pagePhoto}) : super(key: key);
 
   @override
   _MyJobPageState createState() => _MyJobPageState();
@@ -81,7 +84,7 @@ class _MyJobPageState extends State<MyJobPage> {
 
                 return InkWell(
                   onTap: () {
-                    Get.to(ShowJobApplicants(pageJobId:job['pageJobId']));
+                    Get.to(ShowJobApplicants(pageJobId:job['pageJobId'],pageId: widget.pageId,pageName:widget.pageName,pagePhoto:widget.pagePhoto));
                   },
                   child: Card(
                     margin: const EdgeInsets.all(10),
