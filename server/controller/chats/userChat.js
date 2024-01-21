@@ -39,6 +39,28 @@ exports.messagesControl = async (userUsername, username, message,messageImageNam
         createdAt: new Date(),
     });
 }
+exports.pageMessagesControl = async (pageId, username, message,messageImageName,messageVideoName) => {
+    //while(true);
+    await messages.create({
+        senderPageId: pageId,
+        receiverUsername: username,
+        text: message,
+        image: messageImageName,
+        video:messageVideoName,
+        createdAt: new Date(),
+    });
+}
+exports.messagesToPageControl = async ( username,pageId, message,messageImageName,messageVideoName) => {
+    //while(true);
+    await messages.create({
+        senderUsername: username,
+        receiverPageId: pageId,
+        text: message,
+        image: messageImageName,
+        video:messageVideoName,
+        createdAt: new Date(),
+    });
+}
 exports.groupMessagesControl = async (userUsername, groupId, message,messageImageName,messageVideoName) => {
     //while(true);
     await groupMessage.create({

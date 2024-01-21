@@ -5,6 +5,9 @@ require('dotenv').config();
 function generateAccessToken(user) {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' })
 }
+function generatePageAccessToken(page) {
+  return jwt.sign(page, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' })
+}
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]
@@ -23,6 +26,20 @@ function authenticateToken(req, res, next) {
   })
 }
 function socketAuthenticateToken(msg) {
+  try {
+    const authHeader = msg
+    console.log(msg)
+    const token = authHeader
+    if (token == null) return 401
+
+    var dec = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    return 200
+  } catch (err) {
+    return 403
+  }
+
+}
+function socketPageAuthenticateToken(msg) {
   try {
     const authHeader = msg
     console.log(msg)
@@ -70,4 +87,4 @@ function getRefreshToken(req, res, next) {
 
   })
 }
-module.exports = { generateAccessToken, socketAuthenticateToken, authenticateToken, getRefreshToken };
+module.exports = { generateAccessToken, socketAuthenticateToken, authenticateToken, getRefreshToken,generatePageAccessToken,socketPageAuthenticateToken};

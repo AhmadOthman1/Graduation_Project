@@ -22,6 +22,9 @@ const systemFields = require("../../models/systemFields");
 const pageCalender = require("../../models/pageCalender");
 const { notifyUser, deleteNotification } = require('../notifyUser');
 const postHistory = require('../../models/postHistory');
+const Messages = require("../../models/messages");
+const sequelize = require('sequelize');
+const auth = require('../authController')
 
 exports.getMyPageInfo = async (req, res, next) => {
     try {
@@ -453,7 +456,7 @@ exports.getPageHistoryPosts = async (req, res, next) => {
                     message: 'fetched',
                     PostHistory: pagePostHistory,
                 });
-                
+
             }
 
         } else {
@@ -469,7 +472,7 @@ exports.getPageHistoryPosts = async (req, res, next) => {
             body: req.body
         });
     }
-   
+
 }
 
 exports.getPagePostLikes = async (req, res, next) => {
@@ -947,7 +950,7 @@ exports.pageAddComment = async (req, res, next) => {
 }
 exports.postNewPagePost = async (req, res, next) => {
     try {
-        const { postContent, postImageBytes, postImageBytesName, postImageExt,postVideoBytes ,postVideoBytesName , postVideoExt ,pageId } = req.body;
+        const { postContent, postImageBytes, postImageBytesName, postImageExt, postVideoBytes, postVideoBytesName, postVideoExt, pageId } = req.body;
         var validphoto = false;
         var newphotoname = null;
         var validvideo = false;
@@ -980,7 +983,7 @@ exports.postNewPagePost = async (req, res, next) => {
                 if (postVideoBytes != null && postVideoBytesName != null && postVideoExt != null) {//if feild change enables (!=null)
                     validvideo = true;
                 }
-    
+
                 if (validphoto) {
                     const photoBuffer = Buffer.from(postImageBytes, 'base64');
                     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -997,7 +1000,7 @@ exports.postNewPagePost = async (req, res, next) => {
                     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
                     newvideoname = userUsername + +"-" + uniqueSuffix + "." + postVideoExt; // You can adjust the file extension based on the actual image type
                     const uploadPath = path.join('videos', newvideoname);
-    
+
                     // Save the image to the server
                     fs.writeFileSync(uploadPath, videoBuffer);
                     console.log("fff" + newvideoname);
@@ -1008,7 +1011,7 @@ exports.postNewPagePost = async (req, res, next) => {
                     "postContent": postContent,
                     "selectedPrivacy": "Any One",
                     "photo": newphotoname,
-                    "video":newvideoname,
+                    "video": newvideoname,
                     "postDate": new Date(),
 
                 }).then(() => {
@@ -2220,6 +2223,331 @@ exports.deletePageEvent = async (req, res, next) => {
             message: 'user not found',
             body: req.body,
         });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};
+exports.pageGetChats = async (req, res, next) => {
+    try {
+        var pageId = req.query.pageId;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        // Calculate the offset based on page and pageSize
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername,
+                status: null,
+            },
+        });
+        if (existingUsername != null) {
+            var userPageAdmin = await pageAdmin.findOne({
+                where: { username: userUsername, pageId: pageId }
+            });
+            if (userPageAdmin != null) {
+                const conversations = await Messages.findAll({
+                    attributes: [
+                        'senderUsername',
+                        'receiverUsername',
+                        [sequelize.fn('MAX', sequelize.col('messages.createdAt')), 'latestMessageDate'],
+                    ],
+                    where: {
+                        [Op.or]: [
+                            { senderPageId: pageId },
+                            { receiverPageId: pageId },
+                        ],
+                    },
+                    group: [
+                        'senderUsername',
+                        'receiverUsername',
+                        'senderPageId_FK.id',
+                        'receiverPageId_FK.id',
+                    ],
+                    include: [
+                        {
+                            model: User,
+                            as: 'senderUsername_FK',
+                            attributes: ['username', 'firstName', 'lastName', 'photo'],
+                        },
+                        {
+                            model: User,
+                            as: 'receiverUsername_FK',
+                            attributes: ['username', 'firstName', 'lastName', 'photo'],
+                        },
+                        {
+                            model: Page,
+                            as: 'senderPageId_FK',
+                            attributes: ['id', 'name', 'photo'],
+                        },
+                        {
+                            model: Page,
+                            as: 'receiverPageId_FK',
+                            attributes: ['id', 'name', 'photo'],
+                        },
+                    ],
+                    order: [[sequelize.literal('latestMessageDate'), 'DESC']],
+                });
+                const uniqueConversationsId = new Set();
+                var uniqueConversations = [];
+                conversations.forEach((conversation) => {
+                    if (
+                        conversation.senderUsername &&
+                        !uniqueConversationsId.has(conversation.senderUsername)
+                        //conversation.senderUsername !== userUsername
+                    ) {
+                        uniqueConversationsId.add(conversation.senderUsername);
+                        uniqueConversations.push(conversation.get({ plain: true }));
+                    }
+
+                    if (
+                        conversation.receiverUsername &&
+                        !uniqueConversationsId.has(conversation.receiverUsername)
+                        //conversation.receiverUsername !== userUsername
+                    ) {
+                        uniqueConversationsId.add(conversation.receiverUsername);
+                        uniqueConversations.push(conversation.get({ plain: true }));
+                    }
+
+                    if (
+                        conversation.senderPageId_FK &&
+                        conversation.senderPageId_FK.id &&
+                        !uniqueConversationsId.has(conversation.senderPageId_FK.id) &&
+                        conversation.senderPageId_FK.id !== pageId
+                    ) {
+                        uniqueConversationsId.add(conversation.senderPageId_FK.id);
+                        uniqueConversations.push(conversation.get({ plain: true }));
+                    }
+
+                    if (
+                        conversation.receiverPageId_FK &&
+                        conversation.receiverPageId_FK.id &&
+                        !uniqueConversationsId.has(conversation.receiverPageId_FK.id) &&
+                        conversation.receiverPageId_FK.id !== pageId
+                    ) {
+                        uniqueConversationsId.add(conversation.receiverPageId_FK.id);
+                        uniqueConversations.push(conversation.get({ plain: true }));
+                    }
+                });
+                console.log(uniqueConversations)
+                return res.status(200).json({
+                    message: 'Conversations fetched',
+                    uniqueConversations: uniqueConversations,
+                });
+
+            } else {
+                return res.status(500).json({
+                    message: 'you are not allowed to see this info',
+                    body: req.body,
+                });
+            }
+        }
+        return res.status(500).json({
+            message: 'user not found',
+            body: req.body,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};
+exports.getPageMessages = async (req, res, next) => {
+    try {
+        console.log("????????????????????????");
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        const otherUsername = req.headers['username']
+        var page = parseInt(req.query.page) || 1;
+        var pageSize = parseInt(req.query.pageSize) || 10;
+        var type = req.query.type;
+        var pageId = req.query.pageId;
+        const offset = (page - 1) * pageSize;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername,
+                status: null,
+            },
+        });
+
+        if (existingUsername == null) {
+            return res.status(500).json({
+                message: 'user not found',
+                body: req.body,
+            });
+        }
+        var userPageAdmin = await pageAdmin.findOne({
+            where: { username: userUsername, pageId: pageId }
+        });
+        if (userPageAdmin != null) {
+            if (type == "U") {
+                const existingotherUsername = await User.findOne({
+                    where: {
+                        username: otherUsername
+                    },
+                });
+                if (existingotherUsername == null) {
+                    return res.status(500).json({
+                        message: 'user not found',
+                        body: req.body,
+                    });
+                }
+                const messages = await Messages.findAll({
+                    where: {
+                        [Op.or]: [
+                            {
+                                senderPageId: pageId,
+                                receiverUsername: otherUsername,
+                            },
+                            {
+                                senderUsername: otherUsername,
+                                receiverPageId: pageId,
+                            },
+                            
+                        ],
+                    },
+                    order: [['createdAt', 'DESC']], // Order by created date in descending order
+                    offset: offset,
+                    limit: pageSize,
+                    include: [
+                        {
+                            model: User,
+                            as: 'senderUsername_FK',
+                            attributes: ['username', 'firstName', 'lastName', 'photo'],
+                        },
+                        {
+                            model: User,
+                            as: 'receiverUsername_FK',
+                            attributes: ['username', 'firstName', 'lastName', 'photo'],
+                        },
+                        {
+                            model: Page,
+                            as: 'senderPageId_FK',
+                            attributes: ['id', 'name', 'photo'],
+                        },
+                        {
+                            model: Page,
+                            as: 'receiverPageId_FK',
+                            attributes: ['id', 'name', 'photo'],
+                        },
+                    ],
+                });
+                console.log("================================");
+                console.log(messages);
+                return res.status(200).json({
+                    message: 'messages fetched',
+                    messages: messages,
+                });
+            } else {
+                const existingotherUsername = await Page.findOne({
+                    where: {
+                        id: otherUsername
+                    },
+                });
+                if (existingotherUsername == null) {
+                    return res.status(500).json({
+                        message: 'Page not found',
+                        body: req.body,
+                    });
+                }
+                const messages = await Messages.findAll({
+                    where: {
+                        [Op.or]: [
+                            {
+                                senderPageId: pageId,
+                                receiverPageId: otherUsername,
+                            },
+                            {
+                                senderPageId: otherUsername,
+                                receiverPageId: pageId,
+                            },
+                        ],
+                    },
+                    order: [['createdAt', 'DESC']], // Order by created date in descending order
+                    offset: offset,
+                    limit: pageSize,
+                    include: [
+                        {
+                            model: User,
+                            as: 'senderUsername_FK',
+                            attributes: ['username', 'firstName', 'lastName', 'photo'],
+                        },
+                        {
+                            model: Page,
+                            as: 'senderPageId_FK',
+                            attributes: ['id', 'name', 'photo'],
+                        },
+                        {
+                            model: Page,
+                            as: 'receiverPageId_FK',
+                            attributes: ['id', 'name', 'photo'],
+                        },
+                    ],
+                });
+                console.log("================================");
+                console.log(messages);
+                return res.status(200).json({
+                    message: 'messages fetched',
+                    messages: messages,
+                });
+
+            }
+        }else{
+            return res.status(500).json({
+                message: 'you are not allowed to see this info',
+                body: req.body,
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};
+exports.generatePageAccessToken = async (req, res, next) => {
+    try {
+        console.log("kkkkkkkkkkk")
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        var pageId = req.query.pageId;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername,
+                status: null,
+            },
+        });
+
+        if (existingUsername == null) {
+            return res.status(500).json({
+                message: 'user not found',
+                body: req.body,
+            });
+        }
+        var userPageAdmin = await pageAdmin.findOne({
+            where: { username: userUsername, pageId: pageId }
+        });
+        if (userPageAdmin != null) {
+            const pageInfo = { pageId: pageId};
+            const accessToken = auth.generatePageAccessToken(pageInfo);
+            return res.status(200).json({
+                message: 'authenticated',
+                accessToken: accessToken,
+            });
+        }else{
+            return res.status(500).json({
+                message: 'you are not allowed to see this info',
+                body: req.body,
+            });
+        }
     } catch (err) {
         console.log(err);
         return res.status(500).json({

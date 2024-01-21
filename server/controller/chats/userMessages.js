@@ -28,26 +28,26 @@ exports.getUserMessages = async (req, res, next) => {
                 status: null,
             },
         });
+
         if (existingUsername==null) {
             return res.status(500).json({
                 message: 'user not found',
                 body: req.body,
             });
         }
-        const existingotherUsername = await User.findOne({
-            where: {
-                username: otherUsername
-            },
-        });
-        if(existingotherUsername == null){
-            return res.status(500).json({
-                message: 'user not found',
-                body: req.body,
-            });
-        }
+        
         if (type == "U") {
-            console.log(userUsername);
-    
+            const existingotherUsername = await User.findOne({
+                where: {
+                    username: otherUsername
+                },
+            });
+            if(existingotherUsername == null){
+                return res.status(500).json({
+                    message: 'user not found',
+                    body: req.body,
+                });
+            }
             const messages = await Messages.findAll({
                 where: {
                     [Op.or]: [
@@ -75,6 +75,16 @@ exports.getUserMessages = async (req, res, next) => {
                         as: 'receiverUsername_FK',
                         attributes: ['username', 'firstName', 'lastName', 'photo'],
                     },
+                    {
+                        model: Page,
+                        as: 'senderPageId_FK',
+                        attributes: ['id', 'name' , 'photo'],
+                    },
+                    {
+                        model: Page,
+                        as: 'receiverPageId_FK',
+                        attributes: ['id', 'name', 'photo'],
+                    },
                 ],
             });
             console.log("================================");
@@ -84,7 +94,57 @@ exports.getUserMessages = async (req, res, next) => {
                 messages: messages,
             });
         } else {
-            console.log("Invalid type provided");
+            const existingotherUsername = await Page.findOne({
+                where: {
+                    id: otherUsername
+                },
+            });
+            if(existingotherUsername == null){
+                return res.status(500).json({
+                    message: 'Page not found',
+                    body: req.body,
+                });
+            }
+            const messages = await Messages.findAll({
+                where: {
+                    [Op.or]: [
+                        {
+                            senderUsername: userUsername,
+                            receiverPageId: otherUsername,
+                        },
+                        {
+                            senderPageId: otherUsername,
+                            receiverUsername: userUsername,
+                        },
+                    ],
+                },
+                order: [['createdAt', 'DESC']], // Order by created date in descending order
+                offset: offset,
+                limit: pageSize,
+                include: [
+                    {
+                        model: User,
+                        as: 'senderUsername_FK',
+                        attributes: ['username', 'firstName', 'lastName', 'photo'],
+                    },
+                    {
+                        model: Page,
+                        as: 'senderPageId_FK',
+                        attributes: ['id', 'name' , 'photo'],
+                    },
+                    {
+                        model: Page,
+                        as: 'receiverPageId_FK',
+                        attributes: ['id', 'name', 'photo'],
+                    },
+                ],
+            });
+            console.log("================================");
+            console.log(messages);
+            return res.status(200).json({
+                message: 'messages fetched',
+                messages: messages,
+            });
             
         }
 

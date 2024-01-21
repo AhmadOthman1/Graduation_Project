@@ -129,6 +129,9 @@ router.post('/addNewJob',authenticateToken,myPagesController.addNewJob);
 router.get('/getPageCalender',authenticateToken,myPagesController.getPageCalender);
 router.post('/addNewPageEvent',authenticateToken,myPagesController.addNewPageEvent);
 router.post('/deletePageEvent',authenticateToken,myPagesController.deletePageEvent);
+router.get('/pageGetChats',authenticateToken,myPagesController.pageGetChats);
+router.get('/getPageMessages',authenticateToken,myPagesController.getPageMessages);
+router.get('/generatePageAccessToken',authenticateToken,myPagesController.generatePageAccessToken);
 
 //user page groups
 router.get('/getMyPageGroups',authenticateToken,pageGroups.getMyPageGroups);

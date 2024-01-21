@@ -77,7 +77,7 @@ const postHistory = require('./models/postHistory')
 
 
 const createTestData =require('./models/createTestData');
-
+createTestData.createText();
 //const bodyParser=require('body-parser');
 
 const sequelize=require('./util/database');
