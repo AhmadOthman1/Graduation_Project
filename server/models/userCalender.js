@@ -29,6 +29,14 @@ const userCalender = sequelize.define('userCalender', {
     type: Sequelize.TIME,
     allowNull: false,
   },
+  reminderDate: {
+    type: Sequelize.DATEONLY,
+    allowNull: true,
+  },
+  reminderTime: {
+    type: Sequelize.TIME,
+    allowNull: true,
+  },
 });
 
 User.hasMany(userCalender, { foreignKey: 'username', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});

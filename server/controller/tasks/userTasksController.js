@@ -122,7 +122,7 @@ exports.ChangeUserTaskStatus = async (req, res, next) => {
 }
 exports.CreateUserTask = async (req, res, next) => {
     try {
-        const { taskName, description, startTime, endTime, startDate, endDate, status } = req.body;
+        const { taskName, description, startTime, endTime, startDate, endDate, status , reminderDate, reminderTime} = req.body;
         const authHeader = req.headers['authorization']
         const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
         var userUsername = decoded.username;
@@ -157,6 +157,8 @@ exports.CreateUserTask = async (req, res, next) => {
                     startDate: formattedStartDate,
                     endTime: endTime,
                     endDate: formattedEndDate,
+                    reminderDate:reminderDate,
+                    reminderTime:reminderTime,
                 });
                 return res.status(200).json({
                     message: 'Task Created',

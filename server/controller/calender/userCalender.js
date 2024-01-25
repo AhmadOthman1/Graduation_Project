@@ -46,7 +46,7 @@ exports.getUserCalender = async (req, res, next) => {
 }
 exports.addNewUserEvent = async (req, res, next) => {
     try {
-        const { subject, description, startTime } = req.body;
+        const { subject, description, startTime , reminderDate,reminderTime} = req.body;
         const authHeader = req.headers['authorization']
         const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
         var userUsername = decoded.username;
@@ -80,6 +80,8 @@ exports.addNewUserEvent = async (req, res, next) => {
                 description: description,
                 date: eventDateTime.toISOString().split('T')[0],
                 time: eventDateTime.toISOString().split('T')[1].substring(0, 8),
+                reminderDate:reminderDate,
+                reminderTime:reminderTime,
             });
             return res.status(200).json({
                 message: 'event Created',

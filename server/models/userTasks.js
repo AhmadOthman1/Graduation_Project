@@ -41,6 +41,14 @@ const userTasks = sequelize.define('userTasks', {
     type: Sequelize.DATEONLY,
     allowNull: false,
   },
+  reminderDate: {
+    type: Sequelize.DATEONLY,
+    allowNull: true,
+  },
+  reminderTime: {
+    type: Sequelize.TIME,
+    allowNull: true,
+  },
 });
 
 User.hasMany(userTasks, { foreignKey: 'username', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
