@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/newJob_controller.dart';
@@ -70,114 +71,361 @@ class NewJobPost extends StatelessWidget {
                     child: Expanded(
                       child: ListView(
                         children: [
-                          buildTextFormField(
-                            hintText: 'Title',
-                            onChanged: (value) => controller.updateTitle(value),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a Title';
-                              }
-                              return null;
-                            },
+                          Row(
+                            children: [
+                              if (kIsWeb)
+                                Expanded(
+                                  flex: 2,
+                                  child: Container(),
+                                ),
+                              kIsWeb
+                                  ? Expanded(
+                                      flex: 2,
+                                      child: buildTextFormField(
+                                        hintText: 'Title',
+                                        onChanged: (value) =>
+                                            controller.updateTitle(value),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please enter a Title';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    )
+                                  : Expanded(
+                                      child: Container(
+                                        width: 350,
+                                        child: buildTextFormField(
+                                          hintText: 'Title',
+                                          onChanged: (value) =>
+                                              controller.updateTitle(value),
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return 'Please enter a Title';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                              if (kIsWeb)
+                                Expanded(
+                                  flex: 2,
+                                  child: Container(),
+                                ),
+                            ],
                           ),
                           const SizedBox(height: 16),
                           Container(
-                            margin: EdgeInsets.only(left: 6),
-                            child: Text("The Fields",style: TextStyle(color: Colors.grey),)),
-                          MultiSelectDropDown(
-                            searchEnabled: true,
-                            onOptionSelected:
-                                (List<ValueItem> selectedOptions) {
-                                 controller.selectedItems.assignAll(selectedOptions.map((item) => item.value));
-                                },
-                            options: controller.items
-                                .map((item) =>
-                                    ValueItem(label: item, value: item))
-                                .toList(),
-                            selectionType: SelectionType.multi,
-                            chipConfig:
-                                const ChipConfig(wrapType: WrapType.scroll),
-                            dropdownHeight: 300,
-                            optionTextStyle: const TextStyle(fontSize: 16),
-                            selectedOptionIcon: const Icon(Icons.check_circle),
-                          ),
-                          const SizedBox(height: 20),
-                          buildTextFormField(
-                            hintText: 'Description',
-                            maxLines: 8,
-                            onChanged: (value) =>
-                                controller.updateDescription(value),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a Description';
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: () async {
-                              final DateTime? picked = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime.now(),
-                                lastDate: DateTime(2101),
-                              );
-                              if (picked != null &&
-                                  picked != controller.endDate.value) {
-                                controller.updateEndDate(picked);
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                side: BorderSide(color: Colors.grey),
+                              margin: EdgeInsets.only(left: 6),
+                              child: Text(
+                                "The Fields",
+                                style: TextStyle(color: Colors.grey),
+                              )),
+                          Row(
+                            children: [
+                               if (kIsWeb)
+                                Expanded(
+                                  flex: 2,
+                                  child: Container(),
+                                ),
+                                kIsWeb
+                                  ?
+                              Expanded(
+                                flex: 2,
+                                child: Container(
+                                  width: 350,
+                                  child: MultiSelectDropDown(
+                                    searchEnabled: true,
+                                    onOptionSelected:
+                                        (List<ValueItem> selectedOptions) {
+                                      controller.selectedItems.assignAll(
+                                          selectedOptions.map((item) => item.value));
+                                    },
+                                    options: controller.items
+                                        .map((item) =>
+                                            ValueItem(label: item, value: item))
+                                        .toList(),
+                                    selectionType: SelectionType.multi,
+                                    chipConfig:
+                                        const ChipConfig(wrapType: WrapType.scroll),
+                                    dropdownHeight: 300,
+                                    optionTextStyle: const TextStyle(fontSize: 16),
+                                    selectedOptionIcon: const Icon(Icons.check_circle),
+                                  ),
+                                ),
+                              ):Expanded(
+                                child: Container(
+                                    width: 350,
+                                    child: MultiSelectDropDown(
+                                      searchEnabled: true,
+                                      onOptionSelected:
+                                          (List<ValueItem> selectedOptions) {
+                                        controller.selectedItems.assignAll(
+                                            selectedOptions.map((item) => item.value));
+                                      },
+                                      options: controller.items
+                                          .map((item) =>
+                                              ValueItem(label: item, value: item))
+                                          .toList(),
+                                      selectionType: SelectionType.multi,
+                                      chipConfig:
+                                          const ChipConfig(wrapType: WrapType.scroll),
+                                      dropdownHeight: 300,
+                                      optionTextStyle: const TextStyle(fontSize: 16),
+                                      selectedOptionIcon: const Icon(Icons.check_circle),
+                                    ),
+                                  ),
                               ),
-                            ),
-                            child: const Text('Select End Date'),
+                                 if (kIsWeb)
+                                Expanded(
+                                  flex: 2,
+                                  child: Container(),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              if (kIsWeb)
+                                Expanded(
+                                  flex: 2,
+                                  child: Container(),
+                                ),
+                              kIsWeb
+                                  ? Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                        width: 350,
+                                        child: buildTextFormField(
+                                          hintText: 'Description',
+                                          maxLines: 8,
+                                          onChanged: (value) =>
+                                              controller.updateDescription(value),
+                                          validator: (value) {
+                                            if (value == null || value.isEmpty) {
+                                              return 'Please enter a Description';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    )
+                                  : Expanded(
+                                    child: Container(
+                                      width: 350,
+                                      child: buildTextFormField(
+                                          hintText: 'Description',
+                                          maxLines: 8,
+                                          onChanged: (value) =>
+                                              controller.updateDescription(value),
+                                          validator: (value) {
+                                            if (value == null || value.isEmpty) {
+                                              return 'Please enter a Description';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                    ),
+                                  ),
+                              if (kIsWeb)
+                                Expanded(
+                                  flex: 2,
+                                  child: Container(),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              if (kIsWeb)
+                                Expanded(
+                                  flex: 2,
+                                  child: Container(),
+                                ),
+                              kIsWeb
+                                  ? Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          onPressed: () async {
+                                            final DateTime? picked =
+                                                await showDatePicker(
+                                              context: context,
+                                              initialDate: DateTime.now(),
+                                              firstDate: DateTime.now(),
+                                              lastDate: DateTime(2101),
+                                            );
+                                            if (picked != null &&
+                                                picked !=
+                                                    controller.endDate.value) {
+                                              controller.updateEndDate(picked);
+                                            }
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                              side: BorderSide(
+                                                  color: Colors.grey),
+                                            ),
+                                          ),
+                                          child: const Text('Select End Date'),
+                                        ),
+                                      ),
+                                    )
+                                  : Expanded(
+                                      child: Container(
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          onPressed: () async {
+                                            final DateTime? picked =
+                                                await showDatePicker(
+                                              context: context,
+                                              initialDate: DateTime.now(),
+                                              firstDate: DateTime.now(),
+                                              lastDate: DateTime(2101),
+                                            );
+                                            if (picked != null &&
+                                                picked !=
+                                                    controller.endDate.value) {
+                                              controller.updateEndDate(picked);
+                                            }
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                              side: BorderSide(
+                                                  color: Colors.grey),
+                                            ),
+                                          ),
+                                          child: const Text('Select End Date'),
+                                        ),
+                                      ),
+                                    ),
+                              if (kIsWeb)
+                                Expanded(
+                                  flex: 2,
+                                  child: Container(),
+                                ),
+                            ],
                           ),
                         ],
                       ),
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Container(
-                    width: double.infinity,
-                    child: MaterialButton(
-                      onPressed: () async {
-                        print("ooooooooooooooooooooooooooooooooooo");
-                        print(controller.selectedItems);
-                        if (formstate.currentState!.validate()) {
-                          print('Title: ${controller.postTitle}');
-                          print('Description: ${controller.postDescription}');
-                          print('Selected Date: ${controller.endDate.value}');
-                          var message = await controller.postJob(pageId);
-                          (message != null)
-                              ? await showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomAlertDialog(
-                                      title: 'Message',
-                                      icon: Icons.error,
-                                      text: message,
-                                      buttonText: 'OK',
-                                    );
+                  Row(
+                    children: [
+                      if (kIsWeb)
+                        Expanded(
+                          flex: 2,
+                          child: Container(),
+                        ),
+                      kIsWeb
+                          ? Expanded(
+                              flex: 2,
+                              child: Container(
+                                width: double.infinity,
+                                child: MaterialButton(
+                                  onPressed: () async {
+                                    print(
+                                        "ooooooooooooooooooooooooooooooooooo");
+                                    print(controller.selectedItems);
+                                    if (formstate.currentState!.validate()) {
+                                      print('Title: ${controller.postTitle}');
+                                      print(
+                                          'Description: ${controller.postDescription}');
+                                      print(
+                                          'Selected Date: ${controller.endDate.value}');
+                                      var message =
+                                          await controller.postJob(pageId);
+                                      (message != null)
+                                          ? await showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return CustomAlertDialog(
+                                                  title: 'Message',
+                                                  icon: Icons.error,
+                                                  text: message,
+                                                  buttonText: 'OK',
+                                                );
+                                              },
+                                            )
+                                          : null;
+                                      Get.back();
+                                    }
                                   },
-                                )
-                              : null;
-                              Get.back();
-                        }
-                      },
-                      color: const Color.fromARGB(255, 85, 191, 218),
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: const Text(
-                        "Post",
-                        style: TextStyle(color: Colors.white, fontSize: 17),
-                      ),
-                    ),
+                                  color:
+                                      const Color.fromARGB(255, 85, 191, 218),
+                                  elevation: 2,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  child: const Text(
+                                    "Post",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 17),
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Expanded(
+                              child: Container(
+                                width: double.infinity,
+                                child: MaterialButton(
+                                  onPressed: () async {
+                                    print(
+                                        "ooooooooooooooooooooooooooooooooooo");
+                                    print(controller.selectedItems);
+                                    if (formstate.currentState!.validate()) {
+                                      print('Title: ${controller.postTitle}');
+                                      print(
+                                          'Description: ${controller.postDescription}');
+                                      print(
+                                          'Selected Date: ${controller.endDate.value}');
+                                      var message =
+                                          await controller.postJob(pageId);
+                                      (message != null)
+                                          ? await showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return CustomAlertDialog(
+                                                  title: 'Message',
+                                                  icon: Icons.error,
+                                                  text: message,
+                                                  buttonText: 'OK',
+                                                );
+                                              },
+                                            )
+                                          : null;
+                                      Get.back();
+                                    }
+                                  },
+                                  color:
+                                      const Color.fromARGB(255, 85, 191, 218),
+                                  elevation: 2,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  child: const Text(
+                                    "Post",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 17),
+                                  ),
+                                ),
+                              ),
+                            ),
+                      if (kIsWeb)
+                        Expanded(
+                          flex: 2,
+                          child: Container(),
+                        ),
+                    ],
                   ),
                 ],
               ),

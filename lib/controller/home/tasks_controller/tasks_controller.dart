@@ -55,6 +55,12 @@ class TasksController extends GetxController {
           DateTime.parse(taskData['startDate']),
           DateTime.parse(taskData['endDate']),
           taskData['status'],
+           taskData['reminderDate'] != null
+        ? DateTime.parse(taskData['reminderDate'])
+        : null,
+          taskData['reminderTime'] != null
+        ? stringToTimeOfDay(taskData['reminderTime'])
+        : null,
           taskData['id'],
         );
         tasks.add(task);
@@ -117,6 +123,9 @@ String _formatDate(DateTime date) {
       "startDate":  _formatDate(task.startDate),
       "endDate":  _formatDate(task.endDate),
       "status": task.status,
+      "reminderDate": task.reminderDate == null ? null : _formatDate(task.reminderDate),
+      "reminderTime": task.reminderTime == null ? null : _formatTimeOfDay(task.reminderTime),
+
     };
     String jsonString = jsonEncode(jsonData);
     var response = await http.post(Uri.parse(url), body: jsonString, headers: {
@@ -128,6 +137,8 @@ String _formatDate(DateTime date) {
 
   createUserTask(task) async {
     var response = await postCreateUserTask(task);
+    print("llllllllllllllllll");
+    print(response.statusCode);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
       createUserTask(task);

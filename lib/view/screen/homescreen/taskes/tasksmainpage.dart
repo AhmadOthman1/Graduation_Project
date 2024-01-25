@@ -19,8 +19,12 @@ class _TasksHomePageState extends State<TasksHomePage> {
 
   TimeOfDay? startTime;
   TimeOfDay? endTime;
+  TimeOfDay? reminderTime;
   DateTime? startDate;
   DateTime? endDate;
+  DateTime? reminderDate;
+  bool isSaveVisible = true;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -143,21 +147,23 @@ class _TasksHomePageState extends State<TasksHomePage> {
                             const SizedBox(height: 20),
                             Column(
                               children: [
-                                Container(
-                                  margin: const EdgeInsets.only(right: 8),
-                                  child: const Text('Start',style: TextStyle(
-                                     fontSize: 16,
-                                    fontWeight: FontWeight.bold
-                                  ),),
-                                ),
                                 Row(
                                   children: <Widget>[
-                                    
+                                    Container(
+                                      margin: const EdgeInsets.only(right: 2),
+                                      child: const Text(
+                                        'Start:',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
                                     ElevatedButton(
                                       onPressed: () async {
                                         final pickedDate = await showDatePicker(
                                           context: context,
-                                          initialDate: startDate ?? DateTime.now(),
+                                          initialDate:
+                                              startDate ?? DateTime.now(),
                                           firstDate: DateTime(2000),
                                           lastDate: DateTime(2101),
                                         );
@@ -176,7 +182,8 @@ class _TasksHomePageState extends State<TasksHomePage> {
                                       onPressed: () async {
                                         final pickedTime = await showTimePicker(
                                           context: context,
-                                          initialTime: startTime ?? TimeOfDay.now(),
+                                          initialTime:
+                                              startTime ?? TimeOfDay.now(),
                                         );
                                         if (pickedTime != null) {
                                           setState(() {
@@ -202,21 +209,23 @@ class _TasksHomePageState extends State<TasksHomePage> {
                             const SizedBox(height: 20),
                             Column(
                               children: [
-                                Container(
-                                  margin: const EdgeInsets.only(right: 8),
-                                  child: const Text('End',style: TextStyle(
-                                     fontSize: 16,
-                                    fontWeight: FontWeight.bold
-                                  ),),
-                                ),
                                 Row(
                                   children: <Widget>[
-                                    
+                                    Container(
+                                      margin: const EdgeInsets.only(right: 2),
+                                      child: const Text(
+                                        'End:   ',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
                                     ElevatedButton(
                                       onPressed: () async {
                                         final pickedDate = await showDatePicker(
                                           context: context,
-                                          initialDate: endDate ?? DateTime.now(),
+                                          initialDate:
+                                              endDate ?? DateTime.now(),
                                           firstDate: DateTime(2000),
                                           lastDate: DateTime(2101),
                                         );
@@ -235,7 +244,8 @@ class _TasksHomePageState extends State<TasksHomePage> {
                                       onPressed: () async {
                                         final pickedTime = await showTimePicker(
                                           context: context,
-                                          initialTime: endTime ?? TimeOfDay.now(),
+                                          initialTime:
+                                              endTime ?? TimeOfDay.now(),
                                         );
                                         if (pickedTime != null) {
                                           setState(() {
@@ -255,6 +265,78 @@ class _TasksHomePageState extends State<TasksHomePage> {
                                   const Text('Selected End: '),
                                   Text(
                                     '${_formatDate(endDate!)} , ${endTime!.format(context)}',
+                                  ),
+                                ],
+                              ),
+                            const SizedBox(height: 20),
+                            Column(
+                              children: [
+                                Container(
+                                  alignment: Alignment.bottomLeft,
+                                  margin: const EdgeInsets.only(right: 20),
+                                  child: const Text(
+                                    'Remind Me : ',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        final pickedDate = await showDatePicker(
+                                          context: context,
+                                          initialDate:
+                                              reminderDate ?? DateTime.now(),
+                                          firstDate: DateTime(2000),
+                                          lastDate: DateTime(2101),
+                                        );
+                                        if (pickedDate != null) {
+                                          setState(() {
+                                            reminderDate = pickedDate;
+                                          });
+                                        }
+                                      },
+                                      child: const Text('Select Date'),
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        final pickedTime = await showTimePicker(
+                                          context: context,
+                                          initialTime:
+                                              reminderTime ?? TimeOfDay.now(),
+                                        );
+                                        if (pickedTime != null) {
+                                          setState(() {
+                                            reminderTime = pickedTime;
+                                          });
+                                        }
+                                      },
+                                      child: const Text('Select Time'),
+                                    ),
+                                    //
+                                    Checkbox(
+                                      value: isSaveVisible,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          isSaveVisible = value!;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            if (reminderDate != null && reminderTime != null)
+                              Row(
+                                children: [
+                                  const Text('Selected Reminder: '),
+                                  Text(
+                                    '${_formatDate(reminderDate!)} , ${reminderTime!.format(context)}',
                                   ),
                                 ],
                               ),
@@ -323,6 +405,34 @@ class _TasksHomePageState extends State<TasksHomePage> {
                                 }
                               }
                             }
+
+                            if (isSaveVisible) {
+                              // Check if reminderDate or reminderTime is null
+                              if (reminderDate == null ||
+                                  reminderTime == null) {
+                                // Show an error message
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Reminder not selected'),
+                                      content: const Text(
+                                          'Please select reminder date and time'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                return;
+                              }
+                            }
+
                             if (taskNameController.text.isNotEmpty &&
                                 descriptionController.text.isNotEmpty &&
                                 startTime != null &&
@@ -339,25 +449,15 @@ class _TasksHomePageState extends State<TasksHomePage> {
                                 startDate ?? DateTime.now(),
                                 endDate ?? DateTime.now(),
                                 selectedStatus,
+                                isSaveVisible ? reminderDate : null,
+                                isSaveVisible ? reminderTime : null,
                               );
                               var newTaskId =
                                   await controller.createUserTask(task);
-                              if (newTaskId != null)
-                                Navigator.pop(
-                                  context,
-                                  Task(
-                                    taskNameController.text,
-                                    descriptionController.text,
-                                    startTime ??
-                                        const TimeOfDay(hour: 0, minute: 0),
-                                    endTime ??
-                                        const TimeOfDay(hour: 0, minute: 0),
-                                    startDate ?? DateTime.now(),
-                                    endDate ?? DateTime.now(),
-                                    selectedStatus,
-                                    newTaskId,
-                                  ),
-                                );
+                              BuildContext localContext = context;
+                              if (newTaskId != null) {
+                                Navigator.pop(localContext, task);
+                              }
                             }
                           }
                         },

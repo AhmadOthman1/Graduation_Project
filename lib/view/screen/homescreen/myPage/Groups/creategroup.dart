@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Groups_controller/createGroup_controller.dart';
@@ -5,7 +6,9 @@ import 'package:growify/controller/home/Groups_controller/createGroup_controller
 class CreateGroupPage extends StatefulWidget {
   final groupsData;
   final pageId;
-  const CreateGroupPage({Key? key, required this.groupsData, required this.pageId}) : super(key: key);
+  const CreateGroupPage(
+      {Key? key, required this.groupsData, required this.pageId})
+      : super(key: key);
 
   @override
   _CreateGroupPageState createState() => _CreateGroupPageState();
@@ -69,102 +72,283 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
               key: formKey,
               child: Column(
                 children: [
-                  
-                  TextFormField(
-                    controller: _groupNameController,
-                    decoration: InputDecoration(
-                      hintText: "Enter Group Name",
-                      hintStyle: const TextStyle(
-                        fontSize: 14,
-                      ),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      contentPadding:
-                          const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                      labelText: "Group Name",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a Group Name';
-                      }
-                      return null;
-                    },
+                  Row(
+                    children: [
+                      if (kIsWeb)
+                        Expanded(
+                          flex: 2,
+                          child: Container(),
+                        ),
+                      kIsWeb
+                          ? Expanded(
+                              flex: 2,
+                              child: TextFormField(
+                                controller: _groupNameController,
+                                decoration: InputDecoration(
+                                  hintText: "Enter Group Name",
+                                  hintStyle: const TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.always,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 15, horizontal: 30),
+                                  labelText: "Group Name",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a Group Name';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            )
+                          : Expanded(
+                            child: Container(
+                                width: 350,
+                                child: TextFormField(
+                                  controller: _groupNameController,
+                                  decoration: InputDecoration(
+                                    hintText: "Enter Group Name",
+                                    hintStyle: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 30),
+                                    labelText: "Group Name",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a Group Name';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                          ),
+                      if (kIsWeb)
+                        Expanded(
+                          flex: 2,
+                          child: Container(),
+                        ),
+                    ],
                   ),
                   SizedBox(height: 16),
-                  TextFormField(
-                    controller: _descriptionController,
-                    maxLines: 6,
-                    decoration: InputDecoration(
-                      hintText: "Enter Your Group description",
-                      hintStyle: const TextStyle(
-                        fontSize: 14,
-                      ),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      contentPadding:
-                          const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                      labelText: "Description",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a Group Name';
-                      }
-                      return null;
-                    },
+                  Row(
+                    children: [
+                      if (kIsWeb)
+                        Expanded(
+                          flex: 2,
+                          child: Container(),
+                        ),
+                      kIsWeb
+                          ? Expanded(
+                              flex: 2,
+                              child: TextFormField(
+                                controller: _descriptionController,
+                                maxLines: 6,
+                                decoration: InputDecoration(
+                                  hintText: "Enter Your Group description",
+                                  hintStyle: const TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.always,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 15, horizontal: 30),
+                                  labelText: "Description",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a Group Name';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            )
+                          : Expanded(
+                            child: Container(
+                                width: 350,
+                                child: TextFormField(
+                                  controller: _descriptionController,
+                                  maxLines: 6,
+                                  decoration: InputDecoration(
+                                    hintText: "Enter Your Group description",
+                                    hintStyle: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 30),
+                                    labelText: "Description",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a Group Name';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                          ),
+                      if (kIsWeb)
+                        Expanded(
+                          flex: 2,
+                          child: Container(),
+                        ),
+                    ],
                   ),
                   SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    value: _selectedParentNode,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedParentNode = value;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      hintText: "All groups",
-                      hintStyle: const TextStyle(
-                        fontSize: 14,
-                      ),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      labelText: "Parent Group",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    items: defaultParentNodes.map((String parentNode) {
-                      return DropdownMenuItem<String>(
-                        value: parentNode,
-                        child: Text(parentNode),
-                      );
-                    }).toList(),
+                  Row(
+                    children: [
+                      if (kIsWeb)
+                        Expanded(
+                          flex: 2,
+                          child: Container(),
+                        ),
+                      kIsWeb
+                          ? Expanded(
+                              flex: 2,
+                              child: DropdownButtonFormField<String>(
+                                value: _selectedParentNode,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedParentNode = value;
+                                  });
+                                },
+                                decoration: InputDecoration(
+                                  hintText: "All groups",
+                                  hintStyle: const TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.always,
+                                  labelText: "Parent Group",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                items:
+                                    defaultParentNodes.map((String parentNode) {
+                                  return DropdownMenuItem<String>(
+                                    value: parentNode,
+                                    child: Text(parentNode),
+                                  );
+                                }).toList(),
+                              ),
+                            )
+                          : Expanded(
+                            child: Container(
+                                width: 350,
+                                child: DropdownButtonFormField<String>(
+                                  value: _selectedParentNode,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedParentNode = value;
+                                    });
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: "All groups",
+                                    hintStyle: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                    labelText: "Parent Group",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  items:
+                                      defaultParentNodes.map((String parentNode) {
+                                    return DropdownMenuItem<String>(
+                                      value: parentNode,
+                                      child: Text(parentNode),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                          ),
+                      if (kIsWeb)
+                        Expanded(
+                          flex: 2,
+                          child: Container(),
+                        ),
+                    ],
                   ),
                 ],
               ),
             ),
             SizedBox(height: 16),
-            Expanded(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  width: 380,
-                  child: MaterialButton(
-                    color: const Color.fromARGB(255, 85, 191, 218),
-                    onPressed: _createGroup,
-                    child: Text(
-                      'Create',
-                      style: TextStyle(color: Colors.white, fontSize: 17),
-                    ),
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
+            Row(
+              children: [
+                if (kIsWeb)
+                  Expanded(
+                    flex: 2,
+                    child: Container(),
                   ),
-                ),
-              ),
+                kIsWeb
+                    ? Expanded(
+                        flex: 2,
+                       
+                            child: MaterialButton(
+                              color: const Color.fromARGB(255, 85, 191, 218),
+                              onPressed: _createGroup,
+                              child: Text(
+                                'Create',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 17),
+                              ),
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                           
+                        ),
+                      )
+                    : Expanded(
+                       
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                            width: 350,
+                            child: MaterialButton(
+                              color: const Color.fromARGB(255, 85, 191, 218),
+                              onPressed: _createGroup,
+                              child: Text(
+                                'Create',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 17),
+                              ),
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                if (kIsWeb)
+                  Expanded(
+                    flex: 2,
+                    child: Container(),
+                  ),
+              ],
             ),
           ],
         ),

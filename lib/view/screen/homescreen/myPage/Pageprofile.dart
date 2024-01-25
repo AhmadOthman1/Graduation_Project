@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:growify/controller/home/myPage_Controller/PageProfile_controller.dart';
 import 'package:growify/global.dart';
@@ -98,11 +99,11 @@ class _PageProfileState extends State<PageProfile> {
               child: Column(
                 children: [
                   _buildProfileInfo(),
-                  _Details("Details"),
-                  _buildDivider(10),
-                  _buildButtonsRow(),
-                  _buildDivider(10),
-                  _Details("Posts"),
+                  if (!kIsWeb) _Details("Details"),
+                  if (!kIsWeb) _buildDivider(10),
+                  if (!kIsWeb) _buildButtonsRow(),
+                  if (!kIsWeb) _buildDivider(10),
+                  if (!kIsWeb) _Details("Posts"),
                   //  Expanded(
                   // child: Post(username: widget.userData[0]["username"]), // Use Expanded for the Post widget
                   // ),
@@ -111,10 +112,44 @@ class _PageProfileState extends State<PageProfile> {
             ),
           ];
         },
-        body: Post(
+        body: kIsWeb
+            ? Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          _Details("Details"),
+                          _buildDivider(10),
+                          _buildButtonsRow(),
+                          _buildDivider(10),
+                          // _buildDetails("Posts"),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 4,
+                    child: Post(
+                        isAdmin: widget.isAdmin,
+                        username: widget.userData.id,
+                        isPage: true),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(),
+                  ),
+                ],
+              )
+            : Post(
+                isAdmin: widget.isAdmin,
+                username: widget.userData.id,
+                isPage: true),
+        /* Post(
             isAdmin: widget.isAdmin,
             username: widget.userData.id,
-            isPage: true),
+            isPage: true),*/
       ),
     );
   }
@@ -218,7 +253,7 @@ class _PageProfileState extends State<PageProfile> {
                 child: Container(
                   height: 35,
                   padding: const EdgeInsets.only(left: 10),
-                  child: const Row(
+                  child:  Row(
                     children: [
                       Icon(Icons.person),
                       SizedBox(width: 10),
@@ -228,12 +263,13 @@ class _PageProfileState extends State<PageProfile> {
                             fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                       Spacer(),
+                      if (!kIsWeb)
                       Icon(Icons.arrow_forward, size: 30),
                     ],
                   ),
                 ),
               ),
-              _buildDivider(10),
+            if (!kIsWeb)  _buildDivider(10),
               InkWell(
                 onTap: () {
                   Get.to(ShowEmployees(pageId: widget.userData.id));
@@ -241,7 +277,7 @@ class _PageProfileState extends State<PageProfile> {
                 child: Container(
                   height: 35,
                   padding: const EdgeInsets.only(left: 10),
-                  child: const Row(
+                  child:  Row(
                     children: [
                       Icon(Icons.person),
                       SizedBox(width: 10),
@@ -251,12 +287,13 @@ class _PageProfileState extends State<PageProfile> {
                             fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                       Spacer(),
+                      if (!kIsWeb)
                       Icon(Icons.arrow_forward, size: 30),
                     ],
                   ),
                 ),
               ),
-              _buildDivider(10),
+            if (!kIsWeb)  _buildDivider(10),
               InkWell(
                 onTap: () {
                   controller.goToShowGroupPage(widget.userData.id);
@@ -264,7 +301,7 @@ class _PageProfileState extends State<PageProfile> {
                 child: Container(
                   height: 35,
                   padding: const EdgeInsets.only(left: 10),
-                  child: const Row(
+                  child:  Row(
                     children: [
                       Icon(Icons.diversity_3),
                       SizedBox(width: 10),
@@ -274,12 +311,13 @@ class _PageProfileState extends State<PageProfile> {
                             fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                       Spacer(),
+                      if (!kIsWeb)
                       Icon(Icons.arrow_forward, size: 30),
                     ],
                   ),
                 ),
               ),
-              _buildDivider(10),
+            if (!kIsWeb)  _buildDivider(10),
               InkWell(
                 onTap: () {
                   controller.goToEditPageProfile(widget.userData);
@@ -287,7 +325,7 @@ class _PageProfileState extends State<PageProfile> {
                 child: Container(
                   height: 35,
                   padding: const EdgeInsets.only(left: 10),
-                  child: const Row(
+                  child:  Row(
                     children: [
                       Icon(Icons.edit),
                       SizedBox(width: 10),
@@ -297,19 +335,23 @@ class _PageProfileState extends State<PageProfile> {
                             fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                       Spacer(),
+                      if (!kIsWeb)
                       Icon(Icons.arrow_forward, size: 30),
                     ],
                   ),
                 ),
               ),
-              _buildDivider(10),
+            if (!kIsWeb)  _buildDivider(10),
               Visibility(
                 visible: pageType != "private",
                 child: Column(
                   children: [
                     InkWell(
                       onTap: () {
-                        Get.to(MyJobPage(pageId: widget.userData.id,pageName:widget.userData.name,pagePhoto:widget.userData.photo));
+                        Get.to(MyJobPage(
+                            pageId: widget.userData.id,
+                            pageName: widget.userData.name,
+                            pagePhoto: widget.userData.photo));
                       },
                       child: Container(
                         height: 35,
@@ -324,12 +366,13 @@ class _PageProfileState extends State<PageProfile> {
                                   fontSize: 15, fontWeight: FontWeight.bold),
                             ),
                             Spacer(),
+                            if (!kIsWeb)
                             Icon(Icons.arrow_forward, size: 30),
                           ],
                         ),
                       ),
                     ),
-                    _buildDivider(10),
+                if (!kIsWeb)   _buildDivider(10),
                   ],
                 ),
               ),
@@ -355,7 +398,7 @@ class _PageProfileState extends State<PageProfile> {
           child: Container(
             height: 35,
             padding: const EdgeInsets.only(left: 10),
-            child: const Row(
+            child:  Row(
               children: [
                 Icon(Icons.more_horiz),
                 SizedBox(width: 10),
@@ -364,12 +407,13 @@ class _PageProfileState extends State<PageProfile> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),
+                if (!kIsWeb)
                 Icon(Icons.arrow_forward, size: 30),
               ],
             ),
           ),
         ),
-        _buildDivider(10),
+      if (!kIsWeb)  _buildDivider(10),
         InkWell(
           onTap: () {
             //controller.goToSeeAboutInfo();
@@ -380,7 +424,7 @@ class _PageProfileState extends State<PageProfile> {
           child: Container(
             height: 35,
             padding: const EdgeInsets.only(left: 10),
-            child: const Row(
+            child:  Row(
               children: [
                 Icon(Icons.calendar_today_rounded),
                 SizedBox(width: 10),
@@ -389,58 +433,71 @@ class _PageProfileState extends State<PageProfile> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),
+                if (!kIsWeb)
                 Icon(Icons.arrow_forward, size: 30),
               ],
             ),
           ),
         ),
-        _buildDivider(10),
-        InkWell(
-          onTap: () {
-            Get.to(NewPost(
+      if (!kIsWeb)  _buildDivider(10),
+       kIsWeb
+    ? InkWell(
+        onTap: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true, // Set this to true
+            builder: (BuildContext context) {
+              return NewPost(
                 profileImage: profileImage,
                 isPage: true,
-                pageId: widget.userData.id));
-          },
-          child: Container(
-            height: 35,
-            padding: const EdgeInsets.only(left: 10),
-            child: const Row(
-              children: [
-                Icon(Icons.post_add_outlined),
-                SizedBox(width: 10),
-                Text(
-                  "Add New Post",
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-                Spacer(),
-                Icon(Icons.arrow_forward, size: 30),
-              ],
-            ),
+                pageId: widget.userData.id,
+              );
+            },
+          );
+        },
+        child: Container(
+          height: 35,
+          padding: const EdgeInsets.only(left: 10),
+          child: Row(
+            children: [
+              Icon(Icons.post_add_outlined),
+              SizedBox(width: 10),
+              Text(
+                "Add New Post",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+              Spacer(),
+              // The arrow forward icon is not included for web
+            ],
           ),
         ),
-        _buildDivider(10),
-        InkWell(
-          onTap: () {
-            controller.goToChatPage(widget.userData.id,widget.userData.name,widget.userData.photo );
-          },
-          child: Container(
-            height: 35,
-            padding: const EdgeInsets.only(left: 10),
-            child: const Row(
-              children: [
-                Icon(Icons.post_add_outlined),
-                SizedBox(width: 10),
-                Text(
-                  "Chat",
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-                Spacer(),
-                Icon(Icons.arrow_forward, size: 30),
-              ],
-            ),
+      )
+    : InkWell(
+        onTap: () {
+          Get.to(NewPost(
+            profileImage: profileImage,
+            isPage: true,
+            pageId: widget.userData.id,
+          ));
+        },
+        child: Container(
+          height: 35,
+          padding: const EdgeInsets.only(left: 10),
+          child: Row(
+            children: [
+              Icon(Icons.post_add_outlined),
+              SizedBox(width: 10),
+              Text(
+                "Add New Post",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+              Spacer(),
+              Icon(Icons.arrow_forward, size: 30),
+            ],
           ),
         ),
+      ),
+
       ],
     );
   }

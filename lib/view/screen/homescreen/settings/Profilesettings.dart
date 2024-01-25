@@ -228,36 +228,44 @@ class ProfileSettings extends StatelessWidget {
                       Obx(
                         () => Row(
                           children: [
-                            Container(
-                              width: 300,
-                              margin: const EdgeInsets.only(right: 10),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: TextFormField(
-                                  controller: _controller1,
-                                  enabled: controller.isTextFieldEnabled.value,
-                                  onChanged: (value) {
-                                    controller.textFieldText.value = value;
-                                  },
-                                  validator: (Value) {
-                                    return validInput(
-                                        Value!, 50, 1, "username");
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: controller.textFieldText.value,
-                                    hintStyle: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.always,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    label: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 9),
-                                        child: const Text("Firstname")),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
+                             if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                width: 300,
+                                margin: const EdgeInsets.only(right: 10),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextFormField(
+                                    controller: _controller1,
+                                    enabled: controller.isTextFieldEnabled.value,
+                                    onChanged: (value) {
+                                      controller.textFieldText.value = value;
+                                    },
+                                    validator: (Value) {
+                                      return validInput(
+                                          Value!, 50, 1, "username");
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: controller.textFieldText.value,
+                                      hintStyle: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      contentPadding: const EdgeInsets.symmetric(
+                                          vertical: 15, horizontal: 30),
+                                      label: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 9),
+                                          child: const Text("Firstname")),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -275,7 +283,12 @@ class ProfileSettings extends StatelessWidget {
                               color: controller.isTextFieldEnabled.value
                                   ? Colors.blue
                                   : Colors.grey,
-                            )
+                            ),
+                             if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
                           ],
                         ),
                       ),
@@ -284,36 +297,44 @@ class ProfileSettings extends StatelessWidget {
                       Obx(
                         () => Row(
                           children: [
-                            Container(
-                              width: 300,
-                              margin: const EdgeInsets.only(right: 10),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: TextFormField(
-                                  controller: _controller2,
-                                  enabled: controller.isTextFieldEnabled2.value,
-                                  onChanged: (text) {
-                                    controller.textFieldText2.value = text;
-                                  },
-                                  validator: (Value) {
-                                    return validInput(
-                                        Value!, 50, 1, "username");
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: controller.textFieldText2.value,
-                                    hintStyle: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.always,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    label: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 9),
-                                        child: const Text("Lastname")),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
+                             if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                width: 300,
+                                margin: const EdgeInsets.only(right: 10),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextFormField(
+                                    controller: _controller2,
+                                    enabled: controller.isTextFieldEnabled2.value,
+                                    onChanged: (text) {
+                                      controller.textFieldText2.value = text;
+                                    },
+                                    validator: (Value) {
+                                      return validInput(
+                                          Value!, 50, 1, "username");
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: controller.textFieldText2.value,
+                                      hintStyle: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      contentPadding: const EdgeInsets.symmetric(
+                                          vertical: 15, horizontal: 30),
+                                      label: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 9),
+                                          child: const Text("Lastname")),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -331,7 +352,12 @@ class ProfileSettings extends StatelessWidget {
                               color: controller.isTextFieldEnabled2.value
                                   ? Colors.blue
                                   : Colors.grey,
-                            )
+                            ),
+                             if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
                           ],
                         ),
                       ),
@@ -341,35 +367,43 @@ class ProfileSettings extends StatelessWidget {
                       Obx(
                         () => Row(
                           children: [
-                            Container(
-                              width: 300,
-                              margin: const EdgeInsets.only(right: 10),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: TextFormField(
-                                  controller: _controller3,
-                                  enabled: controller.isTextFieldEnabled3.value,
-                                  onChanged: (text) {
-                                    controller.textFieldText3.value = text;
-                                  },
-                                  validator: (Value) {
-                                    return validInput(Value!, 50, 1, "length");
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: controller.textFieldText3.value,
-                                    hintStyle: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.always,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    label: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 9),
-                                        child: const Text("Address")),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
+                             if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                width: 300,
+                                margin: const EdgeInsets.only(right: 10),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextFormField(
+                                    controller: _controller3,
+                                    enabled: controller.isTextFieldEnabled3.value,
+                                    onChanged: (text) {
+                                      controller.textFieldText3.value = text;
+                                    },
+                                    validator: (Value) {
+                                      return validInput(Value!, 50, 1, "length");
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: controller.textFieldText3.value,
+                                      hintStyle: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      contentPadding: const EdgeInsets.symmetric(
+                                          vertical: 15, horizontal: 30),
+                                      label: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 9),
+                                          child: const Text("Address")),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -387,12 +421,16 @@ class ProfileSettings extends StatelessWidget {
                               color: controller.isTextFieldEnabled3.value
                                   ? Colors.blue
                                   : Colors.grey,
-                            )
+                            ),
+                             if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
                           ],
                         ),
                       ),
                       //////////////////
-                      
 
                       const SizedBox(height: 20),
                       Container(
@@ -401,11 +439,20 @@ class ProfileSettings extends StatelessWidget {
                           () => Column(
                             children: [
                               Container(
-                            margin: EdgeInsets.only(right: 230),
-                            child: Text("Your Fields",style: TextStyle(color: Colors.grey),)),
+                                  margin: EdgeInsets.only(right: 230),
+                                  child: Text(
+                                    "Your Fields",
+                                    style: TextStyle(color: Colors.grey),
+                                  )),
                               Row(
                                 children: [
+                                  if (kIsWeb)
+                                    Expanded(
+                                      flex: 1,
+                                      child: Container(),
+                                    ),
                                   Expanded(
+                                    flex: 1,
                                     child: AbsorbPointer(
                                       absorbing: !controller
                                           .isTextFieldEnabledFields.value,
@@ -413,11 +460,13 @@ class ProfileSettings extends StatelessWidget {
                                         searchEnabled: true,
                                         onOptionSelected:
                                             (List<ValueItem> selectedOptions) {
-                                              controller.finalselectedItems.assignAll(selectedOptions.map((item) => item.value));
+                                          controller.finalselectedItems
+                                              .assignAll(selectedOptions
+                                                  .map((item) => item.value));
                                         },
                                         options: controller.items
-                                            .map((item) =>
-                                                ValueItem(label: item, value: item))
+                                            .map((item) => ValueItem(
+                                                label: item, value: item))
                                             .toList(),
                                         selectionType: SelectionType.multi,
                                         chipConfig: const ChipConfig(
@@ -427,23 +476,31 @@ class ProfileSettings extends StatelessWidget {
                                             const TextStyle(fontSize: 16),
                                         selectedOptionIcon:
                                             const Icon(Icons.check_circle),
-                                        selectedOptions: controller.selectedItems
-                                            .map((item) =>
-                                                ValueItem(label: item, value: item))
+                                        selectedOptions: controller
+                                            .selectedItems
+                                            .map((item) => ValueItem(
+                                                label: item, value: item))
                                             .toList(),
                                       ),
                                     ),
                                   ),
                                   IconButton(
                                     onPressed: () {
-                                      controller.isTextFieldEnabledFields.toggle();
+                                      controller.isTextFieldEnabledFields
+                                          .toggle();
                                       controller.update();
                                     },
                                     icon: const Icon(Icons.edit),
-                                    color: controller.isTextFieldEnabledFields.value
+                                    color: controller
+                                            .isTextFieldEnabledFields.value
                                         ? Colors.blue
                                         : Colors.grey,
-                                  )
+                                  ),
+                                  if (kIsWeb)
+                                    Expanded(
+                                      flex: 1,
+                                      child: Container(),
+                                    ),
                                 ],
                               ),
                             ],
@@ -455,56 +512,65 @@ class ProfileSettings extends StatelessWidget {
                       Obx(
                         () => Row(
                           children: [
-                            Container(
-                              width: 300,
-                              margin: const EdgeInsets.only(right: 10),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: DropdownButtonFormField(
-                                  decoration: InputDecoration(
-                                    alignLabelWithHint: true,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
+                            if (kIsWeb)
+                              Expanded(
+                                flex: 1,
+                                child: Container(),
+                              ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                width: 300,
+                                margin: const EdgeInsets.only(right: 10),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: DropdownButtonFormField(
+                                    decoration: InputDecoration(
+                                      alignLabelWithHint: true,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      hintStyle: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 15, horizontal: 30),
+                                      label: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 9),
+                                        child: const Text("Your Country"),
+                                      ),
                                     ),
-                                    hintStyle: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.always,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    label: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 9),
-                                      child: const Text("Your Country"),
-                                    ),
+                                    isExpanded: true,
+                                    hint: const Text('Select Country',
+                                        style: TextStyle(color: Colors.grey)),
+                                    items: controller.countryList.map((value) {
+                                      return DropdownMenuItem(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                    value: controller.country.value.isEmpty
+                                        ? null
+                                        : controller.country.value,
+                                    onChanged: controller
+                                            .isTextFieldEnabled11.value
+                                        ? (value) {
+                                            controller.country.value =
+                                                value.toString();
+                                            print(controller.country.value);
+                                          }
+                                        : null, // Disable the dropdown when not enabled
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please select country';
+                                      }
+                                      return null;
+                                    },
                                   ),
-                                  isExpanded: true,
-                                  hint: const Text('Select Country',
-                                      style: TextStyle(color: Colors.grey)),
-                                  items: controller.countryList.map((value) {
-                                    return DropdownMenuItem(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                  value: controller.country.value.isEmpty
-                                      ? null
-                                      : controller.country.value,
-                                  onChanged: controller
-                                          .isTextFieldEnabled11.value
-                                      ? (value) {
-                                          controller.country.value =
-                                              value.toString();
-                                          print(controller.country.value);
-                                        }
-                                      : null, // Disable the dropdown when not enabled
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please select country';
-                                    }
-                                    return null;
-                                  },
                                 ),
                               ),
                             ),
@@ -517,7 +583,12 @@ class ProfileSettings extends StatelessWidget {
                               color: controller.isTextFieldEnabled11.value
                                   ? Colors.blue
                                   : Colors.grey,
-                            )
+                            ),
+                            if (kIsWeb)
+                              Expanded(
+                                flex: 1,
+                                child: Container(),
+                              ),
                           ],
                         ),
                       ),
@@ -527,56 +598,65 @@ class ProfileSettings extends StatelessWidget {
                       Obx(
                         () => Row(
                           children: [
-                            Container(
-                              width: 300,
-                              margin: const EdgeInsets.only(right: 10),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: DropdownButtonFormField(
-                                  decoration: InputDecoration(
-                                    alignLabelWithHint: true,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
+                            if (kIsWeb)
+                              Expanded(
+                                flex: 1,
+                                child: Container(),
+                              ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                width: 300,
+                                margin: const EdgeInsets.only(right: 10),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: DropdownButtonFormField(
+                                    decoration: InputDecoration(
+                                      alignLabelWithHint: true,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      hintStyle: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 15, horizontal: 30),
+                                      label: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 9),
+                                        child: const Text("Your Gender"),
+                                      ),
                                     ),
-                                    hintStyle: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.always,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    label: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 9),
-                                      child: const Text("Your Gender"),
-                                    ),
+                                    isExpanded: true,
+                                    hint: const Text('Select Gender',
+                                        style: TextStyle(color: Colors.grey)),
+                                    items: controller.genderList.map((value) {
+                                      return DropdownMenuItem(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                    value: controller.gender.value.isEmpty
+                                        ? null
+                                        : controller.gender.value,
+                                    onChanged: controller
+                                            .isTextFieldEnabledGender.value
+                                        ? (value) {
+                                            controller.gender.value =
+                                                value.toString();
+                                            print(controller.gender.value);
+                                          }
+                                        : null, // Disable the dropdown when not enabled
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please select gender';
+                                      }
+                                      return null;
+                                    },
                                   ),
-                                  isExpanded: true,
-                                  hint: const Text('Select Gender',
-                                      style: TextStyle(color: Colors.grey)),
-                                  items: controller.genderList.map((value) {
-                                    return DropdownMenuItem(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                  value: controller.gender.value.isEmpty
-                                      ? null
-                                      : controller.gender.value,
-                                  onChanged: controller
-                                          .isTextFieldEnabledGender.value
-                                      ? (value) {
-                                          controller.gender.value =
-                                              value.toString();
-                                          print(controller.gender.value);
-                                        }
-                                      : null, // Disable the dropdown when not enabled
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please select gender';
-                                    }
-                                    return null;
-                                  },
                                 ),
                               ),
                             ),
@@ -589,7 +669,12 @@ class ProfileSettings extends StatelessWidget {
                               color: controller.isTextFieldEnabledGender.value
                                   ? Colors.blue
                                   : Colors.grey,
-                            )
+                            ),
+                            if (kIsWeb)
+                              Expanded(
+                                flex: 1,
+                                child: Container(),
+                              ),
                           ],
                         ),
                       ),
@@ -653,44 +738,54 @@ class ProfileSettings extends StatelessWidget {
                       Obx(
                         () => Row(
                           children: [
-                            Container(
-                              width: 300,
-                              margin: const EdgeInsets.only(right: 10),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: TextFormField(
-                                  // controller: _controller5,
-                                  controller: controller.startDateController,
-                                  readOnly: true,
-                                  enabled: controller.isTextFieldEnabled5.value,
-                                  onChanged: (text) {
-                                    controller.textFieldText5.value = text;
-                                  },
+                            if (kIsWeb)
+                              Expanded(
+                                flex: 1,
+                                child: Container(),
+                              ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                width: 300,
+                                margin: const EdgeInsets.only(right: 10),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextFormField(
+                                    // controller: _controller5,
+                                    controller: controller.startDateController,
+                                    readOnly: true,
+                                    enabled:
+                                        controller.isTextFieldEnabled5.value,
+                                    onChanged: (text) {
+                                      controller.textFieldText5.value = text;
+                                    },
 
-                                  validator: (Value) {
-                                    return validInput(
-                                        Value!, 10, 8, "dateOfBirth");
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: controller.textFieldText5.value,
-                                    hintStyle: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.always,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    label: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 9),
-                                        child: const Text("DateOfBirth")),
-                                    suffixIcon: IconButton(
-                                      icon: const Icon(Icons.date_range),
-                                      onPressed: () =>
-                                          controller.pickStartDate(context),
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
+                                    validator: (Value) {
+                                      return validInput(
+                                          Value!, 10, 8, "dateOfBirth");
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: controller.textFieldText5.value,
+                                      hintStyle: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 15, horizontal: 30),
+                                      label: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 9),
+                                          child: const Text("DateOfBirth")),
+                                      suffixIcon: IconButton(
+                                        icon: const Icon(Icons.date_range),
+                                        onPressed: () =>
+                                            controller.pickStartDate(context),
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -708,7 +803,12 @@ class ProfileSettings extends StatelessWidget {
                               color: controller.isTextFieldEnabled5.value
                                   ? Colors.blue
                                   : Colors.grey,
-                            )
+                            ),
+                            if (kIsWeb)
+                              Expanded(
+                                flex: 1,
+                                child: Container(),
+                              ),
                           ],
                         ),
                       ),
@@ -718,35 +818,46 @@ class ProfileSettings extends StatelessWidget {
                       Obx(
                         () => Row(
                           children: [
-                            Container(
-                              width: 300,
-                              margin: const EdgeInsets.only(right: 10),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: TextFormField(
-                                  controller: _controller6,
-                                  enabled: controller.isTextFieldEnabled6.value,
-                                  onChanged: (text) {
-                                    controller.textFieldText6.value = text;
-                                  },
-                                  validator: (Value) {
-                                    return validInput(Value!, 15, 10, "phone");
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: controller.textFieldText6.value,
-                                    hintStyle: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.always,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    label: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 9),
-                                        child: const Text("Phone")),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
+                            if (kIsWeb)
+                              Expanded(
+                                flex: 1,
+                                child: Container(),
+                              ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                width: 300,
+                                margin: const EdgeInsets.only(right: 10),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextFormField(
+                                    controller: _controller6,
+                                    enabled:
+                                        controller.isTextFieldEnabled6.value,
+                                    onChanged: (text) {
+                                      controller.textFieldText6.value = text;
+                                    },
+                                    validator: (Value) {
+                                      return validInput(
+                                          Value!, 15, 10, "phone");
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: controller.textFieldText6.value,
+                                      hintStyle: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 15, horizontal: 30),
+                                      label: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 9),
+                                          child: const Text("Phone")),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -764,7 +875,12 @@ class ProfileSettings extends StatelessWidget {
                               color: controller.isTextFieldEnabled6.value
                                   ? Colors.blue
                                   : Colors.grey,
-                            )
+                            ),
+                            if (kIsWeb)
+                              Expanded(
+                                flex: 1,
+                                child: Container(),
+                              ),
                           ],
                         ),
                       ),
@@ -774,35 +890,46 @@ class ProfileSettings extends StatelessWidget {
                       Obx(
                         () => Row(
                           children: [
-                            Container(
-                              width: 300,
-                              margin: const EdgeInsets.only(right: 10),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: TextFormField(
-                                  controller: _controller7,
-                                  enabled: controller.isTextFieldEnabled7.value,
-                                  onChanged: (text) {
-                                    controller.textFieldText7.value = text;
-                                  },
-                                  validator: (Value) {
-                                    return validInput(Value!, 250, 1, "length");
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: controller.textFieldText7.value,
-                                    hintStyle: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.always,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    label: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 9),
-                                        child: const Text("Bio")),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
+                            if (kIsWeb)
+                              Expanded(
+                                flex: 1,
+                                child: Container(),
+                              ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                width: 300,
+                                margin: const EdgeInsets.only(right: 10),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextFormField(
+                                    controller: _controller7,
+                                    enabled:
+                                        controller.isTextFieldEnabled7.value,
+                                    onChanged: (text) {
+                                      controller.textFieldText7.value = text;
+                                    },
+                                    validator: (Value) {
+                                      return validInput(
+                                          Value!, 250, 1, "length");
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: controller.textFieldText7.value,
+                                      hintStyle: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 15, horizontal: 30),
+                                      label: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 9),
+                                          child: const Text("Bio")),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -820,11 +947,15 @@ class ProfileSettings extends StatelessWidget {
                               color: controller.isTextFieldEnabled7.value
                                   ? Colors.blue
                                   : Colors.grey,
-                            )
+                            ),
+                            if (kIsWeb)
+                              Expanded(
+                                flex: 1,
+                                child: Container(),
+                              ),
                           ],
                         ),
                       ),
-                      
 
                       const SizedBox(height: 20),
 
@@ -839,192 +970,242 @@ class ProfileSettings extends StatelessWidget {
                       // change cover page
                       Row(
                         children: [
-                          GetBuilder<ProfileSettingsControllerImp>(
-                            builder: (controller) => Stack(
-                              alignment: Alignment.bottomRight,
-                              children: [
-                                Container(
-                                  width: 350,
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.rectangle,
-                                    borderRadius: BorderRadius.circular(20.0),
-                                    image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: controller
-                                              .coverImageBytes.isNotEmpty
-                                          ? MemoryImage(base64Decode(
-                                              controller.coverImageBytes.value))
-                                          : coverBackgroundImage, // Replace with your default photo URL
+                          if (kIsWeb)
+                            Expanded(
+                              flex: 2,
+                              child: Container(),
+                            ),
+                          Expanded(
+                            child: GetBuilder<ProfileSettingsControllerImp>(
+                              builder: (controller) => Stack(
+                                alignment: Alignment.bottomRight,
+                                children: [
+                                  Container(
+                                    width: 350,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.rectangle,
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: controller
+                                                .coverImageBytes.isNotEmpty
+                                            ? MemoryImage(base64Decode(
+                                                controller.coverImageBytes.value))
+                                            : coverBackgroundImage, // Replace with your default photo URL
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color:
-                                        const Color.fromARGB(255, 85, 191, 218),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: IconButton(
-                                    onPressed: () async {
-                                      try {
-                                        final result =
-                                            await FilePicker.platform.pickFiles(
-                                          type: FileType.custom,
-                                          allowedExtensions: [
-                                            'jpg',
-                                            'jpeg',
-                                            'png'
-                                          ],
-                                          allowMultiple: false,
-                                        );
-                                        if (result != null &&
-                                            result.files.isNotEmpty) {
-                                          PlatformFile file =
-                                              result.files.first;
-                                          if (file.extension == "jpg" ||
-                                              file.extension == "jpeg" ||
-                                              file.extension == "png") {
-                                            String base64String;
-                                            if (kIsWeb) {
-                                              final fileBytes = file.bytes;
-                                              base64String = base64Encode(
-                                                  fileBytes as List<int>);
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color:
+                                          const Color.fromARGB(255, 85, 191, 218),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: IconButton(
+                                      onPressed: () async {
+                                        try {
+                                          final result =
+                                              await FilePicker.platform.pickFiles(
+                                            type: FileType.custom,
+                                            allowedExtensions: [
+                                              'jpg',
+                                              'jpeg',
+                                              'png'
+                                            ],
+                                            allowMultiple: false,
+                                          );
+                                          if (result != null &&
+                                              result.files.isNotEmpty) {
+                                            PlatformFile file =
+                                                result.files.first;
+                                            if (file.extension == "jpg" ||
+                                                file.extension == "jpeg" ||
+                                                file.extension == "png") {
+                                              String base64String;
+                                              if (kIsWeb) {
+                                                final fileBytes = file.bytes;
+                                                base64String = base64Encode(
+                                                    fileBytes as List<int>);
+                                              } else {
+                                                List<int> fileBytes =
+                                                    await File(file.path!)
+                                                        .readAsBytes();
+                                                base64String =
+                                                    base64Encode(fileBytes);
+                                              }
+                            
+                                              coverImageBytes = base64String;
+                                              coverImageBytesName = file.name;
+                                              coverImageExt = file.extension;
+                            
+                                              controller.updateCoverImage(
+                                                base64String,
+                                                file.name,
+                                                file.extension ??
+                                                    '', // Use the null-aware operator
+                                              );
                                             } else {
-                                              List<int> fileBytes =
-                                                  await File(file.path!)
-                                                      .readAsBytes();
-                                              base64String =
-                                                  base64Encode(fileBytes);
+                                              controller.updateCoverImage(
+                                                  '', '', '');
                                             }
-
-                                            coverImageBytes = base64String;
-                                            coverImageBytesName = file.name;
-                                            coverImageExt = file.extension;
-
-                                            controller.updateCoverImage(
-                                              base64String,
-                                              file.name,
-                                              file.extension ??
-                                                  '', // Use the null-aware operator
-                                            );
                                           } else {
+                                            // User canceled the picker
                                             controller.updateCoverImage(
                                                 '', '', '');
                                           }
-                                        } else {
-                                          // User canceled the picker
-                                          controller.updateCoverImage(
-                                              '', '', '');
+                                        } catch (err) {
+                                          print(err);
                                         }
-                                      } catch (err) {
-                                        print(err);
-                                      }
-                                    },
-                                    icon: const Icon(
-                                      Icons.camera_alt,
-                                      color: Colors.white,
+                                      },
+                                      icon: const Icon(
+                                        Icons.camera_alt,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
+                          if (kIsWeb)
+                            Expanded(
+                              flex: 2,
+                              child: Container(),
+                            ),
                         ],
                       ),
 
                       const SizedBox(height: 20),
 
-                      Container(
-                        child: ElevatedButton.icon(
-                          onPressed: () async {
-                            final result = await FilePicker.platform.pickFiles(
-                              type: FileType.custom,
-                              allowedExtensions: ['pdf'],
-                              allowMultiple: false,
-                            );
-
-                            if (result != null && result.files.isNotEmpty) {
-                              PlatformFile file = result.files.first;
-                              if (file.extension == "pdf") {
-                                String base64String;
-                                if (kIsWeb) {
-                                  final fileBytes = file.bytes;
-                                  base64String =
-                                      base64Encode(fileBytes as List<int>);
-                                } else {
-                                  List<int> fileBytes =
-                                      await File(file.path!).readAsBytes();
-                                  base64String = base64Encode(fileBytes);
-                                }
-                                cvBytes = base64String;
-                                cvName = file.name;
-                                cvExt = file.extension;
-                              } else {
-                                cvBytes = null;
-                                cvName = null;
-                                cvExt = null;
-                              }
-                            } else {
-                              // User canceled the picker
-                              cvBytes = null;
-                              cvName = null;
-                              cvExt = null;
-                            }
-                          },
-                          icon: const Icon(Icons.cloud_upload),
-                          label: const Text('Upload CV'),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor:
-                                const Color.fromARGB(255, 85, 191, 218),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+                      Row(
+                        children: [
+                          if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
                             ),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 130, vertical: 13),
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              child: ElevatedButton.icon(
+                                onPressed: () async {
+                                  final result =
+                                      await FilePicker.platform.pickFiles(
+                                    type: FileType.custom,
+                                    allowedExtensions: ['pdf'],
+                                    allowMultiple: false,
+                                  );
+
+                                  if (result != null &&
+                                      result.files.isNotEmpty) {
+                                    PlatformFile file = result.files.first;
+                                    if (file.extension == "pdf") {
+                                      String base64String;
+                                      if (kIsWeb) {
+                                        final fileBytes = file.bytes;
+                                        base64String = base64Encode(
+                                            fileBytes as List<int>);
+                                      } else {
+                                        List<int> fileBytes =
+                                            await File(file.path!)
+                                                .readAsBytes();
+                                        base64String = base64Encode(fileBytes);
+                                      }
+                                      cvBytes = base64String;
+                                      cvName = file.name;
+                                      cvExt = file.extension;
+                                    } else {
+                                      cvBytes = null;
+                                      cvName = null;
+                                      cvExt = null;
+                                    }
+                                  } else {
+                                    // User canceled the picker
+                                    cvBytes = null;
+                                    cvName = null;
+                                    cvExt = null;
+                                  }
+                                },
+                                icon: const Icon(Icons.cloud_upload),
+                                label: const Text('Upload CV'),
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 85, 191, 218),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 130, vertical: 13),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                          if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
+                        ],
                       ),
 
                       const SizedBox(height: 20),
 
-                      MaterialButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 13, horizontal: 135),
-                        onPressed: () async {
-                          print("oooooooooooooooooooo");
-                          print((controller.finalselectedItems.join(',')));
-                          print("oooooooooooooooooooo");
-                          var message = await controller.SaveChanges(
-                              profileImageBytes,
-                              profileImageBytesName,
-                              profileImageExt,
-                              coverImageBytes,
-                              coverImageBytesName,
-                              coverImageExt,
-                              cvBytes,
-                              cvName,
-                              cvExt);
-                          (message != null)
-                              ? showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomAlertDialog(
-                                      title: 'Error',
-                                      icon: Icons.error,
-                                      text: message,
-                                      buttonText: 'OK',
-                                    );
-                                  },
-                                )
-                              : null;
-                        },
-                        color: const Color.fromARGB(255, 85, 191, 218),
-                        textColor: Colors.white,
-                        child: const Text("Save Changes"),
+                      Row(
+                        children: [
+                          if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
+                          Expanded(
+                            flex: 1,
+                            child: MaterialButton(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 13, horizontal: 135),
+                              onPressed: () async {
+                                print("oooooooooooooooooooo");
+                                print(
+                                    (controller.finalselectedItems.join(',')));
+                                print("oooooooooooooooooooo");
+                                var message = await controller.SaveChanges(
+                                    profileImageBytes,
+                                    profileImageBytesName,
+                                    profileImageExt,
+                                    coverImageBytes,
+                                    coverImageBytesName,
+                                    coverImageExt,
+                                    cvBytes,
+                                    cvName,
+                                    cvExt);
+                                (message != null)
+                                    ? showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CustomAlertDialog(
+                                            title: 'Error',
+                                            icon: Icons.error,
+                                            text: message,
+                                            buttonText: 'OK',
+                                          );
+                                        },
+                                      )
+                                    : null;
+                              },
+                              color: const Color.fromARGB(255, 85, 191, 218),
+                              textColor: Colors.white,
+                              child: const Text("Save Changes"),
+                            ),
+                          ),
+                          if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
+                        ],
                       ),
                     ],
                   ),

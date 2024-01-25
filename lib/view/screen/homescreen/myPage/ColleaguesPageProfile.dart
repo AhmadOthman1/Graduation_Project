@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:growify/controller/home/myPage_Controller/PageColleaguesProfile_controller.dart';
 import 'package:growify/core/functions/alertbox.dart';
@@ -86,18 +87,48 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
               child: Column(
                 children: [
                   _buildProfileInfo(),
-                  _Deatalis("Details"),
-                  _buildDivider(10),
-                  _buildButtonsRow(),
-                  _buildDivider(10),
-                  _Deatalis("Posts"),
+                  if (!kIsWeb) _Deatalis("Details"),
+                  if (!kIsWeb) _buildDivider(10),
+                  if (!kIsWeb) _buildButtonsRow(),
+                  if (!kIsWeb) _buildDivider(10),
+                  if (!kIsWeb) _Deatalis("Posts"),
                   // Post(),
                 ],
               ),
             )
           ];
         },
-        body: Post(username: widget.userData.id, isPage: true),
+        body: kIsWeb
+            ? Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          _Deatalis("Details"),
+                          _buildDivider(10),
+                          _buildButtonsRow(),
+                          _buildDivider(10),
+                          // _buildDetails("Posts"),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 4,
+                    child: Post(username: widget.userData.id, isPage: true),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(),
+                  ),
+                ],
+              )
+            : Post(username: widget.userData.id, isPage: true),
+        
+        
+        //Post(username: widget.userData.id, isPage: true),
       ),
     );
   }
@@ -265,7 +296,7 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
           child: Container(
             height: 35,
             padding: const EdgeInsets.only(left: 10),
-            child: const Row(
+            child:  Row(
               children: [
                 Icon(Icons.more_horiz),
                 SizedBox(width: 10),
@@ -274,12 +305,13 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),
+                if (!kIsWeb)
                 Icon(Icons.arrow_forward, size: 30),
               ],
             ),
           ),
         ),
-        _buildDivider(10),
+      if (!kIsWeb)  _buildDivider(10),
         InkWell(
           onTap: () {
             //controller.goToSeeAboutInfo();
@@ -290,7 +322,7 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
           child: Container(
             height: 35,
             padding: const EdgeInsets.only(left: 10),
-            child: const Row(
+            child:  Row(
               children: [
                 Icon(Icons.calendar_today_rounded),
                 SizedBox(width: 10),
@@ -299,12 +331,13 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),
+                if (!kIsWeb)
                 Icon(Icons.arrow_forward, size: 30),
               ],
             ),
           ),
         ),
-        _buildDivider(10),
+    if (!kIsWeb)    _buildDivider(10),
         InkWell(
           onTap: () {
             //controller.goToSeeAboutInfo();
@@ -314,7 +347,7 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
           child: Container(
             height: 35,
             padding: const EdgeInsets.only(left: 10),
-            child: const Row(
+            child:  Row(
               children: [
                 Icon(Icons.more_horiz),
                 SizedBox(width: 10),
@@ -323,6 +356,7 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),
+                if (!kIsWeb)
                 Icon(Icons.arrow_forward, size: 30),
               ],
             ),
