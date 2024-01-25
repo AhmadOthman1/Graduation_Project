@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/network_controller/networdkmainpage_controller.dart';
@@ -15,12 +16,12 @@ class ShowPagesIFollow extends StatefulWidget {
 final ScrollController scrollController = ScrollController();
 
 class _ShowPagesIFollowState extends State<ShowPagesIFollow> {
-  final NetworkMainPageControllerImp Networkcontroller = Get.put(NetworkMainPageControllerImp());
+  final NetworkMainPageControllerImp Networkcontroller =
+      Get.put(NetworkMainPageControllerImp());
   late ShowPagesIFollowController _controller;
   final ScrollController _scrollController = ScrollController();
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
-  
 
   @override
   void initState() {
@@ -51,7 +52,7 @@ class _ShowPagesIFollowState extends State<ShowPagesIFollow> {
       _loadData();
     }
   }
-  
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -60,60 +61,141 @@ class _ShowPagesIFollowState extends State<ShowPagesIFollow> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pages I Follow'),
-      ),
-      body: Column(
-        children: [
-          const Divider(
-            color: Color.fromARGB(255, 194, 193, 193),
-            thickness: 2.0,
-          ),
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: _controller.PagesIfollow.length,
-              itemBuilder: (context, index) {
-                final pageFollowed = _controller.PagesIfollow[index];
-                final firstname=pageFollowed['name'];
-                
-                
-                
-                return Column(
-                  children: [
-                    ListTile(
-                      onTap: (){
-                       final pageId =pageFollowed['id'];
-                        Networkcontroller.goToPage(pageId!);
-                        
-                      },
-                      leading: CircleAvatar(
-                        backgroundImage: (pageFollowed['photo'] != null &&
-                                pageFollowed['photo'] != "")
-                            ? Image.network("$urlStarter/" + pageFollowed['photo']!)
-                                .image
-                            : defultprofileImage,
-                      ),
-                      title: Text('$firstname ',style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold
-                      ),),
-                      
-                      
+    if (kIsWeb) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Pages I Follow'),
+        ),
+        body: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(flex: 2, child: Container()),
+            Expanded(
+              flex: 4,
+              child: Container(
+                padding: EdgeInsets.only(left: 10, right: 10),
+                alignment: Alignment.topCenter,
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: Offset(0, 3), // changes the position of shadow
                     ),
+                  ],
+                ),
+                child: Column(
+                  children: [
                     const Divider(
                       color: Color.fromARGB(255, 194, 193, 193),
                       thickness: 2.0,
                     ),
+                    Expanded(
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        itemCount: _controller.PagesIfollow.length,
+                        itemBuilder: (context, index) {
+                          final pageFollowed = _controller.PagesIfollow[index];
+                          final firstname = pageFollowed['name'];
+
+                          return Column(
+                            children: [
+                              ListTile(
+                                onTap: () {
+                                  final pageId = pageFollowed['id'];
+                                  Networkcontroller.goToPage(pageId!);
+                                },
+                                leading: CircleAvatar(
+                                  backgroundImage:
+                                      (pageFollowed['photo'] != null &&
+                                              pageFollowed['photo'] != "")
+                                          ? Image.network("$urlStarter/" +
+                                                  pageFollowed['photo']!)
+                                              .image
+                                          : defultprofileImage,
+                                ),
+                                title: Text(
+                                  '$firstname ',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              const Divider(
+                                color: Color.fromARGB(255, 194, 193, 193),
+                                thickness: 2.0,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                    if (_controller.isLoading)
+                      const CircularProgressIndicator(),
                   ],
-                );
-              },
+                ),
+              ),
             ),
-          ),
-          if (_controller.isLoading) const CircularProgressIndicator(),
-        ],
-      ),
-    );
+            Expanded(flex: 2, child: Container()),
+          ],
+        ),
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Pages I Follow'),
+        ),
+        body: Column(
+          children: [
+            const Divider(
+              color: Color.fromARGB(255, 194, 193, 193),
+              thickness: 2.0,
+            ),
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: _controller.PagesIfollow.length,
+                itemBuilder: (context, index) {
+                  final pageFollowed = _controller.PagesIfollow[index];
+                  final firstname = pageFollowed['name'];
+
+                  return Column(
+                    children: [
+                      ListTile(
+                        onTap: () {
+                          final pageId = pageFollowed['id'];
+                          Networkcontroller.goToPage(pageId!);
+                        },
+                        leading: CircleAvatar(
+                          backgroundImage: (pageFollowed['photo'] != null &&
+                                  pageFollowed['photo'] != "")
+                              ? Image.network(
+                                      "$urlStarter/" + pageFollowed['photo']!)
+                                  .image
+                              : defultprofileImage,
+                        ),
+                        title: Text(
+                          '$firstname ',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const Divider(
+                        color: Color.fromARGB(255, 194, 193, 193),
+                        thickness: 2.0,
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+            if (_controller.isLoading) const CircularProgressIndicator(),
+          ],
+        ),
+      );
+    }
   }
 }

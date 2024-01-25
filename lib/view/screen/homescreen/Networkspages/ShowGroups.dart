@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/network_controller/ShowGroups_controller.dart';
@@ -106,7 +107,7 @@ class _ShowGroupPageState extends State<ShowGroupPage> {
                   'description': groupData['description'],
                   'parentNode': groupData['parentNode'],
                   'membersendmessage': groupData['membersendmessage'],
-                  'pageId':groupData['pageId']
+                  'pageId': groupData['pageId']
                 };
                 groupsController.Groupmessages =
                     <Map<String, dynamic>>[userMap].obs;
@@ -138,8 +139,7 @@ class _ShowGroupPageState extends State<ShowGroupPage> {
           Column(
             children: groupsDatalocal
                 .where((subgroupData) =>
-                    subgroupData['parentNode'] ==
-                        groupData['id'] &&
+                    subgroupData['parentNode'] == groupData['id'] &&
                     subgroupData['pageId'] == groupData['pageId'])
                 .map((subgroupData) {
               return buildGroupTile(subgroupData, level + 1);
@@ -151,23 +151,70 @@ class _ShowGroupPageState extends State<ShowGroupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Group Page'),
-      ),
-      body: ListView.builder(
-        itemCount: widget.pagesData
-            .map((page) => page['pageId'])
-            .toSet()
-            .length, // Count unique page IDs
-        itemBuilder: (context, index) {
-          var pageId = widget.pagesData
+    if (kIsWeb) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Group Page'),
+        ),
+        body: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(flex: 2, child: Container()),
+            Expanded(
+              flex: 4,
+              child: Container(
+                padding: EdgeInsets.only(left: 10, right: 10),
+                alignment: Alignment.topCenter,
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: Offset(0, 3), // changes the position of shadow
+                    ),
+                  ],
+                ),
+                child: ListView.builder(
+                  itemCount: widget.pagesData
+                      .map((page) => page['pageId'])
+                      .toSet()
+                      .length, // Count unique page IDs
+                  itemBuilder: (context, index) {
+                    var pageId = widget.pagesData
+                        .map((page) => page['pageId'])
+                        .toSet()
+                        .toList()[index];
+                    return buildPageSection(pageId);
+                  },
+                ),
+              ),
+            ),
+            Expanded(flex: 2, child: Container()),
+          ],
+        ),
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Group Page'),
+        ),
+        body: ListView.builder(
+          itemCount: widget.pagesData
               .map((page) => page['pageId'])
               .toSet()
-              .toList()[index];
-          return buildPageSection(pageId);
-        },
-      ),
-    );
+              .length, // Count unique page IDs
+          itemBuilder: (context, index) {
+            var pageId = widget.pagesData
+                .map((page) => page['pageId'])
+                .toSet()
+                .toList()[index];
+            return buildPageSection(pageId);
+          },
+        ),
+      );
+    }
   }
 }

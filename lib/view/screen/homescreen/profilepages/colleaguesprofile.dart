@@ -5,6 +5,7 @@ import 'package:growify/controller/home/ColleaguesProfile_controller.dart';
 import 'package:growify/controller/home/chats_controller/chatmainpage_controller.dart';
 import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/chat/chatForWeb/chatWebmainpage.dart';
 import 'package:growify/view/screen/homescreen/chat/chatpagemessages.dart';
 import 'dart:convert';
 
@@ -75,65 +76,104 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
         controller.isDeleteButtonVisible = false;
         break;
     }
-
-    return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return [
-            SliverAppBar(
-              backgroundColor: Colors.white,
-              expandedHeight: 200,
-              floating: false,
-              pinned: true,
-              flexibleSpace: FlexibleSpaceBar(
-                background: _buildCoverPhoto(),
-              ),
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  _buildProfileInfo(context),
-                  if (!kIsWeb) _Deatalis("Details"),
-                  if (!kIsWeb) _buildDivider(10),
-                  if (!kIsWeb) _buildButtonsRow(),
-                  if (!kIsWeb) _buildDivider(10),
-                  if (!kIsWeb) _Deatalis("Posts"),
-                  // Post(),
-                ],
-              ),
-            )
-          ];
-        },
-        body: kIsWeb
-            ? Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: SingleChildScrollView(
+    if (kIsWeb) {
+      return Scaffold(
+        body: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              flex: 7,
+              child: NestedScrollView(
+                headerSliverBuilder:
+                    (BuildContext context, bool innerBoxIsScrolled) {
+                  return [
+                    SliverAppBar(
+                      backgroundColor: Colors.white,
+                      expandedHeight: 200,
+                      floating: false,
+                      pinned: true,
+                      flexibleSpace: FlexibleSpaceBar(
+                        background: _buildCoverPhoto(),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
                       child: Column(
                         children: [
-                          _Deatalis("Details"),
-                          _buildDivider(10),
-                          _buildButtonsRow(),
-                          _buildDivider(10),
-                          // _buildDetails("Posts"),
+                          _buildProfileInfo(context),
                         ],
                       ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 4,
-                    child: Post(username: widget.userData[0]["username"]),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Container(),
-                  ),
-                ],
+                  ];
+                },
+                body: kIsWeb
+                    ? Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              child: Column(
+                                children: [
+                                  _Deatalis("Details"),
+                                  _buildDivider(10),
+                                  _buildButtonsRow(),
+                                  _buildDivider(10),
+                                  // _buildDetails("Posts"),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 4,
+                            child:
+                                Post(username: widget.userData[0]["username"]),
+                          ),
+                        ],
+                      )
+                    : Post(username: widget.userData[0]["username"]),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Container(
+                child: ChatWebMainPage(),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Scaffold(
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return [
+              SliverAppBar(
+                backgroundColor: Colors.white,
+                expandedHeight: 200,
+                floating: false,
+                pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: _buildCoverPhoto(),
+                ),
+              ),
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    _buildProfileInfo(context),
+                    _Deatalis("Details"),
+                    _buildDivider(10),
+                    _buildButtonsRow(),
+                    _buildDivider(10),
+                    _Deatalis("Posts"),
+                    // Post(),
+                  ],
+                ),
               )
-            : Post(username: widget.userData[0]["username"]),
-      ),
-    );
+            ];
+          },
+          body: Post(username: widget.userData[0]["username"]),
+        ),
+      );
+    }
   }
 
   Widget _buildCoverPhoto() {

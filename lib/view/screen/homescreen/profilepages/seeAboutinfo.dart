@@ -33,32 +33,80 @@ class SeeAboutInfo extends StatelessWidget {
 
     controller.setpersonalData(personalDetails);
     print(personalDetails);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "About Info",
-          style: TextStyle(color: Colors.black),
+    if (kIsWeb) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "About Info",
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Colors.white,
+          iconTheme: const IconThemeData(
+            color: Colors.black,
+          ),
         ),
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(
-          color: Colors.black,
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
+        body: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildPersonalDetails(controller),
-            _buildEducationList(controller),
-            _buildExperienceList(controller),
+            Expanded(flex: 2, child: Container()),
+            Expanded(
+                flex: 4,
+                child: Container(
+                  alignment: Alignment.topCenter,
+                  height: MediaQuery.of(context).size.height,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3), // changes the position of shadow
+                      ),
+                    ],
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        _buildPersonalDetails(controller),
+                        _buildEducationList(controller),
+                        _buildExperienceList(controller),
+                      ],
+                    ),
+                  ),
+                )),
+            Expanded(flex: 2, child: Container()),
           ],
         ),
-      ),
-    );
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "About Info",
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Colors.white,
+          iconTheme: const IconThemeData(
+            color: Colors.black,
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildPersonalDetails(controller),
+              _buildEducationList(controller),
+              _buildExperienceList(controller),
+            ],
+          ),
+        ),
+      );
+    }
   }
 
   Future download(String url, String filename) async {
-    var savePath = '/storage/emulated/0/Download/$filename';
+    var savePath= '/storage/emulated/0/Download/$filename';
+
     var dio = Dio();
     dio.interceptors.add(LogInterceptor());
     try {

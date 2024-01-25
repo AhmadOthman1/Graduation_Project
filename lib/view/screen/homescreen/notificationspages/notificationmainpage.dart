@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
@@ -64,88 +65,224 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notifications'),
-        automaticallyImplyLeading: false,
-
-      ),
-      body: Column(
-        children: [
-          const Divider(
-            color: Color.fromARGB(255, 194, 193, 193),
-            thickness: 2.0,
-          ),
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: _controller.notifications.length,
-              itemBuilder: (context, index) {
-                final notice = _controller.notifications[index];
-
-                return Column(
+    if (kIsWeb) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Notifications'),
+          automaticallyImplyLeading: false,
+        ),
+        body: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(flex: 2, child: Container()),
+            Expanded(
+              flex: 4,
+              child: Container(
+                alignment: Alignment.topCenter,
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: Offset(0, 3), // changes the position of shadow
+                    ),
+                  ],
+                ),
+                child: Column(
                   children: [
-                    ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: (notice['notificationType'] != "post" && notice['notificationType'] != "job" )
-                            ? (notice['photo'] != null && notice['photo'] != "")
-                                ? Image.network(
-                                        "$urlStarter/" + notice['photo']!)
-                                    .image
-                                : defultprofileImage
-                            : defultNotificationImage,
-                      ),
-                      title: Text(notice['notificationType'] != "post" &&notice['notificationType'] != "job" 
-                          ? "${notice['notificationPointer']} ${notice['notificationContent']}"
-                          : "${notice['notificationContent']}"),
-                      subtitle: Text(notice['date']),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.open_in_new),
-                            onPressed: () async {
-                              if (notice['notificationType'] == "connection") {
-                                searchController.goToUserPage(
-                                    notice['notificationPointer']!);
-                              } else if (notice['notificationType'] == "call" ||
-                                  notice['notificationType'] == "message") {
-                                HomePageControllerImp controller =
-                                    Get.put(HomePageControllerImp());
-                                var foundUser =
-                                    await controller.userChatProfileInfo(
-                                        notice['notificationPointer']);
+                    
+                    Expanded(
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        itemCount: _controller.notifications.length,
+                        itemBuilder: (context, index) {
+                          final notice = _controller.notifications[index];
 
-                                if (foundUser != null) {
-                                  MyApp.navigatorKey.currentState?.push(
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          ChatPageMessages(data: foundUser),
+                          return Column(
+                            children: [
+                              ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage:
+                                      (notice['notificationType'] != "post" &&
+                                              notice['notificationType'] !=
+                                                  "job")
+                                          ? (notice['photo'] != null &&
+                                                  notice['photo'] != "")
+                                              ? Image.network("$urlStarter/" +
+                                                      notice['photo']!)
+                                                  .image
+                                              : defultprofileImage
+                                          : defultNotificationImage,
+                                ),
+                                title: Text(notice['notificationType'] !=
+                                            "post" &&
+                                        notice['notificationType'] != "job"
+                                    ? "${notice['notificationPointer']} ${notice['notificationContent']}"
+                                    : "${notice['notificationContent']}"),
+                                subtitle: Text(notice['date']),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.open_in_new),
+                                      onPressed: () async {
+                                        if (notice['notificationType'] ==
+                                            "connection") {
+                                          searchController.goToUserPage(
+                                              notice['notificationPointer']!);
+                                        } else if (notice['notificationType'] ==
+                                                "call" ||
+                                            notice['notificationType'] ==
+                                                "message") {
+                                          HomePageControllerImp controller =
+                                              Get.put(HomePageControllerImp());
+                                          var foundUser = await controller
+                                              .userChatProfileInfo(notice[
+                                                  'notificationPointer']);
+
+                                          if (foundUser != null) {
+                                            MyApp.navigatorKey.currentState
+                                                ?.push(
+                                              MaterialPageRoute(
+                                                builder: (_) =>
+                                                    ChatPageMessages(
+                                                        data: foundUser),
+                                              ),
+                                            );
+                                          }
+                                        } else if (notice['notificationType'] ==
+                                            "post") {
+                                          _controller.showPost(
+                                              notice['notificationPointer']);
+                                        } else if (notice['notificationType'] ==
+                                            "job") {
+                                          await _controller.showJob(
+                                              notice['notificationPointer']);
+                                        }
+                                      },
                                     ),
-                                  );
-                                }
-                              } else if (notice['notificationType'] == "post") {
-                                _controller.showPost(notice['notificationPointer']);
-                              }else if (notice['notificationType'] == "job") {
-                                await _controller.showJob(notice['notificationPointer']);
-                              }
-                            },
-                          ),
-                        ],
+                                  ],
+                                ),
+                              ),
+                              const Divider(
+                                color: Color.fromARGB(255, 194, 193, 193),
+                                thickness: 2.0,
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     ),
                     const Divider(
                       color: Color.fromARGB(255, 194, 193, 193),
                       thickness: 2.0,
                     ),
+                    if (_controller.isLoading)
+                      const CircularProgressIndicator(),
                   ],
-                );
-              },
+                ),
+              ),
             ),
-          ),
-          if (_controller.isLoading) const CircularProgressIndicator(),
-        ],
-      ),
-    );
+            Expanded(flex: 2, child: Container()),
+          ],
+        ),
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Notifications'),
+          automaticallyImplyLeading: false,
+        ),
+        body: Column(
+          children: [
+            const Divider(
+              color: Color.fromARGB(255, 194, 193, 193),
+              thickness: 2.0,
+            ),
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: _controller.notifications.length,
+                itemBuilder: (context, index) {
+                  final notice = _controller.notifications[index];
+
+                  return Column(
+                    children: [
+                      ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage:
+                              (notice['notificationType'] != "post" &&
+                                      notice['notificationType'] != "job")
+                                  ? (notice['photo'] != null &&
+                                          notice['photo'] != "")
+                                      ? Image.network(
+                                              "$urlStarter/" + notice['photo']!)
+                                          .image
+                                      : defultprofileImage
+                                  : defultNotificationImage,
+                        ),
+                        title: Text(notice['notificationType'] != "post" &&
+                                notice['notificationType'] != "job"
+                            ? "${notice['notificationPointer']} ${notice['notificationContent']}"
+                            : "${notice['notificationContent']}"),
+                        subtitle: Text(notice['date']),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.open_in_new),
+                              onPressed: () async {
+                                if (notice['notificationType'] ==
+                                    "connection") {
+                                  searchController.goToUserPage(
+                                      notice['notificationPointer']!);
+                                } else if (notice['notificationType'] ==
+                                        "call" ||
+                                    notice['notificationType'] == "message") {
+                                  HomePageControllerImp controller =
+                                      Get.put(HomePageControllerImp());
+                                  var foundUser =
+                                      await controller.userChatProfileInfo(
+                                          notice['notificationPointer']);
+
+                                  if (foundUser != null) {
+                                    MyApp.navigatorKey.currentState?.push(
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            ChatPageMessages(data: foundUser),
+                                      ),
+                                    );
+                                  }
+                                } else if (notice['notificationType'] ==
+                                    "post") {
+                                  _controller
+                                      .showPost(notice['notificationPointer']);
+                                } else if (notice['notificationType'] ==
+                                    "job") {
+                                  await _controller
+                                      .showJob(notice['notificationPointer']);
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Divider(
+                        color: Color.fromARGB(255, 194, 193, 193),
+                        thickness: 2.0,
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+            if (_controller.isLoading) const CircularProgressIndicator(),
+          ],
+        ),
+      );
+    }
   }
 }

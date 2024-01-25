@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:growify/controller/home/profileMainPage_controller.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/NewPost/newpost.dart';
+import 'package:growify/view/screen/homescreen/chat/chatForWeb/chatWebmainpage.dart';
 import 'package:growify/view/screen/homescreen/settings/settings.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -45,15 +46,75 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      /*  appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text(
-          "My Profile",
-          style: TextStyle(color: Colors.black),
+    if (kIsWeb) {
+      return Scaffold(
+        
+        body: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              flex: 7,
+              child: NestedScrollView(
+                controller: _scrollController,
+                headerSliverBuilder:
+                    (BuildContext context, bool innerBoxIsScrolled) {
+                  return [
+                    SliverAppBar(
+                      backgroundColor: Colors.white,
+                      expandedHeight: 200,
+                      floating: false,
+                      pinned: true,
+                      flexibleSpace: FlexibleSpaceBar(
+                        background: _buildCoverPhoto(),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          _buildProfileInfo(),
+                        ],
+                      ),
+                    ),
+                  ];
+                },
+                body: kIsWeb
+                    ? Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              child: Column(
+                                children: [
+                                  _buildDetails("Details"),
+                                  _buildDivider(10),
+                                  _buildButtonsRow(),
+                                  _buildDivider(10),
+                                  // _buildDetails("Posts"),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 4,
+                            child:
+                                Post(username: widget.userData[0]["username"]),
+                          ),
+                        ],
+                      )
+                    : Post(username: widget.userData[0]["username"]),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Container(
+                child: ChatWebMainPage(),
+              ),
+            ),
+          ],
         ),
-        iconTheme: const IconThemeData(color: Color.fromARGB(255, 5, 3, 3)),
-      ),*/
+      );
+    } else {return Scaffold(
+      
       body: NestedScrollView(
         controller: _scrollController,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -71,46 +132,20 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
               child: Column(
                 children: [
                   _buildProfileInfo(),
-                  if (!kIsWeb) _buildDetails("Details"),
-                  if (!kIsWeb) _buildDivider(10),
-                  if (!kIsWeb) _buildButtonsRow(),
-                  if (!kIsWeb) _buildDivider(10),
-                  if (!kIsWeb) _buildDetails("Posts"),
+                   _buildDetails("Details"),
+                   _buildDivider(10),
+                   _buildButtonsRow(),
+                   _buildDivider(10),
+                   _buildDetails("Posts"),
                 ],
               ),
             ),
           ];
         },
-        body: kIsWeb
-            ? Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          _buildDetails("Details"),
-                          _buildDivider(10),
-                          _buildButtonsRow(),
-                          _buildDivider(10),
-                          // _buildDetails("Posts"),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 4,
-                    child: Post(username: widget.userData[0]["username"]),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Container(),
-                  ),
-                ],
-              )
-            : Post(username: widget.userData[0]["username"]),
+        body: Post(username: widget.userData[0]["username"]),
       ),
-    );
+    );}
+    
   }
 
   Widget _buildCoverPhoto() {
