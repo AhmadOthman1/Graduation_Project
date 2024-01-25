@@ -63,7 +63,7 @@ addMessage( text,  username, userPhoto,  createdAt, image,video) async {
       length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
   createMeeting(groupId) async {
-    var meetingId = getRandomString(5);
+    var meetingId = GetStorage().read('username')  + groupId.toString();
     var url = "$urlStarter/user/createGroupMeeting";
     Map<String, dynamic> jsonData = {
       "meetingId": meetingId,

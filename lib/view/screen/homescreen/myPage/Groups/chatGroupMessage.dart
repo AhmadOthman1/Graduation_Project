@@ -12,7 +12,7 @@ import 'package:growify/resources/jitsi_meet.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/CalendarGroup.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/MeetingsHistory.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/TaskGroup/taskgroupmainpage.dart';
-import 'package:growify/view/screen/homescreen/myPage/Groups/conference.dart';
+import 'package:growify/view/screen/homescreen/myPage/Groups/meeting.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/settingGroupPage.dart';
 import 'package:growify/view/screen/homescreen/chat/CallScreen.dart';
 import 'package:growify/view/widget/homePage/chatmessage.dart';
@@ -269,7 +269,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                 Row(
                   children: [
                     Container(
-                      width: 120, 
+                      width: 120,
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
@@ -380,22 +380,24 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                   ),
                   const SizedBox(height: 10),
                   Container(
-                  width: 380,
-                  child: MaterialButton(
-                    color: const Color.fromARGB(255, 85, 191, 218),
-                    onPressed: (){
-                      Get.to(ShowMeetingsHistory(groupData: widget.data,));
-                    },
-                    child: Text(
-                      'Show Meetings History',
-                      style: TextStyle(color: Colors.white, fontSize: 17),
-                    ),
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                    width: 380,
+                    child: MaterialButton(
+                      color: const Color.fromARGB(255, 85, 191, 218),
+                      onPressed: () {
+                        Get.to(ShowMeetingsHistory(
+                          groupData: widget.data,
+                        ));
+                      },
+                      child: Text(
+                        'Show Meetings History',
+                        style: TextStyle(color: Colors.white, fontSize: 17),
+                      ),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
                     ),
                   ),
-                ),
                 ],
               ),
             ),
@@ -410,7 +412,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
             TextButton(
               onPressed: () async {
                 if (formKey.currentState!.validate()) {
-                  Get.back();
+                   Navigator.pop(context);
                   var message = await chatController.joinMeeting(
                       meetingIDController.text, widget.data["id"]);
                   if (message != null && message != "joined")
@@ -427,7 +429,24 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                             },
                           )
                         : null;
-                  if (message != null && message == "joined")
+                  if (message != null && message == "joined"){
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => meetingPage(
+                                meetingID: meetingIDController.text.trim(),
+                                userId: GetStorage().read("username"),
+                                userName: GetStorage().read("firstname") +
+                                    " " +
+                                    GetStorage().read("lastname"),
+                                photo: GetStorage().read("photo"),
+                                groupId: widget.data["id"].toString(),
+                                socket: socket,
+                              )),
+                    );
+                    
+                  }
+                  /*
                     Get.to(VideoConferencePage(
                       meetingID: meetingIDController.text,
                       userId: GetStorage().read("username"),
@@ -436,7 +455,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                           GetStorage().read("lastname"),
                       groupId: widget.data["id"].toString(),
                       socket: socket,
-                    ));
+                    ));*/
                 }
               },
               child: const Text('Join'),
@@ -446,7 +465,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                     widget.isUserAdminInPage == true))
               TextButton(
                 onPressed: () async {
-                  Get.back();
+                   Navigator.pop(context);
                   var meetingID =
                       await chatController.createMeeting(widget.data["id"]);
                   var accessToken = GetStorage().read("accessToken");
@@ -466,7 +485,34 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                     "messageVideoBytesName": null,
                     "messageVideoExt": null,
                   });
-                  Get.to(VideoConferencePage(
+                  if (meetingID != null) {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => meetingPage(
+                                meetingID: meetingID,
+                                userId: GetStorage().read("username"),
+                                userName: GetStorage().read("firstname") +
+                                    " " +
+                                    GetStorage().read("lastname"),
+                                photo: GetStorage().read("photo"),
+                                groupId: widget.data["id"].toString(),
+                                socket: socket,
+                              )),
+                    );
+                    
+                    /*Get.to(meetingPage(
+                      meetingID: meetingID,
+                      userId: GetStorage().read("username"),
+                      userName: GetStorage().read("firstname") +
+                          " " +
+                          GetStorage().read("lastname"),
+                      photo: GetStorage().read("photo"),
+                      groupId: widget.data["id"].toString(),
+                      socket: socket,
+                    ));*/
+                  }
+                  /*Get.to(VideoConferencePage(
                     meetingID: meetingID,
                     userId: GetStorage().read("username"),
                     userName: GetStorage().read("firstname") +
@@ -474,7 +520,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                         GetStorage().read("lastname"),
                     groupId: widget.data["id"].toString(),
                     socket: socket,
-                  ));
+                  ));*/
                 },
                 child: const Text('Create'),
               ),

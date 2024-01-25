@@ -3,10 +3,13 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
+import 'package:flutter_screen_recording/flutter_screen_recording.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/chat/screen_select_dialog.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:universal_io/io.dart';
 
 class CallScreen extends StatefulWidget {
   final String callerId, calleeId;
@@ -45,6 +48,7 @@ class _CallScreenState extends State<CallScreen> {
 
   // mediaStream for localPeer
   bool isScreenSharing = false;
+  bool isScreenRecording = false;
   MediaStream? _localStream;
   MediaStream? _screenStream;
   MediaStream? _prevStream;
@@ -208,7 +212,7 @@ class _CallScreenState extends State<CallScreen> {
     }
     // for Outgoing Call
     else {
-      // listen for local iceCandidate and add it to the list of IceCandidate
+      // listen for local iceCandidate and add it to the list of IceCandidate for other peer to see 
       _rtcPeerConnection!.onIceCandidate =
           (RTCIceCandidate candidate) => rtcIceCadidates.add(candidate);
 
@@ -258,22 +262,21 @@ class _CallScreenState extends State<CallScreen> {
       // make a call to remote peer over signalling
       if (widget.type != null && widget.type == "P") {
         widget.socket!.emit('makePageCall', {
-        "callerId": widget.callerId,
-        "calleeId": widget.calleeId,
-        "photo": widget.photo,
-        "sdpOffer": offer.toMap(),
-        "isVideo": widget.isVideo,
-      });
+          "callerId": widget.callerId,
+          "calleeId": widget.calleeId,
+          "photo": widget.photo,
+          "sdpOffer": offer.toMap(),
+          "isVideo": widget.isVideo,
+        });
       } else {
         widget.socket!.emit('makeCall', {
-        "callerId": widget.callerId,
-        "calleeId": widget.calleeId,
-        "photo": widget.photo,
-        "sdpOffer": offer.toMap(),
-        "isVideo": widget.isVideo,
-      });
+          "callerId": widget.callerId,
+          "calleeId": widget.calleeId,
+          "photo": widget.photo,
+          "sdpOffer": offer.toMap(),
+          "isVideo": widget.isVideo,
+        });
       }
-      
     }
   }
 
@@ -281,16 +284,16 @@ class _CallScreenState extends State<CallScreen> {
     if (mounted) {
       if (widget.type != null && widget.type == "P") {
         widget.socket!.emit("leavePageCall", {
-        "user1": widget.calleeId,
-        "user2": widget.callerId,
-      });
+          "user1": widget.calleeId,
+          "user2": widget.callerId,
+        });
       } else {
-       widget.socket!.emit("leaveCall", {
-        "user1": widget.calleeId,
-        "user2": widget.callerId,
-      });
+        widget.socket!.emit("leaveCall", {
+          "user1": widget.calleeId,
+          "user2": widget.callerId,
+        });
       }
-      
+
       widget.socket!.off("callEnded");
       widget.socket!.off("IceCandidate");
       widget.socket!.off("callAnswered");
@@ -402,13 +405,7 @@ class _CallScreenState extends State<CallScreen> {
       var stream =
           await navigator.mediaDevices.getDisplayMedia(<String, dynamic>{
         'video': selected_source_ == null
-            ? {
-                'mandatory': {
-                  'frameRate': 15.0,
-                  'minWidth': 640,
-                  'minHeight': 480,
-                },
-              }
+            ? true
             : {
                 'deviceId': {'exact': selected_source_!.id},
                 'mandatory': {
@@ -556,7 +553,27 @@ class _CallScreenState extends State<CallScreen> {
                           }
                         },
                         icon: Icon(isScreenSharing ? Icons.tv : Icons.tv_off),
-                      )
+                      ),
+                    if (widget.isVideo == null || widget.isVideo == true)
+                      IconButton(
+                        onPressed: () async {
+                          print(isScreenRecording);
+                          if (!isScreenRecording) {
+                            setState(() {
+                              isScreenRecording = !isScreenRecording;
+                            });
+                            startScreenRecord(true);
+                          } else {
+                            setState(() {
+                              isScreenRecording = !isScreenRecording;
+                            });
+                            stopScreenRecord();
+                          }
+                        },
+                        icon: Icon(isScreenRecording
+                            ? Icons.fiber_manual_record
+                            : Icons.fiber_smart_record_outlined),
+                      ),
                   ],
                 ),
               ),
@@ -595,5 +612,30 @@ class _CallScreenState extends State<CallScreen> {
     widget.socket!.off("callAnswered");
     cancelCallTimeout();
     super.dispose();
+  }
+
+  startScreenRecord(bool audio) async {
+    bool start = false;
+
+    if (audio) {
+      start = await FlutterScreenRecording.startRecordScreenAndAudio("call");
+    } else {
+      start = await FlutterScreenRecording.startRecordScreen("call");
+    }
+
+    if (start) {
+      setState(() => isScreenRecording = !isScreenRecording);
+    }
+
+    return start;
+  }
+
+  stopScreenRecord() async {
+    String path = await FlutterScreenRecording.stopRecordScreen;
+    setState(() {
+      isScreenRecording = !isScreenRecording;
+    });
+    print("Opening video");
+    print(path);
   }
 }
