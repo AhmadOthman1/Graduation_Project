@@ -104,10 +104,13 @@ class _MeetingPageState extends State<meetingPage> {
   bool isScreenRecording = false;
   RTCPeerConnection? _peerConnection;
   MediaStream? _localStream;
+  MediaStream? _prevStream;
   MediaStream? _screenStream;
   RTCVideoRenderer _localRenderer = RTCVideoRenderer();
+  RTCVideoRenderer _mainRenderer = RTCVideoRenderer();
   bool _isSend = false;
-
+  var mainScreenIndex;
+  bool firstTimeflag = true;
   // media status
   bool isAudioOn = true, isVideoOn = true, isFrontCameraSelected = true;
   void initState() {
@@ -118,9 +121,11 @@ class _MeetingPageState extends State<meetingPage> {
         _peerConnection = pc; // set the new peer connection to _peerConnection
         _localStream = await _getUserMedia(); // store local stream
         setState(() {});
-        _localStream!.getTracks().forEach((track) {
+        _localStream!.getTracks().forEach((track) async {
           // add the stream tracks (video/audio) to the connection with the server
-          _peerConnection!.addTrack(track, _localStream!);
+          RTCRtpSender sender =
+              await _peerConnection!.addTrack(track, _localStream!);
+          _senders.add(sender);
           setState(() {});
         });
       },
@@ -132,6 +137,7 @@ class _MeetingPageState extends State<meetingPage> {
 // Initialize video renderer
   initRenderers() async {
     await _localRenderer.initialize();
+    await _mainRenderer.initialize();
   }
 
   _getUserMedia() async {
@@ -145,6 +151,7 @@ class _MeetingPageState extends State<meetingPage> {
     setState(() {
       _localRenderer.srcObject =
           stream; // to show the local stream on the screen
+      _mainRenderer.srcObject = stream;
     });
 
     return stream;
@@ -178,7 +185,8 @@ class _MeetingPageState extends State<meetingPage> {
     setState(() {});
     await widget.socket!.emit('joinMeeting', {
       'sdp': sdp,
-      'meetingID': widget.meetingID
+      'meetingID': widget.meetingID,
+      'userName': GetStorage().read('username'),
     }); //send the sdp to the server
   }
 
@@ -189,6 +197,10 @@ class _MeetingPageState extends State<meetingPage> {
       print(peer);
       int index =
           socketIdRemotes.indexWhere((item) => item['socketId'] == peer);
+      if (mainScreenIndex == index) {
+        // if peer who leaved is in the main screen, set the main screen to local render
+        _handleTap(_localRenderer, -1);
+      }
       if (index != -1) {
         if (socketIdRemotes[index]['stream'] != null) {
           try {
@@ -225,14 +237,23 @@ class _MeetingPageState extends State<meetingPage> {
       setState(() {});
       var peerUser = {
         'socketId': newUser,
+        'userName': data['userName'],
         'pc': null,
         'stream': stream,
       };
-      socketIdRemotes.add(peerUser);
+      bool socketIdExists =
+          socketIdRemotes.any((peer) => peer['socketId'] == newUser);
+
+      if (!socketIdExists) {
+        // Add the user to socketIdRemotes
+        socketIdRemotes.add(peerUser);
+      } else {
+        int index =
+            socketIdRemotes.indexWhere((item) => item['socketId'] == newUser);
+        socketIdRemotes[index]['stream'] = stream;
+      }
 
       setState(() {});
-      int index =
-          socketIdRemotes.indexWhere((item) => item['socketId'] == newUser);
       await _createPeerConnectionAnswer(newUser).then((pcRemote) async {
         await pcRemote.addTransceiver(
           kind: RTCRtpMediaType
@@ -242,32 +263,62 @@ class _MeetingPageState extends State<meetingPage> {
             direction: TransceiverDirection.RecvOnly,
           ),
         );
-        peerUser['pc'] = pcRemote;
+        int index =
+            socketIdRemotes.indexWhere((item) => item['socketId'] == newUser);
+        socketIdRemotes[index]['pc'] = pcRemote;
         setState(() {});
       });
     });
     // When this user has joined the meeting
     widget.socket!.on('joined', (data) async {
       //tack the users in the meeting sockets
-      List<String> listSocketId =
-          (data['sockets'] as List<dynamic>).map((e) => e.toString()).toList();
+      /*List<String> listSocketId =
+          (data['sockets'] as List<dynamic>).map((e) => e.toString()).toList();*/
+      List<Map<String, String>> listSocketId =
+          (data['sockets'] as List<dynamic>).map((e) {
+        final Map<String, dynamic> socketData = e as Map<String, dynamic>;
+        return {
+          'socketId': socketData['socketId'].toString(),
+          'userName': socketData['userName'].toString(),
+        };
+      }).toList();
       setState(() {});
       print("==================================================");
       print(listSocketId);
       print("==================================================");
+      if (firstTimeflag) {
+        print(firstTimeflag);
+        print("iiiiiiiiiiiiiiiiiiiiiiiiiiiiindex");
+        await _setRemoteDescription(data['sdp']);
+      }
+
+      Future.delayed(Duration(seconds: 1), () {});
+
       for (int index = 0; index < listSocketId.length; index++) {
-        String user = listSocketId[index];
+        String? user = listSocketId[index]['socketId'];
         //set a stream for each user to get there stream
         RTCVideoRenderer stream = await new RTCVideoRenderer();
         await stream.initialize();
         setState(() {});
         //store there streams
+
         var peerUser = {
           'socketId': user,
+          'userName': listSocketId[index]['userName'],
           'pc': null,
           'stream': stream,
         };
-        socketIdRemotes.add(peerUser);
+        bool socketIdExists =
+            socketIdRemotes.any((peer) => peer['socketId'] == user);
+
+        if (!socketIdExists) {
+          // Add the user to socketIdRemotes
+          socketIdRemotes.add(peerUser);
+        } else {
+          int index =
+              socketIdRemotes.indexWhere((item) => item['socketId'] == user);
+          socketIdRemotes[index]['stream'] = stream;
+        }
 
         setState(() {});
 
@@ -281,12 +332,19 @@ class _MeetingPageState extends State<meetingPage> {
               direction: TransceiverDirection.RecvOnly,
             ),
           );
-          peerUser['pc'] = pcRemote;
+          int index =
+              socketIdRemotes.indexWhere((item) => item['socketId'] == user);
+          socketIdRemotes[index]['pc'] = pcRemote;
         });
         setState(() {});
+        if (index == listSocketId.length - 1 && firstTimeflag) {
+          print("laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaastindex");
+          firstTimeflag = false;
+          setState(() {});
+          await widget.socket!.emit('refresh', {'meetingID': widget.meetingID});
+        }
       }
 
-      await _setRemoteDescription(data['sdp']);
       setState(() {});
     });
     // When receiving the Set Session Configuration from the server
@@ -321,7 +379,8 @@ class _MeetingPageState extends State<meetingPage> {
         socketIdRemotes[index]['stream'].srcObject = track.streams[0];
       });
       // Call the callback to handle the arrival of the remote stream
-      handleRemoteStreamAdded(socketIdRemotes[index]['stream'].srcObject, socketId);
+      /*handleRemoteStreamAdded(
+          socketIdRemotes[index]['stream'].srcObject, socketId);*/
     };
     setState(() {});
     // When renegotiation is needed, create an offer for receiving, modifying an existing connection between two peers
@@ -339,16 +398,12 @@ class _MeetingPageState extends State<meetingPage> {
     if (stream.getTracks().isNotEmpty) {
       print('Stream has arrived');
       print("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-      setState(() {
-        
-      });
+      setState(() {});
     } else {
       print('Stream has not arrived');
       print('Stream visibility: ${stream.active}');
       print("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-      setState(() {
-        
-      });
+      setState(() {});
       // Trigger rejoin or stream refreshing if needed
     }
 
@@ -408,6 +463,7 @@ class _MeetingPageState extends State<meetingPage> {
   }
 
   _leaveCall() async {
+    await userLeaved(widget.groupId, widget.meetingID);
     if (mounted) {
       widget.socket!.off("newPeerJoined");
       widget.socket!.off("peerLeaved");
@@ -485,10 +541,15 @@ class _MeetingPageState extends State<meetingPage> {
   @override
   void dispose() {
     widget.socket!.emit("leaveGroupMeeting", {'meetingID': widget.meetingID});
+    if (_mainRenderer != null) {
+      _mainRenderer.srcObject = null;
+      _mainRenderer.dispose();
+    }
     if (_localRenderer != null) {
       _localRenderer.srcObject = null;
       _localRenderer.dispose();
     }
+
     socketIdRemotes.forEach((element) {
       if (element['stream'] != null) {
         element['stream'].srcObject = null;
@@ -526,6 +587,146 @@ class _MeetingPageState extends State<meetingPage> {
     super.dispose();
   }
 
+  Future<void> selectScreenSourceDialog(BuildContext context) async {
+    try {
+      if (WebRTC.platformIsDesktop) {
+        print("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiind");
+        final source = await showDialog<DesktopCapturerSource>(
+          context: context,
+          builder: (context) => ScreenSelectDialog(),
+        );
+        if (source != null) {
+          await _shareScreen(source);
+        }
+      } else {
+        if (WebRTC.platformIsAndroid) {
+          // Android specific
+          Future<void> requestBackgroundPermission(
+              [bool isRetry = false]) async {
+            // Required for android screenshare.
+            try {
+              var hasPermissions = await FlutterBackground.hasPermissions;
+              if (!isRetry) {
+                const androidConfig = FlutterBackgroundAndroidConfig(
+                  notificationTitle: 'Screen Sharing',
+                  notificationText: 'LiveKit Example is sharing the screen.',
+                  notificationImportance: AndroidNotificationImportance.Default,
+                  notificationIcon: AndroidResource(
+                      name: 'livekit_ic_launcher', defType: 'mipmap'),
+                );
+                hasPermissions = await FlutterBackground.initialize(
+                    androidConfig: androidConfig);
+              }
+              if (hasPermissions &&
+                  !FlutterBackground.isBackgroundExecutionEnabled) {
+                await FlutterBackground.enableBackgroundExecution();
+              }
+            } catch (e) {
+              if (!isRetry) {
+                return await Future<void>.delayed(const Duration(seconds: 1),
+                    () => requestBackgroundPermission(true));
+              }
+              print('could not publish video: $e');
+            }
+          }
+
+          await requestBackgroundPermission();
+        }
+        await _shareScreen(null);
+      }
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  Future<void> _shareScreen(DesktopCapturerSource? source) async {
+    print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    setState(() {
+      selected_source_ = source;
+    });
+
+    try {
+      var stream =
+          await navigator.mediaDevices.getDisplayMedia(<String, dynamic>{
+        'video': selected_source_ == null
+            ? true
+            : {
+                'deviceId': {'exact': selected_source_!.id},
+                'mandatory': {
+                  'frameRate': 15.0,
+                  'minWidth': 640,
+                  'minHeight': 480,
+                },
+              }
+      });
+      stream.getVideoTracks()[0].onEnded = () {
+        _stop();
+      };
+      _prevStream = _localStream;
+      _screenStream = stream;
+      _localRenderer.srcObject = _screenStream;
+      _mainRenderer.srcObject = _screenStream;
+      /*for (var oldTrack in _localStream!.getTracks()) {
+        _localStream!.removeTrack(oldTrack);
+        oldTrack.dispose();
+      }
+
+      for (var newTrack in stream.getTracks()) {
+        _localStream!.addTrack(newTrack);
+      }*/
+      switchToScreenSharing(stream);
+      // Add the new stream to the peer connection
+      //_rtcPeerConnection!.addStream(_localStream!);
+
+      //_localStream = _screenStream;
+      setState(() {});
+    } catch (e) {
+      print(e.toString());
+    }
+    if (!mounted) return;
+    isScreenSharing = true;
+    setState(() {});
+  }
+
+  void switchToScreenSharing(MediaStream stream) {
+    if (_localStream != null) {
+      for (var sender in _senders) {
+        if (sender.track!.kind == 'video') {
+          sender.replaceTrack(stream.getVideoTracks()[0]);
+        }
+      }
+      //onLocalStream?.call(stream);
+    }
+  }
+
+  Future<void> _stop() async {
+    try {
+      switchToScreenSharing(_prevStream!);
+      if (_screenStream != null) {
+        for (var track in _screenStream!.getTracks()) {
+          track.stop();
+        }
+        _screenStream?.dispose();
+      }
+      _screenStream = null;
+      _localRenderer.srcObject = _localStream;
+      _mainRenderer.srcObject = _localStream;
+      setState(() {
+        isScreenSharing = false;
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void _handleTap(RTCVideoRenderer tappedRenderer, index) {
+    setState(() {
+      mainScreenIndex = index;
+      _mainRenderer.srcObject = tappedRenderer.srcObject;
+    });
+    print("tapped");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -534,98 +735,150 @@ class _MeetingPageState extends State<meetingPage> {
         child: Column(
           children: [
             Expanded(
-              child: Stack(children: [
-                /*Container(
-                  color: Colors.black,
-                  width: size.width,
-                  height: size.height,
-                  child: socketIdRemotes.isEmpty
-                      ? Container(
-                          color: Colors.blue,
-                        )
-                      : RemoteViewCard(
-                          remoteRenderer: socketIdRemotes[0]['stream'],
-                        ),
-                ),*/
-                Positioned(
-                  bottom: 20.0,
-                  left: 12.0,
-                  right: 0,
-                  child: Container(
-                    color: Colors.transparent,
-                    height: 150,
-                    child: socketIdRemotes.isEmpty
-                        ? Container(
-                            color: Colors.red,
-                          )
-                        : ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: socketIdRemotes.length,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                margin: EdgeInsets.only(right: 6.0),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4.0),
-                                  border: Border.all(
-                                    color: Colors.blueAccent,
-                                    width: 2.0,
-                                  ),
-                                ),
-                                child: FittedBox(
-                                  fit: BoxFit.cover,
-                                  child: Container(
-                                    height: 150,
-                                    width: 120,
-                                    child: RTCVideoView(
-                                      socketIdRemotes[index]['stream'],
-                                      objectFit: RTCVideoViewObjectFit
-                                          .RTCVideoViewObjectFitContain,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
+              child: Stack(
+                children: [
+                  Container(
+                    color: Colors.black,
+                    child: RTCVideoView(
+                      _mainRenderer,
+                      objectFit:
+                          RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
+                    ),
                   ),
-                ),
-                Positioned(
-                  top: 45.0,
-                  left: 15.0,
-                  child: Column(
-                    children: [
-                      _localRenderer.textureId == null
-                          ? Container(
-                              height: 150,
-                              width: 220,
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(6.0)),
-                                border: Border.all(
-                                    color: Colors.blueAccent, width: 2.0),
-                              ),
-                            )
-                          : FittedBox(
-                              fit: BoxFit.cover,
-                              child: Container(
+                  Positioned(
+                    bottom: 20.0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                        color: Colors.transparent,
+                        height: 150,
+                        child: socketIdRemotes.isEmpty
+                            ? Container()
+                            : ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: socketIdRemotes.length,
+                                itemBuilder: (context, index) {
+                                  return Stack(
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          _handleTap(
+                                              socketIdRemotes[index]['stream'],
+                                              index);
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(4.0),
+                                            border: Border.all(
+                                              color: Colors.blueAccent,
+                                              width: 2.0,
+                                            ),
+                                          ),
+                                          child: FittedBox(
+                                            fit: BoxFit.cover,
+                                            child: Container(
+                                              height: 150,
+                                              width: 120,
+                                              child: RTCVideoView(
+                                                socketIdRemotes[index]
+                                                    ['stream'],
+                                                objectFit: RTCVideoViewObjectFit
+                                                    .RTCVideoViewObjectFitContain,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        left: 0,
+                                        bottom: 0,
+                                        child: Container(
+                                          width: 120,
+                                          color:
+                                              Color.fromARGB(255, 183, 164, 164)
+                                                  .withOpacity(0.5),
+                                          child: SingleChildScrollView(
+                                            scrollDirection: Axis.horizontal,
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  socketIdRemotes[index]
+                                                      ['userName'],
+                                                  style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 15),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              )),
+                  ),
+                  Positioned(
+                    top: 45.0,
+                    left: 15.0,
+                    child: Stack(
+                      children: [
+                        _localRenderer.textureId == null
+                            ? Container(
                                 height: 150,
-                                width: 120,
+                                width: 220,
                                 decoration: BoxDecoration(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(6.0)),
                                   border: Border.all(
                                       color: Colors.blueAccent, width: 2.0),
                                 ),
-                                child: RTCVideoView(
-                                  _localRenderer,
-                                  objectFit: RTCVideoViewObjectFit
-                                      .RTCVideoViewObjectFitContain,
+                              )
+                            : FittedBox(
+                                fit: BoxFit.cover,
+                                child: Container(
+                                  height: 150,
+                                  width: 120,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(6.0)),
+                                    border: Border.all(
+                                        color: Colors.blueAccent, width: 2.0),
+                                  ),
+                                  child: RTCVideoView(
+                                    _localRenderer,
+                                    objectFit: RTCVideoViewObjectFit
+                                        .RTCVideoViewObjectFitContain,
+                                  ),
                                 ),
                               ),
+                        Positioned(
+                          left: 0,
+                          bottom: 0,
+                          child: Container(
+                            width: 120,
+                            color: Color.fromARGB(255, 183, 164, 164)
+                                .withOpacity(0.5),
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  Text(
+                                    GetStorage().read("username"),
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 15),
+                                  ),
+                                ],
+                              ),
                             ),
-                    ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ]),
+                ],
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 1),
@@ -653,7 +906,7 @@ class _MeetingPageState extends State<meetingPage> {
                           Icon(isVideoOn ? Icons.videocam : Icons.videocam_off),
                       onPressed: _toggleCamera,
                     ),
-                    /*IconButton(
+                    IconButton(
                       onPressed: () async {
                         print(isScreenSharing);
                         if (!isScreenSharing) {
@@ -664,25 +917,6 @@ class _MeetingPageState extends State<meetingPage> {
                       },
                       icon: Icon(isScreenSharing ? Icons.tv : Icons.tv_off),
                     ),
-                    IconButton(
-                      onPressed: () async {
-                        print(isScreenRecording);
-                        if (!isScreenRecording) {
-                          setState(() {
-                            isScreenRecording = !isScreenRecording;
-                          });
-                          startScreenRecord(true);
-                        } else {
-                          setState(() {
-                            isScreenRecording = !isScreenRecording;
-                          });
-                          stopScreenRecord();
-                        }
-                      },
-                      icon: Icon(isScreenRecording
-                          ? Icons.fiber_manual_record
-                          : Icons.fiber_smart_record_outlined),
-                    ),*/
                   ],
                 ),
               ),

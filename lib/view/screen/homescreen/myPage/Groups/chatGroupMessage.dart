@@ -412,7 +412,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
             TextButton(
               onPressed: () async {
                 if (formKey.currentState!.validate()) {
-                   Navigator.pop(context);
+                   
                   var message = await chatController.joinMeeting(
                       meetingIDController.text, widget.data["id"]);
                   if (message != null && message != "joined")
@@ -430,6 +430,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                           )
                         : null;
                   if (message != null && message == "joined"){
+                    Navigator.pop(context);
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -465,7 +466,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                     widget.isUserAdminInPage == true))
               TextButton(
                 onPressed: () async {
-                   Navigator.pop(context);
+                   
                   var meetingID =
                       await chatController.createMeeting(widget.data["id"]);
                   var accessToken = GetStorage().read("accessToken");
@@ -486,6 +487,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                     "messageVideoExt": null,
                   });
                   if (meetingID != null) {
+                    Navigator.pop(context);
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
