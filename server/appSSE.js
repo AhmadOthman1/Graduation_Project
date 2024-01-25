@@ -48,7 +48,7 @@ constraints = {
   'optional': [],
 };
 populateClientsMap();
-function handleTrackEvent(e, socketId, meetingID) {
+function handleTrackEvent(e, socketId, meetingID, userName) {
   return new Promise((resolve) => {
     console.log(senderStreams);
     console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu3");
@@ -62,13 +62,14 @@ function handleTrackEvent(e, socketId, meetingID) {
         socketId: socketId,
         stream: e.streams[0],
         meetingID: meetingID,
+        userName: userName
       });
     }
     resolve(true);
   });
 }
 // handle peer sending stream to other peers 
-async function createPeerConnectionSend(sdp, socketId, meetingID) {
+async function createPeerConnectionSend(sdp, socketId, meetingID, userName) {
   //server peer
 
   const peer = new webrtc.RTCPeerConnection({
@@ -90,7 +91,7 @@ async function createPeerConnectionSend(sdp, socketId, meetingID) {
   console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu2")
   // store user stream 
   peer.ontrack = async (e) => {
-    await handleTrackEvent(e, socketId, meetingID);
+    await handleTrackEvent(e, socketId, meetingID, userName);
     // The rest of your code that depends on handleTrackEvent being completed
   };
   // make stp offer from the server
@@ -110,18 +111,19 @@ async function createPeerConnectionSend(sdp, socketId, meetingID) {
   });
   await peer.setLocalDescription(answer);
   const index = socketIdConnectionsSenders.findIndex((item) => socketId == item.socketId);
-    if (index !== -1) {
-      socketIdConnectionsSenders[index].pc = peer;
-      console.log("ggggggggggggggggggggggggggggggggggggggggggggggggggggggggg");
-    } else {
-      socketIdConnectionsSenders.push(
-        {
-          socketId: socketId,
-          pc: peer,
-        }
-      )
-    }
-  
+  if (index !== -1) {
+    socketIdConnectionsSenders[index].pc = peer;
+    console.log("ggggggggggggggggggggggggggggggggggggggggggggggggggggggggg");
+  } else {
+    socketIdConnectionsSenders.push(
+      {
+        socketId: socketId,
+        userName: userName,
+        pc: peer,
+      }
+    )
+  }
+
 
   const payload = peer.localDescription.sdp;
   return payload;
@@ -164,23 +166,23 @@ async function createPeerConnectionReceive(userSocketId, sdp, socketId) {//(my s
     'optional': [],
   });
   await peer.setLocalDescription(answer);
-  const i = socketIdConnectionsReceivers.findIndex((item) => socketId == item.socketId && userSocketId== item.userSocketId);
-    if (i !== -1) {
-      socketIdConnectionsReceivers[i].pc = peer;
-      socketIdConnectionsReceivers[i].senders = senders;
+  const i = socketIdConnectionsReceivers.findIndex((item) => socketId == item.socketId && userSocketId == item.userSocketId);
+  if (i !== -1) {
+    socketIdConnectionsReceivers[i].pc = peer;
+    socketIdConnectionsReceivers[i].senders = senders;
 
-      console.log("ggggggggggggggggggggggggggggggggggggggggggggggggggggggggg");
-    } else {
-      socketIdConnectionsReceivers.push(
-        {
-          userSocketId: userSocketId,
-          socketId: socketId,
-          pc: peer,
-          senders: senders,
-        }
-      )
-    }
-  
+    console.log("ggggggggggggggggggggggggggggggggggggggggggggggggggggggggg");
+  } else {
+    socketIdConnectionsReceivers.push(
+      {
+        userSocketId: userSocketId,
+        socketId: socketId,
+        pc: peer,
+        senders: senders,
+      }
+    )
+  }
+
   const payload = peer.localDescription.sdp;
   return payload;
 }
@@ -190,138 +192,179 @@ io.on("connection", (socket) => {// first time socket connection
   console.log(socket.id);
 
   socket.on("joinMeeting", async (msg) => {//when peer join a meeting
-    try{
-    console.log("ssssssssssssssssssssssssssssssssssssssssss");
-    console.log(msg.meetingID);
-    console.log(senderStreams)
-    console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu1")
-    const payload = await createPeerConnectionSend(msg.sdp, socket.id, msg.meetingID);//create peer connection between user and server
-    //extract all other peers socket ids
-    const listSocketId = senderStreams
-      .filter((e) => e.socketId != socket.id && e.meetingID == msg.meetingID)
-      .map((e) => e.socketId);
-    console.log(";;;;;;;;;;;;;;;;;;;;")
-    console.log(listSocketId)
-    console.log(";;;;;;;;;;;;;;;;;;;;")
-    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++(add new user peer as sender)")
-    console.log(socketIdConnectionsSenders)
-    console.log(socketIdConnectionsReceivers)
-    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-    // Send sdp answer to the sender
-    io.to(socket.id).emit("joined", {
-      socketId: socket.id,
-      sdp: payload,
-      sockets: listSocketId,
-    });
-    // Broadcast to other meeting participants about the new peer
-    socket.broadcast.to(msg.meetingID).emit("newPeerJoined", {
-      socketId: socket.id,
-    });
-    console.log("====================================")
-    console.log(senderStreams);
-    console.log("====================================")
-    socket.join(msg.meetingID);
-  }catch(err){
-    console.log(err)
-  }
+    try {
+      console.log("ssssssssssssssssssssssssssssssssssssssssss");
+      console.log(msg.meetingID);
+      console.log(senderStreams)
+      console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu1")
+      const payload = await createPeerConnectionSend(msg.sdp, socket.id, msg.meetingID, msg.userName);//create peer connection between user and server
+      //extract all other peers socket ids
+      /*const listSocketId = senderStreams
+        .filter((e) => e.socketId != socket.id && e.meetingID == msg.meetingID)
+        .map((e) => e.socketId);*/
+      const listSocketId = senderStreams
+        .filter((e) => e.socketId != socket.id && e.meetingID == msg.meetingID)
+        .map((e) => ({ socketId: e.socketId, userName: e.userName }));
+      console.log(";;;;;;;;;;;;;;;;;;;;")
+      console.log(listSocketId)
+      console.log(";;;;;;;;;;;;;;;;;;;;")
+      console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++(add new user peer as sender)")
+      console.log(socketIdConnectionsSenders)
+      console.log(socketIdConnectionsReceivers)
+      console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+      // Send sdp answer to the sender
+      io.to(socket.id).emit("joined", {
+        socketId: socket.id,
+        sdp: payload,
+        sockets: listSocketId,
+      });
+      // Broadcast to other meeting participants about the new peer
+      socket.broadcast.to(msg.meetingID).emit("newPeerJoined", {
+        socketId: socket.id,
+        userName: msg.userName
+      });
+      console.log("====================================")
+      console.log(senderStreams);
+      console.log("====================================")
+      socket.join(msg.meetingID);
+    } catch (err) {
+      console.log(err)
+    }
+  });
+  socket.on("refresh", async (msg) => {//when peer join a meeting
+    try {
+      console.log("ssssssssssssssssssssssssssssssssssssssssss");
+      console.log(msg.meetingID);
+      console.log(senderStreams)
+      console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu1")
+      senderPeerRefresh = socketIdConnectionsSenders.filter((e) => e.socketId == socket.id);
+      const payload = senderPeerRefresh.pc.localDescription.sdp;//create peer connection between user and server
+      console.log(payload);
+      //extract all other peers socket ids
+      const listSocketId = senderStreams
+        .filter((e) => e.socketId != socket.id && e.meetingID == msg.meetingID)
+        .map((e) => e.socketId);
+      console.log(";;;;;;;;;;;;;;;;;;;;")
+      console.log(listSocketId)
+      console.log(";;;;;;;;;;;;;;;;;;;;")
+      console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++(add new user peer as sender)")
+      console.log(socketIdConnectionsSenders)
+      console.log(socketIdConnectionsReceivers)
+      console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+      // Send sdp answer to the sender
+      io.to(socket.id).emit("joined", {
+        socketId: socket.id,
+        sdp: payload,
+        sockets: listSocketId,
+      });
+      // Broadcast to other meeting participants about the new peer
+      socket.broadcast.to(msg.meetingID).emit("newPeerJoined", {
+        socketId: socket.id,
+      });
+      console.log("====================================")
+      console.log(senderStreams);
+      console.log("====================================")
+      socket.join(msg.meetingID);
+    } catch (err) {
+      console.log(err)
+    }
   });
   // New user will receive a stream from the peer that got his id from nowPeerJoined
   socket.on("RECEIVE-CSS", async function (data) {
-    try{
-    console.log(data.socketId);
-    console.log("rrrrrrrrrrrrrrrrrrrrrrrrrr");
-    const payload = await createPeerConnectionReceive(socket.id, data.sdp, data.socketId);
-    console.log("*************************************************(add all other peers for the new peer as receivers) ")
-    console.log(socketIdConnectionsSenders)
-    console.log(socketIdConnectionsReceivers)
-
-    console.log("*************************************************")
-    // Send SDP answer to peers to listen to the user stream  
-    io.to(socket.id).emit("RECEIVE-SSC", {
-      socketId: data.socketId,
-      sdp: payload,
-    });
-  }catch(err){
-    console.log(err)
-  }
-  });
-  socket.on("leaveGroupMeeting", async (msg) => {
-    try{
-    console.log(msg.meetingID)
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-    // Broadcast to other meeting participants about the leaving peer
-
-
-
-    const leavingUser = senderStreams.find((e) => (e.socketId === socket.id && e.meetingID == msg.meetingID));
-    // Close the peer connection associated with the leaving user
-    if (leavingUser) {
-
-      for (const sr of socketIdConnectionsReceivers){
-        if (sr.userSocketId == socket.id) {
-          console.log("closed");
-          sr.pc.ontrack = async (e) => await e.streams[0].getTracks()
-            .forEach(async (track) => await track.stop());
-          /*for (let sender of sr.senders) {
-            await sr.pc.removeTrack(sender);
-          }*/
-          await sr.pc.close();
-
-        }
-
-        if (sr.socketId == socket.id) {
-          console.log("closed");
-          sr.pc.ontrack = async (e) => await e.streams[0].getTracks()
-            .forEach(async (track) => await track.stop());
-          /*for (let sender of sr.senders) {
-            await sr.pc.removeTrack(sender);
-          }*/
-          await sr.pc.close();
-
-        }
-      }
-      //socketIdConnectionsReceivers = socketIdConnectionsReceivers.filter((e) => e.userSocketId != socket.id);
-
-      //socketIdConnectionsReceivers = socketIdConnectionsReceivers.filter((e) => e.socketId != socket.id);
-      for (const ss of socketIdConnectionsSenders)
-       {
-        if (ss.socketId == socket.id) {
-          console.log("closed");
-          await ss.pc.close();
-
-        }
-
-
-      };
-      //socketIdConnectionsSenders = socketIdConnectionsSenders.filter((e) => e.socketId != socket.id);
-      // Stop and remove tracks from the stream
-      await senderStreams.find((e) => (e.socketId == socket.id && e.meetingID == msg.meetingID))?.stream?.getTracks().forEach(async (track) => { await track.stop();  });
-      // Remove the leaving user from senderStreams
-      senderStreams = senderStreams.filter((e) => e.socketId != socket.id);
-      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    try {
+      console.log(data.socketId);
+      console.log("rrrrrrrrrrrrrrrrrrrrrrrrrr");
+      const payload = await createPeerConnectionReceive(socket.id, data.sdp, data.socketId);
+      console.log("*************************************************(add all other peers for the new peer as receivers) ")
       console.log(socketIdConnectionsSenders)
       console.log(socketIdConnectionsReceivers)
-      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
-
-      socket.broadcast.to(msg.meetingID).emit("peerLeaved", {
-        socketId: socket.id,
+      console.log("*************************************************")
+      // Send SDP answer to peers to listen to the user stream  
+      io.to(socket.id).emit("RECEIVE-SSC", {
+        socketId: data.socketId,
+        sdp: payload,
       });
-
-
-      console.log("----------------------------------------------------");
-      console.log(socket.id);
-      console.log("----------------------------------------------------");
-      console.log(msg.meetingID);
-      console.log(socket.id);
-      console.log(senderStreams);
-      console.log(senderStreams[0]?.socketId);
-      console.log(senderStreams[0]?.stream.getTracks());
-      console.log(senderStreams[0]?.stream.getTracks().forEach(async (track) => { console.log(track) }));
+    } catch (err) {
+      console.log(err)
     }
-  }catch(err){
-    console.log(err)
-  }
+  });
+  socket.on("leaveGroupMeeting", async (msg) => {
+    try {
+      console.log(msg.meetingID)
+      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+      // Broadcast to other meeting participants about the leaving peer
+
+
+
+      const leavingUser = senderStreams.find((e) => (e.socketId === socket.id && e.meetingID == msg.meetingID));
+      // Close the peer connection associated with the leaving user
+      if (leavingUser) {
+
+        for (const sr of socketIdConnectionsReceivers) {
+          if (sr.userSocketId == socket.id) {
+            console.log("closed");
+            sr.pc.ontrack = async (e) => await e.streams[0].getTracks()
+              .forEach(async (track) => await track.stop());
+            /*for (let sender of sr.senders) {
+              await sr.pc.removeTrack(sender);
+            }*/
+            await sr.pc.close();
+
+          }
+
+          if (sr.socketId == socket.id) {
+            console.log("closed");
+            sr.pc.ontrack = async (e) => await e.streams[0].getTracks()
+              .forEach(async (track) => await track.stop());
+            /*for (let sender of sr.senders) {
+              await sr.pc.removeTrack(sender);
+            }*/
+            await sr.pc.close();
+
+          }
+        }
+        //socketIdConnectionsReceivers = socketIdConnectionsReceivers.filter((e) => e.userSocketId != socket.id);
+
+        //socketIdConnectionsReceivers = socketIdConnectionsReceivers.filter((e) => e.socketId != socket.id);
+        for (const ss of socketIdConnectionsSenders) {
+          if (ss.socketId == socket.id) {
+            console.log("closed");
+            await ss.pc.close();
+
+          }
+
+
+        };
+        //socketIdConnectionsSenders = socketIdConnectionsSenders.filter((e) => e.socketId != socket.id);
+        // Stop and remove tracks from the stream
+        await senderStreams.find((e) => (e.socketId == socket.id && e.meetingID == msg.meetingID))?.stream?.getTracks().forEach(async (track) => { await track.stop(); });
+        // Remove the leaving user from senderStreams
+        senderStreams = senderStreams.filter((e) => e.socketId != socket.id);
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        console.log(socketIdConnectionsSenders)
+        console.log(socketIdConnectionsReceivers)
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+
+        socket.broadcast.to(msg.meetingID).emit("peerLeaved", {
+          socketId: socket.id,
+        });
+
+
+        console.log("----------------------------------------------------");
+        console.log(socket.id);
+        console.log("----------------------------------------------------");
+        console.log(msg.meetingID);
+        console.log(socket.id);
+        console.log(senderStreams);
+        console.log(senderStreams[0]?.socketId);
+        console.log(senderStreams[0]?.stream.getTracks());
+        console.log(senderStreams[0]?.stream.getTracks().forEach(async (track) => { console.log(track) }));
+      }
+    } catch (err) {
+      console.log(err)
+    }
   });
   socket.on("/joinRoom", (msg) => {
     var status = socketAuthenticateToken(msg.token);// check token
@@ -815,8 +858,13 @@ io.on("connection", (socket) => {// first time socket connection
     }
   });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", async () => {
     //sockets leave all the channels they were part of automatically
+    socketIdConnectionsReceivers = socketIdConnectionsReceivers.filter((e) => e.userSocketId != socket.id);
+
+    socketIdConnectionsReceivers = socketIdConnectionsReceivers.filter((e) => e.socketId != socket.id);
+    socketIdConnectionsSenders = socketIdConnectionsSenders.filter((e) => e.socketId != socket.id);
+    await senderStreams.find((e) => (e.socketId == socket.id))?.stream?.getTracks().forEach(async (track) => { await track.stop(); });
     senderStreams = senderStreams.filter((e) => e.socketId != socket.id);
     groupUsers = groupUsers.filter(u => u.id != socket.id)
     const username = Object.keys(socketUsernameMap).find(

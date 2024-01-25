@@ -89,8 +89,24 @@ exports.createGroupMeeting = async (req, res, next) => {
                     }
                 });
                 if (isMeetingExist != null) {
-                    return res.status(406).json({
-                        message: 'change meeting id',
+                    await groupMeeting.update(
+                        {
+                            users: 0,
+                        },
+                        {
+                            where: {
+                                groupId: groupId,
+                                meetingId: meetingId,
+                            }
+                        }
+                    )
+                    await groupMeeting.create({
+                        groupId: groupId,
+                        meetingId: meetingId,
+                        users: 1,
+                    });
+                    return res.status(200).json({
+                        message: 'meeting created',
                     });
                 } else {
                     await groupMeeting.create({
@@ -112,8 +128,24 @@ exports.createGroupMeeting = async (req, res, next) => {
                         }
                     });
                     if (isMeetingExist != null) {
-                        return res.status(406).json({
-                            message: 'change meeting id',
+                        await groupMeeting.update(
+                            {
+                                users: 0,
+                            },
+                            {
+                                where: {
+                                    groupId: groupId,
+                                    meetingId: meetingId,
+                                }
+                            }
+                        )
+                        await groupMeeting.create({
+                            groupId: groupId,
+                            meetingId: meetingId,
+                            users: 1,
+                        });
+                        return res.status(200).json({
+                            message: 'meeting created',
                         });
                     } else {
                         await groupMeeting.create({
@@ -179,29 +211,42 @@ exports.joinGroupMeeting = async (req, res, next) => {
                 }
             });
             if (isAdmin != null) {
-                var isMeetingExist = await groupMeeting.findOne({
+                var isMeetingExist = await groupMeeting.findAll({
                     where: {
                         groupId: groupId,
                         meetingId: meetingId,
-                    }
+                        users: {
+                            [Op.ne]: 0 // meeting did not end
+                        }
+                    },
+                    order: [['createdAt', 'DESC']],
+                    limit: 1
                 });
-                if (isMeetingExist != null) {
-                    if (isMeetingExist.users <= 0) {
-                        return res.status(500).json({
-                            message: 'meeting ended',
-                        });
-                    }
-                    var meetingUsers = isMeetingExist.users + 1;
+                if (isMeetingExist[0] != null && isMeetingExist != [] && isMeetingExist.length != 0) {
+                    var meetingUsers = isMeetingExist[0].users + 1;
                     await groupMeeting.update({ users: meetingUsers }, {
                         where: {
-                            groupId: groupId,
-                            meetingId: meetingId,
+                            id: isMeetingExist[0].id,
                         }
                     })
                     return res.status(200).json({
                         message: 'joined',
                     });
                 } else {
+                    var isMeetingEnded = await groupMeeting.findAll({
+                        where: {
+                            groupId: groupId,
+                            meetingId: meetingId,
+                            users: 0
+                        },
+                        order: [['createdAt', 'DESC']],
+                        limit: 1,
+                    });
+                    if (isMeetingEnded != null && isMeetingEnded != [] && isMeetingEnded.length != 0) {
+                        return res.status(500).json({
+                            message: 'meeting ended',
+                        });
+                    }
                     return res.status(500).json({
                         message: 'invalid meeting id',
                     });
@@ -209,29 +254,42 @@ exports.joinGroupMeeting = async (req, res, next) => {
             } else {
                 const adminGroupsAndChildren = await getUserAdminGroupsAndChildren(userUsername);
                 if (adminGroupsAndChildren.includes(parseInt(groupId))) {
-                    var isMeetingExist = await groupMeeting.findOne({
+                    var isMeetingExist = await groupMeeting.findAll({
                         where: {
                             groupId: groupId,
                             meetingId: meetingId,
-                        }
+                            users: {
+                                [Op.ne]: 0 // meeting did not end
+                            }
+                        },
+                        order: [['createdAt', 'DESC']],
+                        limit: 1
                     });
-                    if (isMeetingExist != null) {
-                        if (isMeetingExist.users <= 0) {
-                            return res.status(500).json({
-                                message: 'meeting ended',
-                            });
-                        }
-                        var meetingUsers = isMeetingExist.users + 1;
+                    if (isMeetingExist[0] != null && isMeetingExist != [] && isMeetingExist.length != 0) {
+                        var meetingUsers = isMeetingExist[0].users + 1;
                         await groupMeeting.update({ users: meetingUsers }, {
                             where: {
-                                groupId: groupId,
-                                meetingId: meetingId,
+                                id: isMeetingExist[0].id,
                             }
                         })
                         return res.status(200).json({
                             message: 'joined',
                         });
                     } else {
+                        var isMeetingEnded = await groupMeeting.findAll({
+                            where: {
+                                groupId: groupId,
+                                meetingId: meetingId,
+                                users: 0
+                            },
+                            order: [['createdAt', 'DESC']],
+                            limit: 1,
+                        });
+                        if (isMeetingEnded != null && isMeetingEnded != [] && isMeetingEnded.length != 0) {
+                            return res.status(500).json({
+                                message: 'meeting ended',
+                            });
+                        }
                         return res.status(500).json({
                             message: 'invalid meeting id',
                         });
@@ -248,29 +306,42 @@ exports.joinGroupMeeting = async (req, res, next) => {
                             body: req.body
                         });
                     }
-                    var isMeetingExist = await groupMeeting.findOne({
+                    var isMeetingExist = await groupMeeting.findAll({
                         where: {
                             groupId: groupId,
                             meetingId: meetingId,
-                        }
+                            users: {
+                                [Op.ne]: 0 // meeting did not end
+                            }
+                        },
+                        order: [['createdAt', 'DESC']],
+                        limit: 1
                     });
-                    if (isMeetingExist != null) {
-                        if (isMeetingExist.users <= 0) {
-                            return res.status(500).json({
-                                message: 'meeting ended',
-                            });
-                        }
-                        var meetingUsers = isMeetingExist.users + 1;
+                    if (isMeetingExist[0] != null && isMeetingExist != [] && isMeetingExist.length != 0) {
+                        var meetingUsers = isMeetingExist[0].users + 1;
                         await groupMeeting.update({ users: meetingUsers }, {
                             where: {
-                                groupId: groupId,
-                                meetingId: meetingId,
+                                id: isMeetingExist[0].id,
                             }
                         })
                         return res.status(200).json({
                             message: 'joined',
                         });
                     } else {
+                        var isMeetingEnded = await groupMeeting.findAll({
+                            where: {
+                                groupId: groupId,
+                                meetingId: meetingId,
+                                users: 0
+                            },
+                            order: [['createdAt', 'DESC']],
+                            limit: 1,
+                        });
+                        if (isMeetingEnded != null && isMeetingEnded != [] && isMeetingEnded.length != 0) {
+                            return res.status(500).json({
+                                message: 'meeting ended',
+                            });
+                        }
                         return res.status(500).json({
                             message: 'invalid meeting id',
                         });
@@ -324,29 +395,42 @@ exports.leaveGroupMeeting = async (req, res, next) => {
                 }
             });
             if (isAdmin != null) {
-                var isMeetingExist = await groupMeeting.findOne({
+                var isMeetingExist = await groupMeeting.findAll({
                     where: {
                         groupId: groupId,
                         meetingId: meetingId,
-                    }
+                        users: {
+                            [Op.ne]: 0 // meeting did not end
+                        }
+                    },
+                    order: [['createdAt', 'DESC']],
+                    limit: 1
                 });
-                if (isMeetingExist != null) {
-                    if (isMeetingExist.users <= 0) {
-                        return res.status(500).json({
-                            message: 'meeting ended',
-                        });
-                    }
-                    var meetingUsers = isMeetingExist.users - 1;
+                if (isMeetingExist[0] != null && isMeetingExist != [] && isMeetingExist.length != 0) {
+                    var meetingUsers = isMeetingExist[0].users - 1;
                     await groupMeeting.update({ users: meetingUsers }, {
                         where: {
-                            groupId: groupId,
-                            meetingId: meetingId,
+                            id: isMeetingExist[0].id,
                         }
                     })
                     return res.status(200).json({
                         message: 'leaved',
                     });
                 } else {
+                    var isMeetingEnded = await groupMeeting.findAll({
+                        where: {
+                            groupId: groupId,
+                            meetingId: meetingId,
+                            users: 0
+                        },
+                        order: [['createdAt', 'DESC']],
+                        limit: 1,
+                    });
+                    if (isMeetingEnded != null && isMeetingEnded != [] && isMeetingEnded.length != 0) {
+                        return res.status(500).json({
+                            message: 'meeting ended',
+                        });
+                    }
                     return res.status(500).json({
                         message: 'invalid meeting id',
                     });
@@ -354,68 +438,83 @@ exports.leaveGroupMeeting = async (req, res, next) => {
             } else {
                 const adminGroupsAndChildren = await getUserAdminGroupsAndChildren(userUsername);
                 if (adminGroupsAndChildren.includes(parseInt(groupId))) {
-                    var isMeetingExist = await groupMeeting.findOne({
+                    var isMeetingExist = await groupMeeting.findAll({
                         where: {
                             groupId: groupId,
                             meetingId: meetingId,
-                        }
+                            users: {
+                                [Op.ne]: 0 // meeting did not end
+                            }
+                        },
+                        order: [['createdAt', 'DESC']],
+                        limit: 1
                     });
-                    if (isMeetingExist != null) {
-                        if (isMeetingExist.users <= 0) {
-                            return res.status(500).json({
-                                message: 'meeting ended',
-                            });
-                        }
-                        var meetingUsers = isMeetingExist.users - 1;
+                    if (isMeetingExist[0] != null && isMeetingExist != [] && isMeetingExist.length != 0) {
+                        var meetingUsers = isMeetingExist[0].users - 1;
                         await groupMeeting.update({ users: meetingUsers }, {
                             where: {
-                                groupId: groupId,
-                                meetingId: meetingId,
+                                id: isMeetingExist[0].id,
                             }
                         })
                         return res.status(200).json({
                             message: 'leaved',
                         });
                     } else {
+                        var isMeetingEnded = await groupMeeting.findAll({
+                            where: {
+                                groupId: groupId,
+                                meetingId: meetingId,
+                                users: 0
+                            },
+                            order: [['createdAt', 'DESC']],
+                            limit: 1,
+                        });
+                        if (isMeetingEnded != null && isMeetingEnded != [] && isMeetingEnded.length != 0) {
+                            return res.status(500).json({
+                                message: 'meeting ended',
+                            });
+                        }
                         return res.status(500).json({
                             message: 'invalid meeting id',
                         });
                     }
                 } else {
-                    var groupMembers = await groupMember.findOne({
-                        where: {
-                            username: userUsername
-                        }
-                    })
-                    if (groupMembers == null) {
-                        return res.status(500).json({
-                            message: 'you are not allowed to join this meeting ',
-                            body: req.body
-                        });
-                    }
-                    var isMeetingExist = await groupMeeting.findOne({
+                    var isMeetingExist = await groupMeeting.findAll({
                         where: {
                             groupId: groupId,
                             meetingId: meetingId,
-                        }
+                            users: {
+                                [Op.ne]: 0 // meeting did not end
+                            }
+                        },
+                        order: [['createdAt', 'DESC']],
+                        limit: 1
                     });
-                    if (isMeetingExist != null) {
-                        if (isMeetingExist.users <= 0) {
-                            return res.status(500).json({
-                                message: 'meeting ended',
-                            });
-                        }
-                        var meetingUsers = isMeetingExist.users - 1;
+                    if (isMeetingExist[0] != null && isMeetingExist != [] && isMeetingExist.length != 0) {
+                        var meetingUsers = isMeetingExist[0].users - 1;
                         await groupMeeting.update({ users: meetingUsers }, {
                             where: {
-                                groupId: groupId,
-                                meetingId: meetingId,
+                                id: isMeetingExist[0].id,
                             }
                         })
                         return res.status(200).json({
                             message: 'leaved',
                         });
                     } else {
+                        var isMeetingEnded = await groupMeeting.findAll({
+                            where: {
+                                groupId: groupId,
+                                meetingId: meetingId,
+                                users: 0
+                            },
+                            order: [['createdAt', 'DESC']],
+                            limit: 1,
+                        });
+                        if (isMeetingEnded != null && isMeetingEnded != [] && isMeetingEnded.length != 0) {
+                            return res.status(500).json({
+                                message: 'meeting ended',
+                            });
+                        }
                         return res.status(500).json({
                             message: 'invalid meeting id',
                         });
