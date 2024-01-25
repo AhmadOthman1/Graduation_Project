@@ -25,22 +25,21 @@ class _ChatWebMainPageState extends State<ChatWebMainPage> {
 
   Future<void> loadData() async {
     // Simulate an asynchronous data fetch operation
-    await Future.delayed(Duration(seconds: 2));
+    //await Future.delayed(Duration(seconds: 2));
 
     // Update the data and set isLoading to false
-    setState(() {
-      controller.goToChat();
-      controller.localColleagues.assignAll(controller.MycolleaguesWeb);
-      controller.colleaguesPreviousmessages
-          .assignAll(controller.colleaguesPreviousmessagesWed);
-      isLoading = false;
-    });
+
+    await controller.goToChat();
+    controller.localColleagues.assignAll(controller.MycolleaguesWeb);
+    controller.colleaguesPreviousmessages
+        .assignAll(controller.colleaguesPreviousmessagesWed);
+    isLoading = false;
+    setState(()  {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: isLoading
           ? Center(
               child: CircularProgressIndicator(),
@@ -54,8 +53,8 @@ class _ChatWebMainPageState extends State<ChatWebMainPage> {
                     children: [
                       const Text(
                         "Active colleagues",
-                        style:
-                            TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       const SizedBox(height: 20),
                       SizedBox(
@@ -85,11 +84,10 @@ class _ChatWebMainPageState extends State<ChatWebMainPage> {
                                           children: [
                                             CircleAvatar(
                                               radius: 30,
-                                              backgroundColor:
-                                                  Colors.grey[200],
+                                              backgroundColor: Colors.grey[200],
                                               backgroundImage: (controller
-                                                          .localColleagues[
-                                                              index]["photo"] !=
+                                                              .localColleagues[
+                                                          index]["photo"] !=
                                                       null)
                                                   ? Image.network(
                                                           "$urlStarter/${controller.localColleagues[index]['photo']}")
@@ -125,8 +123,8 @@ class _ChatWebMainPageState extends State<ChatWebMainPage> {
                       ),
                       const Text(
                         "Conversations",
-                        style:
-                            TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                     ],
                   ),
@@ -147,9 +145,9 @@ class _ChatWebMainPageState extends State<ChatWebMainPage> {
                           leading: CircleAvatar(
                             radius: 30,
                             backgroundImage: (controller
-                                        .colleaguesPreviousmessages[index]
-                                    ["photo"] !=
-                                null)
+                                            .colleaguesPreviousmessages[index]
+                                        ["photo"] !=
+                                    null)
                                 ? Image.network(
                                         "$urlStarter/${controller.colleaguesPreviousmessages[index]['photo']}")
                                     .image
@@ -159,7 +157,6 @@ class _ChatWebMainPageState extends State<ChatWebMainPage> {
                               .colleaguesPreviousmessages[index]['name']),
                           subtitle: Text(
                               "@${controller.colleaguesPreviousmessages[index]['username']}"),
-                          
                         ),
                       );
                     },

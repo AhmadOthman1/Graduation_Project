@@ -36,16 +36,14 @@ class ChangePassword extends StatelessWidget {
             Expanded(
               flex: kIsWeb ? 5 : 0,
               child: kIsWeb
-                  ? SingleChildScrollView(
+                  ? Container(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          AspectRatio(
-                            aspectRatio: 1.0,
-                            child: Image(
-                              image: AssetImage('images/login.png'),
-                              fit: BoxFit.cover,
-                            ),
+                          Image(
+                            image: AssetImage('images/forgotpassword.png'),
+                            width: 500,
+                            height: 500,
                           ),
                         ],
                       ),
@@ -116,7 +114,7 @@ class ChangePassword extends StatelessWidget {
                                     ),
                                   )
                                 : Expanded(
-                                  child: Container(
+                                    child: Container(
                                       width: 320,
                                       child: TextFormField(
                                         obscureText:
@@ -132,12 +130,14 @@ class ChangePassword extends StatelessWidget {
                                               const EdgeInsets.symmetric(
                                                   vertical: 15, horizontal: 30),
                                           label: Container(
-                                              margin: const EdgeInsets.symmetric(
-                                                  horizontal: 9),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 9),
                                               child: const Text("Password")),
                                           suffixIcon: IconButton(
                                             icon: Icon(
-                                              controller.obscureOldPassword.value
+                                              controller
+                                                      .obscureOldPassword.value
                                                   ? Icons.visibility
                                                   : Icons.visibility_off,
                                             ),
@@ -159,7 +159,7 @@ class ChangePassword extends StatelessWidget {
                                         },
                                       ),
                                     ),
-                                ),
+                                  ),
                             if (kIsWeb)
                               Expanded(
                                 flex: 1,
@@ -221,7 +221,7 @@ class ChangePassword extends StatelessWidget {
                                     ),
                                   )
                                 : Expanded(
-                                  child: Container(
+                                    child: Container(
                                       width: 320,
                                       child: TextFormField(
                                         obscureText:
@@ -237,12 +237,14 @@ class ChangePassword extends StatelessWidget {
                                               const EdgeInsets.symmetric(
                                                   vertical: 15, horizontal: 30),
                                           label: Container(
-                                              margin: const EdgeInsets.symmetric(
-                                                  horizontal: 9),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 9),
                                               child: const Text("Password")),
                                           suffixIcon: IconButton(
                                             icon: Icon(
-                                              controller.obscureNewPassword.value
+                                              controller
+                                                      .obscureNewPassword.value
                                                   ? Icons.visibility
                                                   : Icons.visibility_off,
                                             ),
@@ -263,7 +265,7 @@ class ChangePassword extends StatelessWidget {
                                         },
                                       ),
                                     ),
-                                ),
+                                  ),
                             if (kIsWeb)
                               if (kIsWeb)
                                 Expanded(
@@ -327,7 +329,7 @@ class ChangePassword extends StatelessWidget {
                                     ),
                                   )
                                 : Expanded(
-                                  child: Container(
+                                    child: Container(
                                       width: 320,
                                       child: TextFormField(
                                         obscureText: controller
@@ -343,8 +345,9 @@ class ChangePassword extends StatelessWidget {
                                               const EdgeInsets.symmetric(
                                                   vertical: 15, horizontal: 30),
                                           label: Container(
-                                              margin: const EdgeInsets.symmetric(
-                                                  horizontal: 9),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 9),
                                               child: const Text("Password")),
                                           suffixIcon: IconButton(
                                             icon: Icon(
@@ -367,12 +370,13 @@ class ChangePassword extends StatelessWidget {
                                         },
                                         validator: (value) {
                                           _newPassword = value;
-                                  
-                                          return controller.passwordsMatch(value);
+
+                                          return controller
+                                              .passwordsMatch(value);
                                         },
                                       ),
                                     ),
-                                ),
+                                  ),
                             if (kIsWeb)
                               Expanded(
                                 flex: 1,
@@ -418,7 +422,7 @@ class ChangePassword extends StatelessWidget {
                                 ),
                               )
                             : Expanded(
-                              child: Container(
+                                child: Container(
                                   width: 320,
                                   child: ButtonAuth(
                                     text: "Save",
@@ -431,7 +435,8 @@ class ChangePassword extends StatelessWidget {
                                         (message != null)
                                             ? showDialog(
                                                 context: context,
-                                                builder: (BuildContext context) {
+                                                builder:
+                                                    (BuildContext context) {
                                                   return CustomAlertDialog(
                                                     title: 'Error',
                                                     icon: Icons.error,
@@ -447,7 +452,7 @@ class ChangePassword extends StatelessWidget {
                                     },
                                   ),
                                 ),
-                            ),
+                              ),
                         if (kIsWeb)
                           Expanded(
                             flex: 1,
