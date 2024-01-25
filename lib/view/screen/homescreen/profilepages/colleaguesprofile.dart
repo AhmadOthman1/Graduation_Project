@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/ColleaguesProfile_controller.dart';
@@ -92,18 +93,45 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
               delegate: SliverChildListDelegate(
                 [
                   _buildProfileInfo(context),
-                  _Deatalis("Details"),
-                  _buildDivider(10),
-                  _buildButtonsRow(),
-                  _buildDivider(10),
-                  _Deatalis("Posts"),
+                  if (!kIsWeb) _Deatalis("Details"),
+                  if (!kIsWeb) _buildDivider(10),
+                  if (!kIsWeb) _buildButtonsRow(),
+                  if (!kIsWeb) _buildDivider(10),
+                  if (!kIsWeb) _Deatalis("Posts"),
                   // Post(),
                 ],
               ),
             )
           ];
         },
-        body: Post(username: widget.userData[0]["username"]),
+        body: kIsWeb
+            ? Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          _Deatalis("Details"),
+                          _buildDivider(10),
+                          _buildButtonsRow(),
+                          _buildDivider(10),
+                          // _buildDetails("Posts"),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 4,
+                    child: Post(username: widget.userData[0]["username"]),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(),
+                  ),
+                ],
+              )
+            : Post(username: widget.userData[0]["username"]),
       ),
     );
   }
@@ -146,55 +174,57 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(width: 3,),
+              SizedBox(
+                width: 3,
+              ),
               Text(
                 '${widget.userData[0]["firstname"]} ${widget.userData[0]["lastname"]}',
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               InkWell(
-                      onTap: () {
-                        controller.goToChatMessage();
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 5, left: 3),
-                        child: const Icon(
-                          Icons.message_rounded,
-                          size: 30,
-                        ),
-                      ),
-                    ),
-
-                    PopupMenuButton<String>(
-                        icon: const Icon(Icons.more_vert),
-                        onSelected: (String option) async {
-                          var message = await controller.onMoreOptionSelected(option,widget.userData[0]["username"],);
-                          (message != null)
-                        ? showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return CustomAlertDialog(
-                                title: 'Alert',
-                                icon: Icons.error,
-                                text: message,
-                                buttonText: 'OK',
-                                
-                              );
-                            },
-                          )
-                        : null;
-                        setState(() {
-                          
-                        });
-                        },
-                        itemBuilder: (BuildContext context) {
-                            return controller.moreOptions.map((String option) {
-                              return PopupMenuItem<String>(
-                                value: option,
-                                child: Text(option),
-                              );
-                            }).toList();
-                        },
-                      ),
+                onTap: () {
+                  controller.goToChatMessage();
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 5, left: 3),
+                  child: const Icon(
+                    Icons.message_rounded,
+                    size: 30,
+                  ),
+                ),
+              ),
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert),
+                onSelected: (String option) async {
+                  var message = await controller.onMoreOptionSelected(
+                    option,
+                    widget.userData[0]["username"],
+                  );
+                  (message != null)
+                      ? showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CustomAlertDialog(
+                              title: 'Alert',
+                              icon: Icons.error,
+                              text: message,
+                              buttonText: 'OK',
+                            );
+                          },
+                        )
+                      : null;
+                  setState(() {});
+                },
+                itemBuilder: (BuildContext context) {
+                  return controller.moreOptions.map((String option) {
+                    return PopupMenuItem<String>(
+                      value: option,
+                      child: Text(option),
+                    );
+                  }).toList();
+                },
+              ),
             ],
           ),
           Text(
@@ -219,14 +249,21 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildInfoItem('Posts', widget.userData[0]['postsCount'].toString()),
-              _buildInfoItem('Connections', widget.userData[0]['connectionsCount'].toString()),
+              _buildInfoItem(
+                  'Posts', widget.userData[0]['postsCount'].toString()),
+              _buildInfoItem('Connections',
+                  widget.userData[0]['connectionsCount'].toString()),
             ],
           ),
           GetBuilder<ColleaguesProfileControllerImp>(
             builder: (controller) => Container(
               margin: const EdgeInsets.only(top: 10),
               child: Row(children: [
+                if (kIsWeb)
+                  Expanded(
+                    flex: 1,
+                    child: Container(),
+                  ),
                 Expanded(
                   flex: 1,
                   child: MaterialButton(
@@ -422,6 +459,11 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
                     ),
                   ),
                 ),
+                if (kIsWeb)
+                  Expanded(
+                    flex: 1,
+                    child: Container(),
+                  ),
               ]),
             ),
           )
@@ -478,7 +520,7 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
           child: Container(
             height: 35,
             padding: const EdgeInsets.only(left: 10),
-            child: const Row(
+            child: Row(
               children: [
                 Icon(Icons.more_horiz),
                 SizedBox(width: 10),
@@ -487,7 +529,8 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),
-                Icon(Icons.arrow_forward, size: 30),
+                if (!kIsWeb) // Check if not running on web
+                  Icon(Icons.arrow_forward, size: 30),
               ],
             ),
           ),
@@ -495,6 +538,4 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
       ],
     );
   }
-
-  
 }

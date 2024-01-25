@@ -191,12 +191,12 @@ class PostControllerImp extends PostController {
       return resbody['message'];
     } else if (res.statusCode == 200) {
       var data = jsonDecode(res.body);
-      print(data['posts']);
+     // print(data['posts']);
       posts.addAll(List<Map<String, dynamic>>.from(data['posts']));
 
-      print("555555555555555555");
-      print(data['posts']);
-      print("555555555555555555");
+     // print("555555555555555555");
+     // print(data['posts']);
+     // print("555555555555555555");
       isLoading = false;
     }
     return;

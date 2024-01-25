@@ -65,7 +65,7 @@ class EditGroupSettingSettings extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
-            "Profile Settings",
+            "Group Settings",
             style: TextStyle(color: Colors.black),
           ),
           backgroundColor: Colors.white,
@@ -85,41 +85,54 @@ class EditGroupSettingSettings extends StatelessWidget {
                       Obx(
                         () => Row(
                           children: [
-                            Container(
-                              width: 300,
-                              margin: const EdgeInsets.only(right: 10),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: TextFormField(
-                                  controller: _controller1,
-                                  enabled: controller
-                                      .isTextFieldEnabledGroupId.value,
-                                  onChanged: (value) {
-                                    controller.textFieldText.value = value;
-                                  },
-                                  validator: (Value) {
-                                    return validInput(
-                                        Value!, 50, 1, "username");
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: controller.textFieldText.value,
-                                    hintStyle: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.always,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    label: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 9),
-                                        child: const Text("Group id")),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
+                             if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                width: 300,
+                                margin: const EdgeInsets.only(right: 10),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextFormField(
+                                    controller: _controller1,
+                                    enabled: controller
+                                        .isTextFieldEnabledGroupId.value,
+                                    onChanged: (value) {
+                                      controller.textFieldText.value = value;
+                                    },
+                                    validator: (Value) {
+                                      return validInput(
+                                          Value!, 50, 1, "username");
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: controller.textFieldText.value,
+                                      hintStyle: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      contentPadding: const EdgeInsets.symmetric(
+                                          vertical: 15, horizontal: 30),
+                                      label: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 9),
+                                          child: const Text("Group id")),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
+                            ),
+                             if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
                             ),
                           ],
                         ),
@@ -129,41 +142,54 @@ class EditGroupSettingSettings extends StatelessWidget {
                       Obx(
                         () => Row(
                           children: [
-                            Container(
-                              width: 300,
-                              margin: const EdgeInsets.only(right: 10),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: TextFormField(
-                                  controller: _controller4,
-                                  enabled: controller
-                                      .isTextFieldEnabledParentGroup.value,
-                                  onChanged: (value) {
-                                    controller.parentNode.value  = value;
-                                  },
-                                  validator: (Value) {
-                                    return validInput(
-                                        Value!, 50, 1, "username");
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: controller.parentNode.value ,
-                                    hintStyle: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.always,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    label: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 9),
-                                        child: const Text("Parent Group")),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
+                             if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                width: 300,
+                                margin: const EdgeInsets.only(right: 10),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextFormField(
+                                    controller: _controller4,
+                                    enabled: controller
+                                        .isTextFieldEnabledParentGroup.value,
+                                    onChanged: (value) {
+                                      controller.parentNode.value  = value;
+                                    },
+                                    validator: (Value) {
+                                      return validInput(
+                                          Value!, 50, 1, "username");
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: controller.parentNode.value ,
+                                      hintStyle: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      contentPadding: const EdgeInsets.symmetric(
+                                          vertical: 15, horizontal: 30),
+                                      label: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 9),
+                                          child: const Text("Parent Group")),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
+                            ),
+                             if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
                             ),
                           ],
                         ),
@@ -175,38 +201,46 @@ class EditGroupSettingSettings extends StatelessWidget {
                       Obx(
                         () => Row(
                           children: [
-                            Container(
-                              width: 300,
-                              margin: const EdgeInsets.only(right: 10),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: TextFormField(
-                                  maxLines: 6,
-                                  controller: _controller2,
-                                  enabled: controller
-                                      .isTextFieldEnabledDescription.value,
-                                  onChanged: (text) {
-                                    controller.textFieldText2.value = text;
-                                  },
-                                  validator: (Value) {
-                                    return validInput(
-                                        Value!, 50, 1, "username");
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: controller.textFieldText2.value,
-                                    hintStyle: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.always,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    label: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 9),
-                                        child: const Text("Description")),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
+                             if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                width: 300,
+                                margin: const EdgeInsets.only(right: 10),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextFormField(
+                                    maxLines: 6,
+                                    controller: _controller2,
+                                    enabled: controller
+                                        .isTextFieldEnabledDescription.value,
+                                    onChanged: (text) {
+                                      controller.textFieldText2.value = text;
+                                    },
+                                    validator: (Value) {
+                                      return validInput(
+                                          Value!, 50, 1, "username");
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: controller.textFieldText2.value,
+                                      hintStyle: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      contentPadding: const EdgeInsets.symmetric(
+                                          vertical: 15, horizontal: 30),
+                                      label: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 9),
+                                          child: const Text("Description")),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -225,7 +259,12 @@ class EditGroupSettingSettings extends StatelessWidget {
                                   controller.isTextFieldEnabledDescription.value
                                       ? Colors.blue
                                       : Colors.grey,
-                            )
+                            ),
+                             if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
                           ],
                         ),
                       ),
@@ -235,36 +274,44 @@ class EditGroupSettingSettings extends StatelessWidget {
                       Obx(
                         () => Row(
                           children: [
-                            Container(
-                              width: 300,
-                              margin: const EdgeInsets.only(right: 10),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: TextFormField(
-                                  controller: _controller3,
-                                  enabled: controller
-                                      .isTextFieldEnabledGroupName.value,
-                                  onChanged: (text) {
-                                    controller.textFieldText3.value = text;
-                                  },
-                                  validator: (Value) {
-                                    return validInput(Value!, 50, 1, "length");
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: controller.textFieldText3.value,
-                                    hintStyle: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.always,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    label: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 9),
-                                        child: const Text("Group Name")),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
+                             if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                width: 300,
+                                margin: const EdgeInsets.only(right: 10),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextFormField(
+                                    controller: _controller3,
+                                    enabled: controller
+                                        .isTextFieldEnabledGroupName.value,
+                                    onChanged: (text) {
+                                      controller.textFieldText3.value = text;
+                                    },
+                                    validator: (Value) {
+                                      return validInput(Value!, 50, 1, "length");
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: controller.textFieldText3.value,
+                                      hintStyle: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                      contentPadding: const EdgeInsets.symmetric(
+                                          vertical: 15, horizontal: 30),
+                                      label: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 9),
+                                          child: const Text("Group Name")),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -283,7 +330,12 @@ class EditGroupSettingSettings extends StatelessWidget {
                                   controller.isTextFieldEnabledGroupName.value
                                       ? Colors.blue
                                       : Colors.grey,
-                            )
+                            ),
+                             if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
                           ],
                         ),
                       ),
@@ -291,35 +343,43 @@ class EditGroupSettingSettings extends StatelessWidget {
                       Obx(
                         () => Row(
                           children: [
-                            Container(
-                              width: 300,
-                              margin: const EdgeInsets.only(right: 10),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.only(left: 10),
-                                    child: Text(
-                                      'Member Can Send Messages',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold
+                             if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                width: 300,
+                                margin: const EdgeInsets.only(right: 10),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(left: 10),
+                                      child: Text(
+                                        'Member Can Send Messages',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(width: 50),
-                                  Checkbox(
-                                    value: controller
-                                        .isTextFieldValueCheckBox.value,
-                                    onChanged: controller
-                                            .isTextFieldEnabledCheckBox.value
-                                        ? (value) {
-                                            controller.isTextFieldValueCheckBox
-                                                .toggle();
-                                            controller.update();
-                                          }
-                                        : null,
-                                  ),
-                                ],
+                                    SizedBox(width: 20),
+                                    Checkbox(
+                                      value: controller
+                                          .isTextFieldValueCheckBox.value,
+                                      onChanged: controller
+                                              .isTextFieldEnabledCheckBox.value
+                                          ? (value) {
+                                              controller.isTextFieldValueCheckBox
+                                                  .toggle();
+                                              controller.update();
+                                            }
+                                          : null,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             IconButton(
@@ -332,26 +392,48 @@ class EditGroupSettingSettings extends StatelessWidget {
                               color: controller.isTextFieldEnabledCheckBox.value
                                   ? Colors.blue
                                   : Colors.grey,
-                            )
+                            ),
+                             if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
                           ],
                         ),
                       ),
 
                       //////////////////
-                      const SizedBox(height: 180),
+                      const SizedBox(height: 120),
 
-                      MaterialButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 13, horizontal: 135),
-                        onPressed: () async {
-                          await controller.postSaveChanges(groupId);
-                          
-                        },
-                        color: const Color.fromARGB(255, 85, 191, 218),
-                        textColor: Colors.white,
-                        child: const Text("Save Changes"),
+                      Row(
+                        children: [
+                           if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
+                          Expanded(
+                            flex: 1,
+                            child: MaterialButton(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 13, horizontal: 135),
+                              onPressed: () async {
+                                await controller.postSaveChanges(groupId);
+                                
+                              },
+                              color: const Color.fromARGB(255, 85, 191, 218),
+                              textColor: Colors.white,
+                              child: const Text("Save Changes"),
+                            ),
+                          ),
+                           if (kIsWeb)
+                            Expanded(
+                              flex: 1,
+                              child: Container(),
+                            ),
+                        ],
                       ),
                     ],
                   ),

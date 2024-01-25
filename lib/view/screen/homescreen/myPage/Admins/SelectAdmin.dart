@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/myPage_Controller/Admin_controller/Page_selectAdmin_Controller.dart';
@@ -46,81 +47,235 @@ class _AddAdminState extends State<AddAdmin> {
               key: formKey,
               child: Column(
                 children: [
-                  TextFormField(
-                    controller: _usernameController,
-                    decoration: InputDecoration(
-                      hintText: "Enter Username",
-                      hintStyle: const TextStyle(
-                        fontSize: 14,
-                      ),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 30),
-                      labelText: "Username",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a Username';
-                      }
-                      return null;
-                    },
+                  Row(
+                    children: [
+                      if (kIsWeb)
+                        Expanded(
+                          flex: 2,
+                          child: Container(),
+                        ),
+                      kIsWeb
+                          ? Expanded(
+                              flex: 2,
+                              child: TextFormField(
+                                controller: _usernameController,
+                                decoration: InputDecoration(
+                                  hintText: "Enter Username",
+                                  hintStyle: const TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.always,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 15, horizontal: 30),
+                                  labelText: "Username",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a Username';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            )
+                          : Expanded(
+                            child: Container(
+                                width: 350,
+                                child: TextFormField(
+                                  controller: _usernameController,
+                                  decoration: InputDecoration(
+                                    hintText: "Enter Username",
+                                    hintStyle: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 30),
+                                    labelText: "Username",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a Username';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                          ),
+                      if (kIsWeb)
+                        Expanded(
+                          flex: 2,
+                          child: Container(),
+                        ),
+                    ],
                   ),
                   SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    value: _selectedRole,
-                    decoration: InputDecoration(
-                      labelText: "Select Role",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    items: ["Admin", "Publisher"]
-                        .map((role) => DropdownMenuItem(
-                              value: role,
-                              child: Text(role),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedRole = value;
-                      });
-                    },
+                  Row(
+                    children: [
+                      if (kIsWeb)
+                        Expanded(
+                          flex: 2,
+                          child: Container(),
+                        ),
+                      kIsWeb
+                          ? Expanded(
+                              flex: 2,
+                              child: DropdownButtonFormField<String>(
+                                value: _selectedRole,
+                                decoration: InputDecoration(
+                                  labelText: "Select Role",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                items: ["Admin", "Publisher"]
+                                    .map((role) => DropdownMenuItem(
+                                          value: role,
+                                          child: Text(role),
+                                        ))
+                                    .toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedRole = value;
+                                  });
+                                },
+                              ),
+                            )
+                          : Expanded(
+                            child: Container(
+                                width: 350,
+                                child: DropdownButtonFormField<String>(
+                                  value: _selectedRole,
+                                  decoration: InputDecoration(
+                                    labelText: "Select Role",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  items: ["Admin", "Publisher"]
+                                      .map((role) => DropdownMenuItem(
+                                            value: role,
+                                            child: Text(role),
+                                          ))
+                                      .toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedRole = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                          ),
+                      if (kIsWeb)
+                        Expanded(
+                          flex: 2,
+                          child: Container(),
+                        ),
+                    ],
                   ),
                 ],
               ),
             ),
             SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () async {
-                if (formKey.currentState!.validate()) {
-                  if (_usernameController.text.trim().isNotEmpty &&
-                      _selectedRole != null) {
-                    var message = await _controller.addAdmin(
-                        widget.pageId,
-                        _usernameController.text.trim(),
-                        _selectedRole!);
-                    (message != null)
-                        ? showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return CustomAlertDialog(
-                                title: 'Aret',
-                                icon: Icons.error,
-                                text: message,
-                                buttonText: 'OK',
-                                
-                              );
+            Row(
+              children: [
+                if (kIsWeb)
+                  Expanded(
+                    flex: 2,
+                    child: Container(),
+                  ),
+                kIsWeb
+                    ? Expanded(
+                        flex: 2,
+                        child: MaterialButton(
+                          color: const Color.fromARGB(255, 85, 191, 218),
+                          onPressed: () async {
+                            if (formKey.currentState!.validate()) {
+                              if (_usernameController.text.trim().isNotEmpty &&
+                                  _selectedRole != null) {
+                                var message = await _controller.addAdmin(
+                                    widget.pageId,
+                                    _usernameController.text.trim(),
+                                    _selectedRole!);
+                                (message != null)
+                                    ? showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CustomAlertDialog(
+                                            title: 'Aret',
+                                            icon: Icons.error,
+                                            text: message,
+                                            buttonText: 'OK',
+                                          );
+                                        },
+                                      )
+                                    : null;
+                                _usernameController.clear();
+                              }
+                            }
+                          },
+                          child: Text('Add Admin',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 17)),
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      )
+                    : Expanded(
+                      child: Container(
+                          width: 350,
+                          child: MaterialButton(
+                            color: const Color.fromARGB(255, 85, 191, 218),
+                            onPressed: () async {
+                              if (formKey.currentState!.validate()) {
+                                if (_usernameController.text.trim().isNotEmpty &&
+                                    _selectedRole != null) {
+                                  var message = await _controller.addAdmin(
+                                      widget.pageId,
+                                      _usernameController.text.trim(),
+                                      _selectedRole!);
+                                  (message != null)
+                                      ? showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return CustomAlertDialog(
+                                              title: 'Aret',
+                                              icon: Icons.error,
+                                              text: message,
+                                              buttonText: 'OK',
+                                            );
+                                          },
+                                        )
+                                      : null;
+                                  _usernameController.clear();
+                                }
+                              }
                             },
-                          )
-                        : null;
-                        _usernameController.clear();
-                  }
-                }
-              },
-              child: Text('Add Admin'),
+                            child: Text('Add Admin',
+                                style:
+                                    TextStyle(color: Colors.white, fontSize: 17)),
+                            elevation: 2,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                        ),
+                    ),
+                if (kIsWeb)
+                  Expanded(
+                    flex: 2,
+                    child: Container(),
+                  ),
+              ],
             ),
           ],
         ),

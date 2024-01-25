@@ -7,26 +7,35 @@ import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+
 
 LogOutButtonControllerImp _logoutController = Get.put(LogOutButtonControllerImp());
 
 class Appointment {
   int? id; // Make id nullable (optional)
+  String?date;
   DateTime startTime;
   String subject;
   String eventTime;
   String description;
+  TimeOfDay? reminderTime;
+  DateTime? reminderDate;
 
   Appointment({
     this.id,
+    this.date,
     required this.startTime,
     required this.subject,
     required this.eventTime,
     required this.description,
+    this.reminderTime,
+    this.reminderDate, 
   });
 }
 
 class CalendarController extends GetxController {
+  RxBool isSaveVisible = true.obs;
   late List<Appointment> allAppointments = [];
 
   final RxList<String> moreOptions = <String>[
@@ -74,26 +83,36 @@ class CalendarController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getEvents();
+
   }
 
   void initAppointments() {
     allAppointments = [];
   }
+  String formatTimeOfDay(TimeOfDay timeOfDay) {
+  return '${timeOfDay.hour}:${timeOfDay.minute}';
+}
 
   // store in the database
   addNewEvent(newAppointments) async {
+   
     var url = "$urlStarter/user/addNewUserEvent";
     Map<String, dynamic> jsonData = {
       "subject": newAppointments[0].subject,
       "description": newAppointments[0].description,
       "startTime": newAppointments[0].startTime.toString(),
+       "reminderDate": newAppointments[0].reminderDate?.toIso8601String(),
+  "reminderTime": newAppointments[0].reminderTime != null
+      ? formatTimeOfDay(newAppointments[0].reminderTime!)
+      : null,
     };
     String jsonString = jsonEncode(jsonData);
     var response = await http.post(Uri.parse(url), body: jsonString, headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
     });
+    print("kkkkkkkkkkkkkk");
+    print(response.statusCode);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
       addNewEvent(newAppointments);
@@ -111,6 +130,11 @@ class CalendarController extends GetxController {
       return true;
     }
   }
+
+  TimeOfDay stringToTimeOfDay(String time) {
+  List<String> parts = time.split(':');
+  return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+}
 
   // get data from the database
   Future<void> getEvents() async {
@@ -133,9 +157,9 @@ class CalendarController extends GetxController {
       print(responseBody['message']);
     } else if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-      print("kkkkkkkkkkkkkkkkkkk");
-      print(responseBody);
-      print("kkkkkkkkkkkkkkkkkkk");
+  //    print("kkkkkkkkkkkkkkkkkkk");
+  //    print(responseBody);
+   //   print("kkkkkkkkkkkkkkkkkkk");
 
       // Assuming your response structure is similar to the provided example
       if (responseBody['message'] == 'Calender fetched') {
@@ -152,6 +176,13 @@ class CalendarController extends GetxController {
             eventTime: calendarItem['time'],
             description: calendarItem['description'],
             id: calendarItem['id'],
+            date:calendarItem['date'],
+             reminderDate: calendarItem['reminderDate'] != null
+      ? DateTime.parse(calendarItem['reminderDate'])
+      : null,
+          reminderTime: calendarItem['reminderTime'] != null
+      ? stringToTimeOfDay(calendarItem['reminderTime'])
+      : null,
           );
 
           allAppointments.add(appointment);

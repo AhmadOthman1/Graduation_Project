@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/settings_controller.dart';
@@ -40,6 +41,7 @@ class Settings extends StatelessWidget {
               ],
             ),
           ),
+         
           const Divider(
             color: Color.fromARGB(255, 194, 193, 193),
             thickness: 2.0,
@@ -55,7 +57,7 @@ class Settings extends StatelessWidget {
                   child: Container(
                     height: 35,
                     padding: const EdgeInsets.only(left: 10),
-                    child: const Row(
+                    child:  Row(
                       children: [
                         Icon(Icons.settings),
                         SizedBox(width: 10),
@@ -65,12 +67,14 @@ class Settings extends StatelessWidget {
                               fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                         Spacer(),
+                        if (!kIsWeb)
                         Icon(Icons.arrow_forward, size: 30),
                       ],
                     ),
                   ),
                 ),
               ),
+              if (!kIsWeb)
               const Divider(
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 2.0,
@@ -84,7 +88,7 @@ class Settings extends StatelessWidget {
                   child: Container(
                     height: 35,
                     padding: const EdgeInsets.only(left: 10),
-                    child: const Row(
+                    child:  Row(
                       children: [
                         Icon(Icons.lock_outlined),
                         SizedBox(width: 10),
@@ -94,12 +98,14 @@ class Settings extends StatelessWidget {
                               fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                         Spacer(),
+                        if (!kIsWeb)
                         Icon(Icons.arrow_forward, size: 30),
                       ],
                     ),
                   ),
                 ),
               ),
+              if (!kIsWeb)
               const Divider(
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 2.0,
@@ -113,7 +119,7 @@ class Settings extends StatelessWidget {
                   child: Container(
                     height: 35,
                     padding: const EdgeInsets.only(left: 10),
-                    child: const Row(
+                    child:  Row(
                       children: [
                         Icon(Icons.email_outlined),
                         SizedBox(width: 10),
@@ -123,12 +129,14 @@ class Settings extends StatelessWidget {
                               fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                         Spacer(),
+                        if (!kIsWeb)
                         Icon(Icons.arrow_forward, size: 30),
                       ],
                     ),
                   ),
                 ),
               ),
+              if (!kIsWeb)
               const Divider(
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 2.0,
@@ -142,7 +150,7 @@ class Settings extends StatelessWidget {
                   child: Container(
                     height: 35,
                     padding: const EdgeInsets.only(left: 10),
-                    child: const Row(
+                    child:  Row(
                       children: [
                         Icon(Icons.business),
                         SizedBox(width: 10),
@@ -152,12 +160,14 @@ class Settings extends StatelessWidget {
                               fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                         Spacer(),
+                        if (!kIsWeb)
                         Icon(Icons.arrow_forward, size: 30),
                       ],
                     ),
                   ),
                 ),
               ),
+              if (!kIsWeb)
               const Divider(
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 2.0,
@@ -173,7 +183,7 @@ class Settings extends StatelessWidget {
                   child: Container(
                     height: 35,
                     padding: const EdgeInsets.only(left: 10),
-                    child: const Row(
+                    child:  Row(
                       children: [
                         Icon(Icons.school),
                         SizedBox(width: 10),
@@ -183,12 +193,14 @@ class Settings extends StatelessWidget {
                               fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                         Spacer(),
+                        if (!kIsWeb)
                         Icon(Icons.arrow_forward, size: 30),
                       ],
                     ),
                   ),
                 ),
               ),
+              if (!kIsWeb)
               const Divider(
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 2.0,
@@ -204,7 +216,7 @@ class Settings extends StatelessWidget {
                   child: Container(
                     height: 35,
                     padding: const EdgeInsets.only(left: 10),
-                    child: const Row(
+                    child:  Row(
                       children: [
                         Icon(Icons.delete),
                         SizedBox(width: 10),
@@ -214,14 +226,14 @@ class Settings extends StatelessWidget {
                               fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                         Spacer(),
+                        if (!kIsWeb)
                         Icon(Icons.arrow_forward, size: 30),
                       ],
                     ),
                   ),
                 ),
               ),
-
-
+              if (!kIsWeb)
               const Divider(
                 color: Color.fromARGB(255, 194, 193, 193),
                 thickness: 2.0,

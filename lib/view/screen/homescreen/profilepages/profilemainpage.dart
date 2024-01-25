@@ -6,6 +6,7 @@ import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/NewPost/newpost.dart';
 import 'package:growify/view/screen/homescreen/settings/settings.dart';
 import 'package:growify/view/widget/homePage/posts.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ProfileMainPage extends StatefulWidget {
   final List<Map<String, dynamic>> userData;
@@ -36,7 +37,8 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
   }
 
   void _scrollListener() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
       print("Reached the end of the page");
     }
   }
@@ -44,7 +46,7 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    /*  appBar: AppBar(
+      /*  appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text(
           "My Profile",
@@ -56,7 +58,6 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
         controller: _scrollController,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
-
             SliverAppBar(
               backgroundColor: Colors.white,
               expandedHeight: 200,
@@ -66,23 +67,48 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
                 background: _buildCoverPhoto(),
               ),
             ),
-            
             SliverToBoxAdapter(
               child: Column(
-                children: [              
+                children: [
                   _buildProfileInfo(),
-                  _buildDetails("Details"),
-                  _buildDivider(10),
-                  _buildButtonsRow(),
-                  _buildDivider(10),
-                  _buildDetails("Posts"),
+                  if (!kIsWeb) _buildDetails("Details"),
+                  if (!kIsWeb) _buildDivider(10),
+                  if (!kIsWeb) _buildButtonsRow(),
+                  if (!kIsWeb) _buildDivider(10),
+                  if (!kIsWeb) _buildDetails("Posts"),
                 ],
               ),
             ),
-           
           ];
         },
-        body: Post(username: widget.userData[0]["username"]),
+        body: kIsWeb
+            ? Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          _buildDetails("Details"),
+                          _buildDivider(10),
+                          _buildButtonsRow(),
+                          _buildDivider(10),
+                          // _buildDetails("Posts"),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 4,
+                    child: Post(username: widget.userData[0]["username"]),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(),
+                  ),
+                ],
+              )
+            : Post(username: widget.userData[0]["username"]),
       ),
     );
   }
@@ -153,7 +179,8 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildInfoItem('Posts', widget.userPostCount.toString()),
-              _buildInfoItem('Connections', widget.userConnectionsCount.toString()),
+              _buildInfoItem(
+                  'Connections', widget.userConnectionsCount.toString()),
             ],
           ),
         ],
@@ -197,7 +224,7 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
           child: Container(
             height: 35,
             padding: const EdgeInsets.only(left: 10),
-            child: const Row(
+            child: Row(
               children: [
                 Icon(Icons.edit),
                 SizedBox(width: 10),
@@ -206,12 +233,13 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),
-                Icon(Icons.arrow_forward, size: 30),
+                if (!kIsWeb) // Check if not running on web
+                  Icon(Icons.arrow_forward, size: 30),
               ],
             ),
           ),
         ),
-        _buildDivider(10),
+        if (!kIsWeb) _buildDivider(10),
         InkWell(
           onTap: () {
             controller.goToAboutInfo();
@@ -219,7 +247,7 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
           child: Container(
             height: 35,
             padding: const EdgeInsets.only(left: 10),
-            child: const Row(
+            child: Row(
               children: [
                 Icon(Icons.more_horiz),
                 SizedBox(width: 10),
@@ -228,20 +256,31 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),
-                Icon(Icons.arrow_forward, size: 30),
+                if (!kIsWeb) // Check if not running on web
+                  Icon(Icons.arrow_forward, size: 30),
               ],
             ),
           ),
         ),
-        _buildDivider(10),
+        if (!kIsWeb) _buildDivider(10),
         InkWell(
-          onTap: () {
-            Get.to(NewPost(profileImage:widget.userData[0]["photo"],));
-          },
+          onTap: () => kIsWeb
+              ? showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (BuildContext context) {
+                    return NewPost();
+                  },
+                )
+              : Get.to(
+                  NewPost(
+                    profileImage: widget.userData[0]["photo"],
+                  ),
+                ),
           child: Container(
             height: 35,
             padding: const EdgeInsets.only(left: 10),
-            child: const Row(
+            child: Row(
               children: [
                 Icon(Icons.post_add_outlined),
                 SizedBox(width: 10),
@@ -250,7 +289,8 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),
-                Icon(Icons.arrow_forward, size: 30),
+                if (!kIsWeb) // Check if not running on web
+                  Icon(Icons.arrow_forward, size: 30),
               ],
             ),
           ),
@@ -271,5 +311,3 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
     );
   }
 }
-
-
