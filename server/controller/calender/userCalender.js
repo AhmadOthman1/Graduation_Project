@@ -24,7 +24,6 @@ exports.getUserCalender = async (req, res, next) => {
                     username: userUsername,
                 },
             });
-            console.log(allUserCalender);
             return res.status(200).json({
                 message: 'Calender fetched',
                 Calender: allUserCalender

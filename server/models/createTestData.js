@@ -305,14 +305,14 @@ exports.createText = async () => {
     }
     for (let i = iLimit / 2; i < iLimit * (3 / 4); i++) {
         for (let j = 1; j < iLimit; j++)
-        await like.create({
+            await like.create({
                 postId: j,
                 username: "ahmad" + i,
             });
     }
     for (let i = iLimit / 2; i < iLimit * (3 / 4); i++) {
         for (let j = 1; j < iLimit; j++)
-        await comment.create({
+            await comment.create({
                 postId: j,
                 username: "ahmad" + i,
                 commentContent: "ahmad" + i,
@@ -321,7 +321,7 @@ exports.createText = async () => {
     }
     for (let i = 0; i < iLimit; i++) {
         for (let j = 0; j < 10; j++)
-        await post.create({
+            await post.create({
                 postContent: "my post : ahmad" + i + "post " + i,
                 selectedPrivacy: "Any One",
                 postDate: new Date(),
@@ -384,7 +384,7 @@ exports.createText = async () => {
     }
     for (let i = 1; i < 20; i++) {
         for (let j = 1; j < 20; j++)
-        await pageJobs.create({
+            await pageJobs.create({
                 pageId: "page " + i,
                 title: j % 2 ? "Frontend developer " + j : "Backend developer" + j,
                 interest: j % 2 ? "Frontend" : "Backend",
@@ -395,7 +395,7 @@ exports.createText = async () => {
     }
     for (let i = 1; i < 20; i++) {
         for (let j = 1; j < 20; j++)
-        await jobApplication.create({
+            await jobApplication.create({
                 pageJobId: i,
                 username: "ahmad" + j,
                 note: j % 3 == 0 ? null : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
@@ -501,4 +501,8 @@ exports.createText = async () => {
             text: "message from ahmad" + i,
         })
     }
+    console.log("====================================================");
+    console.log("data created");
+    console.log("====================================================");
+
 }

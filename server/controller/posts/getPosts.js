@@ -5,6 +5,8 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const post = require('../../models/post');
+const postPhotos = require('../../models/postPhotos');
+const postVideos = require('../../models/postVideos');
 const postHistory = require('../../models/postHistory');
 const comment = require('../../models/comment');
 const like = require('../../models/like');
@@ -765,6 +767,14 @@ exports.getPosts = async (req, res, next) => {
                             model: like,
                             order: [['createdAt', 'DESC']],
                         },
+                        {
+                            model: postPhotos,
+                            order: [['createdAt', 'DESC']],
+                        },
+                        {
+                            model: postVideos,
+                            order: [['createdAt', 'DESC']],
+                        },
                     ],
                 });
 
@@ -795,8 +805,8 @@ exports.getPosts = async (req, res, next) => {
                         userPhoto: additionalData ? additionalData.photo : null,
                         postContent: post.postContent,
                         selectedPrivacy: post.selectedPrivacy,
-                        photo: post.photo,
-                        video: post.video,
+                        photo: post.postPhotos,
+                        video: post.postVideos,
                         postDate: moment(post.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
                         commentCount: post.comments.length,
                         likeCount: post.likes.length,
@@ -825,6 +835,14 @@ exports.getPosts = async (req, res, next) => {
                             model: like,
                             order: [['createdAt', 'DESC']],
                         },
+                        {
+                            model: postPhotos,
+                            order: [['createdAt', 'DESC']],
+                        },
+                        {
+                            model: postVideos,
+                            order: [['createdAt', 'DESC']],
+                        },
                     ],
                 });
                 const posts = userPosts.map(post => {
@@ -837,8 +855,8 @@ exports.getPosts = async (req, res, next) => {
                         userPhoto: existingUsername.photo,
                         postContent: post.postContent,
                         selectedPrivacy: post.selectedPrivacy,
-                        photo: post.photo,
-                        video: post.video,
+                        photo: post.postPhotos,
+                        video: post.postVideos,
                         postDate: moment(post.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
                         commentCount: post.comments.length,
                         likeCount: post.likes.length,
@@ -874,6 +892,14 @@ exports.getPosts = async (req, res, next) => {
                                     model: like,
                                     order: [['createdAt', 'DESC']],
                                 },
+                                {
+                                    model: postPhotos,
+                                    order: [['createdAt', 'DESC']],
+                                },
+                                {
+                                    model: postVideos,
+                                    order: [['createdAt', 'DESC']],
+                                },
                             ],
                         });
                         const posts = userPosts.map(post => {
@@ -886,8 +912,8 @@ exports.getPosts = async (req, res, next) => {
                                 userPhoto: existingOtherUsername.photo,
                                 postContent: post.postContent,
                                 selectedPrivacy: post.selectedPrivacy,
-                                photo: post.photo,
-                                video: post.video,
+                                photo: post.postPhotos,
+                                video: post.postVideos,
                                 postDate: moment(post.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
                                 commentCount: post.comments.length,
                                 likeCount: post.likes.length,
@@ -914,6 +940,14 @@ exports.getPosts = async (req, res, next) => {
                                     model: like,
                                     order: [['createdAt', 'DESC']],
                                 },
+                                {
+                                    model: postPhotos,
+                                    order: [['createdAt', 'DESC']],
+                                },
+                                {
+                                    model: postVideos,
+                                    order: [['createdAt', 'DESC']],
+                                },
                             ],
                         });
                         const posts = userPosts.map(post => {
@@ -926,8 +960,8 @@ exports.getPosts = async (req, res, next) => {
                                 userPhoto: existingOtherUsername.photo,
                                 postContent: post.postContent,
                                 selectedPrivacy: post.selectedPrivacy,
-                                photo: post.photo,
-                                video: post.video,
+                                photo: post.postPhotos,
+                                video: post.postVideos,
                                 postDate: moment(post.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
                                 commentCount: post.comments.length,
                                 likeCount: post.likes.length,
@@ -991,6 +1025,14 @@ exports.getPost = async (req, res, next) => {
                             model: like,
                             order: [['createdAt', 'DESC']],
                         },
+                        {
+                            model: postPhotos,
+                            order: [['createdAt', 'DESC']],
+                        },
+                        {
+                            model: postVideos,
+                            order: [['createdAt', 'DESC']],
+                        },
                     ],
                 });
                 const posts = userPosts.map(post => {
@@ -1003,8 +1045,8 @@ exports.getPost = async (req, res, next) => {
                         userPhoto: existingUsername.photo,
                         postContent: post.postContent,
                         selectedPrivacy: post.selectedPrivacy,
-                        photo: post.photo,
-                        video: post.video,
+                        photo: post.postPhotos,
+                        video: post.postVideos,
                         postDate: moment(post.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
                         commentCount: post.comments.length,
                         likeCount: post.likes.length,

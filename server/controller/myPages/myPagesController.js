@@ -25,6 +25,8 @@ const postHistory = require('../../models/postHistory');
 const Messages = require("../../models/messages");
 const sequelize = require('sequelize');
 const auth = require('../authController')
+const postPhotos = require('../../models/postPhotos');
+const postVideos = require('../../models/postVideos');
 
 exports.getMyPageInfo = async (req, res, next) => {
     try {
@@ -295,6 +297,14 @@ exports.getPagePosts = async (req, res, next) => {
                             model: like,
                             order: [['createdAt', 'DESC']],
                         },
+                        {
+                            model: postPhotos,
+                            order: [['createdAt', 'DESC']],
+                        },
+                        {
+                            model: postVideos,
+                            order: [['createdAt', 'DESC']],
+                        },
                     ],
                 });
                 console.log(pageSize)
@@ -311,8 +321,8 @@ exports.getPagePosts = async (req, res, next) => {
                         userPhoto: userAdmin.page.dataValues.photo,
                         postContent: post.postContent,
                         selectedPrivacy: post.selectedPrivacy,
-                        photo: post.photo,
-                        video: post.video,
+                        photo: post.postPhotos,
+                        video: post.postVideos,
                         postDate: moment(post.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
                         commentCount: post.comments.length,
                         likeCount: post.likes.length,
@@ -350,6 +360,14 @@ exports.getPagePosts = async (req, res, next) => {
                             model: like,
                             order: [['createdAt', 'DESC']],
                         },
+                        {
+                            model: postPhotos,
+                            order: [['createdAt', 'DESC']],
+                        },
+                        {
+                            model: postVideos,
+                            order: [['createdAt', 'DESC']],
+                        },
                     ],
                 });
                 const posts = pagePosts.map(post => {
@@ -362,8 +380,8 @@ exports.getPagePosts = async (req, res, next) => {
                         userPhoto: existingPage.photo,
                         postContent: post.postContent,
                         selectedPrivacy: post.selectedPrivacy,
-                        photo: post.photo,
-                        video: post.video,
+                        photo: post.postPhotos,
+                        video: post.postVideos,
                         postDate: moment(post.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
                         commentCount: post.comments.length,
                         likeCount: post.likes.length,
@@ -950,11 +968,11 @@ exports.pageAddComment = async (req, res, next) => {
 }
 exports.postNewPagePost = async (req, res, next) => {
     try {
-        const { postContent, postImageBytes, postImageBytesName, postImageExt, postVideoBytes, postVideoBytesName, postVideoExt, pageId } = req.body;
+        const { postContent, videoList, imageList, pageId } = req.body;
         var validphoto = false;
-        var newphotoname = null;
+        var newphotonames = [];
         var validvideo = false;
-        var newvideoname = null;
+        var newvideonames = [];
 
         const authHeader = req.headers['authorization']
         const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
@@ -977,34 +995,42 @@ exports.postNewPagePost = async (req, res, next) => {
                         body: req.body
                     });
                 }
-                if (postImageBytes != null && postImageBytesName != null && postImageExt != null) {//if feild change enables (!=null)
+                if (imageList !== undefined || imageList !== null || imageList.length != 0) {//if feild change enables (!=null)
                     validphoto = true;
                 }
-                if (postVideoBytes != null && postVideoBytesName != null && postVideoExt != null) {//if feild change enables (!=null)
+                if (videoList !== undefined || videoList !== null || videoList.length != 0) {//if feild change enables (!=null)
                     validvideo = true;
                 }
 
                 if (validphoto) {
-                    const photoBuffer = Buffer.from(postImageBytes, 'base64');
-                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                    newphotoname = userUsername + +"-" + uniqueSuffix + "." + postImageExt; // You can adjust the file extension based on the actual image type
-                    const uploadPath = path.join('images', newphotoname);
-
-                    // Save the image to the server
-                    fs.writeFileSync(uploadPath, photoBuffer);
-                    console.log("fff" + newphotoname);
-                    // Update the user record in the database with the new photo name
+                    for (const photo of imageList) {
+                        if (photo.postImageBytes != null && photo.postImageBytesName != null && photo.postImageExt != null) {
+                            const photoBuffer = Buffer.from(photo.postImageBytes, 'base64');
+                            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+                            newphotoname = userUsername + +"-" + uniqueSuffix + "." + photo.postImageExt; // You can adjust the file extension based on the actual image type
+                            const uploadPath = path.join('images', newphotoname);
+                            newphotonames.push(newphotoname);
+                            // Save the image to the server
+                            fs.writeFileSync(uploadPath, photoBuffer);
+                            console.log("fff" + newphotoname);
+                            // Update the user record in the database with the new photo name
+                        }
+                    }
                 }
                 if (validvideo) {
-                    const videoBuffer = Buffer.from(postVideoBytes, 'base64');
-                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                    newvideoname = userUsername + +"-" + uniqueSuffix + "." + postVideoExt; // You can adjust the file extension based on the actual image type
-                    const uploadPath = path.join('videos', newvideoname);
-
-                    // Save the image to the server
-                    fs.writeFileSync(uploadPath, videoBuffer);
-                    console.log("fff" + newvideoname);
-                    // Update the user record in the database with the new photo name
+                    for (const video of videoList) {
+                        if (video.postVideoBytes != null && video.postVideoBytesName != null && video.postVideoExt != null) {
+                            const videoBuffer = Buffer.from(video.postVideoBytes, 'base64');
+                            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+                            newvideoname = userUsername + +"-" + uniqueSuffix + "." + video.postVideoExt; // You can adjust the file extension based on the actual image type
+                            const uploadPath = path.join('videos', newvideoname);
+                            newvideonames.push(newvideoname);
+                            // Save the image to the server
+                            fs.writeFileSync(uploadPath, videoBuffer);
+                            console.log("fff" + newvideoname);
+                            // Update the user record in the database with the new photo name
+                        }
+                    }
                 }
                 const result = await post.create({
                     "pageId": pageId,
@@ -1014,17 +1040,23 @@ exports.postNewPagePost = async (req, res, next) => {
                     "video": newvideoname,
                     "postDate": new Date(),
 
-                }).then(() => {
-                    res.status(200).json({
-                        message: "created sucsessfully",
-                    })
-                }).catch((err) => {
-                    console.log(err);
-                    return res.status(500).json({
-                        message: 'server Error',
-                        body: req.body
-                    });
                 });
+                for(const photo of newphotonames){
+                    await postPhotos.create({
+                        postId:result.id,
+                        photo:photo,
+                    })
+                }
+                for(const video of newvideonames){
+                    await postVideos.create({
+                        postId:result.id,
+                        video:video,
+                    })
+                }
+                res.status(200).json({
+                    message: "created sucsessfully",
+                })
+
             } else {
                 return res.status(500).json({
                     message: 'You are not Admin',
@@ -2409,7 +2441,7 @@ exports.getPageMessages = async (req, res, next) => {
                                 senderUsername: otherUsername,
                                 receiverPageId: pageId,
                             },
-                            
+
                         ],
                     },
                     order: [['createdAt', 'DESC']], // Order by created date in descending order
@@ -2498,7 +2530,7 @@ exports.getPageMessages = async (req, res, next) => {
                 });
 
             }
-        }else{
+        } else {
             return res.status(500).json({
                 message: 'you are not allowed to see this info',
                 body: req.body,
@@ -2536,13 +2568,13 @@ exports.generatePageAccessToken = async (req, res, next) => {
             where: { username: userUsername, pageId: pageId }
         });
         if (userPageAdmin != null) {
-            const pageInfo = { pageId: pageId};
+            const pageInfo = { pageId: pageId };
             const accessToken = auth.generatePageAccessToken(pageInfo);
             return res.status(200).json({
                 message: 'authenticated',
                 accessToken: accessToken,
             });
-        }else{
+        } else {
             return res.status(500).json({
                 message: 'you are not allowed to see this info',
                 body: req.body,

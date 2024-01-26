@@ -29,7 +29,6 @@ exports.getUserTasks = async (req, res, next) => {
                     ['endTime', 'ASC'], // Then order by endTime in ascending order
                 ],
             });
-            console.log(allUserTasks);
             return res.status(200).json({
                 message: 'tasks fetched',
                 tasks: allUserTasks
