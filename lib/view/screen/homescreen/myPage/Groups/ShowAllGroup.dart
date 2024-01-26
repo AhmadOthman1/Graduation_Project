@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Groups_controller/ShowAllgroups_controller.dart';
@@ -49,10 +50,10 @@ class _GroupPageState extends State<GroupPage> {
     for (var groupData in groupsDatalocal) {
       if (groupData['id'] == groupId) {
         // Change here
-        return groupData['name'] ;
+        return groupData['name'];
       }
     }
-    return ;
+    return;
   }
 
   Widget buildGroupTile(Map<String, dynamic> groupData, int level) {
@@ -77,8 +78,7 @@ class _GroupPageState extends State<GroupPage> {
                 };
                 groupsController.Groupmessages =
                     <Map<String, dynamic>>[userMap].obs;
-                groupsController.
-                getAndLoadPageEmployees(groupData['id']);
+                groupsController.getAndLoadPageEmployees(groupData['id']);
               },
               child: Text(
                 groupName,
@@ -118,38 +118,102 @@ class _GroupPageState extends State<GroupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Groups Page'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Get.off(CreateGroupPage(groupsData: widget.groupsData,pageId:widget.pageId));
-            },
-            child: Text(
-              'Create',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 20.0,
+    if (kIsWeb) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Groups Page'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.off(CreateGroupPage(
+                    groupsData: widget.groupsData, pageId: widget.pageId));
+              },
+              child: Text(
+                'Create',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20.0,
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-      body: Container(
-        margin: EdgeInsets.symmetric(horizontal: 4),
-        child: ListView.builder(
-          itemCount: groupsDatalocal
-              .where((groupData) => groupData['parentNode'] == null)
-              .length,
-          itemBuilder: (context, index) {
-            var parentGroupData = groupsDatalocal
-                .where((groupData) => groupData['parentNode'] == null)
-                .toList()[index];
-            return buildGroupTile(parentGroupData, 0);
-          },
+          ],
         ),
-      ),
-    );
+        body: Container(
+          height: MediaQuery.of(context).size.height - 50,
+          child: Row(
+            children: [
+              Expanded(flex: 3, child: Container()),
+              Expanded(
+                flex: 5,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3), // changes the position of shadow
+                      ),
+                    ],
+                  ),
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 4),
+                    child: ListView.builder(
+                      itemCount: groupsDatalocal
+                          .where((groupData) => groupData['parentNode'] == null)
+                          .length,
+                      itemBuilder: (context, index) {
+                        var parentGroupData = groupsDatalocal
+                            .where(
+                                (groupData) => groupData['parentNode'] == null)
+                            .toList()[index];
+                        return buildGroupTile(parentGroupData, 0);
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(flex: 3, child: Container()),
+            ],
+          ),
+        ),
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Groups Page'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.off(CreateGroupPage(
+                    groupsData: widget.groupsData, pageId: widget.pageId));
+              },
+              child: Text(
+                'Create',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20.0,
+                ),
+              ),
+            ),
+          ],
+        ),
+        body: Container(
+          margin: EdgeInsets.symmetric(horizontal: 4),
+          child: ListView.builder(
+            itemCount: groupsDatalocal
+                .where((groupData) => groupData['parentNode'] == null)
+                .length,
+            itemBuilder: (context, index) {
+              var parentGroupData = groupsDatalocal
+                  .where((groupData) => groupData['parentNode'] == null)
+                  .toList()[index];
+              return buildGroupTile(parentGroupData, 0);
+            },
+          ),
+        ),
+      );
+    }
   }
 }

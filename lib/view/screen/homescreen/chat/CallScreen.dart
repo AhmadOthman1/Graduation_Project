@@ -209,10 +209,22 @@ class _CallScreenState extends State<CallScreen> {
           "sdpAnswer": answer.toMap(),
         });
       }
+      _rtcPeerConnection!.onIceCandidate = (RTCIceCandidate candidate) {
+        // Send generated ICE candidate to the caller
+        widget.socket!.emit("IceCandidate", {
+          "callerId": widget.calleeId,//to send to callee using the same action
+          "calleeId": widget.callerId,
+          "iceCandidate": {
+            "id": candidate.sdpMid,
+            "label": candidate.sdpMLineIndex,
+            "candidate": candidate.candidate
+          }
+        });
+      };
     }
     // for Outgoing Call
     else {
-      // listen for local iceCandidate and add it to the list of IceCandidate for other peer to see 
+      // listen for local iceCandidate and add it to the list of IceCandidate for other peer to see
       _rtcPeerConnection!.onIceCandidate =
           (RTCIceCandidate candidate) => rtcIceCadidates.add(candidate);
 
@@ -250,6 +262,19 @@ class _CallScreenState extends State<CallScreen> {
             }
           });
         }
+      });
+      widget.socket!.on("IceCandidate", (data) {
+        // Handle received ICE candidate from the callee
+        String candidate = data["iceCandidate"]["candidate"];
+        String sdpMid = data["iceCandidate"]["id"];
+        int sdpMLineIndex = data["iceCandidate"]["label"];
+
+        // add iceCandidate
+        _rtcPeerConnection!.addCandidate(RTCIceCandidate(
+          candidate,
+          sdpMid,
+          sdpMLineIndex,
+        ));
       });
 
       // create SDP Offer

@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/view/screen/homescreen/homepages/homemainPage.dart';
 import 'package:growify/view/screen/homescreen/Networkspages/networkmainpage.dart';
-import 'package:growify/view/screen/homescreen/myPage/JobsPages/jobsmainpage.dart';
 import 'package:growify/view/screen/homescreen/notificationspages/notificationmainpage.dart';
 import 'dart:convert';
 import 'package:featurehub_sse_client/featurehub_sse_client.dart';
@@ -16,6 +15,7 @@ import 'dart:async';
 import 'package:growify/Platform.dart'; // our enum
 import 'package:growify/multiplatform.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:growify/view/screen/homescreen/userJobs/jobsmainpage.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:quick_notify/quick_notify.dart';

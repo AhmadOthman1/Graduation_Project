@@ -78,41 +78,49 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
     }
     if (kIsWeb) {
       return Scaffold(
-        body: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              flex: 7,
-              child: NestedScrollView(
-                headerSliverBuilder:
-                    (BuildContext context, bool innerBoxIsScrolled) {
-                  return [
-                    SliverAppBar(
-                      backgroundColor: Colors.white,
-                      expandedHeight: 200,
-                      floating: false,
-                      pinned: true,
-                      flexibleSpace: FlexibleSpaceBar(
-                        background: _buildCoverPhoto(),
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: Column(
-                        children: [
-                          _buildProfileInfo(context),
-                        ],
-                      ),
-                    ),
-                  ];
-                },
-                body: kIsWeb
-                    ? Row(
+        backgroundColor: Colors.white,
+        body: Container(
+          color: const Color.fromARGB(255, 240, 219, 219),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                flex: 7,
+                child: Container(
+                  color: Colors.white,
+                  child: NestedScrollView(
+                      headerSliverBuilder:
+                          (BuildContext context, bool innerBoxIsScrolled) {
+                        return [
+                          SliverAppBar(
+                            backgroundColor: Colors.white,
+                            expandedHeight: 200,
+                            floating: false,
+                            pinned: true,
+                            flexibleSpace: FlexibleSpaceBar(
+                              background: _buildCoverPhoto(),
+                            ),
+                          ),
+                          SliverToBoxAdapter(
+                            child: Column(
+                              children: [
+                                _buildProfileInfo(context),
+                              ],
+                            ),
+                          ),
+                        ];
+                      },
+                      body: Row(
                         children: [
                           Expanded(
                             flex: 1,
                             child: Container(
                               child: Column(
                                 children: [
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+
                                   _Deatalis("Details"),
                                   _buildDivider(10),
                                   _buildButtonsRow(),
@@ -123,22 +131,22 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
                             ),
                           ),
                           Expanded(
-                            flex: 4,
+                            flex: 5,
                             child:
                                 Post(username: widget.userData[0]["username"]),
                           ),
                         ],
-                      )
-                    : Post(username: widget.userData[0]["username"]),
+                      )),
+                ),
               ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Container(
-                child: ChatWebMainPage(),
+              Expanded(
+                flex: 2,
+                child: Container(
+                  child: ChatWebMainPage(),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     } else {
@@ -200,7 +208,10 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
     ImageProvider<Object> profileBackgroundImage = (profileImage.isNotEmpty)
         ? Image.network("$urlStarter/$profileImage").image
         : const AssetImage("images/profileImage.jpg");
-    return Padding(
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.grey[50],
+          border: Border(bottom: BorderSide(color: Colors.grey, width: 2))),
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [

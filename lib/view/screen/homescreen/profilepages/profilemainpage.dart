@@ -48,104 +48,110 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
   Widget build(BuildContext context) {
     if (kIsWeb) {
       return Scaffold(
-        
-        body: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              flex: 7,
-              child: NestedScrollView(
-                controller: _scrollController,
-                headerSliverBuilder:
-                    (BuildContext context, bool innerBoxIsScrolled) {
-                  return [
-                    SliverAppBar(
-                      backgroundColor: Colors.white,
-                      expandedHeight: 200,
-                      floating: false,
-                      pinned: true,
-                      flexibleSpace: FlexibleSpaceBar(
-                        background: _buildCoverPhoto(),
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: Column(
-                        children: [
-                          _buildProfileInfo(),
-                        ],
-                      ),
-                    ),
-                  ];
-                },
-                body: kIsWeb
-                    ? Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              child: Column(
-                                children: [
-                                  _buildDetails("Details"),
-                                  _buildDivider(10),
-                                  _buildButtonsRow(),
-                                  _buildDivider(10),
-                                  // _buildDetails("Posts"),
-                                ],
+        backgroundColor: Colors.white,
+        body: Container(
+          color: const Color.fromARGB(255, 240, 219, 219),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                flex: 7,
+                child: Container(
+                  color: Colors.white,
+                  child: NestedScrollView(
+                    controller: _scrollController,
+                    headerSliverBuilder:
+                        (BuildContext context, bool innerBoxIsScrolled) {
+                      return [
+                        SliverAppBar(
+                          backgroundColor: Colors.white,
+                          expandedHeight: 200,
+                          floating: false,
+                          pinned: true,
+                          flexibleSpace: FlexibleSpaceBar(
+                            background: _buildCoverPhoto(),
+                          ),
+                        ),
+                        SliverToBoxAdapter(
+                          child: Column(
+                            children: [
+                              _buildProfileInfo(),
+                            ],
+                          ),
+                        ),
+                      ];
+                    },
+                    body: Row(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                  child: Column(
+                                    children: [
+                                      SizedBox(height: 10,),
+                                      _buildDetails("Details"),
+                                      _buildDivider(10),
+                                      _buildButtonsRow(),
+                                      _buildDivider(10),
+                                      // _buildDetails("Posts"),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 4,
-                            child:
-                                Post(username: widget.userData[0]["username"]),
-                          ),
-                        ],
-                      )
-                    : Post(username: widget.userData[0]["username"]),
+                              Expanded(
+                                flex: 4,
+                                child: Post(
+                                    username: widget.userData[0]["username"]),
+                              ),
+                            ],
+                          )
+                        
+                  ),
+                ),
               ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Container(
-                child: ChatWebMainPage(),
+              Expanded(
+                flex: 2,
+                child: Container(
+                  child: ChatWebMainPage(),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
-    } else {return Scaffold(
-      
-      body: NestedScrollView(
-        controller: _scrollController,
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return [
-            SliverAppBar(
-              backgroundColor: Colors.white,
-              expandedHeight: 200,
-              floating: false,
-              pinned: true,
-              flexibleSpace: FlexibleSpaceBar(
-                background: _buildCoverPhoto(),
+    } else {
+      return Scaffold(
+        body: NestedScrollView(
+          controller: _scrollController,
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return [
+              SliverAppBar(
+                backgroundColor: Colors.white,
+                expandedHeight: 200,
+                floating: false,
+                pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: _buildCoverPhoto(),
+                ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  _buildProfileInfo(),
-                   _buildDetails("Details"),
-                   _buildDivider(10),
-                   _buildButtonsRow(),
-                   _buildDivider(10),
-                   _buildDetails("Posts"),
-                ],
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    _buildProfileInfo(),
+                    _buildDetails("Details"),
+                    _buildDivider(10),
+                    _buildButtonsRow(),
+                    _buildDivider(10),
+                    _buildDetails("Posts"),
+                  ],
+                ),
               ),
-            ),
-          ];
-        },
-        body: Post(username: widget.userData[0]["username"]),
-      ),
-    );}
-    
+            ];
+          },
+          body: Post(username: widget.userData[0]["username"]),
+        ),
+      );
+    }
   }
 
   Widget _buildCoverPhoto() {
@@ -173,7 +179,10 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
         ? Image.network("$urlStarter/$profileImage").image
         : const AssetImage("images/profileImage.jpg");
 
-    return Padding(
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.grey[50],
+          border: Border(bottom: BorderSide(color: Colors.grey, width: 2))),
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [

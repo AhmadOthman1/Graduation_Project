@@ -6,6 +6,7 @@ import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/global.dart';
 
 import 'package:get/get.dart';
+import 'package:growify/view/screen/homescreen/chat/chatForWeb/chatWebmainpage.dart';
 import 'package:growify/view/screen/homescreen/chat/chatpagemessages.dart';
 import 'package:growify/view/screen/homescreen/myPage/JobsPages/ShowCompanyJobs.dart';
 import 'package:growify/view/screen/homescreen/myPage/colleaguesPageCalendar.dart';
@@ -70,67 +71,118 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return [
-            SliverAppBar(
-              backgroundColor: Colors.white,
-              expandedHeight: 200,
-              floating: false,
-              pinned: true,
-              flexibleSpace: FlexibleSpaceBar(
-                background: _buildCoverPhoto(),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  _buildProfileInfo(),
-                  if (!kIsWeb) _Deatalis("Details"),
-                  if (!kIsWeb) _buildDivider(10),
-                  if (!kIsWeb) _buildButtonsRow(),
-                  if (!kIsWeb) _buildDivider(10),
-                  if (!kIsWeb) _Deatalis("Posts"),
-                  // Post(),
-                ],
-              ),
-            )
-          ];
-        },
-        body: kIsWeb
-            ? Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: SingleChildScrollView(
-                      child: Column(
+    if (kIsWeb) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Container(
+          color: const Color.fromARGB(255, 240, 219, 219),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                flex: 7,
+                child: Container(
+                  color: Colors.white,
+                  child: NestedScrollView(
+                      headerSliverBuilder:
+                          (BuildContext context, bool innerBoxIsScrolled) {
+                        return [
+                          SliverAppBar(
+                            backgroundColor: Colors.white,
+                            expandedHeight: 200,
+                            floating: false,
+                            pinned: true,
+                            flexibleSpace: FlexibleSpaceBar(
+                              background: _buildCoverPhoto(),
+                            ),
+                          ),
+                          SliverToBoxAdapter(
+                            child: Column(
+                              children: [
+                                _buildProfileInfo(),
+                                // Post(),
+                              ],
+                            ),
+                          )
+                        ];
+                      },
+                      body: Row(
                         children: [
-                          _Deatalis("Details"),
-                          _buildDivider(10),
-                          _buildButtonsRow(),
-                          _buildDivider(10),
-                          // _buildDetails("Posts"),
+                          Expanded(
+                            flex: 3,
+                            child: Container(
+                              child: Column(
+                                children: [
+                                  _Deatalis("Details"),
+                                  _buildDivider(10),
+                                  _buildButtonsRow(),
+                                  _buildDivider(10),
+                                  // _buildDetails("Posts"),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 4,
+                            child: Post(
+                                username: widget.userData.id, isPage: true),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Container(),
+                          ),
                         ],
+                      )
+
+                      //Post(username: widget.userData.id, isPage: true),
                       ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 4,
-                    child: Post(username: widget.userData.id, isPage: true),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Container(),
-                  ),
-                ],
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Container(
+                  child: ChatWebMainPage(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+      return Scaffold(
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return [
+              SliverAppBar(
+                backgroundColor: Colors.white,
+                expandedHeight: 200,
+                floating: false,
+                pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: _buildCoverPhoto(),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    _buildProfileInfo(),
+                    _Deatalis("Details"),
+                    _buildDivider(10),
+                    _buildButtonsRow(),
+                    _buildDivider(10),
+                    _Deatalis("Posts"),
+                    // Post(),
+                  ],
+                ),
               )
-            : Post(username: widget.userData.id, isPage: true),
-        
-        
-        //Post(username: widget.userData.id, isPage: true),
-      ),
-    );
+            ];
+          },
+          body: Post(username: widget.userData.id, isPage: true),
+
+          //Post(username: widget.userData.id, isPage: true),
+        ),
+      );
+    }
   }
 
   Widget _buildCoverPhoto() {
@@ -146,7 +198,10 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
   }
 
   Widget _buildProfileInfo() {
-    return Padding(
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.grey[50],
+          border: Border(bottom: BorderSide(color: Colors.grey, width: 2))),
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
@@ -296,7 +351,7 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
           child: Container(
             height: 35,
             padding: const EdgeInsets.only(left: 10),
-            child:  Row(
+            child: Row(
               children: [
                 Icon(Icons.more_horiz),
                 SizedBox(width: 10),
@@ -305,13 +360,12 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),
-                if (!kIsWeb)
-                Icon(Icons.arrow_forward, size: 30),
+                if (!kIsWeb) Icon(Icons.arrow_forward, size: 30),
               ],
             ),
           ),
         ),
-      if (!kIsWeb)  _buildDivider(10),
+        if (!kIsWeb) _buildDivider(10),
         InkWell(
           onTap: () {
             //controller.goToSeeAboutInfo();
@@ -322,7 +376,7 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
           child: Container(
             height: 35,
             padding: const EdgeInsets.only(left: 10),
-            child:  Row(
+            child: Row(
               children: [
                 Icon(Icons.calendar_today_rounded),
                 SizedBox(width: 10),
@@ -331,13 +385,12 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),
-                if (!kIsWeb)
-                Icon(Icons.arrow_forward, size: 30),
+                if (!kIsWeb) Icon(Icons.arrow_forward, size: 30),
               ],
             ),
           ),
         ),
-    if (!kIsWeb)    _buildDivider(10),
+        if (!kIsWeb) _buildDivider(10),
         InkWell(
           onTap: () {
             //controller.goToSeeAboutInfo();
@@ -347,7 +400,7 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
           child: Container(
             height: 35,
             padding: const EdgeInsets.only(left: 10),
-            child:  Row(
+            child: Row(
               children: [
                 Icon(Icons.more_horiz),
                 SizedBox(width: 10),
@@ -356,8 +409,7 @@ class _ColleaguesPageProfileState extends State<ColleaguesPageProfile> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),
-                if (!kIsWeb)
-                Icon(Icons.arrow_forward, size: 30),
+                if (!kIsWeb) Icon(Icons.arrow_forward, size: 30),
               ],
             ),
           ),

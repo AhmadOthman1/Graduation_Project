@@ -29,45 +29,43 @@ class JobPost {
   });
 }
 
-
 class ShowTheJob extends StatefulWidget {
-final String title;
+  final String title;
   final String company;
   final String Fields;
   final String? image; // Change the type to String?
   final String deadline;
   final String content;
   final jopId;
-    const ShowTheJob({Key? key , required this.title,
-    required this.company,
-    required this.Fields,
-    this.image, // Update the type to String?
-    required this.deadline,
-    required this.content,required this.jopId}) : super(key: key);
+  const ShowTheJob(
+      {Key? key,
+      required this.title,
+      required this.company,
+      required this.Fields,
+      this.image, // Update the type to String?
+      required this.deadline,
+      required this.content,
+      required this.jopId})
+      : super(key: key);
 
   @override
   _ShowTheJobState createState() => _ShowTheJobState();
 }
 
 class _ShowTheJobState extends State<ShowTheJob> {
-  
- 
-
-
-
   @override
   Widget build(BuildContext context) {
     final List<JobPost> jobPosts = [
-    JobPost(
-      title: widget.title,
-      company: widget.company,
-      Fields: widget.Fields,
-      image: widget.image,
-      deadline: widget.deadline,
-      content:widget.content,
-      jobId: widget.jopId,
-    ),
-  ];
+      JobPost(
+        title: widget.title,
+        company: widget.company,
+        Fields: widget.Fields,
+        image: widget.image,
+        deadline: widget.deadline,
+        content: widget.content,
+        jobId: widget.jopId,
+      ),
+    ];
     return Scaffold(
       appBar: AppBar(
         title: Text('Job Post'),
@@ -86,7 +84,7 @@ class JobPostCard extends StatelessWidget {
   String? cvExt;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final ShowTheJobImp Controller22 = Get.put(ShowTheJobImp());
- 
+
   final AssetImage defaultProfileImage =
       const AssetImage("images/profileImage.jpg");
 
@@ -97,150 +95,319 @@ class JobPostCard extends StatelessWidget {
     DateTime deadlineDate = DateTime.parse(jobPost.deadline);
     bool isBeforeDeadline = DateTime.now().isBefore(deadlineDate);
     TextEditingController noticeController = TextEditingController();
-
-    return Card(
-      margin: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    if (kIsWeb) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ListTile(
-            leading: InkWell(
-              onTap: (){
-                Controller22.goToPage(jobPost.company);
+          Expanded(flex: 2, child: Container()),
+          Expanded(
+            flex: 4,
+            child: Card(
+              margin: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ListTile(
+                    leading: InkWell(
+                      onTap: () {
+                        Controller22.goToPage(jobPost.company);
+                      },
+                      child: CircleAvatar(
+                        backgroundImage:
+                            (jobPost.image != null && jobPost.image != "")
+                                ? Image.network("$urlStarter/${jobPost.image}")
+                                    .image
+                                : defaultProfileImage,
+                      ),
+                    ),
+                    title: Text(jobPost.company),
+                    subtitle: Text(jobPost.title),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Fields: ${jobPost.Fields}'),
+                        SizedBox(height: 8),
+                        Text(jobPost.content),
+                        SizedBox(height: 16),
+                        Text('Deadline: ${jobPost.deadline}'),
+                        // Display the text field if before the deadline
+                        if (isBeforeDeadline)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Enter your notice:'),
+                              SizedBox(height: 8),
+                              Form(
+                                key: formKey,
+                                child: TextFormField(
+                                  maxLines: 5,
+                                  controller: noticeController,
+                                  decoration: InputDecoration(
+                                    hintText: "Type your notice here...",
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a notice ';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Container(
+                                    width: 150,
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        final result =
+                                            await FilePicker.platform.pickFiles(
+                                          type: FileType.custom,
+                                          allowedExtensions: ['pdf'],
+                                          allowMultiple: false,
+                                        );
 
-              },
-              child: CircleAvatar(
-                backgroundImage: (jobPost.image != null && jobPost.image != "")
-                    ? Image.network("$urlStarter/${jobPost.image}").image
-                    : defaultProfileImage,
+                                        if (result != null &&
+                                            result.files.isNotEmpty) {
+                                          PlatformFile file =
+                                              result.files.first;
+                                          if (file.extension == "pdf") {
+                                            String base64String;
+                                            if (kIsWeb) {
+                                              final fileBytes = file.bytes;
+                                              base64String = base64Encode(
+                                                  fileBytes as List<int>);
+                                            } else {
+                                              List<int> fileBytes =
+                                                  await File(file.path!)
+                                                      .readAsBytes();
+                                              base64String =
+                                                  base64Encode(fileBytes);
+                                            }
+                                            cvBytes = base64String;
+                                            cvName = file.name;
+                                            cvExt = file.extension;
+                                          } else {
+                                            cvBytes = null;
+                                            cvName = null;
+                                            cvExt = null;
+                                          }
+                                        } else {
+                                          // User canceled the picker
+                                          cvBytes = null;
+                                          cvName = null;
+                                          cvExt = null;
+                                        }
+                                      },
+                                      child: Text('Upload CV'),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 150,
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        String notice = noticeController.text;
+                                        // Process the notice as needed
+                                        if (formKey.currentState!.validate()) {
+                                          print('Title: ${jobPost.title}');
+                                          print('Fields: ${jobPost.Fields}');
+                                          print('Company: ${jobPost.company}');
+                                          print('Notice: $notice');
+                                          print('Selected CV: $cvName');
+                                          var message = await Controller22
+                                              .SaveApplication(cvBytes, cvName,
+                                                  cvExt, notice, jobPost.jobId);
+                                          Get.back();
+                                          (message != null)
+                                              ? showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return CustomAlertDialog(
+                                                      title: 'Message',
+                                                      icon: Icons.error,
+                                                      text: message,
+                                                      buttonText: 'OK',
+                                                    );
+                                                  },
+                                                )
+                                              : null;
+                                        }
+                                      },
+                                      child: Text('Apply'),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-            title: Text(jobPost.company),
-            subtitle: Text(jobPost.title),
           ),
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Fields: ${jobPost.Fields}'),
-                SizedBox(height: 8),
-                Text(jobPost.content),
-                SizedBox(height: 16),
-                Text('Deadline: ${jobPost.deadline}'),
-                // Display the text field if before the deadline
-                if (isBeforeDeadline)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Enter your notice:'),
-                      SizedBox(height: 8),
-                      Form(
-                        key: formKey,
-                        child: TextFormField(
-                          maxLines: 5,
-                          controller: noticeController,
-                          decoration: InputDecoration(
-                            hintText: "Type your notice here...",
-                            border: OutlineInputBorder(),
+          Expanded(flex: 2, child: Container()),
+        ],
+      );
+    } else {
+      return Card(
+        margin: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ListTile(
+              leading: InkWell(
+                onTap: () {
+                  Controller22.goToPage(jobPost.company);
+                },
+                child: CircleAvatar(
+                  backgroundImage:
+                      (jobPost.image != null && jobPost.image != "")
+                          ? Image.network("$urlStarter/${jobPost.image}").image
+                          : defaultProfileImage,
+                ),
+              ),
+              title: Text(jobPost.company),
+              subtitle: Text(jobPost.title),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Fields: ${jobPost.Fields}'),
+                  SizedBox(height: 8),
+                  Text(jobPost.content),
+                  SizedBox(height: 16),
+                  Text('Deadline: ${jobPost.deadline}'),
+                  // Display the text field if before the deadline
+                  if (isBeforeDeadline)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Enter your notice:'),
+                        SizedBox(height: 8),
+                        Form(
+                          key: formKey,
+                          child: TextFormField(
+                            maxLines: 5,
+                            controller: noticeController,
+                            decoration: InputDecoration(
+                              hintText: "Type your notice here...",
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a notice ';
+                              }
+                              return null;
+                            },
                           ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a notice ';
-                            }
-                            return null;
-                          },
                         ),
-                      ),
-                      SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            width: 150,
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                final result =
-                                    await FilePicker.platform.pickFiles(
-                                  type: FileType.custom,
-                                  allowedExtensions: ['pdf'],
-                                  allowMultiple: false,
-                                );
+                        SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Container(
+                              width: 150,
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  final result =
+                                      await FilePicker.platform.pickFiles(
+                                    type: FileType.custom,
+                                    allowedExtensions: ['pdf'],
+                                    allowMultiple: false,
+                                  );
 
-                                if (result != null && result.files.isNotEmpty) {
-                                  PlatformFile file = result.files.first;
-                                  if (file.extension == "pdf") {
-                                    String base64String;
-                                    if (kIsWeb) {
-                                      final fileBytes = file.bytes;
-                                      base64String =
-                                          base64Encode(fileBytes as List<int>);
+                                  if (result != null &&
+                                      result.files.isNotEmpty) {
+                                    PlatformFile file = result.files.first;
+                                    if (file.extension == "pdf") {
+                                      String base64String;
+                                      if (kIsWeb) {
+                                        final fileBytes = file.bytes;
+                                        base64String = base64Encode(
+                                            fileBytes as List<int>);
+                                      } else {
+                                        List<int> fileBytes =
+                                            await File(file.path!)
+                                                .readAsBytes();
+                                        base64String = base64Encode(fileBytes);
+                                      }
+                                      cvBytes = base64String;
+                                      cvName = file.name;
+                                      cvExt = file.extension;
                                     } else {
-                                      List<int> fileBytes =
-                                          await File(file.path!).readAsBytes();
-                                      base64String = base64Encode(fileBytes);
+                                      cvBytes = null;
+                                      cvName = null;
+                                      cvExt = null;
                                     }
-                                    cvBytes = base64String;
-                                    cvName = file.name;
-                                    cvExt = file.extension;
                                   } else {
+                                    // User canceled the picker
                                     cvBytes = null;
                                     cvName = null;
                                     cvExt = null;
                                   }
-                                } else {
-                                  // User canceled the picker
-                                  cvBytes = null;
-                                  cvName = null;
-                                  cvExt = null;
-                                }
-                              },
-                              child: Text('Upload CV'),
+                                },
+                                child: Text('Upload CV'),
+                              ),
                             ),
-                          ),
-                          Container(
-                            width: 150,
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                String notice = noticeController.text;
-                                // Process the notice as needed
-                                if (formKey.currentState!.validate()) {
-                                  print('Title: ${jobPost.title}');
-                                  print('Fields: ${jobPost.Fields}');
-                                  print('Company: ${jobPost.company}');
-                                  print('Notice: $notice');
-                                  print('Selected CV: $cvName');
-                                  var message = await Controller22.SaveApplication(
-                                      cvBytes, cvName, cvExt, notice,jobPost.jobId);
-                                      Get.back();
-                                      (message != null)
-                              ? showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomAlertDialog(
-                                      title: 'Message',
-                                      icon: Icons.error,
-                                      text: message,
-                                      buttonText: 'OK',
-                                    );
-                                  },
-                                )
-                              : null;
-                              
-                                }
-                              },
-                              child: Text('Apply'),
+                            Container(
+                              width: 150,
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  String notice = noticeController.text;
+                                  // Process the notice as needed
+                                  if (formKey.currentState!.validate()) {
+                                    print('Title: ${jobPost.title}');
+                                    print('Fields: ${jobPost.Fields}');
+                                    print('Company: ${jobPost.company}');
+                                    print('Notice: $notice');
+                                    print('Selected CV: $cvName');
+                                    var message =
+                                        await Controller22.SaveApplication(
+                                            cvBytes,
+                                            cvName,
+                                            cvExt,
+                                            notice,
+                                            jobPost.jobId);
+                                    Get.back();
+                                    (message != null)
+                                        ? showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return CustomAlertDialog(
+                                                title: 'Message',
+                                                icon: Icons.error,
+                                                text: message,
+                                                buttonText: 'OK',
+                                              );
+                                            },
+                                          )
+                                        : null;
+                                  }
+                                },
+                                child: Text('Apply'),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-              ],
+                          ],
+                        ),
+                      ],
+                    ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    }
   }
 }

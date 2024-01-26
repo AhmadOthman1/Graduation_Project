@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:growify/controller/home/myPage_Controller/PageProfile_controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/view/screen/homescreen/chat/chatForWeb/chatWebmainpage.dart';
 import 'package:growify/view/screen/homescreen/myPage/Groups/ShowAllGroup.dart';
 import 'package:growify/view/screen/homescreen/myPage/JobsPages/addnewjob.dart';
 import 'package:growify/view/screen/homescreen/myPage/JobsPages/showAllMyPageJobs.dart';
@@ -82,76 +83,126 @@ class _PageProfileState extends State<PageProfile> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return [
-            SliverAppBar(
-              backgroundColor: Colors.white,
-              expandedHeight: 200,
-              floating: false,
-              pinned: true,
-              flexibleSpace: FlexibleSpaceBar(
-                background: _buildCoverPhoto(),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  _buildProfileInfo(),
-                  if (!kIsWeb) _Details("Details"),
-                  if (!kIsWeb) _buildDivider(10),
-                  if (!kIsWeb) _buildButtonsRow(),
-                  if (!kIsWeb) _buildDivider(10),
-                  if (!kIsWeb) _Details("Posts"),
-                  //  Expanded(
-                  // child: Post(username: widget.userData[0]["username"]), // Use Expanded for the Post widget
-                  // ),
-                ],
-              ),
-            ),
-          ];
-        },
-        body: kIsWeb
-            ? Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: SingleChildScrollView(
-                      child: Column(
+    if (kIsWeb) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Container(
+          color: const Color.fromARGB(255, 240, 219, 219),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                flex: 7,
+                child: Container(
+                  color: Colors.white,
+                  child: NestedScrollView(
+                      headerSliverBuilder:
+                          (BuildContext context, bool innerBoxIsScrolled) {
+                        return [
+                          SliverAppBar(
+                            backgroundColor: Colors.white,
+                            expandedHeight: 200,
+                            floating: false,
+                            pinned: true,
+                            flexibleSpace: FlexibleSpaceBar(
+                              background: _buildCoverPhoto(),
+                            ),
+                          ),
+                          SliverToBoxAdapter(
+                            child: Column(
+                              children: [
+                                _buildProfileInfo(),
+                                //  Expanded(
+                                // child: Post(username: widget.userData[0]["username"]), // Use Expanded for the Post widget
+                                // ),
+                              ],
+                            ),
+                          ),
+                        ];
+                      },
+                      body: Row(
                         children: [
-                          _Details("Details"),
-                          _buildDivider(10),
-                          _buildButtonsRow(),
-                          _buildDivider(10),
-                          // _buildDetails("Posts"),
+                          Expanded(
+                            flex: 3,
+                            child: Container(
+                              height: 500,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    _Details("Details"),
+                                    _buildDivider(10),
+                                    _buildButtonsRow(),
+                                    _buildDivider(10),
+                                    // _buildDetails("Posts"),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 4,
+                            child: Post(
+                                isAdmin: widget.isAdmin,
+                                username: widget.userData.id,
+                                isPage: true),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Container(),
+                          ),
                         ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 4,
-                    child: Post(
-                        isAdmin: widget.isAdmin,
-                        username: widget.userData.id,
-                        isPage: true),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Container(),
-                  ),
-                ],
-              )
-            : Post(
-                isAdmin: widget.isAdmin,
-                username: widget.userData.id,
-                isPage: true),
-        /* Post(
+                      )),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Container(
+                  child: ChatWebMainPage(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+      return Scaffold(
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return [
+              SliverAppBar(
+                backgroundColor: Colors.white,
+                expandedHeight: 200,
+                floating: false,
+                pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: _buildCoverPhoto(),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    _buildProfileInfo(),
+                    _Details("Details"),
+                    _buildDivider(10),
+                    _buildButtonsRow(),
+                    _buildDivider(10),
+                    _Details("Posts"),
+                  ],
+                ),
+              ),
+            ];
+          },
+          body: Post(
+              isAdmin: widget.isAdmin,
+              username: widget.userData.id,
+              isPage: true),
+          /* Post(
             isAdmin: widget.isAdmin,
             username: widget.userData.id,
             isPage: true),*/
-      ),
-    );
+        ),
+      );
+    }
   }
 
   Widget _buildCoverPhoto() {
@@ -167,7 +218,10 @@ class _PageProfileState extends State<PageProfile> {
   }
 
   Widget _buildProfileInfo() {
-    return Padding(
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.grey[50],
+          border: Border(bottom: BorderSide(color: Colors.grey, width: 2))),
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
@@ -253,7 +307,7 @@ class _PageProfileState extends State<PageProfile> {
                 child: Container(
                   height: 35,
                   padding: const EdgeInsets.only(left: 10),
-                  child:  Row(
+                  child: Row(
                     children: [
                       Icon(Icons.person),
                       SizedBox(width: 10),
@@ -263,13 +317,12 @@ class _PageProfileState extends State<PageProfile> {
                             fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                       Spacer(),
-                      if (!kIsWeb)
-                      Icon(Icons.arrow_forward, size: 30),
+                      if (!kIsWeb) Icon(Icons.arrow_forward, size: 30),
                     ],
                   ),
                 ),
               ),
-            if (!kIsWeb)  _buildDivider(10),
+              if (!kIsWeb) _buildDivider(10),
               InkWell(
                 onTap: () {
                   Get.to(ShowEmployees(pageId: widget.userData.id));
@@ -277,7 +330,7 @@ class _PageProfileState extends State<PageProfile> {
                 child: Container(
                   height: 35,
                   padding: const EdgeInsets.only(left: 10),
-                  child:  Row(
+                  child: Row(
                     children: [
                       Icon(Icons.person),
                       SizedBox(width: 10),
@@ -287,13 +340,12 @@ class _PageProfileState extends State<PageProfile> {
                             fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                       Spacer(),
-                      if (!kIsWeb)
-                      Icon(Icons.arrow_forward, size: 30),
+                      if (!kIsWeb) Icon(Icons.arrow_forward, size: 30),
                     ],
                   ),
                 ),
               ),
-            if (!kIsWeb)  _buildDivider(10),
+              if (!kIsWeb) _buildDivider(10),
               InkWell(
                 onTap: () {
                   controller.goToShowGroupPage(widget.userData.id);
@@ -301,7 +353,7 @@ class _PageProfileState extends State<PageProfile> {
                 child: Container(
                   height: 35,
                   padding: const EdgeInsets.only(left: 10),
-                  child:  Row(
+                  child: Row(
                     children: [
                       Icon(Icons.diversity_3),
                       SizedBox(width: 10),
@@ -311,13 +363,12 @@ class _PageProfileState extends State<PageProfile> {
                             fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                       Spacer(),
-                      if (!kIsWeb)
-                      Icon(Icons.arrow_forward, size: 30),
+                      if (!kIsWeb) Icon(Icons.arrow_forward, size: 30),
                     ],
                   ),
                 ),
               ),
-            if (!kIsWeb)  _buildDivider(10),
+              if (!kIsWeb) _buildDivider(10),
               InkWell(
                 onTap: () {
                   controller.goToEditPageProfile(widget.userData);
@@ -325,7 +376,7 @@ class _PageProfileState extends State<PageProfile> {
                 child: Container(
                   height: 35,
                   padding: const EdgeInsets.only(left: 10),
-                  child:  Row(
+                  child: Row(
                     children: [
                       Icon(Icons.edit),
                       SizedBox(width: 10),
@@ -335,13 +386,12 @@ class _PageProfileState extends State<PageProfile> {
                             fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                       Spacer(),
-                      if (!kIsWeb)
-                      Icon(Icons.arrow_forward, size: 30),
+                      if (!kIsWeb) Icon(Icons.arrow_forward, size: 30),
                     ],
                   ),
                 ),
               ),
-            if (!kIsWeb)  _buildDivider(10),
+              if (!kIsWeb) _buildDivider(10),
               Visibility(
                 visible: pageType != "private",
                 child: Column(
@@ -366,13 +416,12 @@ class _PageProfileState extends State<PageProfile> {
                                   fontSize: 15, fontWeight: FontWeight.bold),
                             ),
                             Spacer(),
-                            if (!kIsWeb)
-                            Icon(Icons.arrow_forward, size: 30),
+                            if (!kIsWeb) Icon(Icons.arrow_forward, size: 30),
                           ],
                         ),
                       ),
                     ),
-                if (!kIsWeb)   _buildDivider(10),
+                    if (!kIsWeb) _buildDivider(10),
                   ],
                 ),
               ),
@@ -398,7 +447,7 @@ class _PageProfileState extends State<PageProfile> {
           child: Container(
             height: 35,
             padding: const EdgeInsets.only(left: 10),
-            child:  Row(
+            child: Row(
               children: [
                 Icon(Icons.more_horiz),
                 SizedBox(width: 10),
@@ -407,13 +456,12 @@ class _PageProfileState extends State<PageProfile> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),
-                if (!kIsWeb)
-                Icon(Icons.arrow_forward, size: 30),
+                if (!kIsWeb) Icon(Icons.arrow_forward, size: 30),
               ],
             ),
           ),
         ),
-      if (!kIsWeb)  _buildDivider(10),
+        if (!kIsWeb) _buildDivider(10),
         InkWell(
           onTap: () {
             //controller.goToSeeAboutInfo();
@@ -424,7 +472,7 @@ class _PageProfileState extends State<PageProfile> {
           child: Container(
             height: 35,
             padding: const EdgeInsets.only(left: 10),
-            child:  Row(
+            child: Row(
               children: [
                 Icon(Icons.calendar_today_rounded),
                 SizedBox(width: 10),
@@ -433,71 +481,101 @@ class _PageProfileState extends State<PageProfile> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Spacer(),
-                if (!kIsWeb)
-                Icon(Icons.arrow_forward, size: 30),
+                if (!kIsWeb) Icon(Icons.arrow_forward, size: 30),
               ],
             ),
           ),
         ),
-      if (!kIsWeb)  _buildDivider(10),
-       kIsWeb
-    ? InkWell(
-        onTap: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true, // Set this to true
-            builder: (BuildContext context) {
-              return NewPost(
-                profileImage: profileImage,
-                isPage: true,
-                pageId: widget.userData.id,
-              );
-            },
-          );
-        },
-        child: Container(
-          height: 35,
-          padding: const EdgeInsets.only(left: 10),
-          child: Row(
+        Visibility(
+          visible: pageType != "private",
+          child: Column(
             children: [
-              Icon(Icons.post_add_outlined),
-              SizedBox(width: 10),
-              Text(
-                "Add New Post",
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              InkWell(
+                onTap: () {
+                  controller.goToChatPage(widget.userData.id,
+                      widget.userData.name, widget.userData.photo);
+                },
+                child: Container(
+                  height: 35,
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Row(
+                    children: [
+                      Icon(Icons.message),
+                      SizedBox(width: 10),
+                      Text(
+                        "Chats",
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      Spacer(),
+                      if (!kIsWeb) Icon(Icons.arrow_forward, size: 30),
+                    ],
+                  ),
+                ),
               ),
-              Spacer(),
-              // The arrow forward icon is not included for web
             ],
           ),
         ),
-      )
-    : InkWell(
-        onTap: () {
-          Get.to(NewPost(
-            profileImage: profileImage,
-            isPage: true,
-            pageId: widget.userData.id,
-          ));
-        },
-        child: Container(
-          height: 35,
-          padding: const EdgeInsets.only(left: 10),
-          child: Row(
-            children: [
-              Icon(Icons.post_add_outlined),
-              SizedBox(width: 10),
-              Text(
-                "Add New Post",
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+        if (!kIsWeb) _buildDivider(10),
+        kIsWeb
+            ? InkWell(
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true, // Set this to true
+                    builder: (BuildContext context) {
+                      return NewPost(
+                        profileImage: profileImage,
+                        isPage: true,
+                        pageId: widget.userData.id,
+                      );
+                    },
+                  );
+                },
+                child: Container(
+                  height: 35,
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Row(
+                    children: [
+                      Icon(Icons.post_add_outlined),
+                      SizedBox(width: 10),
+                      Text(
+                        "Add New Post",
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      Spacer(),
+                      // The arrow forward icon is not included for web
+                    ],
+                  ),
+                ),
+              )
+            : InkWell(
+                onTap: () {
+                  Get.to(NewPost(
+                    profileImage: profileImage,
+                    isPage: true,
+                    pageId: widget.userData.id,
+                  ));
+                },
+                child: Container(
+                  height: 35,
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Row(
+                    children: [
+                      Icon(Icons.post_add_outlined),
+                      SizedBox(width: 10),
+                      Text(
+                        "Add New Post",
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      Spacer(),
+                      Icon(Icons.arrow_forward, size: 30),
+                    ],
+                  ),
+                ),
               ),
-              Spacer(),
-              Icon(Icons.arrow_forward, size: 30),
-            ],
-          ),
-        ),
-      ),
-
       ],
     );
   }

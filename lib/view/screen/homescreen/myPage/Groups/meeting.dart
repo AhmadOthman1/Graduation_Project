@@ -108,6 +108,7 @@ class _MeetingPageState extends State<meetingPage> {
   MediaStream? _screenStream;
   RTCVideoRenderer _localRenderer = RTCVideoRenderer();
   RTCVideoRenderer _mainRenderer = RTCVideoRenderer();
+  List<RTCIceCandidate> rtcIceCadidates = [];
   bool _isSend = false;
   var mainScreenIndex;
   bool firstTimeflag = true;
@@ -126,6 +127,8 @@ class _MeetingPageState extends State<meetingPage> {
           RTCRtpSender sender =
               await _peerConnection!.addTrack(track, _localStream!);
           _senders.add(sender);
+          _peerConnection!.onIceCandidate =
+          (RTCIceCandidate candidate) => rtcIceCadidates.add(candidate);
           setState(() {});
         });
       },
@@ -183,6 +186,7 @@ class _MeetingPageState extends State<meetingPage> {
     var session = parse(description.sdp.toString());
     String sdp = write(session, null);
     setState(() {});
+    
     await widget.socket!.emit('joinMeeting', {
       'sdp': sdp,
       'meetingID': widget.meetingID,
