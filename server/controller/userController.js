@@ -10,188 +10,206 @@ const moment = require('moment');
 
 
 
-exports.postVerificationCode=async (req,res,next)=>{
-    try{
+exports.postVerificationCode = async (req, res, next) => {
+    try {
 
-        const { verificationCode , email} = req.body;//get data from req
+        const { verificationCode, email } = req.body;//get data from req
         //find the user by email in tempuser table
-        const existingUserInTemp  = await tempUser.findOne({
+        const existingUserInTemp = await tempUser.findOne({
             where: {
-                email: email 
-        }});
+                email: email
+            }
+        });
         //if exists 
-        if (existingUserInTemp !=null) {
+        if (existingUserInTemp != null) {
             const storedVerificationCode = existingUserInTemp.code;// get the hashed code from the thable
-            //const hashedVerificationCode = await bcrypt.hash(VerificationCode.toString(), 10);// hash the code from the user
+
+            if(existingUserInTemp.attemptCounter >=3){
+                await existingUserInTemp.destroy();
+                return res.status(409).json({
+                    message: 'Not Valid email, please reSign up',
+                    body: req.body
+                });
+            }else{
+                if (verificationCode != storedVerificationCode){
+                    var newCounter = existingUserInTemp.attemptCounter+1;
+                    existingUserInTemp.attemptCounter = newCounter;
+                    await existingUserInTemp.save();
+                    return res.status(409).json({
+                        message: `Not Valid code, ${3- newCounter} attempts left`,
+                        body: req.body
+                    });
+                }
+            }
             //compare
-            if(verificationCode == storedVerificationCode){
+            if (verificationCode == storedVerificationCode) {
                 const newUser = await User.create({
                     firstname: existingUserInTemp.firstname,
                     lastname: existingUserInTemp.lastname,
                     username: existingUserInTemp.username,
                     email: existingUserInTemp.email,
-                    password: existingUserInTemp.password, 
+                    password: existingUserInTemp.password,
                     phone: existingUserInTemp.phone,
                     dateOfBirth: existingUserInTemp.dateOfBirth,
-                  });
-                  await existingUserInTemp.destroy();
-                  return res.status(200).json({
-                    body :req.body
-                  });
+                });
+                await existingUserInTemp.destroy();
+                return res.status(200).json({
+                    body: req.body
+                });
             }
-            else{
+            else {
                 return res.status(409).json({
                     message: 'Not Valid code',
-                    body :req.body
-                  });
+                    body: req.body
+                });
             }
-        
-            
-          } else {
-            
+
+
+        } else {
+
             return res.status(409).json({
-                message: 'Not Valid email',
-                body :req.body
-              });
-          }
+                message: 'Not Valid email, please reSign up',
+                body: req.body
+            });
+        }
 
 
 
 
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return res.status(409).json({
             message: 'server error',
-            body :req.body
-          });
+            body: req.body
+        });
     }
 }
 
 
-exports.postSignup=async (req,res,next)=>{
+exports.postSignup = async (req, res, next) => {
     try {
         console.log(req);
-        const { firstName,lastName,userName, email, password, phone, dateOfBirth } = req.body;
+        const { firstName, lastName, userName, email, password, phone, dateOfBirth } = req.body;
         // all values not empty 
-        if (!firstName ||!lastName ||!userName || !email || !password || !phone || !dateOfBirth) {
+        if (!firstName || !lastName || !userName || !email || !password || !phone || !dateOfBirth) {
             return res.status(409).json({
                 message: 'One or more fields are empty',
-                body :req.body
-              });
-          }
+                body: req.body
+            });
+        }
         // all values are correct
-        if(!validator.isUsername(firstName) || firstName.length < 1 ||firstName.length > 50){
+        if (!validator.isUsername(firstName) || firstName.length < 1 || firstName.length > 50) {
             return res.status(409).json({
                 message: 'Not Valid firstName',
-                body :req.body
-              });
+                body: req.body
+            });
         }
-        if(!validator.isUsername(lastName) || lastName.length < 1 ||lastName.length > 50){
+        if (!validator.isUsername(lastName) || lastName.length < 1 || lastName.length > 50) {
             return res.status(409).json({
                 message: 'Not Valid UserName',
-                body :req.body
-              });
+                body: req.body
+            });
         }
-        if(!validator.isUsername(userName) || userName.length < 5 ||userName.length > 50){
+        if (!validator.isUsername(userName) || userName.length < 5 || userName.length > 50) {
             return res.status(409).json({
                 message: 'Not Valid UserName',
-                body :req.body
-              });
+                body: req.body
+            });
         }
-        if(!validator.isEmail(email)|| email.length < 12 ||email.length > 100){
+        if (!validator.isEmail(email) || email.length < 12 || email.length > 100) {
             return res.status(409).json({
                 message: 'Not Valid email',
-                body :req.body
-              });
+                body: req.body
+            });
         }
-        if(!validator.isPhoneNumber(phone)|| phone.length < 10 ||phone.length > 15){
+        if (!validator.isPhoneNumber(phone) || phone.length < 10 || phone.length > 15) {
             return res.status(409).json({
                 message: 'Not Valid Phone Number',
-                body :req.body
-              });
+                body: req.body
+            });
         }
-        if(password.length <8 || password.length >30 ){
+        if (password.length < 8 || password.length > 30) {
             return res.status(409).json({
                 message: 'Not Valid password',
-                body :req.body
-              });
+                body: req.body
+            });
         }
-        if(!validator.isDate(dateOfBirth)|| dateOfBirth.length < 8 ||dateOfBirth.length > 10){
+        if (!validator.isDate(dateOfBirth) || dateOfBirth.length < 8 || dateOfBirth.length > 10) {
             return res.status(409).json({
                 message: 'Not Valid date Of Birth',
-                body :req.body
-              });
+                body: req.body
+            });
         }
         // find if user exsist in user table
-            const existingUserName  = await User.findOne({
-                where: {
-                    username: userName 
-                },
-                });
-            const existingEmail = await User.findOne({
-                where: {
-                        email: email 
-                    },
-                });
-            // find if user exsist in tempuser table
-            const existingUserNameInTemp  = await tempUser.findOne({
-                where: {
-                      username: userName 
-                  },
-                });
-            const existingEmailInTemp = await tempUser.findOne({
-                where: {
-                        email: email 
-                    },
-                });
-            //if user has a data on temuser will be removed 
-            if (existingUserNameInTemp !=null) {
-                await existingUserNameInTemp.destroy();
-            }   
-            if (existingEmailInTemp !=null) {
-                await existingEmailInTemp.destroy();
-            }                  
-            if (existingUserName  !=null) {
-                // User already exists
-                return res.status(409).json({
-                  message: 'UserName already exists',
-                  body :req.body
-                });
-            }if (existingEmail !=null) {
-                // mail already exists
-                return res.status(409).json({
-                  message: 'Email already exists',
-                  body :req.body
-                });
-            }
-
-            // after all that validation save the new user and send the VerificationCode
-            await createUserInTemp(firstName,lastName,userName, email, password, phone, dateOfBirth);
-            /*
-            const hashedPassword = await bcrypt.hash(password, 10);// hash the password
-            const newUser = await User.create({
-                username: userName,
-                email: email,
-                password: hashedPassword, 
-                phone: phone,
-                dateOfBirth: dateOfBirth,
-              });
-*/
-            return res.status(200).json({
-                message: "",
-                body :req.body
+        const existingUserName = await User.findOne({
+            where: {
+                username: userName
+            },
+        });
+        const existingEmail = await User.findOne({
+            where: {
+                email: email
+            },
+        });
+        // find if user exsist in tempuser table
+        const existingUserNameInTemp = await tempUser.findOne({
+            where: {
+                username: userName
+            },
+        });
+        const existingEmailInTemp = await tempUser.findOne({
+            where: {
+                email: email
+            },
+        });
+        //if user has a data on temuser will be removed 
+        if (existingUserNameInTemp != null) {
+            await existingUserNameInTemp.destroy();
+        }
+        if (existingEmailInTemp != null) {
+            await existingEmailInTemp.destroy();
+        }
+        if (existingUserName != null) {
+            // User already exists
+            return res.status(409).json({
+                message: 'UserName already exists',
+                body: req.body
             });
-        
+        } if (existingEmail != null) {
+            // mail already exists
+            return res.status(409).json({
+                message: 'Email already exists',
+                body: req.body
+            });
+        }
 
-      } catch (error) {
+        // after all that validation save the new user and send the VerificationCode
+        await createUserInTemp(firstName, lastName, userName, email, password, phone, dateOfBirth);
+        /*
+        const hashedPassword = await bcrypt.hash(password, 10);// hash the password
+        const newUser = await User.create({
+            username: userName,
+            email: email,
+            password: hashedPassword, 
+            phone: phone,
+            dateOfBirth: dateOfBirth,
+          });
+*/
+        return res.status(200).json({
+            message: "",
+            body: req.body
+        });
+
+
+    } catch (error) {
         console.error('Error during user registration:', error);
-            return res.status(500).json({
+        return res.status(500).json({
             message: 'Internal Server Error',
             body: req.body
-            });
-      }
+        });
+    }
 }
-async function createUserInTemp(firstName,lastName,userName, email, password, phone, dateOfBirth){
+async function createUserInTemp(firstName, lastName, userName, email, password, phone, dateOfBirth) {
     var VerificationCode = Math.floor(10000 + Math.random() * 90000);
     //const hashedVerificationCode = await bcrypt.hash(VerificationCode.toString(), 10);
     await sendVerificationCode(email, VerificationCode);
@@ -201,71 +219,73 @@ async function createUserInTemp(firstName,lastName,userName, email, password, ph
         lastname: lastName,
         username: userName,
         email: email,
-        password: hashedPassword, 
+        password: hashedPassword,
         phone: phone,
         dateOfBirth: dateOfBirth,
         //code: hashedVerificationCode,
         code: VerificationCode,
-      });
+        attemptCounter:0,
+    });
 }
 async function sendVerificationCode(email, code) {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-        user: 'growifygp2@gmail.com',
-        pass: 'zglg aoic kdiz gjwf',//growifygp2$P2
+            user: 'growifygp2@gmail.com',
+            pass: 'zglg aoic kdiz gjwf',//growifygp2$P2
         },
     });
-    
-      const mailOptions = {
+
+    const mailOptions = {
         from: 'growifygp2@gmail.com',
         to: email,
         subject: 'Growify Verification Code',
         text: `Your verification code is: ${code} and its valid unless you close the app`,
-      };
-    
-      
-      try {
+    };
+
+
+    try {
         // Send the email
         const info = await transporter.sendMail(mailOptions);
-      } catch (error) {
-        
+    } catch (error) {
+
         console.error('Error sending email:', error);
         return res.status(500).json({
             message: 'email not found',
             body: req.body
-            });
-      }
-    
-  }
-  
-  // Example usage
+        });
+    }
 
-exports.createPost=(req,res,next)=>{
-    const title=req.body.title;
-    const content=req.body.content;
+}
+
+// Example usage
+
+exports.createPost = (req, res, next) => {
+    const title = req.body.title;
+    const content = req.body.content;
 
     User.create({
-        username:"ahmad",
-        name:"ahmad",
-        email:"ahmad@gmail.com ",
-        password:"123123",
-        bio:"",
-        country:"",
-        address:"",
-        phone:"",
-        dateOfBirth:"10-11-2022",
-        photo:"",
-        coverImage:"",
-        cv:""
+        username: "ahmad",
+        name: "ahmad",
+        email: "ahmad@gmail.com ",
+        password: "123123",
+        bio: "",
+        country: "",
+        address: "",
+        phone: "",
+        dateOfBirth: "10-11-2022",
+        photo: "",
+        coverImage: "",
+        cv: ""
 
 
 
-    }).then((result) =>{
+    }).then((result) => {
 
-        res.status(201).json({message:"created sucsessfully",post:result
-})
-    }).catch((err) =>{
+        res.status(201).json({
+            message: "created sucsessfully", post: result
+        })
+    }).catch((err) => {
         console.log(err);
     });
 

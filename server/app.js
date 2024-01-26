@@ -8,7 +8,7 @@ var cors = require('cors');
 const app = express();
 
 app.use(express.json({ limit: '100mb' }));
-app.use(cors()); 
+app.use(cors('*')); 
 app.use(bodyParser.json());
 app.use(express.static('messageImages'));
 app.use(express.static('messageVideos'));
@@ -31,7 +31,6 @@ sequelize.sync().then(result =>{
     
 
 });
-
 /*
 const express=require('express');
 
@@ -73,13 +72,14 @@ const groupMeeting = require('./models/groupMeeting')
 const postHistory = require('./models/postHistory')
 const postPhotos = require('./models/postPhotos')
 const postVideos = require('./models/postVideos')
+const loginAttempts = require('./models/loginAttempts')
 //const queries =require('./models/queries.js');
 
 
 
 
-const createTestData =require('./models/createTestData');
-createTestData.createText();
+//const createTestData =require('./models/createTestData');
+//createTestData.createText();
 //const bodyParser=require('body-parser');
 
 const sequelize=require('./util/database');
@@ -87,7 +87,7 @@ const sequelize=require('./util/database');
 const app=express();
 
 //{force:true}
-sequelize.sync().then(result =>{
+sequelize.sync({force:true}).then(result =>{
     console.log(result);
     app.listen(3000);
   

@@ -31,6 +31,10 @@ const User=sequelize.define('tempUser',{
         type:Sequelize.STRING,
         allowNull:false
     },
+    attemptCounter:{
+        type:Sequelize.INTEGER,
+        allowNull:false
+    },
 
 });
 
