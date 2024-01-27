@@ -28,7 +28,7 @@ exports.getLikes = async (req, res, next) => {
 }
 exports.getPostLikes = async (req, res, next) => {
     var username = req.user.username;
-    const { postId } = req.params;
+    const  postId  = req.params;
     var existingUsername = await User.findOne({
         where: {
             username: username,
@@ -56,7 +56,7 @@ exports.getPostLikes = async (req, res, next) => {
 }
 exports.deleteLike = async (req, res, next) => {
     var username = req.user.username;
-    const { likeId } = req.params;
+    const  likeId  = req.params;
     var existingUsername = await User.findOne({
         where: {
             username: username,

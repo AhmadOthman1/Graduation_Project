@@ -28,7 +28,7 @@ exports.getComments = async (req, res, next) => {
 }
 exports.getPostComments = async (req, res, next) => {
     var username = req.user.username;
-    const { postId } = req.params;
+    const  postId  = req.params;
     var existingUsername = await User.findOne({
         where: {
             username: username,
@@ -56,7 +56,7 @@ exports.getPostComments = async (req, res, next) => {
 }
 exports.deleteComment = async (req, res, next) => {
     var username = req.user.username;
-    const { commentId } = req.params;
+    const commentId  = req.params;
     var existingUsername = await User.findOne({
         where: {
             username: username,

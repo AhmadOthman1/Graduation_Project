@@ -6,7 +6,7 @@ const jobApplication = require("../../../models/jobApplication");
 const pageGroup = require("../../../models/pageGroup");
 const messages = require("../../../models/messages");
 const activeUsers = require("../../../models/activeUsers");
-const groupMeeting = require("../../../models/groupMeeting");
+const tempUser = require("../../../models/tempUser");
 const EducationLevel = require("../../../models/educationLevel");
 const WorkExperience = require("../../../models/workExperience");
 
@@ -23,11 +23,63 @@ exports.getUsers = async (req, res, next) => {
     });
     if (existingUsername != null) {
         var users = await User.findAll({
-            attributes: ['username', 'firstname', 'lastname', 'email', 'bio', 'country', 'address', 'phone', 'dateOfBirth', 'Gender', 'Fields', 'photo', 'coverImage', 'cv', 'status', 'type']
+            attributes: ['username', 'firstname', 'lastname', 'email', 'bio', 'country', 'address', 'phone', 'dateOfBirth', 'Gender', 'Fields', 'photo', 'coverImage', 'cv', 'status', 'type', 'createdAt', 'updatedAt']
         });
         return res.status(200).json({
             message: 'users',
             users: users,
+        });
+    } else {
+        return res.status(500).json({
+            message: 'Invalid email',
+            body: req.body
+        });
+    }
+
+}
+exports.getTempUser = async (req, res, next) => {
+    var username = req.user.username;
+    var existingUsername = await User.findOne({
+        where: {
+            username: username,
+            status: null,
+            type: "Admin"
+        }
+    });
+    if (existingUsername != null) {
+        var tempUsers = await tempUser.findAll({
+            attributes: ['username', 'firstname', 'lastname', 'email', 'phone', 'dateOfBirth' ,'attemptCounter', 'createdAt', 'updatedAt']
+        });
+        return res.status(200).json({
+            message: 'tempUsers',
+            tempUsers: tempUsers,
+        });
+    } else {
+        return res.status(500).json({
+            message: 'Invalid email',
+            body: req.body
+        });
+    }
+
+}
+exports.deleteTempUser = async (req, res, next) => {
+    var username = req.user.username;
+    const{userUsername} = req.body;
+    var existingUsername = await User.findOne({
+        where: {
+            username: username,
+            status: null,
+            type: "Admin"
+        }
+    });
+    if (existingUsername != null) {
+        var tempUsers = await tempUser.destroy({
+            where:{
+                username: userUsername,
+            }
+        });
+        return res.status(200).json({
+            message: 'tempUser deleted',
         });
     } else {
         return res.status(500).json({
@@ -585,6 +637,7 @@ exports.deleteUser = async (req, res, next) => {
 }
 exports.educationLevel = async (req, res, next) => {
     var username = req.user.username;
+    var userUsername = req.params;
     var existingUsername = await User.findOne({
         where: {
             username: username,
@@ -594,6 +647,10 @@ exports.educationLevel = async (req, res, next) => {
     });
     if (existingUsername != null) {
         var EducationLevels = await EducationLevel.findAll({
+            where:
+            {
+                username : userUsername,
+            }
         });
         return res.status(200).json({
             message: 'EducationLevels',
@@ -609,6 +666,7 @@ exports.educationLevel = async (req, res, next) => {
 }
 exports.workExperience = async (req, res, next) => {
     var username = req.user.username;
+    var userUsername = req.params;
     var existingUsername = await User.findOne({
         where: {
             username: username,
@@ -618,10 +676,42 @@ exports.workExperience = async (req, res, next) => {
     });
     if (existingUsername != null) {
         var WorkExperiences = await WorkExperience.findAll({
+            where:
+            {
+                username : userUsername,
+            }
         });
         return res.status(200).json({
             message: 'WorkExperiences',
             WorkExperiences: WorkExperiences,
+        });
+    } else {
+        return res.status(500).json({
+            message: 'Invalid email',
+            body: req.body
+        });
+    }
+
+}
+exports.userApplications = async (req, res, next) => {
+    var username = req.user.username;
+    var userUsername = req.params;
+    var existingUsername = await User.findOne({
+        where: {
+            username: username,
+            status: null,
+            type: "Admin"
+        }
+    });
+    if (existingUsername != null) {
+        var userApplications = await jobApplication.findAll({
+            where: {
+                username: userUsername
+            }
+        });
+        return res.status(200).json({
+            message: 'userApplications',
+            userApplications: userApplications,
         });
     } else {
         return res.status(500).json({

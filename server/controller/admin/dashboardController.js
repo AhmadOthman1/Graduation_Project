@@ -31,14 +31,23 @@ exports.getDashboard = async (req, res, next) => {
         return res.status(200).json({
             message: 'Dashboard',
             usersCount: usersCount,
+            usersTarget: 1000,
             activeUsersCount: activeUsersCount,
+            activeUsersTarget: 50,
             pagesCount: pagesCount,
+            pagesTarget: 50,
             jobsCount: jobsCount,
+            jobsTarget: 200,
             jobsApplicationsCount: jobsApplicationsCount,
+            jobsApplicationsTarget: 1000,
             groupsCount: groupsCount,
+            groupsTarget: 200,
             groupMeetingsCount: groupMeetingsCount,
+            groupMeetingsTarget: 50,
             messagesCount: messagesCount,
+            messagesTarget: 2000,
             postsCount: postsCount,
+            postsTarget: 1000,
         });
     }else{
         return res.status(500).json({
