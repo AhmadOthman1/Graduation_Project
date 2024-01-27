@@ -11,6 +11,7 @@ import 'package:growify/view/screen/homescreen/chat/chatmainpage.dart';
 //import 'package:growify/view/screen/homescreen/myPage/ColleaguesPageProfile.dart';
 import 'package:growify/view/screen/homescreen/profilepages/colleaguesprofile.dart';
 import 'package:growify/view/screen/homescreen/profilepages/profilemainpage.dart';
+import 'package:growify/view/screen/homescreen/search/Search.dart';
 import 'package:growify/view/screen/homescreen/settings/myPages.dart';
 import 'package:growify/view/widget/homePage/commentsMainpage.dart';
 import 'package:growify/view/widget/homePage/like.dart';
@@ -67,6 +68,47 @@ abstract class HomePageController extends GetxController {
 }
 
 class HomePageControllerImp extends HomePageController {
+
+
+
+
+
+
+
+
+
+   getFields() async {
+    var url = "$urlStarter/user/getJobFields";
+    var response = await http.get(Uri.parse(url), headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    });
+
+    print(response.statusCode);
+    if (response.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      getFields();
+      return;
+    } else if (response.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+
+    if (response.statusCode == 409) {
+      var responseBody = jsonDecode(response.body);
+      print(responseBody['message']);
+      return;
+    } else if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      Get.off(Search(
+          
+          availableFields: List<Map<String, dynamic>>.from(
+              responseBody['availableFields'])));
+
+     
+    }
+
+    return;
+  }
 //////////////
 
   final RxString profileImageBytes = ''.obs;

@@ -10,15 +10,22 @@ import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/chat/chatForWeb/chatWebmainpage.dart';
 import 'package:growify/view/screen/homescreen/myPage/JobsPages/showthejob.dart';
 import 'package:growify/view/screen/homescreen/taskes/tasksmainpage.dart';
+import 'package:multi_dropdown/enum/app_enums.dart';
+import 'package:multi_dropdown/models/chip_config.dart';
+import 'package:multi_dropdown/models/value_item.dart';
+import 'package:multi_dropdown/multiselect_dropdown.dart';
 
 class Search extends StatefulWidget {
-  const Search({Key? key}) : super(key: key);
+  final List<Map<String, dynamic>> availableFields;
+  const Search({Key? key, required this.availableFields}) : super(key: key);
 
   @override
   _SearchState createState() => _SearchState();
 }
 
 class _SearchState extends State<Search> {
+  
+
   final SearchControllerImp controller = Get.put(SearchControllerImp());
   final ColleaguesProfileControllerImp _controller2 =
       Get.put(ColleaguesProfileControllerImp());
@@ -41,6 +48,11 @@ class _SearchState extends State<Search> {
     super.initState();
     // Initialize non-dependent state here
     updateAvatarImage();
+     controller.items.clear();
+    controller.items = RxList<String>.from(
+      widget.availableFields.map<String>((map) => map['Field'].toString()),
+    );
+    
   }
 
   void updateAvatarImage() {
@@ -54,6 +66,7 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
+    
     if (kIsWeb) {
       return Scaffold(
         body: Row(
@@ -138,7 +151,6 @@ class _SearchState extends State<Search> {
               child: Container(
                 color: Color(0xfffefbfe),
                 child: Scaffold(
-                  
                   backgroundColor: Colors.white,
                   appBar: PreferredSize(
                     preferredSize: const Size.fromHeight(70),
@@ -210,10 +222,528 @@ class _SearchState extends State<Search> {
                           ],
                         ),
                       ),
+                      actions: [
+              IconButton(
+                  icon: const Icon(
+                    Icons.tune, // Replace with your filter icon
+                    color: Colors.black,
+                  ),
+                  onPressed: () {
+                    if (searchType == "U") {
+                      // Handle filter for Users
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Filter for Users'),
+                          content: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // First TextField with Checkbox
+                           Obx(
+                        () =>    Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      width: 300,
+                                      margin: const EdgeInsets.only(right: 10),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: DropdownButtonFormField(
+                                          decoration: InputDecoration(
+                                            alignLabelWithHint: true,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                            ),
+                                            hintStyle: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                            floatingLabelBehavior:
+                                                FloatingLabelBehavior.always,
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                              vertical: 15,
+                                              horizontal: 30,
+                                            ),
+                                            label: Container(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 9),
+                                              child: const Text(" Country"),
+                                            ),
+                                          ),
+                                          isExpanded: true,
+                                          hint: const Text(
+                                            'Select Country',
+                                            style:
+                                                TextStyle(color: Colors.grey),
+                                          ),
+                                          items: controller.countryList
+                                              .map((value) {
+                                            return DropdownMenuItem(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                          value:
+                                              controller.country.value.isEmpty
+                                                  ? null
+                                                  : controller.country.value,
+                                          onChanged: (value) {
+                                            controller.country.value =
+                                                value.toString();
+                                            print(controller.country.value);
+                                          },
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return 'Please select country';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                   Checkbox(
+                                      value: controller
+                                          .isSaveVisibleCountryUser.value,
+                                      onChanged: (value) {
+                                        controller.isSaveVisibleCountryUser
+                                            .value = value!;
+                                      },
+                                    ),
+                                  
+                                ],
+                              ),),
+                              SizedBox(
+                                height: 20,
+                              ),
+                           Obx(
+                        () =>    Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      width: 300,
+                                      margin: const EdgeInsets.only(right: 10),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: DropdownButtonFormField(
+                                          decoration: InputDecoration(
+                                            alignLabelWithHint: true,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                            ),
+                                            hintStyle: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                            floatingLabelBehavior:
+                                                FloatingLabelBehavior.always,
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                              vertical: 15,
+                                              horizontal: 30,
+                                            ),
+                                            label: Container(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 9),
+                                              child: const Text(" Gender"),
+                                            ),
+                                          ),
+                                          isExpanded: true,
+                                          hint: const Text(
+                                            'Select Gender',
+                                            style:
+                                                TextStyle(color: Colors.grey),
+                                          ),
+                                          items: controller.genderList
+                                              .map((value) {
+                                            return DropdownMenuItem(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                          value: controller.gender.value.isEmpty
+                                              ? null
+                                              : controller.gender.value,
+                                          onChanged: (value) {
+                                            controller.gender.value =
+                                                value.toString();
+                                            print(controller.gender.value);
+                                          },
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return 'Please select gender';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                   Checkbox(
+                                      value: controller
+                                          .isSaveVisibleGenderUser.value,
+                                      onChanged: (value) {
+                                        controller.isSaveVisibleGenderUser
+                                            .value = value!;
+                                      },
+                                    ),
+                                 
+                                ],
+                              ),),
+                              SizedBox(
+                                height: 20,
+                              ),
+                             Obx(
+                        () =>  Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      width: 350,
+                                      child: MultiSelectDropDown(
+                                        searchEnabled: true,
+                                        onOptionSelected:
+                                            (List<ValueItem> selectedOptions) {
+                                          controller.selectedItems.assignAll(
+                                              selectedOptions
+                                                  .map((item) => item.value));
+                                        },
+                                        options: controller.items
+                                            .map((item) => ValueItem(
+                                                label: item, value: item))
+                                            .toList(),
+                                        selectionType: SelectionType.multi,
+                                        chipConfig: const ChipConfig(
+                                            wrapType: WrapType.scroll),
+                                        dropdownHeight: 300,
+                                        optionTextStyle:
+                                            const TextStyle(fontSize: 16),
+                                        selectedOptionIcon:
+                                            const Icon(Icons.check_circle),
+                                      ),
+                                    ),
+                                  ),
+                                   Checkbox(
+                                      value: controller
+                                          .isSaveVisibleFieldsUser.value,
+                                      onChanged: (value) {
+                                        controller.isSaveVisibleFieldsUser
+                                            .value = value!;
+                                      },
+                                    ),
+                                  
+                                ],
+                              ),),
+                              SizedBox(
+                                height: 20,
+                              ),
+
+                            Obx(
+                        () =>   Row(
+                                children: [
+                                  Text(
+                                    "Highest Connection",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                               Checkbox(
+                                      value: controller
+                                          .isSaveVisibleConnectionUser.value,
+                                      onChanged: (value) {
+                                        controller.isSaveVisibleConnectionUser
+                                            .value = value!;
+                                      },
+                                    ),
+                                  
+                                ],
+                              ))
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                // Handle OK button press
+                                //  print('Option 1: ${textController1.text}, Checkbox 1: $checkbox1Value');
+                                // print('Option 2: ${textController2.text}, Checkbox 2: $checkbox2Value');
+                                Navigator.pop(context);
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else if (searchType == "P") {
+                      // Handle filter for Pages
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Filter for Pages'),
+                          content: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                             Obx(
+                        () =>  Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      width: 300,
+                                      margin: const EdgeInsets.only(right: 10),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: DropdownButtonFormField(
+                                          decoration: InputDecoration(
+                                            alignLabelWithHint: true,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                            ),
+                                            hintStyle: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                            floatingLabelBehavior:
+                                                FloatingLabelBehavior.always,
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                              vertical: 15,
+                                              horizontal: 30,
+                                            ),
+                                            label: Container(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 9),
+                                              child: const Text(" Country"),
+                                            ),
+                                          ),
+                                          isExpanded: true,
+                                          hint: const Text(
+                                            'Select Country',
+                                            style:
+                                                TextStyle(color: Colors.grey),
+                                          ),
+                                          items: controller.countryList
+                                              .map((value) {
+                                            return DropdownMenuItem(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                          value:
+                                              controller.country.value.isEmpty
+                                                  ? null
+                                                  : controller.country.value,
+                                          onChanged: (value) {
+                                            controller.country.value =
+                                                value.toString();
+                                            print(controller.country.value);
+                                          },
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return 'Please select country';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Checkbox(
+                                      value: controller
+                                          .isSaveVisibleCountryPage.value,
+                                      onChanged: (value) {
+                                        controller.isSaveVisibleCountryPage
+                                            .value = value!;
+                                      },
+                                    ),
+                                 
+                                ],
+                              ),),
+                              SizedBox(
+                                height: 20,
+                              ),
+                          Obx(
+                        () =>     Row(
+                                children: [
+                                  Text(
+                                    "Highest Followers",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                   Checkbox(
+                                      value: controller
+                                          .isSaveVisibleFollowersPage.value,
+                                      onChanged: (value) {
+                                        controller.isSaveVisibleFollowersPage
+                                            .value = value!;
+                                      },
+                                    ),
+                                  
+                                ],
+                              )),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else if (searchType == "J") {
+                      // Handle filter for Jobs
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Filter for Jobs'),
+                          content: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                           Obx(
+                        () =>    Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      width: 300,
+                                      margin: const EdgeInsets.only(right: 10),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: DropdownButtonFormField(
+                                          decoration: InputDecoration(
+                                            alignLabelWithHint: true,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                            ),
+                                            hintStyle: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                            floatingLabelBehavior:
+                                                FloatingLabelBehavior.always,
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                              vertical: 15,
+                                              horizontal: 30,
+                                            ),
+                                            label: Container(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 9),
+                                              child: const Text(" Country"),
+                                            ),
+                                          ),
+                                          isExpanded: true,
+                                          hint: const Text(
+                                            'Select Country',
+                                            style:
+                                                TextStyle(color: Colors.grey),
+                                          ),
+                                          items: controller.countryList
+                                              .map((value) {
+                                            return DropdownMenuItem(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                          value:
+                                              controller.country.value.isEmpty
+                                                  ? null
+                                                  : controller.country.value,
+                                          onChanged: (value) {
+                                            controller.country.value =
+                                                value.toString();
+                                            print(controller.country.value);
+                                          },
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return 'Please select country';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                    Checkbox(
+                                    value: controller.isSaveVisibleCountryJob.value,
+                                    onChanged: (value) {
+                                  
+                                        controller.isSaveVisibleCountryJob.value=value!;
+                                     
+                                    },
+                                  ),
+                                ],
+                              ),),
+                              SizedBox(
+                                height: 20,
+                              ),
+                             Obx(
+                        () =>  Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      width: 350,
+                                      child: MultiSelectDropDown(
+                                        searchEnabled: true,
+                                        onOptionSelected:
+                                            (List<ValueItem> selectedOptions) {
+                                          controller.selectedItems.assignAll(
+                                              selectedOptions
+                                                  .map((item) => item.value));
+                                        },
+                                        options: controller.items
+                                            .map((item) => ValueItem(
+                                                label: item, value: item))
+                                            .toList(),
+                                        selectionType: SelectionType.multi,
+                                        chipConfig: const ChipConfig(
+                                            wrapType: WrapType.scroll),
+                                        dropdownHeight: 300,
+                                        optionTextStyle:
+                                            const TextStyle(fontSize: 16),
+                                        selectedOptionIcon:
+                                            const Icon(Icons.check_circle),
+                                      ),
+                                    ),
+                                  ),
+                                   Checkbox(
+                                    value: controller.isSaveVisibleFieldsJob.value,
+                                    onChanged: (value) {
+                                  
+                                        controller.isSaveVisibleFieldsJob.value=value!;
+                                     
+                                    },
+                                  ),
+                                ],
+                              ))
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  })
+            ],
                     ),
                   ),
                   body: Container(
-                    color: Color(0xfffefbfe), 
+                    color: Color(0xfffefbfe),
                     child: DefaultTabController(
                       length: 3,
                       child: Column(
@@ -643,6 +1173,524 @@ class _SearchState extends State<Search> {
                 ],
               ),
             ),
+            actions: [
+              IconButton(
+                  icon: const Icon(
+                    Icons.tune, // Replace with your filter icon
+                    color: Colors.black,
+                  ),
+                  onPressed: () {
+                    if (searchType == "U") {
+                      // Handle filter for Users
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Filter for Users'),
+                          content: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // First TextField with Checkbox
+                           Obx(
+                        () =>    Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      width: 300,
+                                      margin: const EdgeInsets.only(right: 10),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: DropdownButtonFormField(
+                                          decoration: InputDecoration(
+                                            alignLabelWithHint: true,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                            ),
+                                            hintStyle: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                            floatingLabelBehavior:
+                                                FloatingLabelBehavior.always,
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                              vertical: 15,
+                                              horizontal: 30,
+                                            ),
+                                            label: Container(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 9),
+                                              child: const Text(" Country"),
+                                            ),
+                                          ),
+                                          isExpanded: true,
+                                          hint: const Text(
+                                            'Select Country',
+                                            style:
+                                                TextStyle(color: Colors.grey),
+                                          ),
+                                          items: controller.countryList
+                                              .map((value) {
+                                            return DropdownMenuItem(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                          value:
+                                              controller.country.value.isEmpty
+                                                  ? null
+                                                  : controller.country.value,
+                                          onChanged: (value) {
+                                            controller.country.value =
+                                                value.toString();
+                                            print(controller.country.value);
+                                          },
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return 'Please select country';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                   Checkbox(
+                                      value: controller
+                                          .isSaveVisibleCountryUser.value,
+                                      onChanged: (value) {
+                                        controller.isSaveVisibleCountryUser
+                                            .value = value!;
+                                      },
+                                    ),
+                                  
+                                ],
+                              ),),
+                              SizedBox(
+                                height: 20,
+                              ),
+                           Obx(
+                        () =>    Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      width: 300,
+                                      margin: const EdgeInsets.only(right: 10),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: DropdownButtonFormField(
+                                          decoration: InputDecoration(
+                                            alignLabelWithHint: true,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                            ),
+                                            hintStyle: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                            floatingLabelBehavior:
+                                                FloatingLabelBehavior.always,
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                              vertical: 15,
+                                              horizontal: 30,
+                                            ),
+                                            label: Container(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 9),
+                                              child: const Text(" Gender"),
+                                            ),
+                                          ),
+                                          isExpanded: true,
+                                          hint: const Text(
+                                            'Select Gender',
+                                            style:
+                                                TextStyle(color: Colors.grey),
+                                          ),
+                                          items: controller.genderList
+                                              .map((value) {
+                                            return DropdownMenuItem(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                          value: controller.gender.value.isEmpty
+                                              ? null
+                                              : controller.gender.value,
+                                          onChanged: (value) {
+                                            controller.gender.value =
+                                                value.toString();
+                                            print(controller.gender.value);
+                                          },
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return 'Please select gender';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                   Checkbox(
+                                      value: controller
+                                          .isSaveVisibleGenderUser.value,
+                                      onChanged: (value) {
+                                        controller.isSaveVisibleGenderUser
+                                            .value = value!;
+                                      },
+                                    ),
+                                 
+                                ],
+                              ),),
+                              SizedBox(
+                                height: 20,
+                              ),
+                             Obx(
+                        () =>  Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      width: 350,
+                                      child: MultiSelectDropDown(
+                                        searchEnabled: true,
+                                        onOptionSelected:
+                                            (List<ValueItem> selectedOptions) {
+                                          controller.selectedItems.assignAll(
+                                              selectedOptions
+                                                  .map((item) => item.value));
+                                        },
+                                        options: controller.items
+                                            .map((item) => ValueItem(
+                                                label: item, value: item))
+                                            .toList(),
+                                        selectionType: SelectionType.multi,
+                                        chipConfig: const ChipConfig(
+                                            wrapType: WrapType.scroll),
+                                        dropdownHeight: 300,
+                                        optionTextStyle:
+                                            const TextStyle(fontSize: 16),
+                                        selectedOptionIcon:
+                                            const Icon(Icons.check_circle),
+                                      ),
+                                    ),
+                                  ),
+                                   Checkbox(
+                                      value: controller
+                                          .isSaveVisibleFieldsUser.value,
+                                      onChanged: (value) {
+                                        controller.isSaveVisibleFieldsUser
+                                            .value = value!;
+                                      },
+                                    ),
+                                  
+                                ],
+                              ),),
+                              SizedBox(
+                                height: 20,
+                              ),
+
+                            Obx(
+                        () =>   Row(
+                                children: [
+                                  Text(
+                                    "Highest Connection",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                               Checkbox(
+                                      value: controller
+                                          .isSaveVisibleConnectionUser.value,
+                                      onChanged: (value) {
+                                        controller.isSaveVisibleConnectionUser
+                                            .value = value!;
+                                      },
+                                    ),
+                                  
+                                ],
+                              ))
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                // Handle OK button press
+                                //  print('Option 1: ${textController1.text}, Checkbox 1: $checkbox1Value');
+                                // print('Option 2: ${textController2.text}, Checkbox 2: $checkbox2Value');
+                                Navigator.pop(context);
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else if (searchType == "P") {
+                      // Handle filter for Pages
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Filter for Pages'),
+                          content: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                             Obx(
+                        () =>  Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      width: 300,
+                                      margin: const EdgeInsets.only(right: 10),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: DropdownButtonFormField(
+                                          decoration: InputDecoration(
+                                            alignLabelWithHint: true,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                            ),
+                                            hintStyle: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                            floatingLabelBehavior:
+                                                FloatingLabelBehavior.always,
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                              vertical: 15,
+                                              horizontal: 30,
+                                            ),
+                                            label: Container(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 9),
+                                              child: const Text(" Country"),
+                                            ),
+                                          ),
+                                          isExpanded: true,
+                                          hint: const Text(
+                                            'Select Country',
+                                            style:
+                                                TextStyle(color: Colors.grey),
+                                          ),
+                                          items: controller.countryList
+                                              .map((value) {
+                                            return DropdownMenuItem(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                          value:
+                                              controller.country.value.isEmpty
+                                                  ? null
+                                                  : controller.country.value,
+                                          onChanged: (value) {
+                                            controller.country.value =
+                                                value.toString();
+                                            print(controller.country.value);
+                                          },
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return 'Please select country';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Checkbox(
+                                      value: controller
+                                          .isSaveVisibleCountryPage.value,
+                                      onChanged: (value) {
+                                        controller.isSaveVisibleCountryPage
+                                            .value = value!;
+                                      },
+                                    ),
+                                 
+                                ],
+                              ),),
+                              SizedBox(
+                                height: 20,
+                              ),
+                          Obx(
+                        () =>     Row(
+                                children: [
+                                  Text(
+                                    "Highest Followers",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                   Checkbox(
+                                      value: controller
+                                          .isSaveVisibleFollowersPage.value,
+                                      onChanged: (value) {
+                                        controller.isSaveVisibleFollowersPage
+                                            .value = value!;
+                                      },
+                                    ),
+                                  
+                                ],
+                              )),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else if (searchType == "J") {
+                      // Handle filter for Jobs
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Filter for Jobs'),
+                          content: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                           Obx(
+                        () =>    Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      width: 300,
+                                      margin: const EdgeInsets.only(right: 10),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: DropdownButtonFormField(
+                                          decoration: InputDecoration(
+                                            alignLabelWithHint: true,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                            ),
+                                            hintStyle: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                            floatingLabelBehavior:
+                                                FloatingLabelBehavior.always,
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                              vertical: 15,
+                                              horizontal: 30,
+                                            ),
+                                            label: Container(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 9),
+                                              child: const Text(" Country"),
+                                            ),
+                                          ),
+                                          isExpanded: true,
+                                          hint: const Text(
+                                            'Select Country',
+                                            style:
+                                                TextStyle(color: Colors.grey),
+                                          ),
+                                          items: controller.countryList
+                                              .map((value) {
+                                            return DropdownMenuItem(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                          value:
+                                              controller.country.value.isEmpty
+                                                  ? null
+                                                  : controller.country.value,
+                                          onChanged: (value) {
+                                            controller.country.value =
+                                                value.toString();
+                                            print(controller.country.value);
+                                          },
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return 'Please select country';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                    Checkbox(
+                                    value: controller.isSaveVisibleCountryJob.value,
+                                    onChanged: (value) {
+                                  
+                                        controller.isSaveVisibleCountryJob.value=value!;
+                                     
+                                    },
+                                  ),
+                                ],
+                              ),),
+                              SizedBox(
+                                height: 20,
+                              ),
+                             Obx(
+                        () =>  Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      width: 350,
+                                      child: MultiSelectDropDown(
+                                        searchEnabled: true,
+                                        onOptionSelected:
+                                            (List<ValueItem> selectedOptions) {
+                                          controller.selectedItems.assignAll(
+                                              selectedOptions
+                                                  .map((item) => item.value));
+                                        },
+                                        options: controller.items
+                                            .map((item) => ValueItem(
+                                                label: item, value: item))
+                                            .toList(),
+                                        selectionType: SelectionType.multi,
+                                        chipConfig: const ChipConfig(
+                                            wrapType: WrapType.scroll),
+                                        dropdownHeight: 300,
+                                        optionTextStyle:
+                                            const TextStyle(fontSize: 16),
+                                        selectedOptionIcon:
+                                            const Icon(Icons.check_circle),
+                                      ),
+                                    ),
+                                  ),
+                                   Checkbox(
+                                    value: controller.isSaveVisibleFieldsJob.value,
+                                    onChanged: (value) {
+                                  
+                                        controller.isSaveVisibleFieldsJob.value=value!;
+                                     
+                                    },
+                                  ),
+                                ],
+                              ))
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  })
+            ],
           ),
         ),
         body: DefaultTabController(

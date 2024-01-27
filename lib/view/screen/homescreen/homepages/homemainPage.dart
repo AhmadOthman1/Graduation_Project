@@ -156,7 +156,8 @@ class _HomepageState extends State<Homepage> {
                                       Expanded(
                                         child: TextFormField(
                                           onTap: () {
-                                            Get.to(const Search());
+                                           // Get.to(const Search());
+                                           controller.getFields();
                                           },
                                           readOnly: true,
                                           decoration: InputDecoration(
@@ -259,7 +260,7 @@ class _HomepageState extends State<Homepage> {
                               Expanded(
                                 child: TextFormField(
                                   onTap: () {
-                                    Get.to(const Search());
+                                  controller.getFields();
                                   },
                                   readOnly: true,
                                   decoration: InputDecoration(

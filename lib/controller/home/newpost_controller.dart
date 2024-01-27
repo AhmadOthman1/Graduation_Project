@@ -14,19 +14,15 @@ class NewPostControllerImp extends GetxController {
   RxString postContent = ''.obs;
   RxString selectedPrivacy = 'Any One'.obs;
 
-  postNewPost(postImageBytes, postImageBytesName, postImageExt,messageVideoBytes,messageVideoBytesName,messageVideoExt,
+  postNewPost(videoList,imageList,
       [bool? isPage, String? pageId]) async {
     if (isPage != null && isPage) {
       var url = "$urlStarter/user/postNewPagePost";
 
       Map<String, dynamic> jsonData = {
         "postContent": postContent.value,
-        "postImageBytes": postImageBytes,
-        "postImageBytesName": postImageBytesName,
-        "postImageExt": postImageExt,
-        "postVideoBytes": messageVideoBytes,
-        "postVideoBytesName": messageVideoBytesName,
-        "postVideoExt": messageVideoExt,
+        "videoList": videoList,
+        "imageList": imageList,
         "pageId":pageId,
       };
       String jsonString = jsonEncode(jsonData);
@@ -43,12 +39,9 @@ class NewPostControllerImp extends GetxController {
       Map<String, dynamic> jsonData = {
         "postContent": postContent.value,
         "selectedPrivacy": selectedPrivacy.value,
-        "postImageBytes": postImageBytes,
-        "postImageBytesName": postImageBytesName,
-        "postImageExt": postImageExt,
-        "postVideoBytes": messageVideoBytes,
-        "postVideoBytesName": messageVideoBytesName,
-        "postVideoExt": messageVideoExt,
+        "videoList": videoList,
+        "imageList": imageList,
+       
       };
       String jsonString = jsonEncode(jsonData);
       int contentLength = utf8.encode(jsonString).length;
@@ -61,13 +54,21 @@ class NewPostControllerImp extends GetxController {
     }
   }
 
-  post(postImageBytes, postImageBytesName, postImageExt,messageVideoBytes,messageVideoBytesName,messageVideoExt,
+  post(videoList,imageList,
       [bool? isPage, String? pageId]) async {
+        print("qqqqqqqqqqqqqqqqqqqqqqqqqqqqq");
+        for (int i = 0; i < imageList.length; i++) {
+    print("Image ${i + 1}: ${imageList[i]}");
+  }
+  print("ooooooooooooooooooooooooo");
+     for (int i = 0; i < videoList.length; i++) {
+    print("Video ${i + 1}: ${videoList[i]}");
+  }
     var res = await postNewPost(
-        postImageBytes, postImageBytesName, postImageExt,messageVideoBytes,messageVideoBytesName,messageVideoExt, isPage, pageId);
+        videoList,imageList, isPage, pageId);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      post(postImageBytes, postImageBytesName, postImageExt,messageVideoBytes,messageVideoBytesName,messageVideoExt, isPage, pageId);
+      post(videoList,imageList, isPage, pageId);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -91,18 +92,18 @@ class NewPostControllerImp extends GetxController {
   // for video 
 
 
-  final RxString messageVideoBytes = ''.obs;
-  final RxString messageVideoBytesName = ''.obs;
-  final RxString messageVideoExt = ''.obs;
+  final RxString postVideoBytes = ''.obs;
+  final RxString postVideoBytesName = ''.obs;
+  final RxString postVideoExt = ''.obs;
 
     void updateVideo(
     String base64String,
     String imageName,
     String imageExt,
   ) {
-    messageVideoBytes.value = base64String;
-    messageVideoBytesName.value = imageName;
-    messageVideoExt.value = imageExt;
+    postVideoBytes.value = base64String;
+    postVideoBytesName.value = imageName;
+    postVideoExt.value = imageExt;
     update(); // This triggers a rebuild of the widget tree
   }
 

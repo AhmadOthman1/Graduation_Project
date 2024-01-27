@@ -31,9 +31,286 @@ class PageInfo {
 
   PageInfo(this.id, this.name, this.description, this.country, this.address, this.contactInfo, this.specialty, this.pageType, this.photo, this.coverImage, this.postCount , this.followCount,[this.adminType]);
 }
+// for filer  .. . . .. . . .. .  ..  . . .
+
+// for fileds 
+  
 
 
 class SearchControllerImp extends GetxController {
+
+  // for enable
+  RxBool isSaveVisibleCountryUser = false.obs;
+  RxBool isSaveVisibleGenderUser = false.obs;
+  RxBool isSaveVisibleFieldsUser = false.obs;
+  RxBool isSaveVisibleConnectionUser = false.obs;
+  //
+   RxBool isSaveVisibleCountryPage = false.obs;
+   RxBool isSaveVisibleFollowersPage = false.obs;
+   //
+    RxBool isSaveVisibleCountryJob = false.obs;
+     RxBool isSaveVisibleFieldsJob = false.obs;
+
+   RxList<String> selectedItems = <String>[].obs;
+    
+ RxList<String> items = RxList<String>([
+
+]);
+// for gender
+  final RxBool isTextFieldEnabledGender = false.obs;
+  final RxString gender = ''.obs;
+  final List<String> genderList = [
+    "Male",
+    "Female",
+    ];
+// for country
+  final RxBool isTextFieldEnabled11 = false.obs;
+  final RxString country = ''.obs;
+  final List<String> countryList = [
+    "Palestine",
+    "United States",
+    "Canada",
+    "Afghanistan",
+    "Albania",
+    "Algeria",
+    "American Samoa",
+    "Andorra",
+    "Angola",
+    "Anguilla",
+    "Antarctica",
+    "Antigua and/or Barbuda",
+    "Argentina",
+    "Armenia",
+    "Aruba",
+    "Australia",
+    "Austria",
+    "Azerbaijan",
+    "Bahamas",
+    "Bahrain",
+    "Bangladesh",
+    "Barbados",
+    "Belarus",
+    "Belgium",
+    "Belize",
+    "Benin",
+    "Bermuda",
+    "Bhutan",
+    "Bolivia",
+    "Bosnia and Herzegovina",
+    "Botswana",
+    "Bouvet Island",
+    "Brazil",
+    "British Indian Ocean Territory",
+    "Brunei Darussalam",
+    "Bulgaria",
+    "Burkina Faso",
+    "Burundi",
+    "Cambodia",
+    "Cameroon",
+    "Cape Verde",
+    "Cayman Islands",
+    "Central African Republic",
+    "Chad",
+    "Chile",
+    "China",
+    "Christmas Island",
+    "Cocos (Keeling) Islands",
+    "Colombia",
+    "Comoros",
+    "Congo",
+    "Cook Islands",
+    "Costa Rica",
+    "Croatia (Hrvatska)",
+    "Cuba",
+    "Cyprus",
+    "Czech Republic",
+    "Denmark",
+    "Djibouti",
+    "Dominica",
+    "Dominican Republic",
+    "East Timor",
+    "Ecudaor",
+    "Egypt",
+    "El Salvador",
+    "Equatorial Guinea",
+    "Eritrea",
+    "Estonia",
+    "Ethiopia",
+    "Falkland Islands (Malvinas)",
+    "Faroe Islands",
+    "Fiji",
+    "Finland",
+    "France",
+    "France, Metropolitan",
+    "French Guiana",
+    "French Polynesia",
+    "French Southern Territories",
+    "Gabon",
+    "Gambia",
+    "Georgia",
+    "Germany",
+    "Ghana",
+    "Gibraltar",
+    "Greece",
+    "Greenland",
+    "Grenada",
+    "Guadeloupe",
+    "Guam",
+    "Guatemala",
+    "Guinea",
+    "Guinea-Bissau",
+    "Guyana",
+    "Haiti",
+    "Heard and Mc Donald Islands",
+    "Honduras",
+    "Hong Kong",
+    "Hungary",
+    "Iceland",
+    "India",
+    "Indonesia",
+    "Iran (Islamic Republic of)",
+    "Iraq",
+    "Ireland",
+    "Israel",
+    "Italy",
+    "Ivory Coast",
+    "Jamaica",
+    "Japan",
+    "Jordan",
+    "Kazakhstan",
+    "Kenya",
+    "Kiribati",
+    "Korea, Democratic People's Republic of",
+    "Korea, Republic of",
+    "Kosovo",
+    "Kuwait",
+    "Kyrgyzstan",
+    "Lao People's Democratic Republic",
+    "Latvia",
+    "Lebanon",
+    "Lesotho",
+    "Liberia",
+    "Libyan Arab Jamahiriya",
+    "Liechtenstein",
+    "Lithuania",
+    "Luxembourg",
+    "Macau",
+    "Macedonia",
+    "Madagascar",
+    "Malawi",
+    "Malaysia",
+    "Maldives",
+    "Mali",
+    "Malta",
+    "Marshall Islands",
+    "Martinique",
+    "Mauritania",
+    "Mauritius",
+    "Mayotte",
+    "Mexico",
+    "Micronesia, Federated States of",
+    "Moldova, Republic of",
+    "Monaco",
+    "Mongolia",
+    "Montserrat",
+    "Morocco",
+    "Mozambique",
+    "Myanmar",
+    "Namibia",
+    "Nauru",
+    "Nepal",
+    "Netherlands",
+    "Netherlands Antilles",
+    "New Caledonia",
+    "New Zealand",
+    "Nicaragua",
+    "Niger",
+    "Nigeria",
+    "Niue",
+    "Norfork Island",
+    "Northern Mariana Islands",
+    "Norway",
+    "Oman",
+    "Pakistan",
+    "Palau",
+    "Panama",
+    "Papua New Guinea",
+    "Paraguay",
+    "Peru",
+    "Philippines",
+    "Pitcairn",
+    "Poland",
+    "Portugal",
+    "Puerto Rico",
+    "Qatar",
+    "Reunion",
+    "Romania",
+    "Russian Federation",
+    "Rwanda",
+    "Saint Kitts and Nevis",
+    "Saint Lucia",
+    "Saint Vincent and the Grenadines",
+    "Samoa",
+    "San Marino",
+    "Sao Tome and Principe",
+    "Saudi Arabia",
+    "Senegal",
+    "Seychelles",
+    "Sierra Leone",
+    "Singapore",
+    "Slovakia",
+    "Slovenia",
+    "Solomon Islands",
+    "Somalia",
+    "South Africa",
+    "South Georgia South Sandwich Islands",
+    "South Sudan",
+    "Spain",
+    "Sri Lanka",
+    "St. Helena",
+    "St. Pierre and Miquelon",
+    "Sudan",
+    "Suriname",
+    "Svalbarn and Jan Mayen Islands",
+    "Swaziland",
+    "Sweden",
+    "Switzerland",
+    "Syrian Arab Republic",
+    "Taiwan",
+    "Tajikistan",
+    "Tanzania, United Republic of",
+    "Thailand",
+    "Togo",
+    "Tokelau",
+    "Tonga",
+    "Trinidad and Tobago",
+    "Tunisia",
+    "Turkey",
+    "Turkmenistan",
+    "Turks and Caicos Islands",
+    "Tuvalu",
+    "Uganda",
+    "Ukraine",
+    "United Arab Emirates",
+    "United Kingdom",
+    "United States minor outlying islands",
+    "Uruguay",
+    "Uzbekistan",
+    "Vanuatu",
+    "Vatican City State",
+    "Venezuela",
+    "Vietnam",
+    "Virigan Islands (British)",
+    "Virgin Islands (U.S.)",
+    "Wallis and Futuna Islands",
+    "Western Sahara",
+    "Yemen",
+    "Yugoslavia",
+    "Zaire",
+    "Zambia",
+    "Zimbabwe"
+  ];
+//
   // Define a dynamic list to store user data
   RxList<Map<String, String>> userList = <Map<String, String>>[].obs;
   String? searchValue;
@@ -61,8 +338,49 @@ class SearchControllerImp extends GetxController {
 
 ///////////////////////
   searchInDataBase(searchValue, page, pageSize, searchType) async {
-    var url =
+     var url =
         "$urlStarter/user/getSearchData?email=${GetStorage().read("loginemail")}&type=$searchType&search=$searchValue&page=$page&pageSize=$pageSize";
+   if (searchType == "U") {
+  if (isSaveVisibleCountryUser.value) {
+    url += "&country=$country";
+  }
+   if (isSaveVisibleFieldsUser.value) {
+     url += "&fields=${(selectedItems.value).join(',')}";
+  }
+
+  if (isSaveVisibleGenderUser.value) {
+     url += "&userGender=$gender";
+  }
+
+  if (isSaveVisibleConnectionUser.value) {
+     url += "&highestConnection=true";
+  }
+  print("kkkkkkkkkkk");
+  print(url);
+}
+
+    else if (searchType == "P") {
+      if (isSaveVisibleCountryPage.value) {
+    url += "&country=$country";
+  }
+  if (isSaveVisibleConnectionUser.value) {
+     url += "&highestFollowers=true";
+  }
+
+
+    }
+    else if (searchType == "J") {
+         if (isSaveVisibleCountryJob.value) {
+    url += "&country=$country";
+  }
+
+   if (isSaveVisibleFieldsJob.value) {
+     url += "&fields=${(selectedItems.value).join(',')}";
+  }
+  
+
+    }
+   
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),

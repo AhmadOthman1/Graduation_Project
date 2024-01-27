@@ -23,47 +23,25 @@ class NewPost extends StatefulWidget {
 }
 
 class _NewPostState extends State<NewPost> {
+  List<Map<String, String>> imageList = [];
+  List<Map<String, String>> videoList = [];
+
   String? postImageBytes;
   String? postImageBytesName;
   String? postImageExt;
   ////// for video
-  String? messageVideoBytes;
-  String? messageVideoBytesName;
-  String? messageVideoExt;
+  String? postVideoBytes;
+  String? postVideoBytesName;
+  String? postVideoExt;
   VideoPlayerController? _Vcontroller;
   bool _isVideoInitialized = false;
 
   @override
   void initState() {
     super.initState();
-  
   }
 
-    Future<void> initializeVideoPlayer() async {
-    try {
-      _Vcontroller = VideoPlayerController.networkUrl(
-        Uri.parse("$urlStarter/${controller.messageVideoBytes}"),
-
-      );
   
-      await _Vcontroller!.initialize();
-      if (mounted) {
-        setState(() {
-          _isVideoInitialized = true;
-        });
-      }
-
-      _Vcontroller!.addListener(() {
-        if (!_Vcontroller!.value.isInitialized) {
-          // Handle initialization errors here
-          print("Video initialization failed");
-        }
-      });
-    } catch (e) {
-      // Handle exceptions during video initialization
-      print("Exception during video initialization: $e");
-    }
-  }
 
   final NewPostControllerImp controller = Get.put(NewPostControllerImp());
   GlobalKey<FormState> formstate = GlobalKey();
@@ -107,12 +85,9 @@ class _NewPostState extends State<NewPost> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
-    if (controller.messageVideoBytes != null && !_isVideoInitialized) {
-      initializeVideoPlayer(); // Don't build the message widget until the video player is initialized
-    }
+   
     ImageProvider<Object> profileBackgroundImage =
         (widget.profileImage != null && widget.profileImage != "")
             ? Image.network("$urlStarter/${widget.profileImage}").image
@@ -177,12 +152,9 @@ class _NewPostState extends State<NewPost> {
                         onPressed: () async {
                           if (formstate.currentState!.validate()) {
                             var message = await controller.post(
-                              postImageBytes,
-                              postImageBytesName,
-                              postImageExt,
-                              messageVideoBytes,
-                              messageVideoBytesName,
-                              messageVideoExt,
+                              videoList,
+                              imageList,
+                             
                               widget.isPage,
                               widget.pageId,
                             );
@@ -235,31 +207,16 @@ class _NewPostState extends State<NewPost> {
                       height: 350,
                       decoration: BoxDecoration(
                         shape: BoxShape.rectangle,
-                        image: (controller.postImageBytes.isNotEmpty)
+                        image: (controller.postImageBytes.isNotEmpty &&
+                                controller.postVideoBytes == null)
                             ? DecorationImage(
                                 fit: BoxFit.cover,
                                 image: MemoryImage(
                                   base64Decode(controller.postImageBytes.value),
                                 ),
                               )
-                            : (controller.messageVideoBytes != null)
-                                ? null
-                                : null,
+                            : null,
                       ),
-                      child: (controller.messageVideoBytes != null)
-                          ? Builder(
-                              builder: (context) {
-                                print("im inside it okkk");
-                                print(
-                                    "Video Bytes: ${controller.messageVideoBytes}");
-                                print(
-                                    "Video Name: ${controller.messageVideoBytesName}");
-                                print(
-                                    "Video Ext: ${controller.messageVideoExt}");
-                                return _buildVideoPlayer();
-                              },
-                            )
-                          : null,
                     ),
                   ),
                   const SizedBox(height: 145),
@@ -277,38 +234,48 @@ class _NewPostState extends State<NewPost> {
                                       await FilePicker.platform.pickFiles(
                                     type: FileType.custom,
                                     allowedExtensions: ['jpg', 'jpeg', 'png'],
-                                    allowMultiple: false,
+                                    allowMultiple: true,
                                   );
+
                                   if (result != null &&
                                       result.files.isNotEmpty) {
-                                    PlatformFile file = result.files.first;
-                                    if (file.extension == "jpg" ||
-                                        file.extension == "jpeg" ||
-                                        file.extension == "png") {
-                                      String base64String;
-                                      if (kIsWeb) {
-                                        final fileBytes = file.bytes;
-                                        base64String = base64Encode(
-                                            fileBytes as List<int>);
-                                      } else {
-                                        List<int> fileBytes =
-                                            await File(file.path!)
-                                                .readAsBytes();
-                                        base64String = base64Encode(fileBytes);
-                                      }
-                                      postImageBytes = base64String;
-                                      postImageBytesName = file.name;
-                                      postImageExt = file.extension;
-                                      print("Symannnnnnnnnnnn");
-                                      print(postImageBytes);
+                                    List<PlatformFile> files = result.files;
 
-                                      controller.updateProfileImage(
-                                        base64String,
-                                        file.name,
-                                        file.extension ?? '',
-                                      );
-                                    } else {
-                                      controller.updateProfileImage('', '', '');
+                                    for (PlatformFile file in files) {
+                                      if (file.extension == "jpg" ||
+                                          file.extension == "jpeg" ||
+                                          file.extension == "png") {
+                                        String base64String;
+                                        if (kIsWeb) {
+                                          final fileBytes = file.bytes;
+                                          base64String = base64Encode(
+                                              fileBytes as List<int>);
+                                        } else {
+                                          List<int> fileBytes =
+                                              await File(file.path!)
+                                                  .readAsBytes();
+                                          base64String =
+                                              base64Encode(fileBytes);
+                                        }
+
+                                        // Add information about each selected image to the list
+                                        imageList.add({
+                                          'postImageBytes': base64String,
+                                          'postImageBytesName': file.name,
+                                          'postImageExt': file.extension ?? '',
+                                        });
+                                        print("the values i have");
+                                        print(imageList);
+                                        postImageBytes = base64String;
+                                        postImageBytesName = file.name;
+                                        postImageExt = file.extension;
+
+                                        controller.updateProfileImage(
+                                          base64String,
+                                          file.name,
+                                          file.extension ?? '',
+                                        );
+                                      }
                                     }
                                   } else {
                                     controller.updateProfileImage('', '', '');
@@ -317,13 +284,21 @@ class _NewPostState extends State<NewPost> {
                                   print(err);
                                 }
                               },
-                              child: const Row(
+                              child: Row(
                                 children: [
-                                  Icon(
-                                    Icons.image,
-                                    size: 45,
-                                    color: Colors.grey,
-                                  ),
+                                  if (postImageBytes != null)
+                                  
+                                    Icon(
+                                      Icons.cancel,
+                                      size: 45,
+                                      color: Colors.red,
+                                    )
+                                  else
+                                    Icon(
+                                      Icons.image,
+                                      size: 45,
+                                      color: Colors.grey,
+                                    ),
                                 ],
                               ),
                             ),
@@ -334,12 +309,12 @@ class _NewPostState extends State<NewPost> {
                           InkWell(
                             onTap: () async {
                               try {
-                                if (messageVideoBytes != null) {
+                                if (postVideoBytes != null) {
                                   // User cancels the video selection
                                   setState(() {
-                                    messageVideoBytes = null;
-                                    messageVideoBytesName = null;
-                                    messageVideoExt = null;
+                                    postVideoBytes = null;
+                                    postVideoBytesName = null;
+                                    postVideoExt = null;
                                   });
                                 } else {
                                   // Open file picker for video
@@ -347,73 +322,86 @@ class _NewPostState extends State<NewPost> {
                                       await FilePicker.platform.pickFiles(
                                     type: FileType.custom,
                                     allowedExtensions: ['mp4', 'avi', 'mov'],
-                                    allowMultiple: false,
+                                    allowMultiple:
+                                        true, // Set to true to allow multiple file selection
                                   );
 
                                   if (result != null &&
                                       result.files.isNotEmpty) {
-                                    PlatformFile file = result.files.first;
-                                    if (file.extension == "mp4" ||
-                                        file.extension == "avi" ||
-                                        file.extension == "mov") {
-                                      // Process the selected video
-                                      String base64String;
-                                      if (kIsWeb) {
-                                        final fileBytes = file.bytes;
-                                        base64String = base64Encode(
-                                            fileBytes as List<int>);
+                                    for (PlatformFile file in result.files) {
+                                      if (file.extension == "mp4" ||
+                                          file.extension == "avi" ||
+                                          file.extension == "mov") {
+                                        // Process each selected video
+                                        String base64String;
+                                        if (kIsWeb) {
+                                          final fileBytes = file.bytes;
+                                          base64String = base64Encode(
+                                              fileBytes as List<int>);
+                                        } else {
+                                          List<int> fileBytes =
+                                              await File(file.path!)
+                                                  .readAsBytes();
+                                          base64String =
+                                              base64Encode(fileBytes);
+                                        }
+
+                                        setState(() {
+                                          postVideoBytes = base64String;
+                                          postVideoBytesName = file.name;
+                                          postVideoExt = file.extension;
+
+                                          // To save more videos
+                                          videoList.add({
+                                            'postVideoBytes': postVideoBytes!,
+                                            'postVideoBytesName':
+                                                postVideoBytesName!,
+                                            'postVideoExt': postVideoExt!,
+                                          });
+                                          print("videoooooooooo777");
+                                          print(videoList);
+
+                                          controller.updateVideo(
+                                            base64String,
+                                            file.name,
+                                            file.extension ?? '',
+                                          );
+
+                                          print("aws2222");
+                                          print(controller.postVideoBytes);
+                                          print(postVideoBytesName);
+                                          print(postVideoExt);
+                                        });
                                       } else {
-                                        List<int> fileBytes =
-                                            await File(file.path!)
-                                                .readAsBytes();
-                                        base64String = base64Encode(fileBytes);
+                                        // File is not a video
+                                        setState(() {
+                                          postVideoBytes = null;
+                                          postVideoBytesName = null;
+                                          postVideoExt = null;
+                                        });
                                       }
-
-                                      setState(() {
-                                        messageVideoBytes = base64String;
-                                        messageVideoBytesName = file.name;
-                                        messageVideoExt = file.extension;
-
-                                        controller.updateVideo(
-                                          base64String,
-                                          file.name,
-                                          file.extension ?? '',
-                                        );
-
-                                        print("aws2222");
-                                        print(controller.messageVideoBytes);
-                                        print(messageVideoBytesName);
-                                        print(messageVideoExt);
-                                      });
-                                    } else {
-                                      // File is not a video
-                                      setState(() {
-                                        messageVideoBytes = null;
-                                        messageVideoBytesName = null;
-                                        messageVideoExt = null;
-                                      });
                                     }
                                   } else {
                                     // User canceled the picker
                                     setState(() {
-                                      messageVideoBytes = null;
-                                      messageVideoBytesName = null;
-                                      messageVideoExt = null;
+                                      postVideoBytes = null;
+                                      postVideoBytesName = null;
+                                      postVideoExt = null;
                                     });
                                   }
                                 }
                               } catch (err) {
                                 print(err);
                                 setState(() {
-                                  messageVideoBytes = null;
-                                  messageVideoBytesName = null;
-                                  messageVideoExt = null;
+                                  postVideoBytes = null;
+                                  postVideoBytesName = null;
+                                  postVideoExt = null;
                                 });
                               }
                             },
                             child: Row(
                               children: [
-                                (messageVideoBytes != null)
+                                (postVideoBytes != null)
                                     ? const Icon(Icons.cancel,
                                         size: 45, color: Colors.red)
                                     : const Icon(Icons.videocam,

@@ -10,6 +10,7 @@ class Post extends StatefulWidget {
   bool? isPage;
   bool? isAdmin;
   String? postId;
+
   Post({this.username, Key? key, this.isPage, this.isAdmin, this.postId})
       : super(key: key);
 
@@ -31,14 +32,21 @@ class _PostState extends State<Post> {
   final ScrollController _scrollController = ScrollController();
   bool isLoading = false;
 
-  // List to store VideoPlayerControllers for each post
-  List<VideoPlayerController?> _videoControllers = [];
+  Map<String, VideoPlayerController?> _videoControllers = {};
+
+
+  int currentPhotoIndex = 0;
+  Map<int, int> currentVideoIndex = {};
+
+  // for toggle between them 
+  
+  
 
   @override
   void initState() {
     super.initState();
 
-     controller = PostControllerImp(rebuildCallback: () {
+    controller = PostControllerImp(rebuildCallback: () {
       // Empty function since we just need to trigger a rebuild
       setState(() {});
     });
@@ -52,11 +60,8 @@ class _PostState extends State<Post> {
       await controller.getPostfromDataBase(
           widget.username, controller.page, widget.isPage, widget.postId);
 
-      // Initialize VideoPlayerControllers for each post
-      _videoControllers.addAll(List.generate(
-        controller.posts.length,
-        (index) => null,
-      ));
+      // Updated: Clear VideoPlayerControllers
+      _videoControllers.clear();
 
       setState(() {
         controller.page++;
@@ -79,59 +84,87 @@ class _PostState extends State<Post> {
     }
   }
 
-  // for video  l l ll
-  Future<void> initializeVideoPlayer(int index) async {
+  // Updated: for video
+  Future<void> initializeVideoPlayer(String postId, int index) async {
     final post = controller.posts[index];
 
-    // Check if the controller is already initialized
-    if (_videoControllers[index] == null) {
-      try {
-        _videoControllers[index] = VideoPlayerController.networkUrl(
-          Uri.parse("$urlStarter/${post["video"]}"),
-        );
+    // Check if the post has videos
+    if (post["video"] != null && post["video"].isNotEmpty) {
+      // Check if the controller is already initialized for this post
+      if (_videoControllers[postId] == null) {
+        try {
+          _videoControllers[postId] = VideoPlayerController.network(
+            "$urlStarter/${post["video"][0]["video"]}", // Assuming you want the first video
+          );
 
-        await _videoControllers[index]!.initialize();
+          await _videoControllers[postId]!.initialize();
 
-        _videoControllers[index]!.addListener(() {
-          if (!_videoControllers[index]!.value.isInitialized) {
-            print("Video initialization failed");
-          }
-        });
-        setState(() {});
-      } catch (e) {
-        print("Exception during video initialization: $e");
+          _videoControllers[postId]!.addListener(() {
+            if (!_videoControllers[postId]!.value.isInitialized) {
+              print("Video initialization failed");
+            }
+          });
+          setState(() {});
+        } catch (e) {
+          print("Exception during video initialization: $e");
+        }
       }
     }
   }
 
-  // the other one 
-   Widget _buildVideoPlayer(int index) {
+    Future<void> updateVideoPlayer(String postId, int postIndex, int videoIndex) async {
+    final post = controller.posts[postIndex];
+
+    if (post["video"] != null && post["video"].length > videoIndex) {
+      final videoUrl = "$urlStarter/${post["video"][videoIndex]["video"]}";
+
+      _videoControllers[postId]?.dispose(); // Dispose the old controller
+      _videoControllers[postId] = VideoPlayerController.network(videoUrl);
+
+      await _videoControllers[postId]!.initialize();
+      setState(() {
+        currentVideoIndex[postIndex] = videoIndex; // Update the current video index
+      });
+    }
+  }
+
+  Widget _buildVideoPlayer(String postId, int postIndex) {
+    final videoController = _videoControllers[postId];
+
     return Builder(
       builder: (context) {
-        if (_videoControllers[index] != null &&
-            _videoControllers[index]!.value.isInitialized) {
+        if (videoController != null && videoController.value.isInitialized) {
+          final post = controller.posts[postIndex];
+          int totalVideos = post["video"].length;
+          int currentIndex = currentVideoIndex[postIndex] ?? 0;
+
           return Column(
             children: [
               AspectRatio(
-                aspectRatio: _videoControllers[index]!.value.aspectRatio,
-                child: VideoPlayer(_videoControllers[index]!),
+                aspectRatio: videoController.value.aspectRatio,
+                child: VideoPlayer(videoController),
               ),
-              VideoProgressIndicator(
-                _videoControllers[index]!,
-                allowScrubbing: true,
-              ),
+              VideoProgressIndicator(videoController, allowScrubbing: true),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
+                    icon: Icon(Icons.arrow_left),
+                    onPressed: currentIndex > 0
+                        ? () => updateVideoPlayer(postId, postIndex, currentIndex - 1)
+                        : null,
+                  ),
+                  IconButton(
+                    icon: videoController.value.isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
                     onPressed: () {
-                      _videoControllers[index]!.value.isPlaying
-                          ? _videoControllers[index]!.pause()
-                          : _videoControllers[index]!.play();
+                      videoController.value.isPlaying ? videoController.pause() : videoController.play();
                     },
-                    icon: _videoControllers[index]!.value.isPlaying
-                        ? const Icon(Icons.pause)
-                        : const Icon(Icons.play_arrow),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.arrow_right),
+                    onPressed: currentIndex < totalVideos - 1
+                        ? () => updateVideoPlayer(postId, postIndex, currentIndex + 1)
+                        : null,
                   ),
                 ],
               ),
@@ -139,11 +172,50 @@ class _PostState extends State<Post> {
             ],
           );
         } else {
-          return Container();
+          return Container(); // Show empty container or loader
         }
       },
     );
   }
+  Container _buildPhotoContainer(String postId, int index) {
+  final post = controller.posts[index];
+
+  int totalPhotos = post["photo"].length;
+  currentPhotoIndex = currentPhotoIndex % totalPhotos; // Ensure it stays within bounds
+
+  return Container(
+    height: postImage != "" ? 400 : 0,
+    decoration: BoxDecoration(
+      image: DecorationImage(
+        image: NetworkImage(
+          "$urlStarter/${post["photo"][currentPhotoIndex]["photo"]}"),
+        fit: BoxFit.cover,
+      ),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        IconButton(
+          icon: Icon(Icons.arrow_left,size: 50,),
+          onPressed: () {
+            setState(() {
+              currentPhotoIndex = (currentPhotoIndex - 1 + totalPhotos) % totalPhotos;
+            });
+          },
+        ),
+        IconButton(
+          icon: Icon(Icons.arrow_right,size: 50,),
+          onPressed: () {
+            setState(() {
+              currentPhotoIndex = (currentPhotoIndex + 1) % totalPhotos;
+            });
+          },
+        ),
+      ],
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -159,16 +231,19 @@ class _PostState extends State<Post> {
           itemBuilder: (context, index) {
             if (index < controller.posts.length) {
               final post = controller.posts[index];
-              if (post["video"] != null) {
-                initializeVideoPlayer(index);
+             if (post["video"] != null) {
+                initializeVideoPlayer(post['id'].toString(), index);
               }
+
               profileImage =
                   (post["userPhoto"] == null) ? "" : post["userPhoto"];
               profileBackgroundImage =
                   (profileImage != null && profileImage != "")
                       ? Image.network("$urlStarter/${profileImage!}").image
                       : defaultProfileImage;
-              postImage = (post["photo"] == null) ? "" : post["photo"];
+              postImage = (post["photo"] != null && post["photo"].isNotEmpty)
+                  ? post["photo"][0]["photo"]
+                  : "";
               postBackgroundImage = (postImage != null && postImage != "")
                   ? Image.network("$urlStarter/${postImage!}").image
                   : transparentImage;
@@ -308,8 +383,7 @@ class _PostState extends State<Post> {
                               textAlign: TextAlign.start,
                             ),
                           ),
-                          if (post["video"] != null)
-                            _buildVideoPlayer(index), // Pass index to the method
+                          if (post["video"] != null) _buildVideoPlayer(post['id'].toString(),index),
                           const SizedBox(height: 10),
                           Container(
                             height: postImage != "" ? 400 : 0,
@@ -319,6 +393,9 @@ class _PostState extends State<Post> {
                                 fit: BoxFit.cover,
                               ),
                             ),
+                            child: post["photo"].isNotEmpty
+                                ? _buildPhotoContainer(post['id'].toString(),index)
+                                : Container(),
                           ),
                           Container(
                             child: Row(
@@ -378,7 +455,7 @@ class _PostState extends State<Post> {
                                                 : null),
                                         widget.isAdmin,
                                         post['name'],
-                                        post["photo"],
+                                        post["photo"][0]["photo"],
                                         post['createdBy'],
                                       );
                                     });
@@ -459,7 +536,7 @@ class _PostState extends State<Post> {
                                                 : null),
                                         widget.isAdmin,
                                         post['name'],
-                                        post["photo"],
+                                        post["photo"][0]["photo"],
                                         post['createdBy'],
                                       );
                                     });
@@ -496,10 +573,7 @@ class _PostState extends State<Post> {
 
   @override
   void dispose() {
-    // Dispose VideoPlayerControllers when the widget is disposed
-    for (var controller in _videoControllers) {
-      controller?.dispose();
-    }
+    _videoControllers.values.forEach((controller) => controller?.dispose());
     super.dispose();
   }
 }
