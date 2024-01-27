@@ -40,7 +40,7 @@ exports.getUserProfileDashboard = async (req, res, next) => {
         var userExists = await User.findOne({
             where: {
                 username: userUsername,
-                status:null,
+                status: null,
             },
         });
         if (userExists != null) {
@@ -90,7 +90,7 @@ exports.getMainInfo = async (req, res, next) => {
         const existingEmail = await User.findOne({
             where: {
                 email: email,
-                status:null,
+                status: null,
             },
         });
         if (existingEmail != null) {
@@ -207,7 +207,7 @@ exports.changeMainInfo = async (req, res, next) => {
         const existingEmail = await User.findOne({
             where: {
                 email: req.user.email,
-                status:null,
+                status: null,
             },
         });
         if (existingEmail != null) {
@@ -514,7 +514,7 @@ exports.changePassword = async (req, res, next) => {
         const existingEmail = await User.findOne({
             where: {
                 email: req.user.email,
-                status:null,
+                status: null,
             },
         });
         if (existingEmail != null) {
@@ -557,7 +557,7 @@ exports.changePassword = async (req, res, next) => {
 exports.changeEmail = async (req, res, next) => {
 
     try {
-        const { email, newEmail, Password } = req.body;
+        const { email, newEmail, Password, ipAddress } = req.body;
 
         if (!newEmail || !Password || !email) {
             return res.status(409).json({
@@ -591,7 +591,7 @@ exports.changeEmail = async (req, res, next) => {
         const existingEmail = await User.findOne({
             where: {
                 email: req.user.email,
-                status:null,
+                status: null,
             },
         });
 
@@ -623,13 +623,28 @@ exports.changeEmail = async (req, res, next) => {
                     } else {//change email 
                         const existingNewEmailInChange = await changeEmail.findOne({
                             where: {
-                                email: newEmail
+                                email: newEmail,
+                                ipAddress: ipAddress,
                             },
                         });
                         if (existingNewEmailInChange != null) {
-                            await existingNewEmailInChange.destroy();
+                            if (existingNewEmailInChange.attemptCounter >= 3) {
+                                const currentDate = new Date();
+                                const timeDifference = currentDate - existingNewEmailInChange.createdAt;
+
+                                // (3600 seconds * 1000 milliseconds)
+                                if (timeDifference < 3600 * 1000) { // password match , less than hour => dont login
+                                    // The time difference is less than one hour
+                                    return res.status(409).json({
+                                        message: 'change password attempts exceeded. Please try again later.',
+                                    });
+                                } else {
+                                    await existingNewEmailInChange.destroy();
+                                }
+                            }
+
                         }
-                        await createChangeEmail(existingEmail.username, newEmail);
+                        await createChangeEmail(existingEmail.username, newEmail, ipAddress);
                         return res.status(200).json({
                             message: 'code sent',
                             body: req.body
@@ -657,7 +672,7 @@ exports.changeEmail = async (req, res, next) => {
         });
     }
 }
-async function createChangeEmail(userName, email) {
+async function createChangeEmail(userName, email, ipAddress) {
     var VerificationCode = Math.floor(10000 + Math.random() * 90000);
     //const hashedVerificationCode = await bcrypt.hash(VerificationCode.toString(), 10);
     await sendVerificationCode(email, VerificationCode);
@@ -665,6 +680,8 @@ async function createChangeEmail(userName, email) {
         username: userName,
         email: email,
         code: VerificationCode,
+        ipAddress: ipAddress,
+        attemptCounter:0,
     });
 }
 async function sendVerificationCode(email, code) {
@@ -680,7 +697,7 @@ async function sendVerificationCode(email, code) {
         from: 'growifygp2@gmail.com',
         to: email,
         subject: 'Growify Verification Code',
-        text: `Your verification code is: ${code} and its valid unless you close the app`,
+        text: `Your verification code is: ${code} `,
     };
 
 
@@ -700,30 +717,63 @@ async function sendVerificationCode(email, code) {
 exports.postVerificationCode = async (req, res, next) => {
     try {
 
-        const { verificationCode, email } = req.body;//get data from req
+        const { verificationCode, email, ipAddress } = req.body;//get data from req
         //find the user by email in tempuser table
         console.log(email);
         const existingUserInChangeEamil = await changeEmail.findOne({
             where: {
                 email: email,
-                status:null,
+                ipAddress: ipAddress,
             }
         });
         //if exists 
         if (existingUserInChangeEamil != null) {
+            if (existingUserInChangeEamil.attemptCounter >= 3) {
+                const currentDate = new Date();
+                const timeDifference = currentDate - existingUserInChangeEamil.createdAt;
+
+                // (3600 seconds * 1000 milliseconds)
+                if (timeDifference < 3600 * 1000) { // password match , less than hour => dont login
+                    // The time difference is less than one hour
+                    return res.status(409).json({
+                        message: 'change email attempts exceeded. Please try again later.',
+                    });
+                } else {
+                    var VerificationCode = Math.floor(10000 + Math.random() * 90000);
+                    //send the code
+                    await sendVerificationCode(email, VerificationCode);
+                    existingUserInChangeEamil.code = VerificationCode;
+                    existingUserInChangeEamil.ipAddress;
+                    existingUserInChangeEamil.attemptCounter = 0;
+                    await existingUserInChangeEamil.save();
+                    return res.status(409).json({
+                        message: 'new code have been sent to your email. Please try again.',
+                    });
+                }
+            }
             const storedVerificationCode = existingUserInChangeEamil.code;// get the hashed code from the thable
             //compare
             if (verificationCode == storedVerificationCode) {
+
                 var username = existingUserInChangeEamil.username;
                 const result = await User.update({ email: email }, { where: { username } });
-                await existingUserInChangeEamil.destroy();
+                await changeEmail.destroy({
+                    where: {
+                        email: email,
+                        ipAddress: ipAddress,
+                    }
+                });
                 return res.status(200).json({
                     body: req.body
                 });
             }
             else {
+                var newCounter = existingUserInChangeEamil.attemptCounter + 1;
+                existingUserInChangeEamil.attemptCounter = newCounter;
+                await existingUserInChangeEamil.save();
+
                 return res.status(409).json({
-                    message: 'Not Valid code',
+                    message: `Not Valid code, you have ${3 - newCounter} attempts left`,
                     body: req.body
                 });
             }
@@ -745,194 +795,194 @@ exports.postVerificationCode = async (req, res, next) => {
     }
 }
 exports.deleteUserAccount = async (req, res, next) => {
-    try{
-    const { password } = req.body;
-    const existingEmail = await User.findOne({
-        where: {
-            email: req.user.email,
-            status:null,
-        },
-    });
-    if (!password) {
-        return res.status(409).json({
-            message: 'password is empty',
-            body: req.body
+    try {
+        const { password } = req.body;
+        const existingEmail = await User.findOne({
+            where: {
+                email: req.user.email,
+                status: null,
+            },
         });
-    }
-    if (password.length < 8 || password.length > 30) {
-        return res.status(409).json({
-            message: 'Not Valid password',
-            body: req.body
-        });
-    }
-    if (existingEmail != null) {
-        // mail  exists
-        console.log(password);
-        const isMatch = await bcrypt.compare(password, existingEmail.password);
-        if (isMatch) {
-            var oldPhoto = existingEmail.photo;
-            var oldCover = existingEmail.coverImage;
+        if (!password) {
+            return res.status(409).json({
+                message: 'password is empty',
+                body: req.body
+            });
+        }
+        if (password.length < 8 || password.length > 30) {
+            return res.status(409).json({
+                message: 'Not Valid password',
+                body: req.body
+            });
+        }
+        if (existingEmail != null) {
+            // mail  exists
+            console.log(password);
+            const isMatch = await bcrypt.compare(password, existingEmail.password);
+            if (isMatch) {
+                var oldPhoto = existingEmail.photo;
+                var oldCover = existingEmail.coverImage;
 
-            if (oldPhoto != null) {
-                //delete the old photo from the  server image folder
-                const oldPhotoPath = path.join('images', oldPhoto);
+                if (oldPhoto != null) {
+                    //delete the old photo from the  server image folder
+                    const oldPhotoPath = path.join('images', oldPhoto);
 
-                fs.unlinkSync(oldPhotoPath);
-            }
-            if (oldCover != null) {
-                //delete the old photo from the  server image folder
-                const oldCoverPath = path.join('images', oldCover);
+                    fs.unlinkSync(oldPhotoPath);
+                }
+                if (oldCover != null) {
+                    //delete the old photo from the  server image folder
+                    const oldCoverPath = path.join('images', oldCover);
 
-                fs.unlinkSync(oldCoverPath);
-            }
-            await User.update(
-                { status: false, photo: null, coverImage: null },
-                {
+                    fs.unlinkSync(oldCoverPath);
+                }
+                await User.update(
+                    { status: false, photo: null, coverImage: null,token :null },
+                    {
+                        where: {
+                            username: existingEmail.username,
+                        },
+                    });
+
+                await activeUsers.destroy({
                     where: {
                         username: existingEmail.username,
                     },
                 });
+                await notifications.destroy({
+                    where: {
+                        [Op.or]: [
+                            {
+                                username: existingEmail.username,
+                            },
+                            {
+                                notificationPointer: existingEmail.username,
+                            }
+                        ]
 
-            await activeUsers.destroy({
-                where: {
-                    username: existingEmail.username,
-                },
-            });
-            await notifications.destroy({
-                where: {
-                    [Op.or]: [
-                        {
-                            username: existingEmail.username,
-                        },
-                        {
-                            notificationPointer: existingEmail.username,
-                        }
-                    ]
-                    
-                },
-            });
-            await connections.destroy({
-                where: {
-                    [Op.or]: [
-                        {
-                            senderUsername: existingEmail.username,
-                        },
-                        {
-                            receiverUsername: existingEmail.username,
-                        }
-                    ]
-                },
-            });
-            await sentConnection.destroy({
-                where: {
-                    [Op.or]: [
-                        {
-                            senderUsername: existingEmail.username,
-                        },
-                        {
-                            receiverUsername: existingEmail.username,
-                        }
-                    ]
-                },
-            });
-            await workExperience.destroy({
-                where: {
-                    username: existingEmail.username,
-                },
-            });
-            await educationLevel.destroy({
-                where: {
-                    username: existingEmail.username,
-                },
-            });
-            await userTasks.destroy({
-                where: {
-                    username: existingEmail.username,
-                },
-            });
-            await changeEmail.destroy({
-                where: {
-                    username: existingEmail.username,
-                },
-            });
-            await forgetPasswordCode.destroy({
-                where: {
-                    username: existingEmail.username,
-                },
-            });
-            await userCalender.destroy({
-                where: {
-                    username: existingEmail.username,
-                },
-            });
-            await jobApplication.destroy({
-                where: {
-                    username: existingEmail.username,
-                },
-            });
-            await pageFollower.destroy({
-                where: {
-                    username: existingEmail.username,
-                },
-            });
-            await pageEmployees.destroy({
-                where: {
-                    username: existingEmail.username,
-                },
-            });
-            await pageAdmin.destroy({
-                where: {
-                    username: existingEmail.username,
-                },
-            });
-            await comment.destroy({
-                where: {
-                    username: existingEmail.username,
-                },
-            });
-            await like.destroy({
-                where: {
-                    username: existingEmail.username,
-                },
-            });
-            await post.destroy({
-                where: {
-                    username: existingEmail.username,
-                },
-            });
-            await groupTask.destroy({
-                where: {
-                    username: existingEmail.username,
-                },
-            });
-            await groupAdmin.destroy({
-                where: {
-                    username: existingEmail.username,
-                },
-            });
-            await groupMember.destroy({
-                where: {
-                    username: existingEmail.username,
-                },
-            });
-            return res.status(200).json({
-                message: 'Account deleted',
-            });
+                    },
+                });
+                await connections.destroy({
+                    where: {
+                        [Op.or]: [
+                            {
+                                senderUsername: existingEmail.username,
+                            },
+                            {
+                                receiverUsername: existingEmail.username,
+                            }
+                        ]
+                    },
+                });
+                await sentConnection.destroy({
+                    where: {
+                        [Op.or]: [
+                            {
+                                senderUsername: existingEmail.username,
+                            },
+                            {
+                                receiverUsername: existingEmail.username,
+                            }
+                        ]
+                    },
+                });
+                await workExperience.destroy({
+                    where: {
+                        username: existingEmail.username,
+                    },
+                });
+                await educationLevel.destroy({
+                    where: {
+                        username: existingEmail.username,
+                    },
+                });
+                await userTasks.destroy({
+                    where: {
+                        username: existingEmail.username,
+                    },
+                });
+                await changeEmail.destroy({
+                    where: {
+                        username: existingEmail.username,
+                    },
+                });
+                await forgetPasswordCode.destroy({
+                    where: {
+                        username: existingEmail.username,
+                    },
+                });
+                await userCalender.destroy({
+                    where: {
+                        username: existingEmail.username,
+                    },
+                });
+                await jobApplication.destroy({
+                    where: {
+                        username: existingEmail.username,
+                    },
+                });
+                await pageFollower.destroy({
+                    where: {
+                        username: existingEmail.username,
+                    },
+                });
+                await pageEmployees.destroy({
+                    where: {
+                        username: existingEmail.username,
+                    },
+                });
+                await pageAdmin.destroy({
+                    where: {
+                        username: existingEmail.username,
+                    },
+                });
+                await comment.destroy({
+                    where: {
+                        username: existingEmail.username,
+                    },
+                });
+                await like.destroy({
+                    where: {
+                        username: existingEmail.username,
+                    },
+                });
+                await post.destroy({
+                    where: {
+                        username: existingEmail.username,
+                    },
+                });
+                await groupTask.destroy({
+                    where: {
+                        username: existingEmail.username,
+                    },
+                });
+                await groupAdmin.destroy({
+                    where: {
+                        username: existingEmail.username,
+                    },
+                });
+                await groupMember.destroy({
+                    where: {
+                        username: existingEmail.username,
+                    },
+                });
+                return res.status(200).json({
+                    message: 'Account deleted',
+                });
+
+            } else {
+                return res.status(409).json({
+                    message: 'Wrong Password',
+                    body: req.body
+                });
+            }
 
         } else {
-            return res.status(409).json({
-                message: 'Wrong Password',
+            return res.status(404).json({
+                message: 'user not exist',
                 body: req.body
             });
         }
-
-    } else {
-        return res.status(404).json({
-            message: 'user not exist',
-            body: req.body
-        });
-    }
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return res.status(500).json({
             message: 'user not exist',

@@ -27,7 +27,7 @@ exports.postVerificationCode = async (req, res, next) => {
             if(existingUserInTemp.attemptCounter >=3){
                 await existingUserInTemp.destroy();
                 return res.status(409).json({
-                    message: 'Not Valid email, please reSign up',
+                    message: 'Not Valid code, please reSign up',
                     body: req.body
                 });
             }else{

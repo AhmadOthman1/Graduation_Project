@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_ip_address/get_ip_address.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
 import 'package:http/http.dart' as http;
@@ -23,10 +24,14 @@ class ForgetPasswordControllerImp extends ForgetPasswordController{
   }
   @override
   postForgetPassword(email)async {
+        var ipAddress = IpAddress(type: RequestType.text);
+    dynamic ip = await ipAddress.getIpAddress();
+
     var url = "$urlStarter/user/forgetpassword";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
           "email": email.trim(),
+          "ipAddress":ip,
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',

@@ -68,6 +68,10 @@ const User=sequelize.define('user',{
         type:Sequelize.BOOLEAN,
         allowNull:true
     },
+    type:{
+        type:Sequelize.STRING,
+        allowNull:true
+    },
 
 });
 

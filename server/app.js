@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/user');
+const adminRoutes = require('./routes/admin');
 const sequelize=require('./util/database');
 
 var cors = require('cors');
@@ -20,6 +21,7 @@ app.use(express.static('cvs'));
 
 // Use feed routes
 app.use('/user', userRoutes);
+app.use('/admin', adminRoutes);
 
 //{force:true}
 sequelize.sync().then(result =>{

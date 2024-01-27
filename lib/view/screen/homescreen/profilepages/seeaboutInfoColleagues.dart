@@ -1,9 +1,11 @@
 // final SeeAboutInfoColleaguesController controller = Get.put(SeeAboutInfoColleaguesController());
 
+import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/seeaboutInfoColleagues_controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/services/notification_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
@@ -121,25 +123,47 @@ class SeeAboutInfoColleagues extends StatelessWidget {
   }
 
   Future download(String url, String filename) async {
-    var savePath = '/storage/emulated/0/Download/$filename';
-    var dio = Dio();
-    dio.interceptors.add(LogInterceptor());
-    try {
-      var response = await dio.get(
-        url,
-        //Received data with List<int>
-        options: Options(
-          responseType: ResponseType.bytes,
-          followRedirects: false,
-        ),
-      );
-      var file = File(savePath);
-      var raf = file.openSync(mode: FileMode.write);
-      // response.data is List<int> type
-      raf.writeFromSync(response.data);
-      await raf.close();
-    } catch (e) {
-      debugPrint(e.toString());
+    print(url);
+    print(filename);
+    if (kIsWeb) {
+      try {
+        FileSaver.instance.saveFile(
+            name: filename.split('.')[0],
+            link: LinkDetails(link: url+"/"+filename),
+            ext: 'pdf',
+            mimeType: MimeType.pdf);
+      } catch (err) {
+        print(err);
+      }
+    } else {
+      var savePath = '/storage/emulated/0/Download/$filename';
+      var dio = Dio();
+      dio.interceptors.add(LogInterceptor());
+      try {
+        var response = await dio.get(
+          url + "/" + filename,
+          //Received data with List<int>
+          options: Options(
+            responseType: ResponseType.bytes,
+            followRedirects: false,
+          ),
+        );
+        var file = File(savePath);
+        var raf = file.openSync(mode: FileMode.write);
+        // response.data is List<int> type
+        raf.writeFromSync(response.data);
+        await raf.close();
+        var playSound = true;
+        Duration timeoutAfter = Duration(seconds: 5);
+        await NotificationService.initializeNotification(playSound);
+        await NotificationService.showNotification(
+          title: "Growify",
+          body: "file $filename downloaded successfully",
+          chronometer: Duration.zero,
+        );
+      } catch (e) {
+        debugPrint(e.toString());
+      }
     }
   }
   /*
@@ -244,25 +268,7 @@ Future<void> downloadFromWeb(String url, String filename) async {
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 20),
                                 onPressed: () async {
-                                  if (kIsWeb) {
-                                    var url = "$urlStarter/" + value;
-                                    if (await canLaunch(url)) {
-                                      await launch(
-                                        url,
-                                        headers: {
-                                          "Content-Type": "application/pdf",
-                                          "Content-Disposition": "inline"
-                                        },
-                                      );
-                                      print("browser url");
-                                      print(url);
-                                    } else {
-                                      // can't launch url, there is some error
-                                      throw "Could not launch $url";
-                                    }
-                                  } else {
-                                    download("$urlStarter/" + value, value);
-                                  }
+                                  download(urlStarter, value);
                                 },
                                 textColor: Colors.blue,
                                 child: const Text("Download"),

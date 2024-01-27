@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
+import 'package:get_ip_address/get_ip_address.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/core/constant/routes.dart';
@@ -24,12 +25,16 @@ late String verifyCode;
 
   @override
   Future postVerificationCode(verificationCode,newEmail) async {
+        var ipAddress = IpAddress(type: RequestType.text);
+    dynamic ip = await ipAddress.getIpAddress();
+
     print(newEmail+"ffffff");
    var url = "$urlStarter/user/settingChangeemailVerificationCode";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
           "verificationCode": verificationCode,
           "email": newEmail,
+          "ipAddress":ip,
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -53,7 +58,7 @@ late String verifyCode;
     if(res.statusCode == 409 || res.statusCode == 500){
       return resbody['message'];
     }else if(res.statusCode == 200){
-      Get.offNamed(AppRoute.settings);
+      _logoutController.goTosigninpage();
     }
     
     //Get.offNamed(AppRoute.verifycodeaftersignup);

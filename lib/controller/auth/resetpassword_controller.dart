@@ -1,13 +1,14 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
+import 'package:get_ip_address/get_ip_address.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
 import 'package:http/http.dart' as http;
 abstract class ResetPasswordController extends GetxController{
 
-goToSuccessResetPassword(email,password);
-postChangePassword(email,password);
+goToSuccessResetPassword(email,password,code);
+postChangePassword(email,password,code);
 }
 
 class ResetPasswordControllerImp extends ResetPasswordController{
@@ -49,13 +50,16 @@ class ResetPasswordControllerImp extends ResetPasswordController{
   }
 
      @override
-  Future postChangePassword(email,password) async {
+  Future postChangePassword(email,password,code) async {
+    var ipAddress = IpAddress(type: RequestType.text);
+    dynamic ip = await ipAddress.getIpAddress();
     var url = "$urlStarter/user/changepassword";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
           "email": email.trim(),
           "password": password.trim(),
-
+          "code":code,
+          "ipAddress": ip,
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -64,8 +68,8 @@ class ResetPasswordControllerImp extends ResetPasswordController{
   }
 
   @override
-  goToSuccessResetPassword(email,password)async {
-    var res = await postChangePassword(email,password);
+  goToSuccessResetPassword(email,password,code)async {
+    var res = await postChangePassword(email,password,code);
     var resbody = jsonDecode(res.body);
     print(resbody['message']);
     print(res.statusCode);

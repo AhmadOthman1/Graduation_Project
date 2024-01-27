@@ -23,6 +23,14 @@ const changeEmail=sequelize.define('changeEmail',{
         type:Sequelize.STRING,
         allowNull:false
     },
+    attemptCounter:{
+        type:Sequelize.INTEGER,
+        allowNull:false
+    },
+    ipAddress: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
 });
 User.hasOne(changeEmail, { foreignKey: 'username', onDelete: 'CASCADE' ,onUpdate : 'CASCADE'});
 

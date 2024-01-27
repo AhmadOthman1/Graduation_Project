@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:featurehub_sse_client/featurehub_sse_client.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_ip_address/get_ip_address.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
@@ -38,11 +39,16 @@ class LoginControllerImp extends LoginController {
   }
   @override
   Future postLogin(email, password) async {
+    var ipAddress = IpAddress(type: RequestType.text);
+    dynamic ip = await ipAddress.getIpAddress();
+    print(ip);
+    print(";;;;;;;;;;;;;;;;;");
     var url = "$urlStarter/user/Login";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
           "email": email.trim(),
           "password": password.trim(),
+          "ipAddress": ip,
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',

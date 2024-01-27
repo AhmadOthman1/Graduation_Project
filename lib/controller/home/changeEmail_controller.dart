@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_ip_address/get_ip_address.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
 import 'package:growify/global.dart';
@@ -45,12 +46,15 @@ class ChangeEmailControllerImp extends ChangeEmailController {
   // here chould you check if password correct , update the email
   @override
   postSaveChanges(newEmail,password)async {
+    var ipAddress = IpAddress(type: RequestType.text);
+    dynamic ip = await ipAddress.getIpAddress();
     var url = "$urlStarter/user/settingChangeemail";
     var responce = await http.post(Uri.parse(url),
         body: jsonEncode({
           "email": GetStorage().read("loginemail"),
           "newEmail": newEmail.trim(),
           "Password": password.toString(),
+          "ipAddress":ip,
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',

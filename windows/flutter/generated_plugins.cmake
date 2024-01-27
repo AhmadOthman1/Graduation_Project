@@ -5,6 +5,7 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   audioplayers_windows
   awesome_notifications
+  file_saver
   file_selector_windows
   flutter_webrtc
   quick_notify

@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:file_saver/file_saver.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/SeeAboutInfo_Controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/services/notification_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SeeAboutInfo extends StatelessWidget {
@@ -104,62 +106,50 @@ class SeeAboutInfo extends StatelessWidget {
     }
   }
 
-  Future download(String url, String filename) async {
-    var savePath= '/storage/emulated/0/Download/$filename';
-
-    var dio = Dio();
-    dio.interceptors.add(LogInterceptor());
-    try {
-      var response = await dio.get(
-        url,
-        //Received data with List<int>
-        options: Options(
-          responseType: ResponseType.bytes,
-          followRedirects: false,
-        ),
-      );
-      var file = File(savePath);
-      var raf = file.openSync(mode: FileMode.write);
-      // response.data is List<int> type
-      raf.writeFromSync(response.data);
-      await raf.close();
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-  }
-  /*
-Future<void> downloadFromWeb(String url, String filename) async {
-    final html.AnchorElement anchor = html.AnchorElement(href: url)
-      ..target = 'web'
-      ..download = filename;
-
-    final Uint8List bytes = await _fetchBytes(url);
-    final html.Blob blob = html.Blob([bytes]);
-
-    final urlBlob = html.Url.createObjectUrlFromBlob(blob);
-    anchor.href = urlBlob;
-
-    final body = html.querySelector('body');
-    if (body != null) {
-      body.children.add(anchor);
-    }
-
-    anchor.click();
-
-    html.Url.revokeObjectUrl(urlBlob);
-  }
-
-  Future<Uint8List> _fetchBytes(String url) async {
-    final html.HttpRequest request =
-        await html.HttpRequest.request(url, responseType: 'arraybuffer');
-    if (request.status == 200) {
-      final ByteBuffer byteBuffer = request.response;
-      return Uint8List.fromList(byteBuffer.asUint8List());
+ Future download(String url, String filename) async {
+    print(url);
+    print(filename);
+    if (kIsWeb) {
+      try {
+        FileSaver.instance.saveFile(
+            name: filename.split('.')[0],
+            link: LinkDetails(link: url+"/"+filename),
+            ext: 'pdf',
+            mimeType: MimeType.pdf);
+      } catch (err) {
+        print(err);
+      }
     } else {
-      throw Exception('Failed to load data: ${request.statusText}');
+      var savePath = '/storage/emulated/0/Download/$filename';
+      var dio = Dio();
+      dio.interceptors.add(LogInterceptor());
+      try {
+        var response = await dio.get(
+          url + "/" + filename,
+          //Received data with List<int>
+          options: Options(
+            responseType: ResponseType.bytes,
+            followRedirects: false,
+          ),
+        );
+        var file = File(savePath);
+        var raf = file.openSync(mode: FileMode.write);
+        // response.data is List<int> type
+        raf.writeFromSync(response.data);
+        await raf.close();
+        var playSound = true;
+        Duration timeoutAfter = Duration(seconds: 5);
+        await NotificationService.initializeNotification(playSound);
+        await NotificationService.showNotification(
+          title: "Growify",
+          body: "file $filename downloaded successfully",
+          chronometer: Duration.zero,
+        );
+      } catch (e) {
+        debugPrint(e.toString());
+      }
     }
   }
-  */
 
   ///
   Widget _buildPersonalDetails(SeeAboutInfoController controller) {
@@ -233,7 +223,7 @@ Future<void> downloadFromWeb(String url, String filename) async {
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 20),
                                 onPressed: () async {
-                                  // Rest of your code
+                                  await download(urlStarter, value);
                                 },
                                 textColor: Colors.blue,
                                 child: const Text("Download"),

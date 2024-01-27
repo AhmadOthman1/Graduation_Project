@@ -165,6 +165,7 @@ exports.createText = async () => {
         cv: "AhmadOthman-1701032805374-381183524.pdf",
         phone: "0569929734",
         dateOfBirth: "2001-05-18",
+        type:"Admin"
     });
     await User.create({
         firstname: "Ahmad",

@@ -9,7 +9,8 @@ import 'package:growify/view/widget/auth/ButtonAuth.dart';
 import 'package:growify/view/widget/auth/textTitleAuth.dart';
 
 class ResetPassword extends StatelessWidget {
-  ResetPassword({super.key});
+  final code;
+  ResetPassword({super.key , required this.code});
   GlobalKey<FormState> formstate = GlobalKey();
   String? pas;
   @override
@@ -128,7 +129,7 @@ class ResetPassword extends StatelessWidget {
                               if (formstate.currentState!.validate()) {
                                 print("Vaild");
                                 var message = await controller
-                                    .goToSuccessResetPassword(email, pas);
+                                    .goToSuccessResetPassword(email, pas,code);
                                 (message != null)
                                     ? showDialog(
                                         context: context,
@@ -266,7 +267,7 @@ class ResetPassword extends StatelessWidget {
                     if (formstate.currentState!.validate()) {
                       print("Vaild");
                       var message =
-                          await controller.goToSuccessResetPassword(email, pas);
+                          await controller.goToSuccessResetPassword(email, pas,code);
                       (message != null)
                           ? showDialog(
                               context: context,

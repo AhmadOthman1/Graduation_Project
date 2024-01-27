@@ -50,9 +50,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _evetnsAndtasks() async {
     // for task
-
+/*
     print("tasksssssssssssssssssssssssssssss");
-    print("Tasks:");
+    print("Tasks:");*/
     myTasks.clear();
     myTasks.addAll(tasks);
 
@@ -64,16 +64,10 @@ class _HomeScreenState extends State<HomeScreen> {
         DateTime taskRemindDate = task.reminderDate!;
         if (taskRemindDate.isAtSameMomentAs(
             DateTime(presentDay.year, presentDay.month, presentDay.day))) {
-                print("yessssssssssssssss: ${task.reminderDate} ${task.reminderTime}");
+                //print("yessssssssssssssss: ${task.reminderDate} ${task.reminderTime}");
           int? hour = task.reminderTime?.hour;
           int? minute = task.reminderTime?.minute;
-
           int presentHour = presentDay.hour;
-
-          if (!kIsWeb) {
-            presentHour += 2;
-          }
-
           int presentMinute = presentDay.minute;
           int value = (minute ?? 0) - presentMinute;
       print("presentHour: $presentHour");
@@ -82,12 +76,12 @@ class _HomeScreenState extends State<HomeScreen> {
               // Check if task.id is not already in myTasksIsendNoti
               if (!myTasksIsendNoti.contains(task.id)) {
                 myTasksIsendNoti.add(task.id);
-                print("Task ID: ${task.id}");
+                /*print("Task ID: ${task.id}");
                 print("Task Name: ${task.taskName}");
                 print("End Date: ${taskRemindDate}");
                 print("End Time: ${task.endTime}");
                 print("Description: ${task.description}");
-                print("--------------");
+                print("--------------");*/
 
                 DateTime now = DateTime.now();
                 String Noti = task.taskName;
@@ -121,10 +115,6 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
 
-    // for event in calendar rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
-    print("EEEEEEEEEEEEEEVVVVVVVVEEEEEEEEEEENNNNNNNNNTTTTTTTT");
-    // print(allAppointments);
-    print("EEEEEEEEEEEEEEVVVVVVVVEEEEEEEEEEENNNNNNNNNTTTTTTTT data");
     DateTime today = DateTime.now();
     today = today.add(Duration(hours: 2));
     
@@ -147,21 +137,21 @@ class _HomeScreenState extends State<HomeScreen> {
           int presentMinuteEvent = today.minute;
           int valueEvent = (minuteEvent ?? 0) - presentMinuteEvent;
       //    print("minuteEvent :$minuteEvent : ")
-          print("hourEvent: $hourEvent");
+          /*print("hourEvent: $hourEvent");
           print("presentHourEvent: $presentHourEvent");
-          print("valueEvent: $valueEvent");
+          print("valueEvent: $valueEvent");*/
            if (hourEvent == presentHourEvent) {
              print("My Event: ${appointment.reminderDate} : ${appointment.reminderTime}");
             if (-1 <= valueEvent && valueEvent < 2) {
                if (!myEventsIsendNoti.contains(appointment.id)) {
                 myEventsIsendNoti.add(appointment.id);
-                print("Upcoming Event ID: ${appointment.id}");
+                /*print("Upcoming Event ID: ${appointment.id}");
                 print("Event Date: ${appointment.date}");
                 print("Event Time: ${appointment.eventTime}");
                 print("Subject: ${appointment.subject}");
-                print("Description: ${appointment.description}");
+                print("Description: ${appointment.description}");*/
                // print("timeDifference:${timeDifference}");
-                print("--------------");
+                //print("--------------");
 
                 // send to notification
 
