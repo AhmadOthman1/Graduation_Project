@@ -22,7 +22,7 @@ class _ReportPageState extends State<ReportPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Report The Comment"),
+        title: Text("Report The Page"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

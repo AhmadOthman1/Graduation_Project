@@ -39,6 +39,9 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
       'type': 'U'
     };
     controller.colleaguesmessages.assign(userMap);
+
+    print("ssssssssssssss");
+    print(widget.userData[0]["bio"]);
   }
 
   final AssetImage defultprofileImage =
@@ -249,6 +252,7 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
                 icon: const Icon(Icons.more_vert),
                 onSelected: (String option) async {
                   var message = await controller.onMoreOptionSelected(
+                    context,
                     option,
                     widget.userData[0]["username"],
                   );
@@ -288,7 +292,7 @@ class _ColleaguesProfileState extends State<ColleaguesProfile> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 8.0),
-                Text(Bio != null ? '$Bio' : "",
+                Text(widget.userData[0]["bio"] != null ? '${widget.userData[0]["bio"]}' : "",
                     style: TextStyle(
                         fontSize: 14.0,
                         fontWeight: FontWeight.normal,

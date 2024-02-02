@@ -9,12 +9,12 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
-
-LogOutButtonControllerImp _logoutController = Get.put(LogOutButtonControllerImp());
+LogOutButtonControllerImp _logoutController =
+    Get.put(LogOutButtonControllerImp());
 
 class Appointment {
   int? id; // Make id nullable (optional)
-  String?date;
+  String? date;
   DateTime startTime;
   String subject;
   String eventTime;
@@ -30,7 +30,7 @@ class Appointment {
     required this.eventTime,
     required this.description,
     this.reminderTime,
-    this.reminderDate, 
+    this.reminderDate,
   });
 }
 
@@ -63,7 +63,7 @@ class CalendarController extends GetxController {
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
       deleteEvent(id);
-      return ;
+      return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();
     }
@@ -83,28 +83,27 @@ class CalendarController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
   }
 
   void initAppointments() {
     allAppointments = [];
   }
+
   String formatTimeOfDay(TimeOfDay timeOfDay) {
-  return '${timeOfDay.hour}:${timeOfDay.minute}';
-}
+    return '${timeOfDay.hour}:${timeOfDay.minute}';
+  }
 
   // store in the database
   addNewEvent(newAppointments) async {
-   
     var url = "$urlStarter/user/addNewUserEvent";
     Map<String, dynamic> jsonData = {
       "subject": newAppointments[0].subject,
       "description": newAppointments[0].description,
       "startTime": newAppointments[0].startTime.toString(),
-       "reminderDate": newAppointments[0].reminderDate?.toIso8601String(),
-  "reminderTime": newAppointments[0].reminderTime != null
-      ? formatTimeOfDay(newAppointments[0].reminderTime!)
-      : null,
+      "reminderDate": newAppointments[0].reminderDate?.toIso8601String(),
+      "reminderTime": newAppointments[0].reminderTime != null
+          ? formatTimeOfDay(newAppointments[0].reminderTime!)
+          : null,
     };
     String jsonString = jsonEncode(jsonData);
     var response = await http.post(Uri.parse(url), body: jsonString, headers: {
@@ -132,9 +131,9 @@ class CalendarController extends GetxController {
   }
 
   TimeOfDay stringToTimeOfDay(String time) {
-  List<String> parts = time.split(':');
-  return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
-}
+    List<String> parts = time.split(':');
+    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+  }
 
   // get data from the database
   Future<void> getEvents() async {
@@ -157,9 +156,9 @@ class CalendarController extends GetxController {
       print(responseBody['message']);
     } else if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-  //    print("kkkkkkkkkkkkkkkkkkk");
-  //    print(responseBody);
-   //   print("kkkkkkkkkkkkkkkkkkk");
+      //    print("kkkkkkkkkkkkkkkkkkk");
+      //    print(responseBody);
+      //   print("kkkkkkkkkkkkkkkkkkk");
 
       // Assuming your response structure is similar to the provided example
       if (responseBody['message'] == 'Calender fetched') {
@@ -176,13 +175,13 @@ class CalendarController extends GetxController {
             eventTime: calendarItem['time'],
             description: calendarItem['description'],
             id: calendarItem['id'],
-            date:calendarItem['date'],
-             reminderDate: calendarItem['reminderDate'] != null
-      ? DateTime.parse(calendarItem['reminderDate'])
-      : null,
-          reminderTime: calendarItem['reminderTime'] != null
-      ? stringToTimeOfDay(calendarItem['reminderTime'])
-      : null,
+            date: calendarItem['date'],
+            reminderDate: calendarItem['reminderDate'] != null
+                ? DateTime.parse(calendarItem['reminderDate'])
+                : null,
+            reminderTime: calendarItem['reminderTime'] != null
+                ? stringToTimeOfDay(calendarItem['reminderTime'])
+                : null,
           );
 
           allAppointments.add(appointment);

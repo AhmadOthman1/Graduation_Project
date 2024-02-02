@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/ShowAllMyJobs_controller.dart';
@@ -63,7 +64,129 @@ class _CompanyJobPageState extends State<CompanyJobPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+   if(kIsWeb){
+     return Scaffold(
+      appBar: AppBar(
+        title: const Text('All Jobs'),
+      ),
+      body: Container(
+        height: MediaQuery.of(context).size.height - 100,
+        child: Row(
+          children: [
+             Expanded(flex: 3, child: Container()),
+            Expanded(
+              flex: 4,
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3), // changes the position of shadow
+                      ),
+                    ],
+                  ),
+                child: Column(
+                  children: [
+                    const Divider(
+                      color: Color.fromARGB(255, 194, 193, 193),
+                      thickness: 2.0,
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        itemCount: _controller.jobs.length,
+                        itemBuilder: (context, index) {
+                          final job = _controller.jobs[index];
+                
+                          return Card(
+                              margin: const EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.open_in_new),
+                                      onPressed: () {
+                                        Get.to(ShowTheJob(jopId: job['pageJobId'],title:job['title'],company:widget.pageId,Fields: job['Fields'], image:widget.image,deadline:job['endDate'],content:job['description']));
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                    title: Text(
+                                      "${job['title']}",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
+                                      
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(5),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Fields: ${job['Fields']}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(5),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          job['description'],
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'Deadline: ${job['endDate']}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                         
+                        },
+                      ),
+                    ),
+                    if (_controller.isLoading) const CircularProgressIndicator(),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(flex: 3, child: Container()),
+          ],
+        ),
+      ),
+    );
+
+   }
+   
+   
+   else{
+     return Scaffold(
       appBar: AppBar(
         title: const Text('All Jobs'),
       ),
@@ -146,51 +269,7 @@ class _CompanyJobPageState extends State<CompanyJobPage> {
                       ],
                     ),
                   );
-                /*
-                Card(
-                  margin: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: CircleAvatar(
-                          backgroundImage: (job['photo'] != null &&
-                                  job['photo'] != "")
-                              ? Image.network("$urlStarter/" + job['photo']!)
-                                  .image
-                              : defultprofileImage,
-                        ),
-                        title: Text(
-                          "${job['notificationContent']}",
-                          
-                        ),
-                        trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.open_in_new),
-                            onPressed: () {
-                              Get.to(ShowTheJob());
-                            },
-                          ),
-                        ],
-                      ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Deadline: ${job['date']}'),
-                            const SizedBox(height: 8),
-                            Text(job['notificationContent']),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );*/
+               
               },
             ),
           ),
@@ -198,6 +277,8 @@ class _CompanyJobPageState extends State<CompanyJobPage> {
         ],
       ),
     );
+
+   }
   }
 }
 

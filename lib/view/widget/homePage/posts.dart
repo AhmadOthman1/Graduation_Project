@@ -326,7 +326,9 @@ class _PostState extends State<Post> {
                                       widget.isPage,
                                       post['postContent'],
                                       post['selectedPrivacy'],
-                                      post["userPhoto"]);
+                                      post["userPhoto"],
+                                      context
+                                      );
                                 },
                                 itemBuilder: (BuildContext context) {
                                   if (post['createdBy'] ==
@@ -404,6 +406,7 @@ class _PostState extends State<Post> {
                                   onTap: () {
                                     int postId = post['id'];
                                     controller.goToLikePage(
+                                      context,
                                         postId,
                                         widget.isPage ??
                                             (post['isUser'] != null
@@ -444,20 +447,21 @@ class _PostState extends State<Post> {
                                 InkWell(
                                   onTap: () {
                                     setState(() {
+                                      print("ssssssssssssssssssss");
                                       int postIndex = index;
                                       int postId = post['id'];
                                       controller.gotoCommentPage(
+                                        context,
                                         postIndex,
                                         postId,
+                                        post['createdBy'],
                                         widget.isPage ??
                                             (post['isUser'] != null
                                                 ? !post['isUser']
                                                 : null),
                                         widget.isAdmin,
                                         post['name'],
-                                        post["photo"][0]["photo"],
-                                        post['createdBy'],
-                                      );
+                                        );
                                     });
                                   },
                                   child: Row(
@@ -528,16 +532,18 @@ class _PostState extends State<Post> {
                                       int postIndex = index;
                                       int postId = post['id'];
                                       controller.gotoCommentPage(
+                                        context,
                                         postIndex,
                                         postId,
+                                        post['createdBy'],
                                         widget.isPage ??
                                             (post['isUser'] != null
                                                 ? !post['isUser']
                                                 : null),
                                         widget.isAdmin,
                                         post['name'],
-                                        post["photo"][0]["photo"],
-                                        post['createdBy'],
+                                        
+                                        
                                       );
                                     });
                                   },

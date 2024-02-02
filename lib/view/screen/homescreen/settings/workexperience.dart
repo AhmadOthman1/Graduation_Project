@@ -42,88 +42,14 @@ class WorkExperience extends StatelessWidget {
         body: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Expanded(flex: 2, child: Container()),
             Expanded(
-              flex: 1,
-              child: Container(
-                color: Color.fromARGB(0, 255, 251, 254),
-                child: InkWell(
-                  onTap: () {
-                    HPcontroller.goToprofilepage();
-                  },
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      UserAccountsDrawerHeader(
-                        decoration: const BoxDecoration(
-                          color: Colors.transparent,
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Colors.white,
-                              width: 1.0,
-                            ),
-                          ),
-                        ),
-                        currentAccountPicture: CircleAvatar(
-                          backgroundImage: avatarImage,
-                        ),
-                        accountName: Text(
-                          name ?? "",
-                          style: const TextStyle(color: Colors.black),
-                        ),
-                        accountEmail: const Text(
-                          "View profile",
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      ),
-                      ListTile(
-                        title: const Text("Settings"),
-                        leading: const Icon(Icons.settings),
-                        onTap: () {
-                          HPcontroller.goToSettingsPgae();
-                        },
-                      ),
-                      ListTile(
-                        title: const Text("Calender"),
-                        leading: const Icon(Icons.calendar_today_rounded),
-                        onTap: () {
-                          HPcontroller.goToCalenderPage();
-                        },
-                      ),
-                      ListTile(
-                        title: const Text("Tasks"),
-                        leading: const Icon(Icons.task),
-                        onTap: () {
-                          Get.to(const TasksHomePage());
-                        },
-                      ),
-                      ListTile(
-                        title: const Text("My Pages"),
-                        leading: const Icon(Icons.contact_page),
-                        onTap: () {
-                          HPcontroller.goToMyPages();
-                        },
-                      ),
-                      ListTile(
-                        title: const Text("Log Out"),
-                        leading: const Icon(Icons.logout_outlined),
-                        onTap: () async {
-                          await logoutController.goTosigninpage();
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 5,
+              flex: 4,
               child: Container(
                 child: Row(
                   children: [
-                    Expanded(flex: 2, child: Container()),
                     Expanded(
-                      flex: 4,
+                      flex: 1,
                       child: Container(
                         alignment: Alignment.topCenter,
                         height: MediaQuery.of(context).size.height,
@@ -453,14 +379,15 @@ class WorkExperience extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Expanded(
-                      flex: 2,
-                      child: Container(),
-                    )
+                    
                   ],
                 ),
               ),
             ),
+            Expanded(
+                      flex: 2,
+                      child: Container(),
+                    )
           ],
         ),
       );

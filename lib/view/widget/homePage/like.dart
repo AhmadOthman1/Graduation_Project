@@ -7,7 +7,9 @@ import 'package:growify/controller/home/Search_Cotroller.dart';
 import 'package:growify/global.dart';
 
 class Like extends StatefulWidget {
-  const Like({super.key});
+  final RxList<Map<String, dynamic>> likes;
+
+  Like({Key? key, required this.likes}) : super(key: key);
 
   @override
   _LikeState createState() => _LikeState();
@@ -37,10 +39,7 @@ RxList<Map<String, dynamic>> likes;
       likes = args != null ? args['likes'] : [];
       
     }*/
-    var args = Get.arguments;
-    RxList<Map<String, dynamic>> likes = args != null ? args['likes'] : [];
-    print("HiiiiiiiiiiiiiiiHowi");
-    print(likes);
+   
 
     return Scaffold(
       body: Column(
@@ -78,10 +77,10 @@ RxList<Map<String, dynamic>> likes;
               builder: (likeController) {
                 //print(likes.length);
                 return ListView.builder(
-                  itemCount: likes[0]['data'].length,
+                  itemCount:widget. likes[0]['data'].length,
                   itemBuilder: (context, index) {
                     //  print(likes.length);
-                    final colleague = likes[0]['data'][index];
+                    final colleague =widget. likes[0]['data'][index];
                     profileImage1 =
                         (colleague['photo'] == null) ? "" : colleague['photo'];
                     profileBackgroundImage1 = (profileImage1 != null &&

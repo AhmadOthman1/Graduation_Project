@@ -329,6 +329,27 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                                     groupData: widget.data));
                               },
                             ),
+                          if (!doesUsernameIsAdmin &&(widget.isUserAdminInPage == false||widget.isUserAdminInPage == null)
+                            )
+                            PopupMenuButton<String>(
+                              icon: const Icon(Icons.more_vert,color:Colors.white ,),
+                              color: Colors.white,
+                              onSelected: (String value) {
+                                // Handle menu item selection
+                                if (value == 'leave_group') {
+                                  // Add your leaving group logic here
+                                  // For example: Navigator.pop(context);
+                                  print('Leave Group selected');
+                                }
+                              },
+                              itemBuilder: (BuildContext context) =>
+                                  <PopupMenuEntry<String>>[
+                                PopupMenuItem<String>(
+                                  value: 'leave_group',
+                                  child: Text('Leave Group'),
+                                ),
+                              ],
+                            ),
                         ],
                       ),
                     ),
@@ -412,7 +433,6 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
             TextButton(
               onPressed: () async {
                 if (formKey.currentState!.validate()) {
-                   
                   var message = await chatController.joinMeeting(
                       meetingIDController.text, widget.data["id"]);
                   if (message != null && message != "joined")
@@ -429,7 +449,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                             },
                           )
                         : null;
-                  if (message != null && message == "joined"){
+                  if (message != null && message == "joined") {
                     Navigator.pop(context);
                     await Navigator.push(
                       context,
@@ -445,7 +465,6 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                                 socket: socket,
                               )),
                     );
-                    
                   }
                   /*
                     Get.to(VideoConferencePage(
@@ -466,7 +485,6 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                     widget.isUserAdminInPage == true))
               TextButton(
                 onPressed: () async {
-                   
                   var meetingID =
                       await chatController.createMeeting(widget.data["id"]);
                   var accessToken = GetStorage().read("accessToken");
@@ -502,7 +520,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                                 socket: socket,
                               )),
                     );
-                    
+
                     /*Get.to(meetingPage(
                       meetingID: meetingID,
                       userId: GetStorage().read("username"),

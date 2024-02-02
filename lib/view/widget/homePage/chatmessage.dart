@@ -144,7 +144,7 @@ bool _isVideoInitialized = false;
                 children: [
                   CircleAvatar(
                     radius: 15,
-                    backgroundImage: (widget.userPhoto != '')
+                    backgroundImage: (widget.userPhoto != '' &&widget.userPhoto != null  &&widget.userPhoto != "null" )
                         ? Image.network("$urlStarter/${widget.userPhoto}").image
                         : const AssetImage("images/profileImage.jpg"),
                   ),

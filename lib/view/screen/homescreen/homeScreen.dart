@@ -50,9 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _evetnsAndtasks() async {
     // for task
-/*
-    print("tasksssssssssssssssssssssssssssss");
-    print("Tasks:");*/
+
     myTasks.clear();
     myTasks.addAll(tasks);
 
@@ -116,10 +114,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     DateTime today = DateTime.now();
-    today = today.add(Duration(hours: 2));
     
-  
-    allAppointments.assignAll(calendarController.allAppointments);
+    allAppointments.clear();
+    allAppointments.addAll(calendarController.allAppointments);
+    //allAppointments.assignAll(calendarController.allAppointments);
 
     for (var appointment in allAppointments) {
       if (appointment.reminderDate != null) {

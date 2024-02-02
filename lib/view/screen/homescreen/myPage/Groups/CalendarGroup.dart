@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Groups_controller/calendarGroup_controller.dart';
@@ -46,7 +47,84 @@ class _CalenderGroupPageState extends State<CalenderGroup> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    if(kIsWeb){
+      return Scaffold(
+      appBar: AppBar(
+        title: const Text('My Events'),
+      ),
+      body: Row(
+        children: [
+            Expanded(flex: 1, child: Container()),
+          Expanded(
+            flex: 5,
+            child: Container(
+               decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3), // changes the position of shadow
+                      ),
+                    ],
+                  ),
+              child: FutureBuilder(
+                future: controller.getEvents(widget.groupData['id']),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    // Initialize dependent state here after fetching events
+                    appointments = controller.getAppointmentsForDate(selectedDate);
+              
+                    return Column(
+                      children: [
+                        _buildCalendar(),
+                        // Inside the build method, locate the ElevatedButton widget and wrap it with Visibility
+                        Visibility(
+                          visible: widget.isAdmin ||
+                              (widget.isUserAdminInPage != null &&
+                                  widget.isUserAdminInPage == true),
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 20),
+                            width: 370,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                List<Appointment>? newAppointments =
+                                    await _showAddEventDialog(context);
+              
+                                if (newAppointments != null) {
+                                  await controller.addNewEvent(newAppointments,widget.groupData['id']);
+              
+                                  setState(() {
+                                    appointments =
+                                        controller.getAppointmentsForDate(selectedDate);
+                                  });
+                                }
+                              },
+                              child: const Text('Add Event'),
+                            ),
+                          ),
+                        ),
+              
+                        _buildAppointmentGridList(),
+                      ],
+                    );
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                },
+              ),
+            ),
+          ),
+          Expanded(flex: 1, child: Container()),
+        ],
+      ),
+    );
+
+    }else{
+      return Scaffold(
       appBar: AppBar(
         title: const Text('My Events'),
       ),
@@ -98,6 +176,7 @@ class _CalenderGroupPageState extends State<CalenderGroup> {
         },
       ),
     );
+    }
   }
 
   Widget _buildCalendar() {
@@ -331,4 +410,94 @@ class _CalenderGroupPageState extends State<CalenderGroup> {
       },
     );
   }
+
+  // web
+  Widget _buildAppointmentGridList() {
+  return Expanded(
+    child: GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, // Set the number of columns in the grid
+        crossAxisSpacing: 8.0, // Set the spacing between columns
+        mainAxisSpacing: 8.0, // Set the spacing between rows
+      ),
+      itemCount: appointments.length,
+      itemBuilder: (context, index) {
+        String formattedDate = DateFormat('yyyy-MM-dd').format(appointments[index].startTime);
+
+        return Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          padding: const EdgeInsets.all(16.0),
+          margin: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Title: ${appointments[index].subject}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Spacer(),
+                  Visibility(
+                    visible: widget.isAdmin ||
+                        (widget.isUserAdminInPage != null &&
+                            widget.isUserAdminInPage == true),
+                    child: PopupMenuButton<String>(
+                      icon: const Icon(Icons.more_vert),
+                      onSelected: (String option) async {
+                        var appointmentId = appointments[index]?.id ?? 0;
+                        var message = await controller.onMoreOptionSelected(option, appointmentId, widget.groupData['id']);
+
+                        (message != null)
+                            ? showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return CustomAlertDialog(
+                                    title: 'Aret',
+                                    icon: Icons.error,
+                                    text: message,
+                                    buttonText: 'OK',
+                                  );
+                                },
+                              )
+                            : null;
+                        setState(() {
+                          appointments.removeWhere((appointment) => appointment.id == appointmentId);
+                        });
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return controller.moreOptions.map((String option) {
+                          return PopupMenuItem<String>(
+                            value: option,
+                            child: Text(option),
+                          );
+                        }).toList();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8.0),
+              Text(
+                'Description: ${appointments[index].description}',
+              ),
+              const SizedBox(height: 8.0),
+              Text(
+                'Date: $formattedDate',
+              ),
+              const SizedBox(height: 8.0),
+              Text(
+                'Time: ${appointments[index].eventTime}',
+              ),
+            ],
+          ),
+        );
+      },
+    ),
+  );
+}
+
 }

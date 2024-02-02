@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
@@ -20,6 +22,7 @@ import 'package:http/http.dart' as http;
 
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
+
 class PageInfo {
   final String id;
   final String name;
@@ -34,8 +37,21 @@ class PageInfo {
   final String? postCount;
   final String? followCount;
 
-  PageInfo(this.id, this.name, this.description, this.country, this.address, this.contactInfo, this.specialty, this.pageType, this.photo, this.coverImage, this.postCount , this.followCount);
+  PageInfo(
+      this.id,
+      this.name,
+      this.description,
+      this.country,
+      this.address,
+      this.contactInfo,
+      this.specialty,
+      this.pageType,
+      this.photo,
+      this.coverImage,
+      this.postCount,
+      this.followCount);
 }
+
 class CommentModel {
   final int? id;
   final int postId;
@@ -61,25 +77,16 @@ class CommentModel {
 abstract class PostController extends GetxController {
   bool isLoading = false;
 
-
-  
-
-
   //// for comment
   getprofilefromcomment(String email);
   gotoprofileFromcomment(String email);
 }
 
 class PostControllerImp extends PostController {
-
-
-    void Function() rebuildCallback;
+  void Function() rebuildCallback;
 
   // Constructor to initialize the callback
   PostControllerImp({required this.rebuildCallback});
-
-
-
 
 // for photo on the comment
   final RxString profileImageBytes = ''.obs;
@@ -133,7 +140,8 @@ class PostControllerImp extends PostController {
       );
       return responce;
     } else {
-      if (postId != null) {//get one post only
+      if (postId != null) {
+        //get one post only
         var url = "$urlStarter/user/getPost";
         var responce = await http.post(
           Uri.parse(url),
@@ -210,9 +218,6 @@ class PostControllerImp extends PostController {
     return posts[index]['comment'];
   }
 
- 
-  
-
   void toggleLike(int index, [bool? isPage]) async {
     final post = posts[index];
     post['isLiked'] = !post['isLiked'];
@@ -225,11 +230,7 @@ class PostControllerImp extends PostController {
     }
 
     update(); // Notify GetBuilder to rebuild
-    
   }
-
- 
-  
 
   PostAddLike(postId, [bool? isPage]) async {
     if (isPage != null && isPage) {
@@ -344,22 +345,71 @@ class PostControllerImp extends PostController {
     'Show edit history',
   ].obs;
 
-  Future<void> onMoreOptionSelected(
-      String option, createdBy, postId, isPage,postContent,selectedPrivacy,profileImage) async {
+  Future<void> onMoreOptionSelected(String option, createdBy, postId, isPage,
+      postContent, selectedPrivacy, profileImage, context) async {
     if (isPage != null && isPage == true) {
       switch (option) {
         case 'Delete':
           await deletePagePost(createdBy, postId);
           break;
         case 'Report':
-        await  Get.to(ReportPostPage(postId: postId,));
-          break;
-        case 'Edit post':
-          await  Get.to(EditPostPage(postId: postId,postContent: postContent,selectedPrivacy: selectedPrivacy,profileImage: profileImage,));
-          break;
-           case 'Show edit history':
-           await  Get.to(ShowEditPageHistory(postId: postId,));
-          break;
+  if (kIsWeb) {
+    // Code for web
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return ReportPostPage(postId: postId);
+      },
+    );
+  } else {
+    // Code for non-web (e.g., mobile)
+    await Get.to(ReportPostPage(postId: postId));
+  }
+  break;
+
+      case 'Edit post':
+  if (kIsWeb) {
+    // Code for web
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return EditPostPage(
+          postId: postId,
+          postContent: postContent,
+          selectedPrivacy: selectedPrivacy,
+          profileImage: profileImage,
+        );
+      },
+    );
+  } else {
+    // Code for non-web (e.g., mobile)
+    await Get.to(EditPostPage(
+      postId: postId,
+      postContent: postContent,
+      selectedPrivacy: selectedPrivacy,
+      profileImage: profileImage,
+    ));
+  }
+  break;
+
+       case 'Show edit history':
+  if (kIsWeb) {
+    // Code for web
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return ShowEditPageHistory(postId: postId);
+      },
+    );
+  } else {
+    // Code for non-web (e.g., mobile)
+    await Get.to(ShowEditPageHistory(postId: postId));
+  }
+  break;
+
       }
     } else {
       switch (option) {
@@ -367,13 +417,60 @@ class PostControllerImp extends PostController {
           await deletePost(createdBy, postId);
           break;
         case 'Report':
-           await  Get.to(ReportPostPage(postId: postId,));
+          if (kIsWeb) {
+            // Code for web
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (BuildContext context) {
+                return ReportPostPage(postId: postId);
+              },
+            );
+          } else {
+            // Code for non-web (e.g., mobile)
+            await Get.to(ReportPostPage(postId: postId));
+          }
           break;
         case 'Edit post':
-           await  Get.to(EditPost(postId: postId,postContent: postContent,selectedPrivacy: selectedPrivacy,profileImage: profileImage,));
+          if (kIsWeb) {
+            // Code for web
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (BuildContext context) {
+                return EditPost(
+                  postId: postId,
+                  postContent: postContent,
+                  selectedPrivacy: selectedPrivacy,
+                  profileImage: profileImage,
+                );
+              },
+            );
+          } else {
+            // Code for non-web (e.g., mobile)
+            await Get.to(EditPost(
+              postId: postId,
+              postContent: postContent,
+              selectedPrivacy: selectedPrivacy,
+              profileImage: profileImage,
+            ));
+          }
           break;
-         case 'Show edit history':
-           await  Get.to(ShowEditUserHistory(postId: postId,));
+
+        case 'Show edit history':
+          if (kIsWeb) {
+            // Code for web
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (BuildContext context) {
+                return ShowEditUserHistory(postId: postId);
+              },
+            );
+          } else {
+            // Code for non-web (e.g., mobile)
+            await Get.to(ShowEditUserHistory(postId: postId));
+          }
           break;
       }
     }
@@ -440,15 +537,27 @@ class PostControllerImp extends PostController {
     }
   }
 
-  onCommentOptionSelected(String option, createdBy, commentId, isPage) async {
+  onCommentOptionSelected(context,String option, createdBy, commentId, isPage) async {
     if (isPage != null && isPage == true) {
       switch (option) {
         case 'Delete':
           return await deletePageComment(createdBy, commentId);
           break;
         case 'Report':
-        return await  Get.to(ReportCommentPage(commentId: commentId,));
-          break;
+  if (kIsWeb) {
+    // Code for web
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return ReportCommentPage(commentId: commentId);
+      },
+    );
+  } else {
+    // Code for non-web (e.g., mobile)
+    return await Get.to(ReportCommentPage(commentId: commentId));
+  }
+  break;
       }
     } else {
       switch (option) {
@@ -456,7 +565,19 @@ class PostControllerImp extends PostController {
           return await deleteComment(commentId);
           break;
         case 'Report':
-         return await  Get.to(ReportCommentPage(commentId: commentId,));
+           if (kIsWeb) {
+    // Code for web
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return ReportCommentPage(commentId: commentId);
+      },
+    );
+  } else {
+    // Code for non-web (e.g., mobile)
+    return await Get.to(ReportCommentPage(commentId: commentId));
+  }
           break;
       }
     }
@@ -526,7 +647,6 @@ class PostControllerImp extends PostController {
   }
 
   PostAddComment(int postId, String commentContent, [bool? isPage]) async {
-    
     if (isPage != null && isPage) {
       var url = "$urlStarter/user/pageAddComment";
       var responce = await http.post(
@@ -563,17 +683,13 @@ class PostControllerImp extends PostController {
       return;
     }
 
-   
-   
-   
-
     var res =
         await PostAddComment(comment.postId, comment.commentContent, isPage);
     print(";;;;;;;;;;;;;;;;;;;;;;;;;;;;");
     print(res.statusCode);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      addComment(comment,isPage);
+      addComment(comment, isPage);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -624,95 +740,97 @@ class PostControllerImp extends PostController {
     }
   }
 
- gotoCommentPage(
-  int index,
-  int postId,
-  [bool? isPage,
-  bool? isAdmin,
-  String? name,
-  String? photo,
-  String? createdBy]
-) async {
+  gotoCommentPage(context,
+    int index, int postId,String? createdBy,
+      [bool? isPage,
+      bool? isAdmin,
+      String? name,
+      String? photo,
+      ]) async {
+    print("jjjjjjjjjjjj");
+    try {
+      var res = await getCommentPage(postId, isPage);
+      print(res.statusCode);
 
-  try {
-    var res = await getCommentPage(postId, isPage);
-    print(res.statusCode);
-
-    if (res.statusCode == 403) {
-      await getRefreshToken(GetStorage().read('refreshToken'));
-      // Use await to make sure the recursive call completes before continuing
-      await gotoCommentPage(index, postId, isPage, isAdmin, name, photo, createdBy);
-      return;
-    } else if (res.statusCode == 401) {
-      _logoutController.goTosigninpage();
-      return;
-    }
-
-    var resbody = jsonDecode(res.body);
-
-    if (res.statusCode == 409) {
-      print(resbody['message']);
-      return resbody['message'];
-    } else if (res.statusCode == 200) {
-      var data = jsonDecode(res.body);
-      print("llllllllllllllllllllllllllllll");
-      print(data);
-
-      if (data != null) {
-        List<CommentModel> newComments = (data['data'] as List).map((commentData) {
-          return CommentModel(
-            id: commentData['id'],
-            postId: commentData['postId'],
-            createdBy: commentData['createdBy'],
-            commentContent: commentData['commentContent'],
-            Date: commentData['Date'],
-            isUser: commentData['isUser'],
-            name: commentData['name'],
-            photo: commentData['photo'],
-          );
-        }).toList();
-
-        comments1.clear();
-        comments1.assignAll(newComments);
-
-        print("llllllllllllllllllllllllllllll");
-        print(data['data']);
-
-        // Pass an additional parameter 'sendButtonPressCount' with initial value 0
-        var result = await Get.to(CommentsMainPage(index: index,), arguments: {
-          'comments': comments1,
-          'postId': postId,
-          'isPage': isPage,
-          'isAdmin': isAdmin,
-          'name': name,
-          'photo': photo,
-          'createdBy': createdBy,
-          'sendButtonPressCount': 0, // Initialize counter value
-        });
-        var post;
-        // Retrieve the counter value from the result
-        if (result != null && result['sendButtonPressCount'] != null) {
-          int receivedCount = result['sendButtonPressCount'];
-            post = posts[index];
-        post['commentCount']=post['commentCount']+receivedCount;
-        rebuildCallback();
-          print('Received sendButtonPressCount from CommentsMainPage: $receivedCount');  
-        }
-        
-         int receivedCount1 = result['sendButtonPressCount'];
-
-        // Move the increment outside of the if condition
-     
-      } else {
-        print("Invalid or missing 'data' property in response.");
+      if (res.statusCode == 403) {
+        await getRefreshToken(GetStorage().read('refreshToken'));
+        // Use await to make sure the recursive call completes before continuing
+        await gotoCommentPage(context,
+            index, postId,createdBy, isPage, isAdmin, name, photo);
+        return;
+      } else if (res.statusCode == 401) {
+        _logoutController.goTosigninpage();
+        return;
       }
+
+      var resbody = jsonDecode(res.body);
+
+      if (res.statusCode == 409) {
+        print(resbody['message']);
+        return resbody['message'];
+      } else if (res.statusCode == 200) {
+        var data = jsonDecode(res.body);
+        print("llllllllllllllllllllllllllllll");
+        print(data);
+
+        if (data != null) {
+          List<CommentModel> newComments =
+              (data['data'] as List).map((commentData) {
+            return CommentModel(
+              id: commentData['id'],
+              postId: commentData['postId'],
+              createdBy: commentData['createdBy'],
+              commentContent: commentData['commentContent'],
+              Date: commentData['Date'],
+              isUser: commentData['isUser'],
+              name: commentData['name'],
+              photo: commentData['photo'],
+            );
+          }).toList();
+
+          comments1.clear();
+          comments1.assignAll(newComments);
+
+          print("llllllllllllllllllllllllllllll");
+          print(data['data']);
+
+          // Pass an additional parameter 'sendButtonPressCount' with initial value 0
+          var result = await Get.to(
+              CommentsMainPage(
+                index: index,
+              ),
+              arguments: {
+                'comments': comments1,
+                'postId': postId,
+                'isPage': isPage,
+                'isAdmin': isAdmin,
+                'name': name,
+                'photo': photo,
+                'createdBy': createdBy,
+                'sendButtonPressCount': 0, // Initialize counter value
+              });
+          var post;
+          // Retrieve the counter value from the result
+          if (result != null && result['sendButtonPressCount'] != null) {
+            int receivedCount = result['sendButtonPressCount'];
+            post = posts[index];
+            post['commentCount'] = post['commentCount'] + receivedCount;
+            rebuildCallback();
+            print(
+                'Received sendButtonPressCount from CommentsMainPage: $receivedCount');
+          }
+
+          int receivedCount1 = result['sendButtonPressCount'];
+
+          // Move the increment outside of the if condition
+        } else {
+          print("Invalid or missing 'data' property in response.");
+        }
+      }
+    } catch (error) {
+      print('Error in gotoCommentPage: $error');
     }
-  } catch (error) {
-    print('Error in gotoCommentPage: $error');
   }
-}
-
-
 
   @override
   Future getprofilefromcomment(String email) async {
@@ -777,14 +895,14 @@ class PostControllerImp extends PostController {
   }
 
   @override
-  goToLikePage(int postId, [bool? isPage]) async {
+  goToLikePage(context, int postId, [bool? isPage]) async {
     var res = await getPostLikes(postId, isPage);
     print(res.statusCode);
     print(res);
     print(res.body);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      goToLikePage(postId, isPage);
+      goToLikePage(context, postId, isPage);
       return;
     } else if (res.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -797,7 +915,18 @@ class PostControllerImp extends PostController {
       likes.assignAll([Map<String, dynamic>.from(data)]);
       print("444444444444");
       print(likes);
-      Get.to(const Like(), arguments: {'likes': likes});
+      if (kIsWeb) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (BuildContext context) {
+      return Like(likes: likes);
+    },
+  );
+} else {
+  Get.to(Like(likes: likes));
+}
+
     }
   }
 /*
@@ -830,7 +959,6 @@ class PostControllerImp extends PostController {
       Get.to(ProfileMainPage(userData: [resbody["user"]]));
     }
   }*/
-
 
   Future getUserProfilePage(String userUsername) async {
     var url =
@@ -872,9 +1000,9 @@ class PostControllerImp extends PostController {
       }
     }
   }
+
   Future getProfilePage(String pageId) async {
-    var url =
-        "$urlStarter/user/getPageProfileInfo?pageId=$pageId";
+    var url = "$urlStarter/user/getPageProfileInfo?pageId=$pageId";
     var responce = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
@@ -900,16 +1028,43 @@ class PostControllerImp extends PostController {
       return resbody['message'];
     } else if (res.statusCode == 200) {
       var page = resbody['Page'];
-      if(page['isAdmin']== true){
-        Get.to(PageProfile(isAdmin: page['isAdmin'] , userData: PageInfo(page['id'], page['name'], page['description'], page['country'], page['address'], page['contactInfo'], page['specialty'], page['pageType'], page['photo'], page['coverImage'],page['postCount'],page['followCount'])));
-      }else{
-        Get.to(ColleaguesPageProfile(following: page['following'],userData: PageInfo(page['id'], page['name'], page['description'], page['country'], page['address'], page['contactInfo'], page['specialty'], page['pageType'], page['photo'], page['coverImage'],page['postCount'],page['followCount'])));
+      if (page['isAdmin'] == true) {
+        Get.to(PageProfile(
+            isAdmin: page['isAdmin'],
+            userData: PageInfo(
+                page['id'],
+                page['name'],
+                page['description'],
+                page['country'],
+                page['address'],
+                page['contactInfo'],
+                page['specialty'],
+                page['pageType'],
+                page['photo'],
+                page['coverImage'],
+                page['postCount'],
+                page['followCount'])));
+      } else {
+        Get.to(ColleaguesPageProfile(
+            following: page['following'],
+            userData: PageInfo(
+                page['id'],
+                page['name'],
+                page['description'],
+                page['country'],
+                page['address'],
+                page['contactInfo'],
+                page['specialty'],
+                page['pageType'],
+                page['photo'],
+                page['coverImage'],
+                page['postCount'],
+                page['followCount'])));
       }
       print(page);
       print(page["isAdmin"]);
     }
   }
-
 
   /////////////////////////////////////////////////////
   late int userPostCount;
@@ -978,6 +1133,4 @@ class PostControllerImp extends PostController {
           userConnectionsCount: userConnectionsCount));
     }
   }
-
-  
 }

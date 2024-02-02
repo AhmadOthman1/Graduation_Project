@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:growify/controller/home/SeeAboutInfo_Controller.dart';
 
@@ -8,25 +9,72 @@ class MyPageSeeAboutInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "About Info",
-          style: TextStyle(color: Colors.black),
+    if (kIsWeb) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "About Info",
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Colors.white,
+          iconTheme: const IconThemeData(
+            color: Colors.black,
+          ),
         ),
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(
-          color: Colors.black,
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
+        body: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildPersonalDetails(),
+            Expanded(flex: 2, child: Container()),
+            Expanded(
+              flex: 5,
+              child: Container(
+                alignment: Alignment.topCenter,
+                height: MediaQuery.of(context).size.height,
+                 decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3), // changes the position of shadow
+                      ),
+                    ],
+                  ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      _buildPersonalDetails(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Expanded(flex: 2, child: Container()),
           ],
         ),
-      ),
-    );
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "About Info",
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Colors.white,
+          iconTheme: const IconThemeData(
+            color: Colors.black,
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildPersonalDetails(),
+            ],
+          ),
+        ),
+      );
+    }
   }
 
   Widget _buildPersonalDetails() {
@@ -82,7 +130,7 @@ class MyPageSeeAboutInfo extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         Text(
-          value ?? '', 
+          value ?? '',
           style: TextStyle(color: Colors.grey[800]),
         ),
         SizedBox(height: 10),

@@ -47,6 +47,10 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
   @override
   Widget build(BuildContext context) {
     if (kIsWeb) {
+      String profileImage = widget.userData[0]["photo"] ?? "";
+    ImageProvider<Object> profileBackgroundImage = (profileImage.isNotEmpty)
+        ? Image.network("$urlStarter/$profileImage").image
+        : const AssetImage("images/profileImage.jpg");
       return Scaffold(
         backgroundColor: Colors.white,
         body: Container(
@@ -65,7 +69,7 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
                       return [
                         SliverAppBar(
                           backgroundColor: Colors.white,
-                          expandedHeight: 200,
+                          expandedHeight: 150,
                           floating: false,
                           pinned: true,
                           flexibleSpace: FlexibleSpaceBar(
@@ -75,7 +79,7 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
                         SliverToBoxAdapter(
                           child: Column(
                             children: [
-                              _buildProfileInfo(),
+                              _buildProfileInfoWeb(),
                             ],
                           ),
                         ),
@@ -231,6 +235,64 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
       ),
     );
   }
+  Widget _buildProfileInfoWeb() {
+    String profileImage = widget.userData[0]["photo"] ?? "";
+    ImageProvider<Object> profileBackgroundImage = (profileImage.isNotEmpty)
+        ? Image.network("$urlStarter/$profileImage").image
+        : const AssetImage("images/profileImage.jpg");
+
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.grey[50],
+          border: Border(bottom: BorderSide(color: Colors.grey, width: 2))),
+      padding: const EdgeInsets.all(5.0),
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 60,
+            backgroundImage: controller.profileImageBytes.isNotEmpty
+                ? MemoryImage(base64Decode(controller.profileImageBytes.value))
+                : profileBackgroundImage,
+          ),
+          const SizedBox(height: 5),
+          Text(
+            '${widget.userData[0]["firstname"]} ${widget.userData[0]["lastname"]}',
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            '@${widget.userData[0]["username"]}',
+            style: const TextStyle(fontSize: 16, color: Colors.blue),
+          ),
+          Container(
+            padding: const EdgeInsets.all(5.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8.0),
+                Text(
+                  widget.userData[0]["bio"] ?? "",
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.grey[700],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildInfoItem('Posts', widget.userPostCount.toString()),
+              _buildInfoItem(
+                  'Connections', widget.userConnectionsCount.toString()),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildInfoItem(String label, String value) {
     return Column(
@@ -313,7 +375,7 @@ class _ProfileMainPageState extends State<ProfileMainPage> {
                   context: context,
                   isScrollControlled: true,
                   builder: (BuildContext context) {
-                    return NewPost();
+                    return NewPost(profileImage: widget.userData[0]["photo"]);
                   },
                 )
               : Get.to(

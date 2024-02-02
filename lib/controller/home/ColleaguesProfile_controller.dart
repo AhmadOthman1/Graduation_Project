@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
@@ -17,12 +19,25 @@ late RxList<Map<String, dynamic>> colleaguesmessages= <Map<String, dynamic>>[].o
 
 ////////////////
   List<String> moreOptions = ['Report',];
-onMoreOptionSelected(String option, username) async {
+onMoreOptionSelected(context,String option, username) async {
  
       switch (option) {
  
         case 'Report':
-        return await  Get.to(ReportProfilePage(username: username,));
+         if (kIsWeb) {
+    // Code for web
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        // Your bottom sheet content goes here
+        return ReportProfilePage(username: username);
+      },
+    );
+  } else {
+    // Code for non-web (e.g., mobile)
+    return await Get.to(ReportProfilePage(username: username));
+  }
           break;
       }
     } 
@@ -341,6 +356,7 @@ postSendAcceptConnectReq(username) async {
   goToWorkExperiencePgae(username) async {
     var res = await getWorkExperiencePgae(username);
     var resbody = jsonDecode(res.body);
+    print(res.statusCode);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
       goToWorkExperiencePgae(username);
@@ -367,6 +383,9 @@ postSendAcceptConnectReq(username) async {
     var WorkExperienceInfo = await goToWorkExperiencePgae(username);
     var EducationLevelInfo = await goToEducationLevel(username);
     var ProfileMainInfo = await goToProfileMainInfo(username);
+    print("ssssssss");
+    print(WorkExperienceInfo);
+
     if (WorkExperienceInfo!=null && EducationLevelInfo!=null && ProfileMainInfo!=null) {
       Get.to(
         SeeAboutInfoColleagues(),

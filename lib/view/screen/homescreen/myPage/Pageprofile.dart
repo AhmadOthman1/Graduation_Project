@@ -486,6 +486,7 @@ class _PageProfileState extends State<PageProfile> {
             ),
           ),
         ),
+        if (!kIsWeb && pageType != "private") _buildDivider(10),
         Visibility(
           visible: pageType != "private",
           child: Column(

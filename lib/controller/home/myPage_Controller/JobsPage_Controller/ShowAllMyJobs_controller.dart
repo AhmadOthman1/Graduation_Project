@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -19,7 +20,7 @@ class MyJobController {
   int pageSize = 10;
   int page = 1;
 
-  getFields(String pageId) async {
+  getFields(String pageId,context) async {
     var url = "$urlStarter/user/getJobFields";
     var response = await http.get(Uri.parse(url), headers: {
       'Content-type': 'application/json; charset=UTF-8',
@@ -29,7 +30,7 @@ class MyJobController {
     print(response.statusCode);
     if (response.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
-      getFields(pageId);
+      getFields(pageId,context);
       return;
     } else if (response.statusCode == 401) {
       _logoutController.goTosigninpage();
@@ -41,10 +42,31 @@ class MyJobController {
       return;
     } else if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-      Get.off(NewJobPost(
-          pageId: pageId,
-          availableFields: List<Map<String, dynamic>>.from(
-              responseBody['availableFields'])));
+
+      if (kIsWeb) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (BuildContext context) {
+      return NewJobPost(
+        pageId: pageId,
+        availableFields: List<Map<String, dynamic>>.from(
+          responseBody['availableFields'],
+        ),
+      );
+    },
+  );
+} else {
+  Get.off(
+    NewJobPost(
+      pageId: pageId,
+      availableFields: List<Map<String, dynamic>>.from(
+        responseBody['availableFields'],
+      ),
+    ),
+  );
+}
+
 
       isLoading = false;
     }

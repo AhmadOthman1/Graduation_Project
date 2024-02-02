@@ -20,7 +20,7 @@ import 'package:http/http.dart' as http;
 LogOutButtonControllerImp _logoutController =
     Get.put(LogOutButtonControllerImp());
 
-class CommentModel {
+class CommentModel1 {
   final int? postId;
   final String username;
   final String comment;
@@ -30,7 +30,7 @@ class CommentModel {
   final String email;
   final RxBool isLiked;
 
-  CommentModel({
+  CommentModel1({
     required this.username,
     this.postId,
     required this.comment,
@@ -99,7 +99,7 @@ class HomePageControllerImp extends HomePageController {
       return;
     } else if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-      Get.off(Search(
+      Get.to(Search(
           
           availableFields: List<Map<String, dynamic>>.from(
               responseBody['availableFields'])));
@@ -116,9 +116,9 @@ class HomePageControllerImp extends HomePageController {
   final RxString profileImageExt = ''.obs;
   ///////////////////
 
-  final RxList<CommentModel> comments = <CommentModel>[].obs;
+  final RxList<CommentModel1> comments = <CommentModel1>[].obs;
 
-  final RxList<CommentModel> comments1 = <CommentModel>[].obs;
+  final RxList<CommentModel1> comments1 = <CommentModel1>[].obs;
 
   final RxList<Map<String, dynamic>> likes = <Map<String, dynamic>>[
     // Add more colleagues as needed
@@ -183,7 +183,7 @@ class HomePageControllerImp extends HomePageController {
       String username, String newComment, String email, int thePostId) {
     const userImage = AssetImage('images/obaida.jpeg');
     final time = DateTime.now();
-    comments.add(CommentModel(
+    comments.add(CommentModel1(
         username: username,
         comment: newComment,
         userImage: userImage,
@@ -212,12 +212,7 @@ class HomePageControllerImp extends HomePageController {
     update(); // Notify GetBuilder to rebuild
   }
 
-  @override
-  void gotoCommentPage(int id) {
-    Get.to(const CommentsMainPage(), arguments: {
-      'comments': comments1,
-    });
-  }
+  
 
   @override
   Future getprofilefromcomment(String email) async {
@@ -272,10 +267,7 @@ class HomePageControllerImp extends HomePageController {
     update(); // Notify listeners
   }
 
-  @override
-  void goToLikePage(int postId) {
-    Get.to(const Like());
-  }
+ 
 
   @override
   goToSettingsPgae() {
@@ -541,5 +533,11 @@ class HomePageControllerImp extends HomePageController {
   @override
   goToCalenderPage() {
     Get.to(const Calender());
+  }
+  
+  @override
+  gotoCommentPage(int id) {
+    // TODO: implement gotoCommentPage
+    throw UnimplementedError();
   }
 }

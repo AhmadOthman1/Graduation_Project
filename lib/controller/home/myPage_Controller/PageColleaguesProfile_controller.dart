@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
@@ -15,16 +17,29 @@ class ColleaguesPageProfile_Controller extends GetxController {
 
 ///////////////////////////
   List<String> moreOptions = ['Report',];
-onMoreOptionSelected(String option, pageId) async {
+onMoreOptionSelected(context,String option, pageId) async {
  
       switch (option) {
  
         case 'Report':
-        return await  Get.to(ReportPage(pageId: pageId,));
+        if (kIsWeb) {
+    // Code for web
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        // Your bottom sheet content goes here
+        return ReportPage(pageId: pageId,);
+      },
+    );
+  } else {
+    // Code for non-web (e.g., mobile)
+    return Get.to(ReportPage(pageId: pageId,));
+  }
+
           break;
       }
     } 
-  
 
 
 

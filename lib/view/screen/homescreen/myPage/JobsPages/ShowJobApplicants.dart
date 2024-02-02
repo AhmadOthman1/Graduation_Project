@@ -94,7 +94,107 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+   if(kIsWeb){
+     return Scaffold(
+      appBar: AppBar(
+        title: Text('Job Details'),
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          child: Row(
+            children: [
+               Expanded(flex: 3, child: Container()),
+              Expanded(
+                flex: 4,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3), // changes the position of shadow
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: _controller.jobPosts.length,
+                        itemBuilder: (context, index) {
+                          return JobPostCard(jobPost: _controller.jobPosts[index]);
+                        },
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Applicants:',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      ..._controller.Aqraba.map((applicant) {
+                        return ListTile(
+                            leading: InkWell(
+                              onTap: () {
+                                _controller.goToUserPage(applicant['user']['username']);
+                              },
+                              child: CircleAvatar(
+                                backgroundImage: (applicant['user']['photo'] != null)
+                                    ? Image.network(
+                                            "${urlStarter}/${applicant['user']['photo']}")
+                                        .image
+                                    : defaultProfileImage,
+                              ),
+                            ),
+                            title: Text(
+                                "${applicant['user']['firstname']} ${applicant['user']['lastname']}"),
+                            subtitle: Text("@${applicant['user']['username']}"),
+                            trailing: Column(
+                              children: [
+                                InkWell(
+                                  onTap: () async {
+                                    var pageAccessToken = await _controller
+                                        .generatePageAccessToken(widget.pageId);
+                                    final Map<String, dynamic> userInfo = {
+                                      'name':
+                                          "${applicant['user']['firstname']} ${applicant['user']['lastname']}",
+                                      'username': "${applicant['user']['username']}",
+                                      'photo': "${applicant['user']['photo']}",
+                                      'type': "U",
+                                    };
+                                    Get.to(pageChatpagemessages(
+                                        data: userInfo,
+                                        pageId: widget.pageId,
+                                        pageName: widget.pageName,
+                                        pagePhoto: widget.pagePhoto,
+                                        pageAccessToken: pageAccessToken));
+                                  },
+                                  child: Icon(Icons.message),
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    _showApplicantDetails(context, applicant);
+                                  },
+                                  child: Icon(Icons.assignment_outlined),
+                                ),
+                              ],
+                            ));
+                      }).toList(),
+                    ],
+                  ),
+                ),
+              ),
+               Expanded(flex: 3, child: Container()),
+            ],
+          ),
+        ),
+      ),
+    );
+    
+   }else{
+     return Scaffold(
       appBar: AppBar(
         title: Text('Job Details'),
       ),
@@ -167,6 +267,7 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
         ),
       ),
     );
+   }
   }
 
   _showApplicantDetails(BuildContext context, dynamic applicant) {

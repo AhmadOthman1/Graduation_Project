@@ -75,7 +75,7 @@ class NewJobPost extends StatelessWidget {
                             children: [
                               if (kIsWeb)
                                 Expanded(
-                                  flex: 2,
+                                  flex: 1,
                                   child: Container(),
                                 ),
                               kIsWeb
@@ -112,23 +112,18 @@ class NewJobPost extends StatelessWidget {
                                     ),
                               if (kIsWeb)
                                 Expanded(
-                                  flex: 2,
+                                  flex: 1,
                                   child: Container(),
                                 ),
                             ],
                           ),
                           const SizedBox(height: 16),
-                          Container(
-                              margin: EdgeInsets.only(left: 6),
-                              child: Text(
-                                "The Fields",
-                                style: TextStyle(color: Colors.grey),
-                              )),
+                          
                           Row(
                             children: [
                                if (kIsWeb)
                                 Expanded(
-                                  flex: 2,
+                                  flex: 1,
                                   child: Container(),
                                 ),
                                 kIsWeb
@@ -137,23 +132,34 @@ class NewJobPost extends StatelessWidget {
                                 flex: 2,
                                 child: Container(
                                   width: 350,
-                                  child: MultiSelectDropDown(
-                                    searchEnabled: true,
-                                    onOptionSelected:
-                                        (List<ValueItem> selectedOptions) {
-                                      controller.selectedItems.assignAll(
-                                          selectedOptions.map((item) => item.value));
-                                    },
-                                    options: controller.items
-                                        .map((item) =>
-                                            ValueItem(label: item, value: item))
-                                        .toList(),
-                                    selectionType: SelectionType.multi,
-                                    chipConfig:
-                                        const ChipConfig(wrapType: WrapType.scroll),
-                                    dropdownHeight: 300,
-                                    optionTextStyle: const TextStyle(fontSize: 16),
-                                    selectedOptionIcon: const Icon(Icons.check_circle),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        alignment: Alignment.topLeft,
+                              margin: EdgeInsets.only(left: 6),
+                              child: Text(
+                                "The Fields",
+                                style: TextStyle(color: Colors.grey),
+                              )),
+                                      MultiSelectDropDown(
+                                        searchEnabled: true,
+                                        onOptionSelected:
+                                            (List<ValueItem> selectedOptions) {
+                                          controller.selectedItems.assignAll(
+                                              selectedOptions.map((item) => item.value));
+                                        },
+                                        options: controller.items
+                                            .map((item) =>
+                                                ValueItem(label: item, value: item))
+                                            .toList(),
+                                        selectionType: SelectionType.multi,
+                                        chipConfig:
+                                            const ChipConfig(wrapType: WrapType.scroll),
+                                        dropdownHeight: 300,
+                                        optionTextStyle: const TextStyle(fontSize: 16),
+                                        selectedOptionIcon: const Icon(Icons.check_circle),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ):Expanded(
@@ -181,7 +187,7 @@ class NewJobPost extends StatelessWidget {
                               ),
                                  if (kIsWeb)
                                 Expanded(
-                                  flex: 2,
+                                  flex: 1,
                                   child: Container(),
                                 ),
                             ],
@@ -191,7 +197,7 @@ class NewJobPost extends StatelessWidget {
                             children: [
                               if (kIsWeb)
                                 Expanded(
-                                  flex: 2,
+                                  flex: 1,
                                   child: Container(),
                                 ),
                               kIsWeb
@@ -232,7 +238,7 @@ class NewJobPost extends StatelessWidget {
                                   ),
                               if (kIsWeb)
                                 Expanded(
-                                  flex: 2,
+                                  flex: 1,
                                   child: Container(),
                                 ),
                             ],
@@ -242,7 +248,7 @@ class NewJobPost extends StatelessWidget {
                             children: [
                               if (kIsWeb)
                                 Expanded(
-                                  flex: 2,
+                                  flex: 1,
                                   child: Container(),
                                 ),
                               kIsWeb
@@ -309,7 +315,7 @@ class NewJobPost extends StatelessWidget {
                                     ),
                               if (kIsWeb)
                                 Expanded(
-                                  flex: 2,
+                                  flex: 1,
                                   child: Container(),
                                 ),
                             ],
@@ -323,7 +329,7 @@ class NewJobPost extends StatelessWidget {
                     children: [
                       if (kIsWeb)
                         Expanded(
-                          flex: 2,
+                          flex: 1,
                           child: Container(),
                         ),
                       kIsWeb
@@ -422,7 +428,7 @@ class NewJobPost extends StatelessWidget {
                             ),
                       if (kIsWeb)
                         Expanded(
-                          flex: 2,
+                          flex: 1,
                           child: Container(),
                         ),
                     ],

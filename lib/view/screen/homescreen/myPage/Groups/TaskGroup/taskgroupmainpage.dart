@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Groups_controller/taskGroup_controller/taskGroup_Controller.dart';
@@ -447,7 +448,71 @@ class _TasksGroupHomePageState extends State<TasksGroupHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    if(kIsWeb){
+      return Row(
+       mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(flex: 1, child: Container()),
+        Expanded(
+          flex: 5,
+          child: Container(
+            decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3), // changes the position of shadow
+                      ),
+                    ],
+                  ),
+            child: FutureBuilder(
+                // Replace this with your actual future operation
+                future: controller.initUserTasks(widget.groupData['id']),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    // Return a loading indicator while waiting for the future to complete
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasError) {
+                    // Handle any errors that occurred during the initialization
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else {
+                    return DefaultTabController(
+                      length: 4,
+                      child: Scaffold(
+                        appBar: AppBar(
+                          title: const Text('My Tasks'),
+                          bottom: const TabBar(
+                            tabs: [
+                              Tab(text: 'ToDo'),
+                              Tab(text: 'Doing'),
+                              Tab(text: 'Done'),
+                              Tab(text: 'Archived'),
+                            ],
+                          ),
+                        ),
+                        body: TabBarView(
+                          children: [
+                            buildTab('ToDo', widget.isAdmin),
+                            buildTab('Doing', widget.isAdmin),
+                            buildTab('Done', widget.isAdmin),
+                            buildTab('Archived', widget.isAdmin),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                }),
+          ),
+        ),
+        Expanded(flex: 1, child: Container()),
+      ],
+    );
+    }else{
+      return FutureBuilder(
         // Replace this with your actual future operation
         future: controller.initUserTasks(widget.groupData['id']),
         builder: (context, snapshot) {
@@ -486,6 +551,7 @@ class _TasksGroupHomePageState extends State<TasksGroupHomePage> {
             );
           }
         });
+    }
   }
 
   bool isBefore(TimeOfDay a, TimeOfDay b) {
