@@ -91,7 +91,7 @@ exports.getPages = async (req, res, next) => {
 }
 exports.getPageJobs = async (req, res, next) => {
     var username = req.user.username;
-    var pageId = req.params;
+    var pageId = req.params.pageId;
     var existingUsername = await User.findOne({
         where: {
             username: username,
@@ -172,7 +172,7 @@ exports.getJobs = async (req, res, next) => {
 }
 exports.getPageGroups = async (req, res, next) => {
     var username = req.user.username;
-    var pageId = req.params;
+    var pageId = req.params.pageId;
     var existingUsername = await User.findOne({
         where: {
             username: username,
@@ -225,7 +225,7 @@ exports.getGroups = async (req, res, next) => {
 }
 exports.getPageFollowers = async (req, res, next) => {
     var username = req.user.username;
-    var pageId = req.params;
+    var pageId = req.params.pageId;
     var existingUsername = await User.findOne({
         where: {
             username: username,
@@ -253,11 +253,11 @@ exports.getPageFollowers = async (req, res, next) => {
 }
 exports.getPageAdmins = async (req, res, next) => {
     var username = req.user.username;
-    var pageId = req.params;
+    var pageId = req.params.pageId;
     var existingUsername = await User.findOne({
         where: {
             username: username,
-            status: null,
+            status: null,   
             type: "Admin"
         }
     });
@@ -281,7 +281,7 @@ exports.getPageAdmins = async (req, res, next) => {
 }
 exports.getPageEmployees = async (req, res, next) => {
     var username = req.user.username;
-    var pageId = req.params;
+    var pageId = req.params.pageId;
     var existingUsername = await User.findOne({
         where: {
             username: username,
@@ -309,7 +309,7 @@ exports.getPageEmployees = async (req, res, next) => {
 }
 exports.getPageCalender = async (req, res, next) => {
     var username = req.user.username;
-    var pageId = req.params;
+    var pageId = req.params.pageId;
     var existingUsername = await User.findOne({
         where: {
             username: username,

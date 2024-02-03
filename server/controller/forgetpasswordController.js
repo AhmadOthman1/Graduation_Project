@@ -38,6 +38,7 @@ exports.changePassword = async (req, res, next) => {
                     existingUserInforgetPasswordCode.code = VerificationCode;
                     existingUserInforgetPasswordCode.ipAddress;
                     existingUserInforgetPasswordCode.attemptCounter = 0;
+                    existingUserInforgetPasswordCode.createdAt = existingUserInforgetPasswordCode.updatedAt;
                     await existingUserInforgetPasswordCode.save();
                     return res.status(409).json({
                         message: 'new code have been sent to your email. Please try again.',
@@ -90,6 +91,7 @@ exports.postVerificationCode = async (req, res, next) => {
     try {
 
         const { verificationCode, email, ipAddress } = req.body;//get data from req
+        console.log("lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll")
         //find the user by email in tempuser table
         const existingUserInforgetPasswordCode = await forgetPasswordCode.findOne({
             where: {
@@ -116,9 +118,10 @@ exports.postVerificationCode = async (req, res, next) => {
                     //send the code
                     await sendVerificationCode(email, VerificationCode);
                     existingUserInforgetPasswordCode.code = VerificationCode;
-                    existingUserInforgetPasswordCode.ipAddress;
                     existingUserInforgetPasswordCode.attemptCounter = 0;
+                    existingUserInforgetPasswordCode.createdAt = existingUserInforgetPasswordCode.updatedAt;
                     await existingUserInforgetPasswordCode.save();
+                    
                     return res.status(409).json({
                         message: 'new code have been sent to your email. Please try again.',
                     });
@@ -209,7 +212,7 @@ exports.postForgetPassword = async (req, res, next) => {
                 username: existingEmail.username,
                 email: existingEmail.email,
                 code: VerificationCode,
-                attemptCounter: 1,
+                attemptCounter: 0,
                 ipAddress: ipAddress,
             });
             return res.status(200).json({

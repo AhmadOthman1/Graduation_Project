@@ -6,7 +6,7 @@ const sentConnection = require("../../../models/sentConnection");
 
 exports.getConnections = async (req, res, next) => {
     var username = req.user.username;
-    var userUsername = req.params;
+    var userUsername = req.params.username;
     var existingUsername = await User.findOne({
         where: {
             username: username,
@@ -37,7 +37,7 @@ exports.getConnections = async (req, res, next) => {
 }
 exports.getSentConnections = async (req, res, next) => {
     var username = req.user.username;
-    var userUsername = req.params;
+    var userUsername = req.params.username;
     var existingUsername = await User.findOne({
         where: {
             username: username,

@@ -26,8 +26,8 @@ router.delete('/user',authenticateToken,usersController.deleteUser);
 router.get('/connections/:username',authenticateToken,ConnectionsController.getConnections);
 router.get('/SentConnections/:username',authenticateToken,ConnectionsController.getSentConnections);
 router.get('/educationLevel/:username',authenticateToken,usersController.educationLevel);
-router.get('workExperience/:username',authenticateToken,usersController.workExperience);
-router.get('userApplications/:username',authenticateToken,usersController.userApplications);
+router.get('/workExperience/:username',authenticateToken,usersController.workExperience);
+router.get('/userApplications/:username',authenticateToken,usersController.userApplications);
 
 router.get('/tempUser',authenticateToken,usersController.getTempUser);
 router.delete('/tempUser',authenticateToken,usersController.deleteTempUser);

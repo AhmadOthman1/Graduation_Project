@@ -1036,8 +1036,6 @@ exports.postNewPagePost = async (req, res, next) => {
                     "pageId": pageId,
                     "postContent": postContent,
                     "selectedPrivacy": "Any One",
-                    "photo": newphotoname,
-                    "video": newvideoname,
                     "postDate": new Date(),
 
                 });
@@ -2180,13 +2178,16 @@ exports.addNewPageEvent = async (req, res, next) => {
                 where: { username: userUsername, pageId: pageId }
             });
             if (userPageAdmin != null) {
+                console.log(startTime)
                 const eventDateTime = new Date(startTime);
+                console.log(eventDateTime)
+
                 const newEvent = await pageCalender.create({
                     pageId: pageId,
                     subject: subject,
                     description: description,
-                    date: eventDateTime.toISOString().split('T')[0],
-                    time: eventDateTime.toISOString().split('T')[1].substring(0, 8),
+                    date: startTime.split(' ')[0],
+                    time: startTime.split(' ')[1],
                 });
                 return res.status(200).json({
                     message: 'event Created',

@@ -28,7 +28,7 @@ exports.getComments = async (req, res, next) => {
 }
 exports.getPostComments = async (req, res, next) => {
     var username = req.user.username;
-    const  postId  = req.params;
+    const  postId  = req.params.postId;
     var existingUsername = await User.findOne({
         where: {
             username: username,

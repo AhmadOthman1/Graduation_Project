@@ -18,6 +18,10 @@ const notifications = sequelize.define('notifications', {
         allowNull: false,
         /*
         connection => receive connection, connection get accepted
+        post => new like/ comment
+        meessage => new message
+        call => new call
+        job =>new job
         */
     },
     notificationContent: {

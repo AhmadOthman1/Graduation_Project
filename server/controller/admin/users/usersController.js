@@ -637,7 +637,7 @@ exports.deleteUser = async (req, res, next) => {
 }
 exports.educationLevel = async (req, res, next) => {
     var username = req.user.username;
-    var userUsername = req.params;
+    var userUsername = req.params.username;
     var existingUsername = await User.findOne({
         where: {
             username: username,
@@ -666,7 +666,7 @@ exports.educationLevel = async (req, res, next) => {
 }
 exports.workExperience = async (req, res, next) => {
     var username = req.user.username;
-    var userUsername = req.params;
+    var userUsername = req.params.username;
     var existingUsername = await User.findOne({
         where: {
             username: username,
@@ -695,7 +695,7 @@ exports.workExperience = async (req, res, next) => {
 }
 exports.userApplications = async (req, res, next) => {
     var username = req.user.username;
-    var userUsername = req.params;
+    var userUsername = req.params.username;
     var existingUsername = await User.findOne({
         where: {
             username: username,

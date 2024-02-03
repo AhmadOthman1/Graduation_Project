@@ -498,6 +498,7 @@ io.on("connection", (socket) => {// first time socket connection
   });
   socket.on("/pageChat", async (msg) => {//when a new message arrive 
     console.log(msg);
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
     const authHeader = msg.token;
     var status = socketPageAuthenticateToken(msg.token);// check token
     if (status == 200) {//authenticated

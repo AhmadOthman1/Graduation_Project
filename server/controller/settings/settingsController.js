@@ -636,7 +636,7 @@ exports.changeEmail = async (req, res, next) => {
                                 if (timeDifference < 3600 * 1000) { // password match , less than hour => dont login
                                     // The time difference is less than one hour
                                     return res.status(409).json({
-                                        message: 'change password attempts exceeded. Please try again later.',
+                                        message: 'change Email attempts exceeded. Please try again later.',
                                     });
                                 } else {
                                     await existingNewEmailInChange.destroy();

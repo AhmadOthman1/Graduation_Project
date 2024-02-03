@@ -14,6 +14,7 @@ const path = require('path');
 const fs = require('fs');
 const Sequelize = require('sequelize');
 const pageEmployees = require("../../models/pageEmployees");
+const pageAdmin = require("../../models/pageAdmin");
 
 
 
@@ -29,6 +30,7 @@ exports.getWorkExperience = async (req, res, next) => {
         });
 
         if (userUsername != null) {
+            console.log(";;;;;;;;;;;;;;;;;;;;;;;;;");
             const workExperiences = await Promise.all(userUsername.workExperiences.map(async (experience) => {
                 const isEmployee = await pageEmployees.findOne({
                     where: {
@@ -55,6 +57,7 @@ exports.getWorkExperience = async (req, res, next) => {
                 };
             }));
             console.log(workExperiences)
+            
             return res.status(200).json({
                 message: 'User found',
                 workExperiences: workExperiences,

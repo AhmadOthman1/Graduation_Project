@@ -5,10 +5,11 @@ const postPhotos = require('../../../models/postPhotos');
 const postVideos = require('../../../models/postVideos');
 const comment = require('../../../models/comment');
 const like = require('../../../models/like');
+const moment = require('moment');
 
 exports.getUserPosts = async (req, res, next) => {
     var username = req.user.username;
-    var userUsername = req.params;
+    var userUsername = req.params.username;
     var existingUsername = await User.findOne({
         where: {
             username: username,
@@ -68,10 +69,10 @@ exports.getUserPosts = async (req, res, next) => {
 }
 exports.getPagePosts = async (req, res, next) => {
     var username = req.user.username;
-    var pageId = req.params;
+    var pageId = req.params.pageId;
     var existingUsername = await User.findOne({
         where: {
-            pageId: pageId,
+            username: username,
             status: null,
             type: "Admin"
         }
@@ -79,7 +80,7 @@ exports.getPagePosts = async (req, res, next) => {
     if (existingUsername != null) {
         var Posts = await post.findAll({
             where:{
-                username:userUsername
+                pageId:pageId
             },
             include: [
                 {
