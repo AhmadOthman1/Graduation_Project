@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/ShowAllMyJobs_controller.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
+import 'package:growify/core/functions/alertbox.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/screen/homescreen/myPage/JobsPages/ShowJobApplicants.dart';
 import 'package:growify/view/screen/homescreen/myPage/JobsPages/addnewjob.dart';
@@ -130,6 +131,35 @@ class _MyJobPageState extends State<MyJobPage> {
                                           fontSize: 18,
                                         ),
                                       ),
+                                      trailing: PopupMenuButton<String>(
+                                          icon: const Icon(Icons.more_vert),
+                                          onSelected: (String option) async {
+                                            var message =
+                                                await _controller.onMoreOptionSelected(option, widget.pageId,job['pageJobId']);
+                                            (message != null)
+                                                ? showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return CustomAlertDialog(
+                                                        title: 'Alert',
+                                                        icon: Icons.error,
+                                                        text: message,
+                                                        buttonText: 'OK',
+                                                      );
+                                                    },
+                                                  )
+                                                : null;
+                                            setState(() {});
+                                          },
+                                          itemBuilder: (BuildContext context) {
+                                            return _controller.moreOptions.map((String option) {
+                                              return PopupMenuItem<String>(
+                                                value: option,
+                                                child: Text(option),
+                                              );
+                                            }).toList();
+                                          },
+                                        ),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(5),
@@ -234,6 +264,35 @@ class _MyJobPageState extends State<MyJobPage> {
                                 fontSize: 18,
                               ),
                             ),
+                             trailing: PopupMenuButton<String>(
+                                          icon: const Icon(Icons.more_vert),
+                                          onSelected: (String option) async {
+                                            var message =
+                                                await _controller.onMoreOptionSelected(option, widget.pageId,job['pageJobId']);
+                                            (message != null)
+                                                ? showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return CustomAlertDialog(
+                                                        title: 'Alert',
+                                                        icon: Icons.error,
+                                                        text: message,
+                                                        buttonText: 'OK',
+                                                      );
+                                                    },
+                                                  )
+                                                : null;
+                                            setState(() {});
+                                          },
+                                          itemBuilder: (BuildContext context) {
+                                            return _controller.moreOptions.map((String option) {
+                                              return PopupMenuItem<String>(
+                                                value: option,
+                                                child: Text(option),
+                                              );
+                                            }).toList();
+                                          },
+                                        ),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(5),

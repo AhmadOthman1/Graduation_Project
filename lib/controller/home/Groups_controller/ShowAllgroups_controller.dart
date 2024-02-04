@@ -60,7 +60,7 @@ print(membersobject);
 print("8888888888888");
 print(adminsobject);
 
-members.addAll(membersobject.map((member) => {
+members.assignAll(membersobject.map((member) => {
   'username': member['username'],
   'photo': member['photo'], 
    'firstname': member['user']['firstName'], 
@@ -68,7 +68,7 @@ members.addAll(membersobject.map((member) => {
 }).toList());
 
 
-admins.addAll(adminsobject.map((admin) => {
+admins.assignAll(adminsobject.map((admin) => {
       'username': admin['username'],
       'photo': admin['photo'],
      'firstname': admin['user']['firstName'],
@@ -107,6 +107,95 @@ admins.addAll(adminsobject.map((admin) => {
 
   return response;
 }
+
+
+
+
+// to update the data
+  
+Future<http.Response?> UpdateAndLoadPageEmployees(groupid) async {
+  var url = "$urlStarter/user/getMyPageGroupInfo?groupId=$groupid";
+  var response = await http.get(Uri.parse(url), headers: {
+    'Content-type': 'application/json; charset=UTF-8',
+    'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+  });
+
+  print(response.statusCode);
+print("jjjjjjjjjjjjj");
+print('bearer ' + GetStorage().read('accessToken'));
+  if (response.statusCode == 403) {
+    await getRefreshToken(GetStorage().read('refreshToken'));
+    return getAndLoadPageEmployees(groupid);
+  } else if (response.statusCode == 401) {
+    _logoutController.goTosigninpage();
+    return null; // Or handle as needed in your application
+  }
+
+  if (response.statusCode == 409) {
+    var responseBody = jsonDecode(response.body);
+    print(responseBody['message']);
+    return null; // Or handle as needed in your application
+  } else if (response.statusCode == 200) {
+    var responseBody = jsonDecode(response.body);
+   // print(responseBody);
+  
+    List<Map<String, dynamic>> members1;
+    List<Map<String, dynamic>> admins1;
+
+final List<dynamic> membersobject=responseBody['groupMembers'];
+final List<dynamic> adminsobject=responseBody['groupAdmins'];
+print("Adas");
+print(membersobject);
+print("8888888888888");
+print(adminsobject);
+
+members.assignAll(membersobject.map((member) => {
+  'username': member['username'],
+  'photo': member['photo'], 
+   'firstname': member['user']['firstName'], 
+  'lastname': member['user']['lastName'], 
+}).toList());
+
+
+admins.assignAll(adminsobject.map((admin) => {
+      'username': admin['username'],
+      'photo': admin['photo'],
+     'firstname': admin['user']['firstName'],
+      'lastname': admin['user']['lastName'],
+  }).toList());
+  
+   
+ 
+
+
+
+   // print(pageEmployees);
+    print(";;;;;;;;;;;;;;;;;;;;;");
+
+
+   /* if (pageEmployees != null) {
+      final employee = pageEmployees.map((pageEmployee) {
+        print(pageEmployee);
+        return {
+          'id': pageEmployee['id'],
+          'pageId': pageEmployee['pageId'],
+          'username': pageEmployee['username'],
+          'firstname': pageEmployee['firstname'],
+          'lastname': pageEmployee['lastname'],
+          'employeeField': pageEmployee['field'],
+          'photo': pageEmployee['photo'],
+          'date': pageEmployee['createdAt'],
+        };
+      }).toList();
+
+      // Do something with the 'employee' list if needed
+    }*/
+  }
+
+  return response;
+}
+
+
 
 
 

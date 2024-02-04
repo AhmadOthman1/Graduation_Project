@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/network_controller/networdkmainpage_controller.dart';
+import 'package:growify/view/screen/homescreen/Networkspages/MyJopAplication.dart';
 import 'package:growify/view/screen/homescreen/Networkspages/PagesIfollow.dart';
 import 'package:growify/view/screen/homescreen/Networkspages/ShowGroups.dart';
 import 'package:growify/view/screen/homescreen/Networkspages/ShowRequestsReceived.dart';
@@ -46,6 +47,11 @@ class NetworksPage extends StatelessWidget {
       'name': 'My Groups',
       'iconfixed': Icons.arrow_forward,
     },
+    {
+      'iconchnage': Icons.work,
+      'name': 'My Jop Applications',
+      'iconfixed': Icons.arrow_forward,
+    },
   ];
 
   NetworksPage({super.key});
@@ -62,7 +68,7 @@ class NetworksPage extends StatelessWidget {
             Expanded(
               flex: 4,
               child: Container(
-                padding: EdgeInsets.only(left: 10,right: 10),
+                padding: EdgeInsets.only(left: 10, right: 10),
                 alignment: Alignment.topCenter,
                 height: MediaQuery.of(context).size.height,
                 decoration: BoxDecoration(
@@ -130,6 +136,9 @@ class NetworksPage extends StatelessWidget {
 
                             case 5:
                               controller.goToShowGroupPage();
+                              break;
+                            case 6:
+                              Get.to(MyJopApllication());
                               break;
                           }
                         },
@@ -201,6 +210,9 @@ class NetworksPage extends StatelessWidget {
 
                   case 5:
                     controller.goToShowGroupPage();
+                    break;
+                  case 6:
+                    Get.to(MyJopApllication());
                     break;
                 }
               },

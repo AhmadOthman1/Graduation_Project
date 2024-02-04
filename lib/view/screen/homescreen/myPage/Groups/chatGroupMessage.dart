@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:growify/controller/home/Groups_controller/GroupSetting_controller.dart';
 import 'package:growify/controller/home/Groups_controller/groupchat_controller.dart';
 import 'package:growify/controller/home/chats_controller/chatspage_cnotroller.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
@@ -49,6 +50,7 @@ final ScrollController scrollController = ScrollController();
 class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
   late GroupChatController chatController;
   final ScrollController _scrollController = ScrollController();
+   final GroupSettingsController _Controller33 = GroupSettingsController();
   final AssetImage defultprofileImage =
       const AssetImage("images/profileImage.jpg");
   late IO.Socket socket;
@@ -337,8 +339,7 @@ class GroupChatPageMessagesState extends State<GroupChatPageMessages> {
                               onSelected: (String value) {
                                 // Handle menu item selection
                                 if (value == 'leave_group') {
-                                  // Add your leaving group logic here
-                                  // For example: Navigator.pop(context);
+                                  chatController.memberLeaveGroup(widget.data["id"],context);
                                   print('Leave Group selected');
                                 }
                               },

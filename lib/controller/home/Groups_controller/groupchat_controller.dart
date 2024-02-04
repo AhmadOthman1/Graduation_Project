@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:growify/controller/home/logOutButton_controller.dart';
+import 'package:growify/core/constant/routes.dart';
 import 'package:growify/global.dart';
 import 'package:growify/view/widget/homePage/chatmessage.dart';
 import 'package:http/http.dart' as http;
@@ -197,5 +198,37 @@ Future<void> loadUserMessages(page, groupId) async {
 
   return;
 }
+
+
+Future<String?> memberLeaveGroup(groupId,context) async {
+  print("okkkkkkkkkkkkkkkkk");
+  print(groupId);
+  var url = "$urlStarter/user/leavePageGroup";
+
+  Map<String, dynamic> jsonData = {
+    "groupId": groupId,
+  };
+  String jsonString = jsonEncode(jsonData);
+  var response = await http.post(Uri.parse(url), body: jsonString, headers: {
+    'Content-type': 'application/json; charset=UTF-8',
+    'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+  });
+
+  print(response.statusCode);
+
+  if (response.statusCode == 403) {
+    await getRefreshToken(GetStorage().read('refreshToken'));
+    return memberLeaveGroup(groupId,context);
+  } else if (response.statusCode == 401) {
+    _logoutController.goTosigninpage();
+  } else if (response.statusCode == 200) {
+    var responseBody = jsonDecode(response.body);
+    print(responseBody['message']);
+    // Show message in a dialog
+    Get.offNamed(AppRoute.homescreen);
+    return responseBody['message'];
+  } 
+}
+
 
 }

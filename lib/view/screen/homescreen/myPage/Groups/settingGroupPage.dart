@@ -199,7 +199,7 @@ class GroupSettings extends StatelessWidget {
                           child: InkWell(
                             onTap: () {
                             
-                           
+                           controller.adminLeaveGroup(groupData['id'],context);
                             },
                             child: Container(
                               height: 35,
@@ -435,7 +435,7 @@ class GroupSettings extends StatelessWidget {
                           margin: const EdgeInsets.only(top: 10, bottom: 10),
                           child: InkWell(
                             onTap: () {
-                            
+                            controller.adminLeaveGroup(groupData['id'],context);
                            
                             },
                             child: Container(

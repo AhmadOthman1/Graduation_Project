@@ -129,4 +129,72 @@ class MyJobController {
 
     return;
   }
+
+
+
+  // delete the job 
+    final RxList<String> moreOptions = <String>[
+    'Delete',
+  ].obs;
+  onMoreOptionSelected(option, pageid, jobid) async {
+    switch (option) {
+      case 'Delete':
+        return await deleteJob(pageid, jobid);
+        break;
+    }
+  }
+    
+
+    postSaveChanges(pageId, jobId) async {
+  var url = "$urlStarter/user/deletePageJob";
+  var response = await http.post(
+    Uri.parse(url),
+    body: jsonEncode({
+      "pageId": pageId.toString(),  // Corrected key name
+      "jobId": jobId,
+    }),
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      'Authorization': 'bearer ' + GetStorage().read('accessToken'),
+    },
+  );
+  return response;
+}
+
+ @override
+deleteJob(pageId, jobId) async {
+  print("uuuuuuuuuuuuuuuuuuuu");
+  print(pageId);
+  print("ddddddddddddddddd00000");
+  print(jobId);
+  try {
+    var response = await postSaveChanges(pageId, jobId);  // Await here
+    print("ddddddddddddddd");
+    print(response.statusCode);
+
+    if (response.statusCode == 403) {
+      await getRefreshToken(GetStorage().read('refreshToken'));
+      await postSaveChanges(pageId, jobId);  // Await here
+      return;
+    } else if (response.statusCode == 401) {
+      _logoutController.goTosigninpage();
+    }
+
+    var responseBody = jsonDecode(response.body);
+    print(responseBody['message']);
+    print(response.statusCode);
+
+    if (response.statusCode == 409 || response.statusCode == 500) {
+      print(response.statusCode);
+      return responseBody['message'];
+    } else if (response.statusCode == 200) {
+      responseBody['message'] = "";
+      Get.back();
+    }
+  } catch (err) {
+    print(err);
+    return "server error";
+  }
+}
+
 }
