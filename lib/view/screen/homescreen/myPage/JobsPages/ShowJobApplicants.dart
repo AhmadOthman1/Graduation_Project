@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:file_saver/file_saver.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growify/controller/home/Search_Cotroller.dart';
 import 'package:growify/controller/home/myPage_Controller/JobsPage_Controller/ShowJobApplicants_controller.dart';
 import 'package:growify/global.dart';
+import 'package:growify/services/notification_service.dart';
 import 'package:growify/view/screen/homescreen/myPage/chat/pageChatpagemessages.dart';
 import 'package:growify/view/screen/homescreen/taskes/tasksmainpage.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -72,25 +74,50 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
   }
 
   Future download(String url, String filename) async {
-    var savePath = '/storage/emulated/0/Download/$filename';
-    var dio = Dio();
-    dio.interceptors.add(LogInterceptor());
-    try {
-      var response = await dio.get(
-        url,
-        options: Options(
-          responseType: ResponseType.bytes,
-          followRedirects: false,
-        ),
-      );
-      var file = File(savePath);
-      var raf = file.openSync(mode: FileMode.write);
-      raf.writeFromSync(response.data);
-      await raf.close();
-    } catch (e) {
-      debugPrint(e.toString());
+    print(url);
+    print(filename);
+    if (kIsWeb) {
+      try {
+        FileSaver.instance.saveFile(
+            name: filename.split('.')[0],
+            link: LinkDetails(link: url+"/"+filename),
+            ext: 'pdf',
+            mimeType: MimeType.pdf);
+      } catch (err) {
+        print(err);
+      }
+    } else {
+      var savePath = '/storage/emulated/0/Download/$filename';
+      var dio = Dio();
+      dio.interceptors.add(LogInterceptor());
+      try {
+        var response = await dio.get(
+          url + "/" + filename,
+          //Received data with List<int>
+          options: Options(
+            responseType: ResponseType.bytes,
+            followRedirects: false,
+          ),
+        );
+        var file = File(savePath);
+        var raf = file.openSync(mode: FileMode.write);
+        // response.data is List<int> type
+        raf.writeFromSync(response.data);
+        await raf.close();
+        var playSound = true;
+        Duration timeoutAfter = Duration(seconds: 5);
+        await NotificationService.initializeNotification(playSound);
+        await NotificationService.showNotification(
+          title: "Growify",
+          body: "file $filename downloaded successfully",
+          chronometer: Duration.zero,
+        );
+      } catch (e) {
+        debugPrint(e.toString());
+      }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -320,23 +347,9 @@ class _ShowJobApplicantsState extends State<ShowJobApplicants> {
                   visible: applicant['cv'] != null,
                   child: ElevatedButton(
                     onPressed: () async {
-                      var cvUrl = "$urlStarter/${applicant['cv']}";
 
-                      if (kIsWeb) {
-                        if (await canLaunch(cvUrl)) {
-                          await launch(
-                            cvUrl,
-                            headers: {
-                              "Content-Type": "application/pdf",
-                              "Content-Disposition": "inline"
-                            },
-                          );
-                        } else {
-                          throw "Could not launch $cvUrl";
-                        }
-                      } else {
-                        download(cvUrl, applicant['cv']);
-                      }
+                        download(urlStarter, applicant['cv']);
+                      
 
                       Navigator.pop(context);
                     },

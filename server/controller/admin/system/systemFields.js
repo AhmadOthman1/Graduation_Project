@@ -14,7 +14,7 @@ const systemFields = require("../../../models/systemFields");
 
 exports.deleteSystemField = async (req, res, next) => {
     var username = req.user.username;
-    var field  = req.params;
+    var field  = req.params.field;
     var existingUsername = await User.findOne({
         where: {
             username: username,

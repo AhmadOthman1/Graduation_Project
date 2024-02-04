@@ -57,6 +57,7 @@ router.get('/getUserRequestsReceived',authenticateToken,UserColleagues.getUserRe
 router.get('/getUserRequestsSent',authenticateToken,UserColleagues.getUserRequestsSent);
 router.get('/getUserFollowedPages',authenticateToken,userNetworkPages.getUserFollowedPages);
 router.get('/getUserEmployedPages',authenticateToken,userNetworkPages.getUserEmployedPages);
+router.get('/getUserApplications',authenticateToken,userNetworkPages.getUserApplications);
 router.get('/getUserGroups',authenticateToken,userNetworkPages.getUserGroups);
 router.post('/deleteUserAccount',authenticateToken,settingsController.deleteUserAccount);
 
@@ -123,6 +124,7 @@ router.get('/getPageEmployees',authenticateToken,myPagesController.getPageEmploy
 router.post('/addNewEmployee',authenticateToken,myPagesController.addNewEmployee);
 router.post('/deleteEmployee',authenticateToken,myPagesController.deleteEmployee);
 router.get('/getPageJobs',authenticateToken,myPagesController.getPageJobs);
+router.post('/deletePageJob',authenticateToken,myPagesController.deletePageJob);
 router.get('/getPageJobApplications',authenticateToken,myPagesController.getPageJobApplications);
 router.get('/getJobFields',authenticateToken,myPagesController.getJobFields);
 router.post('/addNewJob',authenticateToken,myPagesController.addNewJob);
@@ -138,6 +140,7 @@ router.get('/getMyPageGroups',authenticateToken,pageGroups.getMyPageGroups);
 router.get('/getMyPageGroupInfo',authenticateToken,pageGroups.getMyPageGroupInfo);
 router.get('/getMyPageGroupMessages',authenticateToken,pageGroups.getMyPageGroupMessages);
 router.post('/createPageGroup',authenticateToken,pageGroups.createPageGroup);
+router.post('/leavePageGroup',authenticateToken,pageGroups.leavePageGroup);
 //groups
 router.post('/editGroupInfo',authenticateToken,groupController.editGroupInfo);
 router.post('/addGroupAdmin',authenticateToken,groupController.addGroupAdmin);

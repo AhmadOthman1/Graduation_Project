@@ -177,6 +177,69 @@ exports.getUserEmployedPages = async (req, res, next) => {
         });
     }
 }
+exports.getUserApplications = async (req, res, next) => {
+    try {
+        var page = req.query.page || 1;
+        var pageSize = req.query.pageSize || 10;
+        const offset = (page - 1) * pageSize;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+
+        const existingEmail = await User.findOne({
+            where: {
+                username: userUsername,
+                status:null,
+            },
+        });
+        if (existingEmail != null) {
+
+            jobApplication.findAll({
+                where: { username: existingEmail.username },
+                include: pageJobs,
+                limit: parseInt(pageSize),
+                offset: parseInt(offset),
+                order: [['createdAt', 'DESC']],
+            }).then(async (jobApplications) => {
+                console.log(jobApplications);
+                const pagesJobs = await Promise.all(jobApplications.map(async (application) => {
+                    const pageData = application.pageJob.dataValues;
+                    return {
+                        pageId: pageData.pageId,
+                        title: pageData.title,
+                        Fields: pageData.Fields,
+                        description: pageData.description,
+                        pageJobId:application.pageJobId,
+                        note:application.note,
+                        cv:application.cv,
+                    };
+                }));
+                return res.status(200).json({
+                    message: 'User Applications',
+                    pages: pagesJobs,
+                });
+            })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    return res.status(500).json({
+                        message: 'server Error',
+                        body: req.body
+                    });
+                });
+        } else {
+            return res.status(500).json({
+                message: 'server Error',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+}
 const getChildGroups = async (groupId, childGroups = []) => {
     const groups = await pageGroup.findAll({
         where: {

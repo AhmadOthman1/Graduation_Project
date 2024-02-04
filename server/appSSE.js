@@ -538,7 +538,7 @@ io.on("connection", (socket) => {// first time socket connection
         if (targetSocket) {
           console.log(msg.message);
           targetSocket.emit("/chat", { sender: pageId, message: msg.message, image: messageImageName, video: messageVideoName, date: new Date() });
-        } else {// if not, send him a notification
+        } /*else {// if not, send him a notification
           console.log(username)
           const notification = {
             username: username,
@@ -549,7 +549,7 @@ io.on("connection", (socket) => {// first time socket connection
           var isnotify = false
           isnotify = await notifyUser(username, notification);
           console.log(isnotify);
-        }
+        }*/
         //save the message in db after sending it via socket
         await pageMessagesControl(pageId, username, msg.message, messageImageName, messageVideoName)//store it in the database
       }

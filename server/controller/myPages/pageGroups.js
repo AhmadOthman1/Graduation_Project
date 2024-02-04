@@ -552,3 +552,59 @@ exports.createPageGroup = async (req, res, next) => {
         });
     }
 }
+exports.leavePageGroup = async (req, res, next) => {
+    try {
+        const { groupId } = req.body;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername,
+                status: null,
+            },
+        });
+        if (existingUsername != null) {
+            const group = await pageGroup.findOne({
+                where: {
+                    groupId: groupId,
+                }
+            });
+            if (group == null) {
+                return res.status(500).json({
+                    message: 'group not found',
+                    body: req.body
+                });
+            }
+            const isMember = await groupMember.findOne({
+                where: {
+                    username: userUsername,
+                    groupId: groupId,
+                }
+            });
+            if (isMember != null) {
+                await isMember.destroy();
+                return res.status(200).json({
+                    message: 'Leaved',
+                });
+            }else{
+                return res.status(500).json({
+                    message: 'You are not a member in this group, try to leave a parent group or the page',
+                });
+            }
+
+        } else {
+            return res.status(500).json({
+                message: 'user not found',
+                body: req.body
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'server Error',
+            body: req.body
+        });
+    }
+
+}

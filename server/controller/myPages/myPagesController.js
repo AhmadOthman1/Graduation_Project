@@ -1881,6 +1881,60 @@ exports.getPageJobs = async (req, res, next) => {
         });
     }
 };
+exports.deletePageJob = async (req, res, next) => {
+    try {
+        var pageId = req.body.pageId;
+        var jobId = req.body.jobId;
+        const authHeader = req.headers['authorization']
+        const decoded = jwt.verify(authHeader.split(" ")[1], process.env.ACCESS_TOKEN_SECRET);
+        var userUsername = decoded.username;
+        // Calculate the offset based on page and pageSize
+        const existingUsername = await User.findOne({
+            where: {
+                username: userUsername,
+                status: null,
+            },
+        });
+        if (existingUsername != null) {
+            var userPageAdmin = await pageAdmin.findOne({
+                where: { username: userUsername, pageId: pageId, adminType: "A" }
+            });
+            if (userPageAdmin != null) {
+                const PageJob = await pageJobs.findOne({
+                    where: {
+                        pageId: pageId,
+                        pageJobId:jobId,
+                    },
+                });
+                if(PageJob!=null){
+                    await PageJob.destroy();
+                    return res.status(200).json({
+                        message: 'Job deleted',
+                    });
+                }else{
+                    return res.status(500).json({
+                        message: 'Job not found',
+                    });
+                }
+            } else {
+                return res.status(500).json({
+                    message: 'You are not allowed to see this information',
+                    body: req.body,
+                });
+            }
+        }
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: 'Server Error',
+            body: req.body,
+        });
+    }
+};
 exports.getPageJobApplications = async (req, res, next) => {
     try {
         var pageJobId = req.query.pageJobId;

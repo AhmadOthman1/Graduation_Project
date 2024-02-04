@@ -162,9 +162,9 @@ exports.getChats = async (req, res, next) => {
                 uniqueConversations.push(conversation.get({ plain: true }));
             }
         });
-        //console.log("==========================================")
-        //console.log(uniqueConversationsId)
-        //console.log("==========================================")
+        console.log("==========================================")
+        console.log(uniqueConversations)
+        console.log("==========================================")
         return res.status(200).json({
             message: 'active users fetched',
             activeConnectionsInfo: activeConnectionsInfo,

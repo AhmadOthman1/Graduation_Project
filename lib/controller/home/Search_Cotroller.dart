@@ -316,7 +316,7 @@ class SearchControllerImp extends GetxController {
   String? searchValue;
   int Upage = 1;
   int Ppage = 1;
-  int pageSize = 10;
+  int pageSize = 15;
   // Define a dynamic list to store page data
   RxList<Map<String, String>> pageList = <Map<String, String>>[].obs;
    // Define a dynamic list to store job data

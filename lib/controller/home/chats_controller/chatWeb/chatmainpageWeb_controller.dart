@@ -48,7 +48,6 @@ class ChatMainWebPageController extends GetxController {
 
     super.onInit();
     goToChat();
-    print("mmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
   }
     getChats() async {
     var url = "$urlStarter/user/getChats";
@@ -56,14 +55,12 @@ class ChatMainWebPageController extends GetxController {
       'Content-type': 'application/json; charset=UTF-8',
       'Authorization': 'bearer ' + GetStorage().read('accessToken'),
     });
-    print("Moooooooooooooooooo");
     print(responce);
     return responce;
   }
 
   goToChat() async {
     var res = await getChats();
-    print("why not i will try");
     print(res.statusCode);
     if (res.statusCode == 403) {
       await getRefreshToken(GetStorage().read('refreshToken'));
@@ -84,7 +81,6 @@ class ChatMainWebPageController extends GetxController {
         var name = conversation["firstname"] + " " + conversation["lastname"];
         var username = conversation["username"];
         var photo = conversation["photo"];
-        print(username);
         final Map<String, dynamic> extractedInfo = {
           'name': name,
           'username': username,
@@ -117,7 +113,7 @@ class ChatMainWebPageController extends GetxController {
                 GetStorage().read('username')) {
           name = conversation['receiverUsername_FK']['firstName'] +
               " " +
-              conversation['senderUsername_FK']['lastName'];
+              conversation['receiverUsername_FK']['lastName'];
           username = conversation['receiverUsername_FK']['username'];
           photo = conversation['receiverUsername_FK']['photo'];
           type = "U";
@@ -138,6 +134,7 @@ class ChatMainWebPageController extends GetxController {
           'photo': photo,
           'type': type,
         };
+                print(name);
 
         colleaguesPreviousmessagesWed.add(extractedInfo);
       }

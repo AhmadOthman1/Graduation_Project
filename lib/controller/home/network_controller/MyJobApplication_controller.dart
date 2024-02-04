@@ -65,6 +65,7 @@ class MyJobApplicationController {
             'Fields': job['Fields'],
             'description': job['description'],
             'note': job['note'],
+            'cv': job['cv'],
           };
         }).toList();
 

@@ -2,14 +2,31 @@ const User = require("../../../models/user");
 const post = require('../../../models/post');
 const Page = require("../../../models/pages");
 const pageJobs = require("../../../models/pageJobs");
-const jobApplication = require("../../../models/jobApplication");
 const pageGroup = require("../../../models/pageGroup");
 const messages = require("../../../models/messages");
 const activeUsers = require("../../../models/activeUsers");
 const tempUser = require("../../../models/tempUser");
 const EducationLevel = require("../../../models/educationLevel");
 const WorkExperience = require("../../../models/workExperience");
-
+const validator = require('../../validator');
+const bcrypt = require('bcrypt');
+const notifications = require("../../../models/notifications");
+const connections = require("../../../models/connections");
+const sentConnection = require("../../../models/sentConnection");
+const userTasks = require("../../../models/userTasks");
+const changeEmail = require("../../../models/changeEmail");
+const forgetPasswordCode = require("../../../models/forgetPasswordCode");
+const userCalender = require("../../../models/userCalender");
+const jobApplication = require("../../../models/jobApplication");
+const pageFollower = require("../../../models/pageFollower");
+const pageEmployees = require("../../../models/pageEmployees");
+const pageAdmin = require("../../../models/pageAdmin");
+const comment = require("../../../models/comment");
+const like = require("../../../models/like");
+const groupMember = require("../../../models/groupMember");
+const groupAdmin = require("../../../models/groupAdmin");
+const groupTask = require("../../../models/groupTask");
+const { Op } = require('sequelize');
 
 
 exports.getUsers = async (req, res, next) => {
@@ -192,7 +209,7 @@ exports.createUser = async (req, res, next) => {
                 body: req.body
             });
         }
-
+        const hashedPassword = await bcrypt.hash(password, 10);// hash the password
         const newUser = await User.create({
             firstname: firstName,
             lastname: lastName,
@@ -237,6 +254,17 @@ exports.updateUser = async (req, res, next) => {
                 type: "Admin"
             },
         });
+        const existingUsername = await User.findOne({
+            where: {
+                username: username,
+            },
+        });
+        if(existingUsername == null){
+            return res.status(409).json({
+                message: 'user does not exist',
+                body: req.body
+            });
+        }
         if (existingEmail != null) {
             if (firstName != null) {//if feild change enables (!=null)
                 if (!validator.isUsername(firstName) || firstName.length < 1 || firstName.length > 50) {//validate
@@ -304,7 +332,7 @@ exports.updateUser = async (req, res, next) => {
                 }
             }
             if (phone != null) {//if feild change enables (!=null)
-                if (!validator.isPhoneNumbere(phone) || phone.length < 8 || phone.length > 10) {//validate
+                if (!validator.isPhoneNumber(phone) || phone.length < 8 || phone.length > 10) {//validate
                     return res.status(409).json({
                         message: 'Not Valid phone',
                         body: req.body
@@ -463,23 +491,25 @@ exports.deleteUser = async (req, res, next) => {
             where: {
                 username: username,
                 status: null,
-                type: "Admin"
             },
         });
-
+        if(existingEmail == null){
+            return res.status(409).json({
+                message: 'user does not exist',
+                body: req.body
+            });
+        }
         if (existingAdmin != null) {
             // mail  exists
-
-            var oldPhoto = existingEmail.photo;
-            var oldCover = existingEmail.coverImage;
-
-            if (oldPhoto != null) {
+            if (existingEmail.photo != null) {
+                var oldPhoto = existingEmail.photo;
                 //delete the old photo from the  server image folder
                 const oldPhotoPath = path.join('images', oldPhoto);
 
                 fs.unlinkSync(oldPhotoPath);
             }
-            if (oldCover != null) {
+            if (existingEmail.coverImage != null) {
+                var oldCover = existingEmail.coverImage;
                 //delete the old photo from the  server image folder
                 const oldCoverPath = path.join('images', oldCover);
 
@@ -535,12 +565,12 @@ exports.deleteUser = async (req, res, next) => {
                     ]
                 },
             });
-            await workExperience.destroy({
+            await WorkExperience.destroy({
                 where: {
                     username: existingEmail.username,
                 },
             });
-            await educationLevel.destroy({
+            await EducationLevel.destroy({
                 where: {
                     username: existingEmail.username,
                 },

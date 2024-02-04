@@ -34,6 +34,8 @@ class _ChatWebMainPageState extends State<ChatWebMainPage> {
     controller.colleaguesPreviousmessages
         .assignAll(controller.colleaguesPreviousmessagesWed);
     isLoading = false;
+    print(controller.colleaguesPreviousmessagesWed);
+    print(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;");
     setState(()  {});
   }
 
